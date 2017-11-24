@@ -37,6 +37,11 @@ gem 'jbuilder', '~> 2.5'
 gem 'omniauth'
 gem 'omniauth-github'
 gem 'omniauth-gitlab'
+gem 'font-awesome-rails'
+# For oauth
+gem 'devise'
+# For setting permissions
+gem 'cancancan', '~> 2.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
