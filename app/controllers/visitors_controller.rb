@@ -4,8 +4,5 @@ class VisitorsController < ApplicationController
     # otherwise display a login button and list of active courses they might join
     # @signin_path = "foobar"
   end
-  
-  # def omniauth_callbacks
-  #   render "HI"
-  # end
+
 end
