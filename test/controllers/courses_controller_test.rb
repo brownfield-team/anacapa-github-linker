@@ -5,6 +5,14 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     @course = courses(:one)
   end
 
+  test "verify logged in" do
+    unless @user
+      get courses_url
+      assert_response :success
+    end
+  end
+
+
   test "should get index" do
     get courses_url
     assert_response :success

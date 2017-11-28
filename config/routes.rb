@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   resources :visitors
-
+  
   root "visitors#index"  
 
   # This is supposed to handle signout but for some reason it does not like this
