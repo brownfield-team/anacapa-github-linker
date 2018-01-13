@@ -7,10 +7,4 @@ Rails.application.routes.draw do
   
   root "visitors#index"  
 
-  # This is supposed to handle signout but for some reason it does not like this
-  # chunk of code.
-  # devise_scope :user do
-  #   delete 'sign_out', :to => 'devise/sessions#destroy', :as => :destroy_user_session
-  # end
-
 end

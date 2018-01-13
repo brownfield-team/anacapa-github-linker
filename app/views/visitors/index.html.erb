@@ -1,3 +1,7 @@
-<%= button_to user_github_omniauth_authorize_path, method: :get, class: 'btn btn-info btn-lg' do %>
-    <%= fa_icon 'github', text: 'Sign in with Github' %>
-<% end %>
+<% if !user_signed_in? %>
+  <%= render 'splash' %>
+<% else %>
+  <h1>Welcome! You are enrolled in</h1>
+    
+  <h1>
+<%end%>
