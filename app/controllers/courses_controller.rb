@@ -62,6 +62,14 @@ class CoursesController < ApplicationController
     end
   end
 
+  def join
+    Course.find(params[:course_id]).users << current_user
+  end
+
+  def leave
+    # stub
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course
