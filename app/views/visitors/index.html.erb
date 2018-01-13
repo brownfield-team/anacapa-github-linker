@@ -1,7 +1,9 @@
 <% if !user_signed_in? %>
   <%= render 'splash' %>
 <% else %>
-  <h1>Welcome! You are enrolled in</h1>
-    
-  <h1>
+  <% if current_user.courses.length == 0 %>
+    <h1> Welcome! You are not enrolled in any courses. Click courses to find your class</h1>
+  <% else %>
+    <h1>You are enrolled in</h1>
+  <% end %>
 <%end%>
