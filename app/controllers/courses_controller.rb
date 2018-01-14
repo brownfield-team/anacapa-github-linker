@@ -1,6 +1,7 @@
 class CoursesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_course, only: [:show, :edit, :update, :destroy]
+  load_and_authorize_resource
 
   # GET /courses
   # GET /courses.json
@@ -64,10 +65,12 @@ class CoursesController < ApplicationController
 
   def join
     Course.find(params[:course_id]).users << current_user
+    redirect_to courses_path 
   end
 
   def leave
-    # stub
+    Course.find(params[:course_id]).users.delete(current_user)
+    redirect_to courses_path 
   end
 
   private

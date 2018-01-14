@@ -1,21 +1,36 @@
 <% if !user_signed_in? %>
   <%= render 'splash' %>
 <% else %>
-  <% if current_user.courses.length == 0 %>
+  <% if current_user.has_role? :admin %>
+    <h1> Welcome Admin </h1>
+    <p> Proceed to the courses page to manage classes or to the users page to manage users </p>
+    
+  <% elsif current_user.has_role? :instructor %>
+    
+    <h1> Welcome Instructor </h1>
+    <p> Proceed to the courses page to manage your classes or the users page to manage users with access to your classes </p>
+
+  <% elsif current_user.courses.length == 0 %>
     <h1> Welcome! </h1>
     <p>You are not enrolled in any courses at the moment! <strong> Please take a moment to visit the courses list in the navigation header, and join the class you are enrolled in. </strong> </h1>
     <p>Once you are enrolled in a class you will be able to access your classes from this page</p>
+  
   <% else %>
-    <h1> Welcome! </h1>
-    <ul class="list-group">
-      <% current_user.courses.each do |course| %>
-        <li class="list-group-item justify-content-between">
-          <% course.title %>
-          <%# note that we can easily add notificatio for courses with announcements etc %>
-          <%# <span class="badge badge-default badge-pill">1</span> %>
-        </li>
-      <% end %>
-    </ul>
+    <h1>Welcome to Project Anacapa<h1>
+
+    <p> Click courses to add new classes. You are currently enrolled in the following: </p>
+    <div class="row">
+    <div class="col-sm-4">
+      <ul class="list-group">
+        <% current_user.courses.each do |course| %>
+          <li class="list-group-item justify-content-between">
+            <%= course.name %>
+            <%# note that we can easily add notificatio for courses with announcements etc %>
+            <%# <span class="badge badge-default badge-pill">1</span> %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
 
   <% end %>
 <%end%>

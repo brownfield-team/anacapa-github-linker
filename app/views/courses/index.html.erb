@@ -1,31 +1,80 @@
-<p id="notice"><%= notice %></p>
+<h1>Course List</h1>
+<% if can? :create, Course %>
+  <p>Welcome <%= rolename() %>. To manage your courses go to the home page and select the
+  course you would like to manage from the list of courses you
+  have access to. From this view you can create, edit, or delete 
+  your courses. </p>
+  <div class="panel panel-default">
+    <div class="panel-heading">Create a new course</div>
+    <div class="panel-body">
+      <%= render 'form', course: Course.new %>
+    </div>
+  </div>
+<% end %>
 
-<h1>Courses</h1>
+<div class="row">
+  <div class="col-sm-4">
+      <%# search the course list %>
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">Course Name</span>
+        <input id="courses_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">
+      </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @courses.each do |course| %>
-      <tr>
-        <td><%= course.name %></td>
-        <% if 0==1 %> 
-          <td><%= link_to 'Show', course %></td>
-          <td><%= link_to 'Edit', edit_course_path(course) %></td>
-          <td><%= link_to 'Destroy', course, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-        <% else %>
-          <td><%= link_to 'Join', join_course_path(:course_id => course.id), method: :join, class: 'btn btn-info btn-sm' %></td>
-          <!-- <td><%= link_to 'Leave', course, method: :leave, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %></td> -->
+    <%# table containing the course list %>
+    <table class="table table-sm" id="course_list">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th colspan="3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @courses.each do |course| %>
+          <tr>
+            <td><%= course.name %></td>
+            
+            <!-- <td><%= link_to 'Show', course %></td>
+            <td><%= link_to 'Edit', edit_course_path(course) %></td>
+            <td><%= link_to 'Destroy', course, method: :delete, data: { confirm: 'Are you sure?' } %></td> -->
+            <% if cannot? [:create, :update, :destroy], :any %>
+              <% if course.users.any? {|u| u.id == current_user.id} %>
+                <td><%= link_to 'Leave', leave_course_path(:course_id => course.id), method: :post, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %></td>
+              <% else %>
+                <td><%= link_to 'Join', join_course_path(:course_id => course.id), method: :post, class: 'btn btn-info btn-sm' %></td>
+              <% end %>
+            <% else %>
+              <td>
+                <% if can? :delete, course %> 
+                  <%= link_to 'Edit', edit_course_path(course), class: 'btn btn-sm'%>
+                <% end %>
+                <% if can? :update, course %>
+                  <%= link_to 'Destroy', course, method: :delete, data: { confirm: "Are you sure you want to delete '#{course.name}'?"}, class: 'btn btn-danger btn-sm'%>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
         <% end %>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+
+function filter_list_by_keyword() {
+  var keyword = $("#courses_search").val().toLowerCase();
+  console.log("search for: " + keyword);
+  $("#course_list tr").each(function(element) {
+    var text = $(this).text();
+    if (text.toLowerCase().indexOf(keyword) === -1) {
+      $(this).hide();
+    } else {
+      $(this).show();
+    }
+  });
+}
+</script>
 
 <br>
 
-<%= link_to 'New Course', new_course_path %>
+<!-- <%= link_to 'New Course', new_course_path %> -->

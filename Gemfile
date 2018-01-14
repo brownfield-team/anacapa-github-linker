@@ -42,8 +42,11 @@ gem 'font-awesome-rails'
 gem 'devise'
 # For setting permissions
 gem 'cancancan', '~> 2.0'
-# Bootstrap sass
-gem 'bootstrap-sass'
+# For managing roles
+gem 'rolify'
+
+gem 'bootstrap-sass', '~> 3.3.7'
+gem 'jquery-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

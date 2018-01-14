@@ -8,4 +8,16 @@ module ApplicationHelper
       class: 'avatar'
     )
   end
+
+  def rolename
+    if current_user.has_role? :admin
+      "admin"
+    elsif current_user.has_role? :instructor
+      "instructor"
+    elsif current_user.has_role? :user 
+      "user"
+    else 
+      "unidentified role"
+    end
+  end
 end
