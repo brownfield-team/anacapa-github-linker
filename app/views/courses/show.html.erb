@@ -1,5 +1,14 @@
-<p id="notice"><%= notice %></p>
+<h1> <%= @course.name %> </h1>
 
+<hr>
+
+<% if current_user.can? :manage, @course %>
+  <%= render 'show_admin', course: Course.new %>
+<% elsif current_user.can? :show, @course %>
+  <%= render 'show_student', course: Course.new %>
+<% end %>
+
+<!-- 
 <p>
   <strong>Name:</strong>
   <%= @course.name %>
@@ -7,3 +16,4 @@
 
 <%= link_to 'Edit', edit_course_path(@course) %> |
 <%= link_to 'Back', courses_path %>
+-->

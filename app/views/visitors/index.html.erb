@@ -17,18 +17,18 @@
   <% end %>
 
   <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-6">
       <ul class="list-group">
         <% get_courses_for(current_user).each do |course| %>
-          <li class="list-group-item justify-content-between">
-            <%= course.name %>
-            <%# note: that we can easily add notifications for courses with announcements etc %>
-            <%# <span class="badge badge-default badge-pill">1</span> %>
-          </li>
+          <% if can? :manage, course %>
+            <%= link_to course.name, course, method: :get, class: "list-group-item justify-content-between list-group-item-info"%>
+          <% else %>
+            <%= link_to course.name, course, method: :get, class: "list-group-item justify-content-between"%>
+          <% end %>
         <% end %>
       </ul>
     </div>
   </div>
-
+  <p>Note that if you see a class with a green name this means that you can manage that class</p>
   
 <%end%>

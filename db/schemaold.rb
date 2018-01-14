@@ -13,10 +13,12 @@
 ActiveRecord::Schema.define(version: 20180114054619) do
 
   create_table "courses", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "course_organization", null: false
+    t.string "name"
+    t.string "course_organization"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "student_id"
+    t.index ["student_id"], name: "index_courses_on_student_id"
   end
 
   create_table "courses_users", id: false, force: :cascade do |t|

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  perm: MyString
+  first_name: MyString
+  last_name: MyString
+  email: MyString
+
+two:
+  perm: MyString
+  first_name: MyString
+  last_name: MyString
+  email: MyString
