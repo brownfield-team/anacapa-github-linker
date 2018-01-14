@@ -17,6 +17,8 @@
  // import the CSS framework
 @import "bootstrap-sprockets";
 @import "bootstrap";
+@import "bootstrap/theme";
+
 
 html, body {
  min-height: 100%;
