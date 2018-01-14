@@ -33,6 +33,9 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+# loads the .env file into the environment
+gem 'dotenv-rails'
+
 # for authentication
 gem 'omniauth'
 gem 'omniauth-github'

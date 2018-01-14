@@ -17,5 +17,5 @@ Rails.application.routes.draw do
 
   # home page routes
   resources :visitors
-  root "visitors#index"
+  root :to => "visitors#index"
 end

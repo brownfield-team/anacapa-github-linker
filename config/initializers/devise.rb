@@ -1,13 +1,14 @@
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
-  config.omniauth :github, "7df9c721bd406b87736e", "a06d68437218355713dceb58ff395b7e5453de19", :scope => 'user:email'
+  config.omniauth :github, ENV["OMNIAUTH_PROVIDER_KEY"], ENV["OMNIAUTH_PROVIDER_SECRET"], :scope => 'user:email'
   # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
   # config.secret_key = 'f726ab039750aeeca190e61728bcf5db22b1df93898565461a0553dd3a4bfa2b8afd31a37efaeae20637055537a62c693a3057c135f93c3fa19618a99ef27c9d'
+  config.secret_key = ENV["DEVISE_SECRET_KEY"] || config.secret_key
 
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
@@ -144,7 +145,7 @@ Devise.setup do |config|
 
   # ==> Configuration for :rememberable
   # The time the user will be remembered without asking for credentials again.
-  # config.remember_for = 2.weeks
+  config.remember_for = 1.hour
 
   # Invalidates all the remember me tokens when the user signs out.
   config.expire_all_remember_me_on_sign_out = true
