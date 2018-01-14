@@ -23,6 +23,8 @@
 html, body {
  min-height: 100%;
  background-color: #eee;
+ background-image: url(image_path("backgrounds/crossword.png"));
+ background-repeat: repeat;
 }
 
 .alert {
@@ -62,7 +64,6 @@ img {
 // to make views framework-neutral
 main {
   @extend .container;
-  background-color: #eee;
   padding-bottom: 80px;
   width: 100%;
   margin-top: 51px; // accommodate the navbar
