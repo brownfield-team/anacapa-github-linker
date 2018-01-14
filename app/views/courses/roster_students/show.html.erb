@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Perm:</strong>
+  <%= @roster_student.perm %>
+</p>
+
+<p>
+  <strong>First name:</strong>
+  <%= @roster_student.first_name %>
+</p>
+
+<p>
+  <strong>Last name:</strong>
+  <%= @roster_student.last_name %>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <%= @roster_student.email %>
+</p>
+
+<%= link_to 'Edit', edit_course_roster_student_path(@parent, @roster_student) %> 
+<%= link_to 'Back', course_roster_students_path %>

@@ -1,0 +1,33 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Roster Students</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Perm</th>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Email</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @roster_students.each do |roster_student| %>
+      <tr>
+        <td><%= roster_student.perm %></td>
+        <td><%= roster_student.first_name %></td>
+        <td><%= roster_student.last_name %></td>
+        <td><%= roster_student.email %></td>
+        <td><%= link_to 'Show', course_roster_student_path(@parent, roster_student) %></td>
+        <td><%= link_to 'Edit', edit_course_roster_student_path(@parent, roster_student) %></td>
+        <td><%= link_to 'Destroy', [@parent, roster_student], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Roster Student', new_course_roster_student_path(@parent) %>
