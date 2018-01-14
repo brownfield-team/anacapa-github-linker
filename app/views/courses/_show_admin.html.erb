@@ -9,14 +9,7 @@
   </div>
 </div>
 
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Course Settings</h3>
-  </div>
-  <div class="panel-body">
-    <%= render 'form', course: @course %>
-  </div>
-</div>
+
 
 <div class="panel panel-default">
   <div class="panel-heading">
@@ -24,5 +17,22 @@
   </div>
   <div class="panel-body">
     <table class="table table-sm">
+      <tr>
+        <th>PERM</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+      </tr>
+      
+      <% @course.roster_students.each do |roster_student| %>
+        <tr>
+          <td><%= roster_student.perm %></td>
+          <td><%= roster_student.first_name %></td>
+          <td><%= roster_student.last_name %></td>
+          <td><%= roster_student.email %></td>
+        </tr>
+      <% end %>
+
+    </table>
   </div>
 </div>
