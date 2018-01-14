@@ -16,7 +16,9 @@ class Ability
       # insturctors can only modify courses they have been granted access
       can [:manage], Course, :id => Course.with_role(:instructor, user).pluck(:id)
     elsif user.has_role? :user 
-      can [:read, :join, :leave], Course
+      can [:join, :leave], Course
+      can :index, Course
+      can :show, Course, :id => user.courses.pluck(:id)
     end
 
     # Define abilities for the passed in user here. For example:
