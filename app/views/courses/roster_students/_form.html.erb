@@ -1,0 +1,38 @@
+
+<%= form_for([@parent,@roster_student]) do |form| %>
+  <% if roster_student.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(roster_student.errors.count, "error") %> prohibited this roster_student from being saved:</h2>
+
+      <ul>
+      <% roster_student.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <div class="field">
+    <%= form.label :perm %>
+    <%= form.text_field :perm, id: :roster_student_perm %>
+  </div>
+
+  <div class="field">
+    <%= form.label :first_name %>
+    <%= form.text_field :first_name, id: :roster_student_first_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :last_name %>
+    <%= form.text_field :last_name, id: :roster_student_last_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :email %>
+    <%= form.text_field :email, id: :roster_student_email %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

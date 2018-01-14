@@ -1,3 +1,3 @@
 class RosterStudent < ApplicationRecord
-  belongs_to :student
+  belongs_to :courses, optional: true
 end

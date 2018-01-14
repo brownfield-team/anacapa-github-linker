@@ -20,7 +20,7 @@ class Ability
       can :index, Course
       can :show, Course, :id => user.courses.pluck(:id)
     end
-
+    
     # Define abilities for the passed in user here. For example:
     #
     #   user ||= User.new # guest user (not logged in)

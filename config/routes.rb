@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :roster_students
   # devise routes
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks#github" }
   devise_scope :user do
@@ -6,10 +7,14 @@ Rails.application.routes.draw do
   end
 
   # courses routes
-  resources :courses
   post 'courses/:course_id/join' => 'courses#join', :as => :join_course
   post 'courses/:course_id/leave' => 'courses#leave', :as => :leave_course
-  
+  resources :courses do
+    scope module: :courses do
+      resources :roster_students 
+    end
+  end
+
   # home page routes
   resources :visitors
   root "visitors#index"
