@@ -1,3 +1,7 @@
+<%# NOTE: if this page grows more complicated it may be a good idea to split it into two views
+and render differently depending on whether or not the user is privlidged %>
+
+
 <h1>Course List</h1>
 <% if can? :create, Course %>
   <p>Welcome <%= rolename() %>. To manage your courses go to the home page and select the
@@ -36,7 +40,7 @@
             <!-- <td><%= link_to 'Show', course %></td>
             <td><%= link_to 'Edit', edit_course_path(course) %></td>
             <td><%= link_to 'Destroy', course, method: :delete, data: { confirm: 'Are you sure?' } %></td> -->
-            <% if cannot? [:create, :update, :destroy], :any %>
+            <% if (cannot? [:create, :update, :destroy], :any) and can? :view, course %>
               <% if course.users.any? {|u| u.id == current_user.id} %>
                 <td><%= link_to 'Leave', leave_course_path(:course_id => course.id), method: :post, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %></td>
               <% else %>
