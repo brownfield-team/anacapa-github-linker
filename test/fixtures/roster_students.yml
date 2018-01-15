@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  perm: MyString
-  first_name: MyString
-  last_name: MyString
-  email: MyString
+roster1:
+  perm: 12345678
+  first_name: Wes
+  last_name: P
+  email: wes@email.com
 
-two:
-  perm: MyString
-  first_name: MyString
-  last_name: MyString
-  email: MyString
+roster2:
+  perm: 21345678
+  first_name: Tim
+  last_name: H
+  email: tim@email.com

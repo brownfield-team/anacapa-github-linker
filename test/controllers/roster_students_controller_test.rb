@@ -2,7 +2,7 @@ require 'test_helper'
 
 class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @roster_student = roster_students(:one)
+    @roster_student = roster_students(:roster1)
   end
 
   test "should get index" do

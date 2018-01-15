@@ -2,7 +2,8 @@ require 'test_helper'
 
 class CoursesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @course = courses(:one)
+    @course = courses(:course1)
+    @course2 = courses(:course2)
   end
 
   test "verify logged in" do

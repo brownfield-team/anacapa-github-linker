@@ -1,7 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
+course1:
+  name: course1
+  course_organization: org1
 
-two:
-  name: MyString
+course2:
+  name: course2
+  course_organization: org2
