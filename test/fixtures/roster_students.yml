@@ -1,6 +1,5 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-<<<<<<< HEAD
 roster1:
   perm: 12345678
   first_name: Wes
@@ -12,4 +11,3 @@ roster2:
   first_name: Tim
   last_name: H
   email: tim@email.com
->>>>>>> 32668496ec98e0b74960f734e8eec6fdee8555b1
