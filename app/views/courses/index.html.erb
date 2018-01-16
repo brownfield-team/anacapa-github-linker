@@ -50,9 +50,9 @@ and render differently depending on whether or not the user is privlidged %>
             <% else %>
               <%# otherwise they behave as a normal student, show student options. %>
               <% if course.users.any? {|u| u.id == current_user.id} %>
-                <td><%= link_to 'Leave', leave_course_path(:course_id => course.id), method: :post, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %></td>
+                <td><%= link_to 'Leave', course_leave_path(:course_id => course.id), method: :post, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %></td>
               <% else %>
-                <td><%= link_to 'Join', join_course_path(:course_id => course.id), method: :post, class: 'btn btn-info btn-sm' %></td>
+                <td><%= link_to 'Join', course_join_path(:course_id => course.id), method: :post, class: 'btn btn-info btn-sm' %></td>
               <% end %>
             <% end %>
           </tr>

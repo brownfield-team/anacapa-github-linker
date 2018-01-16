@@ -15,6 +15,9 @@ class Ability
       can :read, Course 
       # insturctors can only modify courses they have been granted access
       can [:manage], Course, :id => Course.with_role(:instructor, user).pluck(:id)
+
+      # a bit of a guess here... will need to test this.
+      can [:manage], RosterStudents, :parent => Course.with_role(:instructor, user)
     elsif user.has_role? :user 
       can [:join, :leave], Course
       can :index, Course
