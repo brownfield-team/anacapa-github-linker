@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
   resources :roster_students
   # devise routes
-  devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks#github" }
+  devise_for :users, :controllers => { 
+    # TODO: add support for additional omniauth providers
+    :omniauth_callbacks => "users/omniauth_callbacks#github" 
+  }
   devise_scope :user do
     get 'sign_out', :to => 'devise/sessions#destroy', :as => :signout
   end
@@ -13,7 +16,7 @@ Rails.application.routes.draw do
     post :join 
     post :leave 
     scope module: :courses do
-      resources :roster_students do
+      resources :roster_students, except: :index do
         collection do 
           post :import
         end
