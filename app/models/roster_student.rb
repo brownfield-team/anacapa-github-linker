@@ -5,7 +5,6 @@ class RosterStudent < ApplicationRecord
   def username 
     # TODO: when linking roster_students to user accounts is implemented, this should return the name 
     # of this roster student's associated user
-    puts "what is up what is up..."
     return nil unless user
     user.username
   end
