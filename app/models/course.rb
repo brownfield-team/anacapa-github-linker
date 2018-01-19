@@ -3,7 +3,6 @@ class Course < ApplicationRecord
   #                   length: { minimum: 3 }
   validates :name, presence: true, length: {minimum: 3}, uniqueness: true
   validates :course_organization, presence: true, length: {minimum: 3}, uniqueness: true
-  has_and_belongs_to_many :users
   has_many :roster_students
   resourcify
 
@@ -64,5 +63,9 @@ class Course < ApplicationRecord
         ]
       end
     end
+  end
+
+  def users 
+    return (self.roster_students.map {|student| student.user }).compact
   end
 end

@@ -1,5 +1,5 @@
 class RosterStudent < ApplicationRecord
-  belongs_to :courses, optional: true
+  belongs_to :course, optional: true
   belongs_to :user, optional: true 
 
   def username 
@@ -9,5 +9,4 @@ class RosterStudent < ApplicationRecord
     user.username
   end
 
-  
 end

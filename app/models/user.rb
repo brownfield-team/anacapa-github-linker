@@ -4,7 +4,6 @@ class User < ApplicationRecord
   devise :database_authenticatable, :trackable, :validatable,
          :omniauthable, :omniauth_providers => [:github]
   
-  has_and_belongs_to_many :courses
   has_many :roster_students
 
   # install rolify
@@ -41,5 +40,20 @@ class User < ApplicationRecord
     @ability ||= Ability.new(self)
   end
 
+  def courses
+    return courses_enrolled + courses_administrating
+  end
+
+  def courses_enrolled 
+    self.roster_students.map { |student| student.course }
+  end
+
+  def courses_administrating 
+    if has_role? :user 
+      return []
+    else 
+      return Course.order("name").select { |course| ability.can? :manage, course }
+    end
+  end
 
 end
