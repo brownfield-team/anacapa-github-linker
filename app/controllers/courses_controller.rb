@@ -65,7 +65,9 @@ class CoursesController < ApplicationController
   def join
     course = Course.find(params[:course_id])
     
-    if course.roster_students.any? {|student| student.email == current_user.email} 
+    roster_student = course.roster_students.find_by(email: current_user.email)
+    if not roster_student.nil?
+      current_user.roster_students << roster_student 
       course.users << current_user
       redirect_to courses_path, notice: "You were successfully enrolled in #{course.name}!"
     else 

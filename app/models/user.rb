@@ -5,6 +5,7 @@ class User < ApplicationRecord
          :omniauthable, :omniauth_providers => [:github]
   
   has_and_belongs_to_many :courses
+  has_many :roster_students
 
   # install rolify
   rolify
