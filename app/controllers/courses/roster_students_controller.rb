@@ -6,12 +6,27 @@ module Courses
   class RosterStudentsController < ApplicationController
     before_action :load_parent
     before_action :set_roster_student, only: [:show, :edit, :update, :destroy]
+    
     load_and_authorize_resource
 
     # GET /roster_students
     # GET /roster_students.json
     def index
       @roster_students = @parent.roster_students.all
+
+      respond_to do |format|
+        format.html
+        format.csv { send_data @parent.export_students_to_csv, filename: "students-#{Date.today}.csv" }
+      end
+    end
+
+    def import
+      if params.has_key? :file
+        @parent.import_students(params[:file], params[:csv_header_map].split(','), params[:csv_header_toggle] == "true")
+        redirect_to course_path(@parent), notice: 'Students imported.'
+      else
+        redirect_to course_path(@parent), alert: 'Please specify a file.'
+      end
     end
 
     # GET /roster_students/1
@@ -36,7 +51,7 @@ module Courses
 
       respond_to do |format|
         if @roster_student.save
-          format.html { redirect_to [@parent, @roster_student], notice: 'Roster student was successfully created.' }
+          format.html { redirect_to course_path(@parent), notice: 'Roster student was successfully created.' }
           format.json { render :show, status: :created, location: @roster_student }
         else
           format.html { render :new }
@@ -50,7 +65,7 @@ module Courses
     def update
       respond_to do |format|
         if @roster_student.update(roster_student_params)
-          format.html { redirect_to @roster_student, notice: 'Roster student was successfully updated.' }
+          format.html { redirect_to course_path(@parent), notice: 'Roster student was successfully updated.' }
           format.json { render :show, status: :ok, location: @roster_student }
         else
           format.html { render :edit }
@@ -64,7 +79,7 @@ module Courses
     def destroy
       @roster_student.destroy
       respond_to do |format|
-        format.html { redirect_to roster_students_url, notice: 'Roster student was successfully destroyed.' }
+        format.html { redirect_to course_path(@parent), notice: 'Roster student was successfully destroyed.' }
         format.json { head :no_content }
       end
     end
@@ -81,9 +96,7 @@ module Courses
       end
 
       def load_parent
-        puts "Loading parent"
         @parent = Course.find(params[:course_id])
-        puts "Loaded parent with id #{@parent.id}"
       end
   end
 
