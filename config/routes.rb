@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :roster_students
+  # resources :roster_students
   # devise routes
   devise_for :users, :controllers => { 
     # TODO: add support for additional omniauth providers

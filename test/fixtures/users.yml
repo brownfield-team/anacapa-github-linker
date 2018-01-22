@@ -3,13 +3,13 @@
 wes:
   name: Wes
   username: w123
-  uid: 123
+  uid: 1
   provider: GitHub
   email: wes@email.com
 
 tim:
   name: Tim
   username: t456
-  uid: 456
+  uid: 2
   provider: GitHub
   email: tim@email.com

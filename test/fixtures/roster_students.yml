@@ -12,3 +12,11 @@ roster2:
   first_name: Tim
   last_name: H
   email: tim@email.com
+  course_id: 2
+
+roster3:
+  perm: 123
+  first_name: Wes
+  last_name: P
+  email: wes@email.com
+  course_id: 2
