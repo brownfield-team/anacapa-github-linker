@@ -1,18 +1,15 @@
 require 'test_helper'
 
 class CoursesControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   setup do
     @course = courses(:course1)
     @course2 = courses(:course2)
+    @user = users(:wes)
+    @user.add_role(:admin)
+    sign_in @user
   end
-
-  test "verify logged in" do
-    unless @user
-      get courses_url
-      assert_response :success
-    end
-  end
-
 
   test "should get index" do
     get courses_url
@@ -26,7 +23,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create course" do
     assert_difference('Course.count') do
-      post courses_url, params: { course: { name: @course.name } }
+      post courses_url, params: { course: { name: "test course", course_organization: "test org" } }
     end
 
     assert_redirected_to course_url(Course.last)
