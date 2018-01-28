@@ -5,7 +5,7 @@ roster1:
   first_name: Wes
   last_name: P
   email: wes@email.com
-  course_id: 1
+  course: course1
 
 roster2:
   perm: 21345678
