@@ -3,10 +3,41 @@ class Course < ApplicationRecord
   #                   length: { minimum: 3 }
   validates :name, presence: true, length: {minimum: 3}, uniqueness: true
   validates :course_organization, presence: true, length: {minimum: 3}, uniqueness: true
+  validate :check_course_org_exists
   has_many :roster_students
   resourcify
 
+  def org
+    return @org if @org or @no_org
+    begin
+      @org = Octokit.organization(course_organization)
+    rescue Octokit::NotFound 
+      @no_org = true 
+      @org = nil 
+    end 
+  end 
+  
+  def check_course_org_exists 
+    # NOTE: this is run as a validation step on creation and update for the organization
+    if org then 
+      begin 
+        membership = Octokit.organization_membership(course_organization)
+        if membership.role != "admin" then 
+          errors.add(:base, "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed.")
+        end
+      rescue Octokit::NotFound 
+        errors.add(:base, "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed.")
+      end
+    else 
+      errors.add(:base, "You must create a github organization with the name of your class and add #{ENV['MACHINE_USER_NAME']} as an owner of that organization.")
+    end
+  end 
 
+  def users 
+    return (self.roster_students.map {|student| student.user }).compact
+  end
+
+  # import roster students from a roster file provided by gradescope
   def import_students(file, header_map, header_row_exists)
     ext = File.extname(file.original_filename)
     spreadsheet = Roo::Spreadsheet.open(file, extension: ext)
@@ -49,6 +80,7 @@ class Course < ApplicationRecord
     end
   end
 
+  # export roster students to a CSV file
   def export_students_to_csv
     CSV.generate(headers: true) do |csv|
       csv << %w[perm email first_name last_name github_username]
@@ -63,9 +95,5 @@ class Course < ApplicationRecord
         ]
       end
     end
-  end
-
-  def users 
-    return (self.roster_students.map {|student| student.user }).compact
   end
 end

@@ -13,10 +13,10 @@ class CoursesController < ApplicationController
   def show
   end
 
-  # GET /courses/new
-  def new
-    @course = Course.new
-  end
+  # # GET /courses/new
+  # def new
+  #   @course = Course.new
+  # end
 
   # GET /courses/1/edit
   def edit
@@ -26,7 +26,7 @@ class CoursesController < ApplicationController
   # POST /courses.json
   def create
     @course = Course.new(course_params)
-
+    
     respond_to do |format|
       if @course.save
         format.html { redirect_to @course, notice: 'Course was successfully created.' }
@@ -68,18 +68,19 @@ class CoursesController < ApplicationController
     roster_student = course.roster_students.find_by(email: current_user.email)
     if not roster_student.nil?
       current_user.roster_students << roster_student 
-      course.users << current_user
+      # course.users << current_user
       redirect_to courses_path, notice: "You were successfully enrolled in #{course.name}!"
+
+      # TODO: add the user to the team
     else 
       message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verrified your email address. '
       redirect_to courses_path, alert: message
     end
-    
-    # Course.find(params[:course_id]).users << current_user
   end
 
   def leave
-    Course.find(params[:course_id]).users.delete(current_user)
+    roster_student = Course.find(params[:course_id]).roster_students.find_by(email: current_user.email)
+    current_user.roster_students.delete(roster_student)
     redirect_to courses_path 
   end
 

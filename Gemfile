@@ -41,6 +41,8 @@ gem 'omniauth'
 gem 'omniauth-github'
 gem 'omniauth-gitlab'
 gem 'font-awesome-rails'
+gem 'octokit', '~> 4.0'
+
 # For oauth
 gem 'devise'
 # For setting permissions
@@ -48,7 +50,6 @@ gem 'cancancan', '~> 2.0'
 # For managing roles
 gem 'rolify'
 
-gem 'bootstrap-sass', '~> 3.3.7'
 gem 'jquery-rails'
 
 # For managing spreadsheets such as the roster and gradebook

@@ -56,4 +56,8 @@ class User < ApplicationRecord
     end
   end
 
+  def join_course(course)
+    
+  end
+
 end

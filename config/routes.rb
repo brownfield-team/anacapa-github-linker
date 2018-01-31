@@ -25,6 +25,6 @@ Rails.application.routes.draw do
   end
 
   # home page routes
-  resources :visitors
+  resources :visitors # NOTE that this defines a number of unused routes that would be good to remove for security
   root :to => "visitors#index"
 end
