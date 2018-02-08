@@ -63,4 +63,13 @@ class User < ApplicationRecord
   def get_role
     self.roles.first.name
   end
+
+
+  def reassign_role(new_role)
+    if self.roles.count > 1
+        raise "This user has more than one role."
+    end
+    self.remove_role(self.get_role.to_sym)
+    self.add_role(new_role.to_sym)
+  end
 end

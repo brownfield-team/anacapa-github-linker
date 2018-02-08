@@ -8,22 +8,31 @@
         <span class="input-group-addon" id="basic-addon1">User Name</span>
         <input id="courses_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">
       </div>
-
     <%# table containing the course list %>
     <table class="table table-sm" id="course_list">
       <thead>
         <tr>
           <th>Name</th>
           <th>Role</th>
-          <th colspan="3"></th>
+          <th>Select</th>
+          <th colspan="4"></th>
         </tr>
       </thead>
       <tbody>
         <% @users.each do |user| %>
+        <%= form_for user do |f| %>
           <tr>
             <td><%= user.name %></td>
-            <td><%= user.get_role%></td>
+            <td><%= user.get_role.titleize%></td>
+            <td><%= f.select :roles, options_for_select(
+                [[user.get_role.titleize, user.get_role],
+                ["Admin", :admin],
+                ["Instructor", :instructor],
+                ["User", :user]])%>
+            </td>
+            <td><%= f.submit %></td>
           </tr>
+          <% end %>
         <% end %>
       </tbody>
     </table>

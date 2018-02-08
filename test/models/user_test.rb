@@ -6,6 +6,8 @@ class UserTest < ActiveSupport::TestCase
     # @roster_student = roster_students(:roster1)
     @user = users(:wes)
     @user.add_role(:admin)
+    @user2 = users(:tim)
+    @user2.add_role(:user)
     # sign_in @user
   end
 
@@ -18,5 +20,10 @@ class UserTest < ActiveSupport::TestCase
 
   test "get role" do
     assert_equal "admin", @user.get_role
+  end
+
+  test "reassign role, promote Tim from a user -> instructor" do
+    @user2.reassign_role("instructor")
+    assert_equal "instructor", @user2.get_role
   end
 end
