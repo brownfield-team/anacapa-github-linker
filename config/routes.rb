@@ -16,7 +16,7 @@ Rails.application.routes.draw do
     post :join
     post :leave
     scope module: :courses do
-      resources :roster_students, except: :index do
+      resources :roster_students do
         collection do
           post :import
         end
