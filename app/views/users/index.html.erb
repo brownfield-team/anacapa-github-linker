@@ -15,24 +15,27 @@
           <th>Name</th>
           <th>Role</th>
           <th>Select</th>
-          <th colspan="4"></th>
+          <th colspan="3"></th>
         </tr>
       </thead>
       <tbody>
         <% @users.each do |user| %>
-        <%= form_for user do |f| %>
           <tr>
             <td><%= user.name %></td>
             <td><%= user.get_role.titleize%></td>
-            <td><%= f.select :roles, options_for_select(
+            <td>
+              <%= form_for user do |f| %>
+
+                <%= f.select :roles, options_for_select(
                 [[user.get_role.titleize, user.get_role],
                 ["Admin", :admin],
                 ["Instructor", :instructor],
                 ["User", :user]])%>
+
+                <%= f.submit %>
+              <% end %>
             </td>
-            <td><%= f.submit %></td>
           </tr>
-          <% end %>
         <% end %>
       </tbody>
     </table>
