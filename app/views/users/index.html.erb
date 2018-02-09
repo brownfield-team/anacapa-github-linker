@@ -27,7 +27,7 @@
           <tr>
             <td><%= user.name %></td>
             <td><%= user.get_role.titleize%></td>
-            <td>
+            <td style="white-space:nowrap;">
               <%= form_for user do |f| %>
 
                 <%= f.select :roles, options_for_select(
