@@ -1,12 +1,16 @@
-<h1>Users</h1>
+<script src="/search.js"></script>
 
+
+<% if can? :update, User %>
+
+<h1>Users</h1>
 
 <div class="row">
   <div class="col-sm-4">
       <%# search the course list %>
       <div class="input-group">
         <span class="input-group-addon" id="basic-addon1">User Name</span>
-        <input id="courses_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">
+        <input id="users_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">
       </div>
     <%# table containing the course list %>
     <table class="table table-sm" id="course_list">
@@ -41,3 +45,25 @@
     </table>
   </div>
 </div>
+
+<% else %>
+
+  <%= render :file => "public/401.html", :status => :unauthorized %>
+
+<% end %>
+
+<script>
+
+function filter_list_by_keyword() {
+  var keyword = $("#users_search").val().toLowerCase();
+  console.log("search for: " + keyword);
+  $("#course_list tr").each(function(element) {
+    var text = $(this).text();
+    if (text.toLowerCase().indexOf(keyword) === -1) {
+      $(this).hide();
+    } else {
+      $(this).show();
+    }
+  });
+}
+</script>
