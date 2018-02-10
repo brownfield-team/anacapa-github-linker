@@ -1,6 +1,11 @@
 class UsersController < ApplicationController
     def index
         @users = User.all
+
+        unless can? :update, User 
+            render :file => "public/401.html", :status => :unauthorized
+        end
+
         
     end
 
@@ -10,8 +15,8 @@ class UsersController < ApplicationController
         redirect_to users_path
     end
 
-    private
-        def user_params
-            params.require(:user).permit(:roles)
-        end
+    # private
+    #     def user_params
+    #         params.require(:user).permit(:roles)
+    #     end
 end

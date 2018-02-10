@@ -1,7 +1,6 @@
 <script src="/search.js"></script>
 
 
-<% if can? :update, User %>
 
 <h1>Users</h1>
 
@@ -46,11 +45,6 @@
   </div>
 </div>
 
-<% else %>
-
-  <%= render :file => "public/401.html", :status => :unauthorized %>
-
-<% end %>
 
 <script>
 
