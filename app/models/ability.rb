@@ -17,7 +17,7 @@ class Ability
       can [:manage], Course, :id => Course.with_role(:instructor, user).pluck(:id)
 
       # a bit of a guess here... will need to test this.
-      can [:manage], RosterStudents, :parent => Course.with_role(:instructor, user)
+      can [:manage], RosterStudent, :parent => Course.with_role(:instructor, user)
     elsif user.has_role? :user
       can [:join, :leave], Course
       can :index, Course
