@@ -31,6 +31,6 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "access denied for users index" do 
   	sign_in @user2
   	get users_url
-  	assert_response :unauthorized
+  	assert_redirected_to root_path
   end
 end
