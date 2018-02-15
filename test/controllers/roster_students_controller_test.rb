@@ -13,7 +13,7 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get new" do
-    get new_course_roster_student_path(:course_id=> @course.id) 
+    get new_course_roster_student_path(:course_id=> @course.id)
     assert_response :success
   end
 
@@ -21,12 +21,12 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
     assert_difference('RosterStudent.count') do
       post course_roster_students_path(
         course_id: @course.id,
-        params: { 
-          roster_student: { 
+        params: {
+          roster_student: {
             email: @roster_student.email,
-            first_name: @roster_student.first_name, 
-            last_name: @roster_student.last_name, 
-            perm: @roster_student.perm 
+            first_name: @roster_student.first_name,
+            last_name: @roster_student.last_name,
+            perm: @roster_student.perm
           }
         }
       )
@@ -48,12 +48,12 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
   test "should update roster_student" do
     patch course_roster_student_path(
       :course_id=> @roster_student.course_id,
-      :id=> @roster_student.id, 
+      :id=> @roster_student.id,
       params: {
         roster_student: {
           email: @roster_student.email,
           first_name: @roster_student.first_name,
-          last_name: @roster_student.last_name, 
+          last_name: @roster_student.last_name,
           perm: @roster_student.perm
         }
       }

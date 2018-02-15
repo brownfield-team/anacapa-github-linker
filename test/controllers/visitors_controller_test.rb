@@ -5,7 +5,7 @@ class VisitorsControllerTest < ActionDispatch::IntegrationTest
   #   assert true
   # end
   include Devise::Test::IntegrationHelpers
-  
+
   test "homepage should return 200 success" do
     get root_url
     assert_response :success
@@ -23,6 +23,22 @@ class VisitorsControllerTest < ActionDispatch::IntegrationTest
     sign_in @user
     get courses_url
     assert_response :success
+  end
+
+  test "user is redirected to github sign in" do
+    @user = users(:tim)
+    @user.add_role(:admin)
+    # sign_in @user
+    get user_github_omniauth_authorize_path
+    puts "#{path}"
+    assert path.include?('github')
+  end
+
+  test "user can sign out" do
+    @user = users(:tim)
+    sign_in @user
+    get signout_path
+    assert_redirected_to root_url
   end
 
 end

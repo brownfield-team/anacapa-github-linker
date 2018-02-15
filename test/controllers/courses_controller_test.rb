@@ -6,6 +6,8 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @course = courses(:course1)
     @course2 = courses(:course2)
+    @student_user = users(:tim)
+    @roster_student = roster_students(:roster_student_tim)
     @user = users(:wes)
     @user.add_role(:admin)
     sign_in @user
@@ -52,5 +54,30 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to courses_url
+  end
+
+
+  test "user can join class if roster student exists" do
+    skip "Can't figure out how to call join method on controller via route"
+    sign_in @student_user
+    puts "roster student count (of class): #{@course.roster_students.count}"
+    puts "#{@student_user.email}"
+    puts "#{@roster_student.email}"
+    # assert_difference('@student_user.roster_students.count', 1) do
+    #   # post course_join_url, params: { course: { course_id: @course.course_id}  }
+    #   post course_join_url(:course_id=> @course.id)
+    #   # @student_user.roster_students << @roster_student
+    # end
+    post course_join_url(:course_id=> @course.id)
+    assert_redirected_to courses_url
+    assert_equal "You were successfully enrolled in #{@course.name}!", flash[:notice]
+  end
+
+  test "roster student can NOT join class if NOT on class roster" do
+    skip "Can't figure out how to call join method on controller via route"
+  end
+
+  test "roster student can leave class" do
+    skip "Can't figure out how to call join method on controller via route"
   end
 end
