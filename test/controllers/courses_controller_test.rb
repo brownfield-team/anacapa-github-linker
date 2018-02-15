@@ -22,7 +22,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create course" do
-    skip "Work in progress"
+    skip "Work in progress (Github integration)"
     assert_difference('Course.count') do
       post courses_url, params: { course: { name: "test course", course_organization: "test org" } }
     end
@@ -40,10 +40,11 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  # test "should update course" do
-  #   patch course_url(@course), params: { course: { name: @course.name } }
-  #   assert_redirected_to course_url(@course)
-  # end
+  test "should update course" do
+    skip "Work in progress (Github integration)"
+    patch course_url(@course), params: { course: { name: @course.name } }
+    assert_redirected_to course_url(@course)
+  end
 
   test "should destroy course" do
     assert_difference('Course.count', -1) do
