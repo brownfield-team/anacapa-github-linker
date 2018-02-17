@@ -3,7 +3,7 @@ class Ability
 
   def initialize(user)
     user ||= User.new
-  
+
     # https://github.com/RolifyCommunity/rolify/wiki/Devise---CanCanCan---rolify-Tutorial
     # see this tutorial for information about the Devise--CanCanCan--rolify stack
     if user.has_role? :admin
@@ -12,15 +12,18 @@ class Ability
       can :manage, :all
 
     elsif user.has_role? :instructor
-      can :read, Course 
+      can :read, Course
       # insturctors can only modify courses they have been granted access
       can [:manage], Course, :id => Course.with_role(:instructor, user).pluck(:id)
-    elsif user.has_role? :user 
+
+      # a bit of a guess here... will need to test this.
+      can [:manage], RosterStudent, :parent => Course.with_role(:instructor, user)
+    elsif user.has_role? :user
       can [:join, :leave], Course
       can :index, Course
       can :show, Course, :id => user.courses.pluck(:id)
     end
-    
+
     # Define abilities for the passed in user here. For example:
     #
     #   user ||= User.new # guest user (not logged in)

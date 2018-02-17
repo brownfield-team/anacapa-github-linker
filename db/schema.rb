@@ -10,20 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180114072530) do
+ActiveRecord::Schema.define(version: 20180119233806) do
 
   create_table "courses", force: :cascade do |t|
     t.string "name", null: false
     t.string "course_organization", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "courses_users", id: false, force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "course_id", null: false
-    t.index ["course_id", "user_id"], name: "index_courses_users_on_course_id_and_user_id", unique: true
-    t.index ["user_id", "course_id"], name: "index_courses_users_on_user_id_and_course_id", unique: true
   end
 
   create_table "roles", force: :cascade do |t|
@@ -45,7 +38,9 @@ ActiveRecord::Schema.define(version: 20180114072530) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "course_id"
+    t.integer "user_id"
     t.index ["course_id"], name: "index_roster_students_on_course_id"
+    t.index ["user_id"], name: "index_roster_students_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|

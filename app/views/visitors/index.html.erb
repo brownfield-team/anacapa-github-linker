@@ -19,7 +19,7 @@
   <div class="row">
     <div class="col-sm-6">
       <ul class="list-group">
-        <% get_courses_for(current_user).each do |course| %>
+        <% current_user.courses.each do |course| %>
           <% if can? :manage, course %>
             <%= link_to course.name, course, method: :get, class: "list-group-item justify-content-between list-group-item-info"%>
           <% else %>

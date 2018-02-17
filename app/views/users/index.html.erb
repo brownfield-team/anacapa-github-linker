@@ -1,0 +1,58 @@
+<h1>Users</h1>
+
+<div class="row">
+  <div class="col-sm-4">
+      <%# search the course list %>
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">User Name</span>
+        <input id="users_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">
+      </div>
+    <%# table containing the course list %>
+    <table class="table table-sm" id="course_list">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Select</th>
+          <th colspan="3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td><%= user.name %></td>
+            <td><%= user.get_role.titleize%></td>
+            <td style="white-space:nowrap;">
+              <%= form_for user do |f| %>
+
+                <%= f.select :roles, options_for_select(
+                [[user.get_role.titleize, user.get_role],
+                ["Admin", :admin],
+                ["Instructor", :instructor],
+                ["User", :user]])%>
+
+                <%= f.submit %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<script>
+function filter_list_by_keyword() {
+  var keyword = $("#users_search").val().toLowerCase();
+  console.log("search for: " + keyword);
+  $("#course_list tr").each(function(element) {
+    var text = $(this).text();
+    if (text.toLowerCase().indexOf(keyword) === -1) {
+      $(this).hide();
+    } else {
+      $(this).show();
+    }
+  });
+}
+</script>

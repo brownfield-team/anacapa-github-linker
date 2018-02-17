@@ -3,8 +3,8 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :trackable, :validatable,
          :omniauthable, :omniauth_providers => [:github]
-  
-  has_and_belongs_to_many :courses
+
+  has_many :roster_students
 
   # install rolify
   rolify
@@ -20,7 +20,7 @@ class User < ApplicationRecord
       user.password = Devise.friendly_token[0,20]
       user.uid = auth.uid
       user.provider = auth.provider
-      # If you are using confirmable and the provider(s) you use validate emails, 
+      # If you are using confirmable and the provider(s) you use validate emails,
       # uncomment the line below to skip the confirmation emails.
       # user.skip_confirmation!
     end
@@ -40,5 +40,36 @@ class User < ApplicationRecord
     @ability ||= Ability.new(self)
   end
 
+  def courses
+    return courses_enrolled + courses_administrating
+  end
 
+  def courses_enrolled
+    self.roster_students.map { |student| student.course }
+  end
+
+  def courses_administrating
+    if has_role? :user
+      return []
+    else
+      return Course.order("name").select { |course| ability.can? :manage, course }
+    end
+  end
+
+  def join_course(course)
+
+  end
+
+  def get_role
+    self.roles.first.name
+  end
+
+
+  def reassign_role(new_role)
+    if self.roles.count > 1
+        raise "This user has more than one role."
+    end
+    self.remove_role(self.get_role.to_sym)
+    self.add_role(new_role.to_sym)
+  end
 end
