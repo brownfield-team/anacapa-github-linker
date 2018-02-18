@@ -63,18 +63,15 @@ class CoursesController < ApplicationController
   end
 
   def join
-    puts "we're in join"
     course = Course.find(params[:course_id])
+
     roster_student = course.roster_students.find_by(email: current_user.email)
     if not roster_student.nil?
       current_user.roster_students.push(roster_student)
-      puts "Added the roster student"
-      # course.users << current_user
       redirect_to courses_path, notice: "You were successfully enrolled in #{course.name}!"
 
       # TODO: add the user to the team
     else
-      puts "didn't match the roster student"
       message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verrified your email address. '
       redirect_to courses_path, alert: message
     end
