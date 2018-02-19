@@ -47,4 +47,19 @@ class CourseTest < ActiveSupport::TestCase
     assert_equal csv, expected_csv
   end
 
+  test "importing a csv should not add duplicate students" do
+    csv_file1 = fixture_file_upload('files/students.csv')
+    csv_file2 = fixture_file_upload('files/students2.csv')
+
+    csv_header_map = "student_id,email,first_name,last_name"
+    @course.import_students(csv_file1,csv_header_map,true)
+
+
+    assert_difference('@course.roster_students.count', 1) do
+      @course.import_students(csv_file2,csv_header_map,true)
+    end
+
+  end
+
+
 end
