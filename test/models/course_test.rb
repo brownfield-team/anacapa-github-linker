@@ -61,5 +61,24 @@ class CourseTest < ActiveSupport::TestCase
 
   end
 
+  test "roster_students email should be unique" do
+    csv_file = fixture_file_upload("files/duplicate_email.csv")
+    csv_header_map = "student_id,email,first_name,last_name"
+
+    assert_difference('@course.roster_students.count', 1) do
+      @course.import_students(csv_file,csv_header_map,true)
+    end
+
+  end
+
+  test "roster_students perm should be unique" do
+    csv_file = fixture_file_upload("files/duplicate_perm.csv")
+    csv_header_map = "student_id,email,first_name,last_name"
+
+    assert_difference('@course.roster_students.count', 1) do
+      @course.import_students(csv_file,csv_header_map,true)
+    end
+  
+  end
 
 end
