@@ -71,7 +71,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     sign_in user_julie
     user_julie.add_role(:user)
 
-    assert_difference('@user.roster_students.count', 0) do
+    assert_difference('user_julie.roster_students.count', 0) do
       post course_join_path(course_id: @course.id)
     end
 
