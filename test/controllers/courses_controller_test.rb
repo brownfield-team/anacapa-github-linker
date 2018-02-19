@@ -57,8 +57,6 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
 
   test "user can join class if roster student exists" do
-    
-    @course.roster_students.push(roster_students(:roster1))
 
     assert_difference('@user.roster_students.count', 1) do
       post course_join_path(course_id: @course.id)
@@ -69,11 +67,14 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "roster student can NOT join class if NOT on class roster" do
+    user_julie = users(:julie)
+    sign_in user_julie
+    user_julie.add_role(:user)
 
     assert_difference('@user.roster_students.count', 0) do
       post course_join_path(course_id: @course.id)
-
     end
+
     assert_redirected_to courses_url
     assert_equal "Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verrified your email address. ", flash[:alert]
 
@@ -85,9 +86,9 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     @user.roster_students.push(roster_students(:roster1))
 
     assert_difference('@user.roster_students.count', -1) do
-      post course_leave_path(course_id: @course.id)
-
+        post course_leave_path(course_id: @course.id)
     end
+
     assert_redirected_to courses_url
   end
 end

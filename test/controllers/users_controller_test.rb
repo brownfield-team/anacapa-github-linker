@@ -12,10 +12,9 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     @user.add_role(:admin)
     @user2 = users(:tim)
     @user2.add_role(:user)
+    users(:julie).add_role(:user)
     sign_in @user
   end
-
-
 
   test "access granted for users index" do
   	get users_url
