@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'csv'
 
 class CourseTest < ActiveSupport::TestCase
   # test "the truth" do
@@ -18,17 +17,34 @@ class CourseTest < ActiveSupport::TestCase
     sign_in @user
   end
 
-  test "calling import_students should import students from csv" do
-    skip "working on it"
-    csv_file = ["1234", "email@email.com", "tim", "G"].to_csv
+  test "calling import_students should import students from csv WITHOUT header" do
+
+    csv_file = fixture_file_upload('files/students.csv')
+
     csv_header_map = "student_id,email,first_name,last_name"
-    assert_difference('@course.roster_students.count', -1) do
+    assert_difference('@course.roster_students.count', 4) do
       @course.import_students(csv_file,csv_header_map,false)
     end
 
   end
 
-  test "download to csv" do 
+  test "calling import_students should import students from csv WITH header" do
+
+    csv_file = fixture_file_upload('files/students.csv')
+
+    csv_header_map = "student_id,email,first_name,last_name"
+    assert_difference('@course.roster_students.count', 3) do
+      @course.import_students(csv_file,csv_header_map,true)
+    end
+
+  end
+
+  test "download to csv" do
+    csv = @course.export_students_to_csv
+
+    #NOTE: The roster_students do not yet have a github username but the exported csv provides a column for it
+    expected_csv = "perm,email,first_name,last_name,github_username\n12345678,wes@email.com,Wes,P,\n21345678,tim@email.com,Tim,H,\n"
+    assert_equal csv, expected_csv
   end
 
 end
