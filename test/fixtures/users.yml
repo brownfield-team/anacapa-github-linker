@@ -13,3 +13,10 @@ tim:
   uid: 2
   provider: GitHub
   email: tim@email.com
+
+julie:
+  name: Julie 
+  username: jlaw
+  uid: 3
+  provider: GitHub
+  email: julie@email.com
