@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'csv'
 
 class CourseTest < ActiveSupport::TestCase
   # test "the truth" do
@@ -32,9 +31,8 @@ class CourseTest < ActiveSupport::TestCase
   test "download to csv" do
     csv = @course.export_students_to_csv
 
-    #NOTE: The roster_students do not yet have a github username but the exported csv provides a column for it
+    #NOTE: The roster_students do not yet have a github username but the exported csv provides a column for itC
     expected_csv = "perm,email,first_name,last_name,github_username\n12345678,wes@email.com,Wes,P,\n21345678,tim@email.com,Tim,H,\n"
-    puts "CSV: #{csv}"
     assert_equal csv, expected_csv
   end
 
