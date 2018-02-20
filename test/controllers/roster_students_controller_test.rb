@@ -18,7 +18,7 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create roster_student" do
-    assert_difference('RosterStudent.count') do
+    assert_difference('RosterStudent.count',1) do
       post course_roster_students_path(
         course_id: @course.id,
         params: {
@@ -34,7 +34,7 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to course_path(@course)
   end
-
+  
   test "should show roster_student" do
     get course_roster_student_path(:course_id=> @roster_student.course_id, :id=> @roster_student.id)
     assert_response :success
