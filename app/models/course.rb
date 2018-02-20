@@ -71,7 +71,10 @@ class Course < ApplicationRecord
       next if row.values.all?(&:nil?) # skip empty rows
 
       # check if there is an existing student in the course or create a new one
-      student = roster_students.find_by(perm: row["student_id"]) || roster_students.new
+      student = roster_students.find_by(perm: row["student_id"]) ||
+      roster_students.find_by(email: row["email"]) ||
+      roster_students.new
+      
       student.perm = row["student_id"]
       student.first_name = row["first_name"]
       student.last_name = row["last_name"]
