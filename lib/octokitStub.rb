@@ -1,0 +1,49 @@
+module OctokitStub
+
+  def octokit_organization_membership_is_in_org(org_name, username)
+    {:url=>
+      "https://api.github.com/orgs/#{org_name}/memberships/#{username}",
+     :state=>"active",
+     :role=>"admin",
+     :organization_url=>"https://api.github.com/orgs/#{org_name}",
+     :user=>
+      {:login=>"#{username}",
+       :id=>32622613,
+       :avatar_url=>"https://avatars2.githubusercontent.com/u/32622613?v=4",
+       :gravatar_id=>"",
+       :url=>"https://api.github.com/users/#{username}",
+       :html_url=>"https://github.com/#{username}",
+       :followers_url=>"https://api.github.com/users/#{username}/followers",
+       :following_url=>
+        "https://api.github.com/users/#{username}/following{/other_user}",
+       :gists_url=>
+        "https://api.github.com/users/#{username}/gists{/gist_id}",
+       :starred_url=>
+        "https://api.github.com/users/#{username}/starred{/owner}{/repo}",
+       :subscriptions_url=>
+        "https://api.github.com/users/#{username}/subscriptions",
+       :organizations_url=>"https://api.github.com/users/#{username}/orgs",
+       :repos_url=>"https://api.github.com/users/#{username}/repos",
+       :events_url=>
+        "https://api.github.com/users/#{username}/events{/privacy}",
+       :received_events_url=>
+        "https://api.github.com/users/#{username}/received_events",
+       :type=>"User",
+       :site_admin=>false},
+     :organization=>
+      {:login=>"#{org_name}",
+       :id=>32622734,
+       :url=>"https://api.github.com/orgs/#{org_name}",
+       :repos_url=>"https://api.github.com/orgs/#{org_name}/repos",
+       :events_url=>"https://api.github.com/orgs/#{org_name}/events",
+       :hooks_url=>"https://api.github.com/orgs/#{org_name}/hooks",
+       :issues_url=>"https://api.github.com/orgs/#{org_name}/issues",
+       :members_url=>
+        "https://api.github.com/orgs/#{org_name}/members{/member}",
+       :public_members_url=>
+        "https://api.github.com/orgs/#{org_name}/public_members{/member}",
+       :avatar_url=>"https://avatars1.githubusercontent.com/u/32622734?v=4",
+       :description=>nil}}
+  end
+
+end
