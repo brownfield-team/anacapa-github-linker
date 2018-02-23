@@ -1,7 +1,9 @@
 require 'test_helper'
+require 'helpers/octokit_stub_helper'
 
 class CoursesControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
+  include OctokitStubHelper
   
   setup do
     @org = "test-org-name"
