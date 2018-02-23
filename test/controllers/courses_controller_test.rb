@@ -2,14 +2,16 @@ require 'test_helper'
 
 class CoursesControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
-  include OctokitStub
   
   setup do
+    @org = "anacapa-dev-class"
     @course = courses(:course1)
     @course2 = courses(:course2)
     @user = users(:wes)
     @user.add_role(:admin)
     sign_in @user
+    stub_organization_membership_admin_in_org(@org, ENV["MACHINE_USER_NAME"])
+    stub_organization_is_an_org(@org)
   end
 
   test "should get index" do
@@ -26,10 +28,9 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   test "should create course" do
     # skip "Work in progress (Github integration)"
     
-    puts OctokitStub.octokit_organization_membership_is_in_org("anacapa-dev-class", "#{ENV['MACHINE_USER_NAME']}")
-
+    
     assert_difference('Course.count') do
-      post courses_url, params: { course: { name: "test course", course_organization: "#{ENV['OCTOKIT_TEST_GITHUB_ORGANIZATION']}" } }
+      post courses_url, params: { course: { name: "blah", course_organization: "#{@org}" } }
     end
 
     assert_redirected_to course_url(Course.last)

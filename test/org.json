@@ -1,0 +1,23 @@
+{
+  "login": "anacapa-dev-class",
+  "id": 32622734,
+  "url": "https://api.github.com/orgs/anacapa-dev-class",
+  "repos_url": "https://api.github.com/orgs/anacapa-dev-class/repos",
+  "events_url": "https://api.github.com/orgs/anacapa-dev-class/events",
+  "hooks_url": "https://api.github.com/orgs/anacapa-dev-class/hooks",
+  "issues_url": "https://api.github.com/orgs/anacapa-dev-class/issues",
+  "members_url": "https://api.github.com/orgs/anacapa-dev-class/members{/member}",
+  "public_members_url": "https://api.github.com/orgs/anacapa-dev-class/public_members{/member}",
+  "avatar_url": "https://avatars1.githubusercontent.com/u/32622734?v=4",
+  "description": null,
+  "has_organization_projects": true,
+  "has_repository_projects": true,
+  "public_repos": 3,
+  "public_gists": 0,
+  "followers": 0,
+  "following": 0,
+  "html_url": "https://github.com/anacapa-dev-class",
+  "created_at": "2017-10-08T21:51:29Z",
+  "updated_at": "2017-10-08T21:51:29Z",
+  "type": "Organization"
+}
