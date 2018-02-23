@@ -22,7 +22,7 @@ module OctokitStubHelper
     with(  headers: {
       'Accept'=>'application/vnd.github.v3+json',
       'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-      'Authorization'=>'Basic YW5hY2FwYS10aHJvd2F3YXk6YjRiNDc0MGQ5OGQ0MGRmMWYzMjNhMTQ5NTM1NzA0Y2FmNTc2N2E2Yg==',
+      # 'Authorization'=>'Basic YW5hY2FwYS10aHJvd2F3YXk6YjRiNDc0MGQ5OGQ0MGRmMWYzMjNhMTQ5NTM1NzA0Y2FmNTc2N2E2Yg==',
       'Content-Type'=>'application/json',
       'User-Agent'=>'Octokit Ruby Gem 4.8.0'
       }).
@@ -37,7 +37,7 @@ module OctokitStubHelper
       with(  headers: {
         'Accept'=>'application/vnd.github.v3+json',
         'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Authorization'=>'Basic YW5hY2FwYS10aHJvd2F3YXk6YjRiNDc0MGQ5OGQ0MGRmMWYzMjNhMTQ5NTM1NzA0Y2FmNTc2N2E2Yg==',
+        # 'Authorization'=>'Basic YW5hY2FwYS10aHJvd2F3YXk6YjRiNDc0MGQ5OGQ0MGRmMWYzMjNhMTQ5NTM1NzA0Y2FmNTc2N2E2Yg==',
         'Content-Type'=>'application/json',
         'User-Agent'=>'Octokit Ruby Gem 4.8.0'
         }).
