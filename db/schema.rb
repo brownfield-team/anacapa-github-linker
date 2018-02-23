@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180119233806) do
+ActiveRecord::Schema.define(version: 20180223231254) do
 
   create_table "courses", force: :cascade do |t|
     t.string "name", null: false
@@ -40,6 +40,8 @@ ActiveRecord::Schema.define(version: 20180119233806) do
     t.integer "course_id"
     t.integer "user_id"
     t.index ["course_id"], name: "index_roster_students_on_course_id"
+    t.index ["email", "course_id"], name: "index_roster_students_on_email_and_course_id", unique: true
+    t.index ["perm", "course_id"], name: "index_roster_students_on_perm_and_course_id", unique: true
     t.index ["user_id"], name: "index_roster_students_on_user_id"
   end
 
