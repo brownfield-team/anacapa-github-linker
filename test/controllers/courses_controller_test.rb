@@ -4,7 +4,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
   
   setup do
-    @org = "anacapa-dev-class"
+    @org = "test-org-name"
     @course = courses(:course1)
     @course2 = courses(:course2)
     @user = users(:wes)
@@ -47,8 +47,9 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update course" do
-    skip "Work in progress (Github integration)"
-    patch course_url(@course), params: { course: { name: @course.name } }
+    stub_organization_membership_admin_in_org(@course.course_organization, ENV["MACHINE_USER_NAME"])
+    stub_organization_is_an_org(@course.course_organization)
+    patch course_url(@course), params: { course: { name: "patched_course_name" } }
     assert_redirected_to course_url(@course)
   end
 

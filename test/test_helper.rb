@@ -2,7 +2,6 @@
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'webmock/minitest'
-require 'json'
 
 
 module OctokitStubHelper
@@ -11,11 +10,14 @@ module OctokitStubHelper
   end
 
   def octokit_organization_membership_admin_in_org(org_name, username)
-    File.open('test/org_member.json').read
+    text = File.open('test/org_member.json').read
+    new_contents = text.gsub("anacapa-dev-class", "#{org_name}")
+    new_contents = new_contents.gsub("anacapa-throwaway", "#{username}")
   end
 
   def octokit_organization_is_an_org(org_name)
-    File.open('test/org.json').read
+    text = File.open('test/org.json').read
+    new_contents = text.gsub("anacapa-dev-class", "#{org_name}")
   end
 
   def stub_organization_is_an_org(org_name)
