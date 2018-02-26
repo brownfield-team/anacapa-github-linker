@@ -4,7 +4,7 @@ require 'helpers/octokit_stub_helper'
 class CoursesControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
   include OctokitStubHelper
-  
+
   setup do
     @org = "test-org-name"
     @course = courses(:course1)
@@ -28,8 +28,6 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create course" do
-    # skip "Work in progress (Github integration)"
-    
     assert_difference('Course.count', 1) do
       post courses_url, params: { course: { name: "blah", course_organization: "#{@org}" } }
     end
@@ -38,14 +36,14 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "if org doesn't exist course should not be created and show why" do 
-    skip "work in progress"
     fake_org_name = "not-a-real-org"
     stub_organization_does_not_exist(fake_org_name)
     assert_difference('Course.count', 0) do
       post courses_url, params: { course: { name: "blah", course_organization: fake_org_name } }
     end
 
-    assert_redirected_to courses_url
+    assert_response :ok
+    assert_select "div[id=?]", "error_explanation"
   end
 
   test "should show course" do
