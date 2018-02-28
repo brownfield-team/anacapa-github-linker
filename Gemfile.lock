@@ -139,13 +139,10 @@ GEM
       oauth2 (~> 1.1)
       omniauth (~> 1.2)
     orm_adapter (0.5.0)
-    parslet (1.8.2)
     pg (0.21.0)
     public_suffix (3.0.1)
     puma (3.11.2)
     rack (2.0.4)
-    rack-proxy (0.6.3)
-      rack
     rack-test (0.8.2)
       rack (>= 1.0, < 3)
     rails (5.1.4)
@@ -216,7 +213,6 @@ GEM
     thor (0.20.0)
     thread_safe (0.3.6)
     tilt (2.0.8)
-    trollop (2.1.2)
     turbolinks (5.1.0)
       turbolinks-source (~> 5.1)
     turbolinks-source (5.1.0)
@@ -231,19 +227,11 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webpacker (3.2.2)
-      activesupport (>= 4.2)
-      rack-proxy (>= 0.6.1)
-      railties (>= 4.2)
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.3)
     xpath (3.0.0)
       nokogiri (~> 1.8)
-    yarn (0.1.1)
-      parslet (>= 1.2)
-      rack (>= 1.3)
-      trollop (>= 1.16)
 
 PLATFORMS
   ruby
@@ -277,8 +265,6 @@ DEPENDENCIES
   tzinfo-data
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
-  webpacker
-  yarn
 
 BUNDLED WITH
    1.16.1
