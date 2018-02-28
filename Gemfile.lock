@@ -252,7 +252,7 @@ DEPENDENCIES
   omniauth
   omniauth-github
   omniauth-gitlab
-  pg (~> 1.0.0)
+  pg
   puma (~> 3.7)
   rails (~> 5.1.4)
   rolify
