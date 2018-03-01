@@ -28,6 +28,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create course" do
+    
     assert_difference('Course.count', 1) do
       post courses_url, params: { course: { name: "blah", course_organization: "#{@org}" } }
     end

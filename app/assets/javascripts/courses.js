@@ -15,18 +15,17 @@ $( document ).ready(function() {
            // now generate table
            $("#upload-modal").modal();
  
-           var dropdownHtml = `
-                 <th>
-                     <select index='%i%' class='form-control'>
-                         <option value='invald' >-- select --</option>
-                         <option value='full_name' >Full Name</option>
-                         <option value='first_name' >First Name</option>
-                         <option value='last_name' >Last Name</option>
-                         <option value='student_id' >Student ID</option>
-                         <option value='email' >Email</option>
-                     </select>
-                 </th>
-           `;
+           var dropdownHtml = 
+                 "<th>" + 
+                        "<select index='%i%' class='form-control'>" +
+                         "<option value='invald' >-- select --</option>" +
+                         "<option value='full_name' >Full Name</option>" +
+                         "<option value='first_name' >First Name</option>" +
+                         "<option value='last_name' >Last Name</option>" +
+                         "<option value='student_id' >Student ID</option>" +
+                         "<option value='email' >Email</option>" +
+                     "</select>" +
+                 "</th>";
  
            for(var i = 0; i < parsedFile.length; i++) {
  
