@@ -2,7 +2,6 @@ require 'test_helper'
 
 class CoursesControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
-  include OctokitStub
   
   setup do
     @course = courses(:course1)
@@ -24,7 +23,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create course" do
-    # skip "Work in progress (Github integration)"
+    skip "Work in progress (Github integration)"
     
     puts OctokitStub.octokit_organization_membership_is_in_org("anacapa-dev-class", "#{ENV['MACHINE_USER_NAME']}")
 

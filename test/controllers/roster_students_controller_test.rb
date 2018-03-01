@@ -34,9 +34,6 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to course_path(@course)
   end
-<<<<<<< HEAD
-  
-=======
 
   test "should not be able to create nonunique roster student(perm, courseid)" do
     assert_difference('RosterStudent.count',0) do
@@ -70,7 +67,6 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
->>>>>>> 0a7da79f73517394fe9b15693cfa0479dd1041d8
   test "should show roster_student" do
     get course_roster_student_path(:course_id=> @roster_student.course_id, :id=> @roster_student.id)
     assert_response :success
