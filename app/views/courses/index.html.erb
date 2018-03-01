@@ -35,7 +35,7 @@ and render differently depending on whether or not the user is privlidged %>
       <tbody>
         <% @courses.each do |course| %>
           <tr>
-            <td><%= course.name %></td>
+            <td><%= link_to "#{course.name}", course_path(course)%></td>
 
             <% if can? :update, course or can? :destroy, course %>
               <%# they are an administrator on this course, show admin options %>
