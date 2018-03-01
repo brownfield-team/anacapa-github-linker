@@ -23,10 +23,10 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
         course_id: @course.id,
         params: {
           roster_student: {
-            email: @roster_student.email,
-            first_name: @roster_student.first_name,
-            last_name: @roster_student.last_name,
-            perm: @roster_student.perm
+            email: "email@test.email.com",
+            first_name: "Jon",
+            last_name: "Snow",
+            perm: 1337888
           }
         }
       )
@@ -34,7 +34,43 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to course_path(@course)
   end
+<<<<<<< HEAD
   
+=======
+
+  test "should not be able to create nonunique roster student(perm, courseid)" do
+    assert_difference('RosterStudent.count',0) do
+      post course_roster_students_path(
+        course_id: @course.id,
+        params: {
+          roster_student: {
+            email: "email@test.email.com",
+            first_name: "Jon",
+            last_name: "Snow",
+            perm: @roster_student.perm
+          }
+        }
+      )
+    end
+  end
+  
+  test "should not be able to create nonunique roster student(email, courseid)" do
+    assert_difference('RosterStudent.count',0) do
+      post course_roster_students_path(
+        course_id: @course.id,
+        params: {
+          roster_student: {
+            email: @roster_student.email,
+            first_name: "Jon",
+            last_name: "Snow",
+            perm: 1234567
+          }
+        }
+      )
+    end
+  end
+
+>>>>>>> 0a7da79f73517394fe9b15693cfa0479dd1041d8
   test "should show roster_student" do
     get course_roster_student_path(:course_id=> @roster_student.course_id, :id=> @roster_student.id)
     assert_response :success
