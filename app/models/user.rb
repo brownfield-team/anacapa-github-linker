@@ -4,7 +4,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :trackable, :validatable,
          :omniauthable, :omniauth_providers => [:github]
 
-  has_many :roster_students
+  has_many :roster_students, dependent: :destroy
 
   # install rolify
   rolify
