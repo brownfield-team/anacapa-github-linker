@@ -6,7 +6,7 @@
 #
 default: &default
   adapter: postgresql
-  host:    db
+  host:    localhost
   username: postgres
   password: 
   encoding: unicode
