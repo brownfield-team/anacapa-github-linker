@@ -170,7 +170,12 @@ $( document ).ready(function() {
          // pull data from our psuedo-form into the hidden elements before posting
          // might be better to put this in a little json hash instead
          $("#csv-header-map-hidden-field").val(headings.join(','));
-         $("#csv-header-toggle-hidden-field").checked = $("#first-row-is-header").is(':checked');
+         if($("#first-row-is-header").is(':checked')){
+            $("#csv-header-toggle-hidden-field").val("true");
+         }
+         else{
+            $("#csv-header-toggle-hidden-field").val("false");
+         }
  
  
          $("#roster-upload-form").submit();
