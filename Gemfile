@@ -43,6 +43,9 @@ gem 'omniauth-gitlab'
 gem 'font-awesome-rails'
 gem 'octokit', '~> 4.0'
 
+# testing api calls
+gem 'webmock'
+
 # For oauth
 gem 'devise'
 # For setting permissions

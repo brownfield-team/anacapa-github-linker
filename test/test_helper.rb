@@ -4,7 +4,7 @@ require 'rails/test_help'
 
 class ActiveSupport::TestCase
   include ActionDispatch::TestProcess
-  
+
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 

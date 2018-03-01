@@ -1,14 +1,19 @@
 require 'test_helper'
+require 'helpers/octokit_stub_helper'
 
 class CoursesControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
+  include OctokitStubHelper
 
   setup do
+    @org = "test-org-name"
     @course = courses(:course1)
     @course2 = courses(:course2)
     @user = users(:wes)
     @user.add_role(:admin)
     sign_in @user
+    stub_organization_membership_admin_in_org(@org, ENV["MACHINE_USER_NAME"])
+    stub_organization_is_an_org(@org)
   end
 
   test "should get index" do
@@ -23,12 +28,22 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create course" do
-    skip "Work in progress (Github integration)"
-    assert_difference('Course.count') do
-      post courses_url, params: { course: { name: "test course", course_organization: "test org" } }
+    assert_difference('Course.count', 1) do
+      post courses_url, params: { course: { name: "blah", course_organization: "#{@org}" } }
     end
 
     assert_redirected_to course_url(Course.last)
+  end
+
+  test "if org doesn't exist course should not be created and show why" do 
+    fake_org_name = "not-a-real-org"
+    stub_organization_does_not_exist(fake_org_name)
+    assert_difference('Course.count', 0) do
+      post courses_url, params: { course: { name: "blah", course_organization: fake_org_name } }
+    end
+
+    assert_response :ok
+    assert_select "div[id=?]", "error_explanation"
   end
 
   test "should show course" do
@@ -42,8 +57,9 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update course" do
-    skip "Work in progress (Github integration)"
-    patch course_url(@course), params: { course: { name: @course.name } }
+    stub_organization_membership_admin_in_org(@course.course_organization, ENV["MACHINE_USER_NAME"])
+    stub_organization_is_an_org(@course.course_organization)
+    patch course_url(@course), params: { course: { name: "patched_course_name" } }
     assert_redirected_to course_url(@course)
   end
 
