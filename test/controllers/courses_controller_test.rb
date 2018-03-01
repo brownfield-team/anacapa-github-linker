@@ -43,7 +43,20 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :ok
-    assert_select "div[id=?]", "error_explanation"
+    assert_select 'div#error_explanation li', "You must create a github organization with the name of your class and add #{ENV['MACHINE_USER_NAME']} as an owner of that organization."
+  end
+
+  test "if org exists but machine user is not admin, should not be created and show why" do
+    org_name = "real-org"
+    stub_organization_is_an_org(org_name)
+    stub_organization_exists_but_not_admin_in_org(org_name)
+    assert_difference('Course.count', 0) do
+      post courses_url, params: {course: { name: "name", course_organization: org_name}}
+    end
+
+    assert_response :ok
+    assert_select 'div#error_explanation li', "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed."
+
   end
 
   test "should show course" do
