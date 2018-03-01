@@ -32,7 +32,7 @@ script:
 
 before_script:
   - psql -c 'create user "anacapa-github-linker_test" with createdb;' -U postgres
-  # - RAILS_ENV=test bundle exec rails db:setup --trace
+  - RAILS_ENV=test bundle exec rails db:setup --trace
 
 # 5. OPTIONAL Add a Build Status Badge to your README, follow instructions here:
 #    http://docs.travis-ci.com/user/status-images/
