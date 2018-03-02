@@ -16,6 +16,10 @@ class Course < ApplicationRecord
       @org = nil 
     end 
   end 
+
+  def accept_invite_to_course_org
+    Octokit.update_organization_membership(course_organization, {state: "active"})
+  end
   
   def check_course_org_exists 
     # NOTE: this is run as a validation step on creation and update for the organization
