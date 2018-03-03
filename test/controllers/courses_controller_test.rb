@@ -85,9 +85,19 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to courses_url
   end
 
+  test "user will not be reinvited if already in org" do
+    stub_find_user_in_org(@user.username, @course.course_organization, true)
+    assert_difference('@user.roster_students.count', 1) do
+      post course_join_path(course_id: @course.id)
+
+    end
+    assert_redirected_to courses_url
+    assert_equal "You were successfully enrolled in #{@course.name}!", flash[:notice]
+  end
 
   test "user can join class if roster student exists" do
-
+    stub_find_user_in_org(@user.username, @course.course_organization, false)
+    stub_invite_user_to_org(@user.username, @course.course_organization)
     assert_difference('@user.roster_students.count', 1) do
       post course_join_path(course_id: @course.id)
 

@@ -20,6 +20,12 @@ class Course < ApplicationRecord
   def accept_invite_to_course_org
     Octokit.update_organization_membership(course_organization, {state: "active"})
   end
+
+  def invite_user_to_course_org(user)
+    unless Octokit.organization_member?(course_organization, user.username)
+      Octokit.update_organization_membership(course_organization, {user: "#{user.username}", role: "User"})
+    end
+  end
   
   def check_course_org_exists 
     # NOTE: this is run as a validation step on creation and update for the organization
