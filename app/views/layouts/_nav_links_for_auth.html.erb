@@ -5,7 +5,8 @@
       <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-      <li class="dropdown-header">Signed in as <b><%= current_user.username %></b></li>
+      <li class="dropdown-header">Signed in as <%=current_user.roles.first.name.titleize %></li>
+      <li class="dropdown-item" style="margin-left:1.5em"><p><b><%= current_user.username %></b></p></li>
       <li role="separator" class="divider"></li>
       <li class="dropdown-item"><a href="https://github.com/<%= current_user.username %>">GitHub Profile</a></li>
       <li class="dropdown-item"><%= link_to 'Log out', signout_path, method: :get %></li>
