@@ -8,7 +8,6 @@
       <li class="dropdown-header">Signed in as <b><%= current_user.username %></b></li>
       <li role="separator" class="divider"></li>
       <li><a href="https://github.com/<%= current_user.username %>">GitHub Profile</a></li>
-      <li><a href="https://github.com/<%= @course %>">Course Organization</a></li>
       <li role="separator" class="divider"></li>
       <li><%= link_to 'Log out', signout_path, method: :get %></li>
     </ul>
