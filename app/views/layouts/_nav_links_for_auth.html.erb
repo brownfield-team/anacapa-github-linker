@@ -1,15 +1,14 @@
 <% if user_signed_in? %>
   <li class="dropdown user-nav">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-      <%= github_profile_img_for current_user %>
-      <span class="dropdown-caret"></span>
+    <a href="#" class="dropdown-toggle float-left" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+      <%=github_profile_img_for current_user%>
+      <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
       <li class="dropdown-header">Signed in as <b><%= current_user.username %></b></li>
       <li role="separator" class="divider"></li>
-      <li><a href="https://github.com/<%= current_user.username %>">GitHub Profile</a></li>
-      <li role="separator" class="divider"></li>
-      <li><%= link_to 'Log out', signout_path, method: :get %></li>
+      <li class="dropdown-item"><a href="https://github.com/<%= current_user.username %>">GitHub Profile</a></li>
+      <li class="dropdown-item"><%= link_to 'Log out', signout_path, method: :get %></li>
     </ul>
   </li>
 <% else %>
