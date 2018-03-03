@@ -23,7 +23,7 @@ class Course < ApplicationRecord
 
   def invite_user_to_course_org(user)
     unless Octokit.organization_member?(course_organization, user.username)
-      Octokit.update_organization_membership(course_organization, {user: "#{user.username}", role: "User"})
+      Octokit.update_organization_membership(course_organization, {user: "#{user.username}", role: "member"})
     end
   end
   

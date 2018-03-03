@@ -14,6 +14,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     sign_in @user
     stub_organization_membership_admin_in_org(@org, ENV["MACHINE_USER_NAME"])
     stub_organization_is_an_org(@org)
+    @enroll_success_flash_notice = %Q[You were successfully enrolled in #{@course.name}! View you invitation <a href="https://github.com/orgs/#{@course.course_organization}/invitation">here</a>.]
   end
 
   test "should get index" do
@@ -92,7 +93,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
     end
     assert_redirected_to courses_url
-    assert_equal "You were successfully enrolled in #{@course.name}!", flash[:notice]
+    assert_equal @enroll_success_flash_notice, flash[:notice]
   end
 
   test "user can join class if roster student exists" do
@@ -103,7 +104,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
     end
     assert_redirected_to courses_url
-    assert_equal "You were successfully enrolled in #{@course.name}!", flash[:notice]
+    assert_equal @enroll_success_flash_notice, flash[:notice]
   end
 
   test "roster student can NOT join class if NOT on class roster" do

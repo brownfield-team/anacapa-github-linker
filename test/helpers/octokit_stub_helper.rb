@@ -34,7 +34,7 @@ module OctokitStubHelper
   def stub_invite_user_to_org(github_id, org_name)
     stub_request(:put, "https://api.github.com/orgs/#{org_name}/memberships/#{github_id}").
       with(
-        body: "{\"role\":\"User\"}",
+        body: "{\"role\":\"member\"}",
         headers: {
         'Accept'=>'application/vnd.github.v3+json',
         'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
