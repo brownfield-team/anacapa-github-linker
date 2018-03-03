@@ -126,9 +126,12 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     @user.roster_students.push(roster_students(:roster1))
 
     assert_difference('@user.roster_students.count', -1) do
+      assert_difference('@course.roster_students.count', 0) do
         post course_leave_path(course_id: @course.id)
+      end
     end
 
     assert_redirected_to courses_url
   end
+
 end

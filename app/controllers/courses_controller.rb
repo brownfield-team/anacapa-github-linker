@@ -79,7 +79,7 @@ class CoursesController < ApplicationController
 
   def leave
     roster_student = Course.find(params[:course_id]).roster_students.find_by(email: current_user.email)
-    current_user.roster_students.delete(roster_student)
+    roster_student.update_attribute(:user_id, nil)
     redirect_to courses_path
   end
 
