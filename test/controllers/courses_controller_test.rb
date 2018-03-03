@@ -14,6 +14,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     sign_in @user
     stub_organization_membership_admin_in_org(@org, ENV["MACHINE_USER_NAME"])
     stub_organization_is_an_org(@org)
+    @enroll_success_flash_notice = %Q[You were successfully enrolled in #{@course.name}! View you invitation <a href="https://github.com/orgs/#{@course.course_organization}/invitation">here</a>.]
   end
 
   test "should get index" do
@@ -28,7 +29,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create course" do
-    
+    stub_updating_org_membership("#{@org}")
     assert_difference('Course.count', 1) do
       post courses_url, params: { course: { name: "blah", course_organization: "#{@org}" } }
     end
@@ -44,7 +45,20 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :ok
-    assert_select "div[id=?]", "error_explanation"
+    assert_select 'div#error_explanation li', "You must create a github organization with the name of your class and add #{ENV['MACHINE_USER_NAME']} as an owner of that organization."
+  end
+
+  test "if org exists but machine user is not admin, should not be created and show why" do
+    org_name = "real-org"
+    stub_organization_is_an_org(org_name)
+    stub_organization_exists_but_not_admin_in_org(org_name)
+    assert_difference('Course.count', 0) do
+      post courses_url, params: {course: { name: "name", course_organization: org_name}}
+    end
+
+    assert_response :ok
+    assert_select 'div#error_explanation li', "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed."
+
   end
 
   test "should show course" do
@@ -72,15 +86,25 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to courses_url
   end
 
-
-  test "user can join class if roster student exists" do
-
+  test "user will not be reinvited if already in org" do
+    stub_find_user_in_org(@user.username, @course.course_organization, true)
     assert_difference('@user.roster_students.count', 1) do
       post course_join_path(course_id: @course.id)
 
     end
     assert_redirected_to courses_url
-    assert_equal "You were successfully enrolled in #{@course.name}!", flash[:notice]
+    assert_equal @enroll_success_flash_notice, flash[:notice]
+  end
+
+  test "user can join class if roster student exists" do
+    stub_find_user_in_org(@user.username, @course.course_organization, false)
+    stub_invite_user_to_org(@user.username, @course.course_organization)
+    assert_difference('@user.roster_students.count', 1) do
+      post course_join_path(course_id: @course.id)
+
+    end
+    assert_redirected_to courses_url
+    assert_equal @enroll_success_flash_notice, flash[:notice]
   end
 
   test "roster student can NOT join class if NOT on class roster" do
@@ -103,9 +127,12 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     @user.roster_students.push(roster_students(:roster1))
 
     assert_difference('@user.roster_students.count', -1) do
+      assert_difference('@course.roster_students.count', 0) do
         post course_leave_path(course_id: @course.id)
+      end
     end
 
     assert_redirected_to courses_url
   end
+
 end
