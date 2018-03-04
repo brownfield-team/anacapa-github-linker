@@ -21,7 +21,7 @@ class CourseTest < ActiveSupport::TestCase
 
     csv_file = fixture_file_upload('files/students.csv')
 
-    csv_header_map = ["student_id","email","first_name","last_name"]
+    csv_header_map = ["perm","email","first_name","last_name"]
     assert_difference('@course.roster_students.count', 4) do
       @course.import_students(csv_file,csv_header_map,false)
     end
@@ -32,7 +32,7 @@ class CourseTest < ActiveSupport::TestCase
 
     csv_file = fixture_file_upload('files/students.csv')
 
-    csv_header_map = ["student_id","email","first_name","last_name"]
+    csv_header_map = ["perm","email","first_name","last_name"]
     assert_difference('@course.roster_students.count', 3) do
       @course.import_students(csv_file,csv_header_map,true)
     end
@@ -51,7 +51,7 @@ class CourseTest < ActiveSupport::TestCase
     csv_file1 = fixture_file_upload('files/students.csv')
     csv_file2 = fixture_file_upload('files/students2.csv')
 
-    csv_header_map = ["student_id","email","first_name","last_name"]
+    csv_header_map = ["perm","email","first_name","last_name"]
     @course.import_students(csv_file1,csv_header_map,true)
 
 
@@ -63,7 +63,7 @@ class CourseTest < ActiveSupport::TestCase
 
   test "roster_students emails for a course should be unique" do
     csv_file = fixture_file_upload("files/duplicate_email.csv")
-    csv_header_map = ["student_id","email","first_name","last_name"]
+    csv_header_map = ["perm","email","first_name","last_name"]
 
     assert_difference('@course.roster_students.count', 1) do
       @course.import_students(csv_file,csv_header_map,true)
@@ -73,7 +73,7 @@ class CourseTest < ActiveSupport::TestCase
 
   test "roster_students perms for a course should be unique" do
     csv_file = fixture_file_upload("files/duplicate_perm.csv")
-    csv_header_map = ["student_id","email","first_name","last_name"]
+    csv_header_map = ["perm","email","first_name","last_name"]
 
     assert_difference('@course.roster_students.count', 1) do
       @course.import_students(csv_file,csv_header_map,true)
