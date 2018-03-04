@@ -53,7 +53,7 @@ class Course < ApplicationRecord
     spreadsheet = Roo::Spreadsheet.open(file, extension: ext)
     
     # get index for each param
-    id_index = header_map.index("student_id")
+    id_index = header_map.index("perm")
     email_index = header_map.index("email")
     first_name_index = header_map.index("first_name")
     last_name_index = header_map.index("last_name")
@@ -66,7 +66,7 @@ class Course < ApplicationRecord
 
       row = {} # build dynaimically based on choices
 
-      row["student_id"] = spreadsheet_row[id_index]
+      row["perm"] = spreadsheet_row[id_index]
       row["email"] = spreadsheet_row[email_index]
 
       if first_name_index
@@ -81,10 +81,10 @@ class Course < ApplicationRecord
       next if row.values.all?(&:nil?) # skip empty rows
 
       # check if there is an existing student in the course or create a new one
-      student = roster_students.find_by(perm: row["student_id"]) ||
+      student = roster_students.find_by(perm: row["perm"]) ||
       roster_students.new
       
-      student.perm = row["student_id"]
+      student.perm = row["perm"]
       student.first_name = row["first_name"]
       student.last_name = row["last_name"]
       student.email = row["email"]
