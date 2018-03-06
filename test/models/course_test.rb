@@ -23,6 +23,7 @@ class CourseTest < ActiveSupport::TestCase
 
     csv_header_map = ["perm","email","first_name","last_name"]
     assert_difference('@course.roster_students.count', 2) do
+
       @course.import_students(csv_file,csv_header_map,false)
     end
 
@@ -33,6 +34,7 @@ class CourseTest < ActiveSupport::TestCase
     csv_file = fixture_file_upload('files/students.csv')
 
     csv_header_map = ["perm","email","first_name","last_name"]
+
     assert_difference('@course.roster_students.count', 1) do
       @course.import_students(csv_file,csv_header_map,true)
     end
