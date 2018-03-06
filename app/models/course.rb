@@ -112,25 +112,13 @@ class Course < ApplicationRecord
   end
 
   def delete_roster_students(spreadsheet, header_row_exists, perm_index)
-    puts "Roster count beforehand (INSIDE METHOD): #{self.roster_students.count}"
-
     perms = sort_perms_into_hash(spreadsheet, header_row_exists, perm_index)
     self.roster_students.each do |student|
-      perm = perms[student.perm.to_s]
+      perm = perms[student.perm]
       if perm.blank?
-        puts "Student will be destroyed. Perm: #{student.perm}"
-        # RosterStudent.destroy(student.id)
         student.destroy
-
       end
     end
-
-    puts "Print out remaining students after deletion within method"
-    self.roster_students.each do |student|
-      puts "Student: #{student.inspect}"
-    end
-    puts "Roster count afterwards(INSIDE METHOD): #{self.roster_students.count}"
-
   end
 
   def sort_perms_into_hash(spreadsheet, header_row_exists, perm_index)

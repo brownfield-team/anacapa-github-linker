@@ -22,7 +22,7 @@ class CourseTest < ActiveSupport::TestCase
     csv_file = fixture_file_upload('files/students.csv')
 
     csv_header_map = ["perm","email","first_name","last_name"]
-    assert_difference('@course.roster_students.count', 4) do
+    assert_difference('@course.roster_students.count', 2) do
       @course.import_students(csv_file,csv_header_map,false)
     end
 
@@ -33,7 +33,7 @@ class CourseTest < ActiveSupport::TestCase
     csv_file = fixture_file_upload('files/students.csv')
 
     csv_header_map = ["perm","email","first_name","last_name"]
-    assert_difference('@course.roster_students.count', 3) do
+    assert_difference('@course.roster_students.count', 1) do
       @course.import_students(csv_file,csv_header_map,true)
     end
 
@@ -55,7 +55,7 @@ class CourseTest < ActiveSupport::TestCase
     @course.import_students(csv_file1,csv_header_map,true)
 
 
-    assert_difference('@course.roster_students.count', 1) do
+    assert_difference('@course.roster_students.count', 0) do
       @course.import_students(csv_file2,csv_header_map,true)
     end
 
@@ -65,7 +65,7 @@ class CourseTest < ActiveSupport::TestCase
     csv_file = fixture_file_upload("files/duplicate_email.csv")
     csv_header_map = ["perm","email","first_name","last_name"]
 
-    assert_difference('@course.roster_students.count', 1) do
+    assert_difference('@course.roster_students.count', -1) do
       @course.import_students(csv_file,csv_header_map,true)
     end
 
@@ -75,7 +75,7 @@ class CourseTest < ActiveSupport::TestCase
     csv_file = fixture_file_upload("files/duplicate_perm.csv")
     csv_header_map = ["perm","email","first_name","last_name"]
 
-    assert_difference('@course.roster_students.count', 1) do
+    assert_difference('@course.roster_students.count', -1) do
       @course.import_students(csv_file,csv_header_map,true)
     end
   
@@ -102,19 +102,12 @@ class CourseTest < ActiveSupport::TestCase
                                       last_name: "Snow",
                                       perm: 8425)
     @course.roster_students.push(roster_student)
-    puts "Roster count before (INSIDE TEST): #{@course.roster_students.count}"
+    
     assert_difference('@course.roster_students.count', -2) do
       @course.delete_roster_students(spreadsheet, true, header_map_index)
     end
 
-    puts "Roster count after (INSIDE TEST): #{@course.roster_students.count}"
-    puts "Course: #{@course.inspect}"
-    @course.roster_students.each do |student|
-      puts "Student: #{student.inspect}"
-
-    end
-
-    assert_equal 8425, @course.roster_students.first.perm
+    assert_equal "8425", @course.roster_students.first.perm
   end
 
 end
