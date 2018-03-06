@@ -135,4 +135,53 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to courses_url
   end
 
+  test "instructors should be able to create courses" do
+    user = users(:julie)
+    user.add_role(:instructor)
+    sign_in user
+
+    stub_updating_org_membership("#{@org}")
+    assert_difference('Course.count', 1) do
+      post courses_url, params: { course: { name: "blah", course_organization: "#{@org}" } }
+    end
+
+    assert_redirected_to course_url(Course.last)
+
+  end
+
+  test "instructors should be able to update courses that they created" do
+    user = users(:julie)
+    user.add_role(:instructor)
+    sign_in user
+
+    stub_updating_org_membership("#{@org}")
+    assert_difference('Course.count', 1) do
+      post courses_url, params: { course: { name: "blah", course_organization: "#{@org}" } }
+    end
+
+    course = Course.where(name: "blah").first
+
+    stub_organization_membership_admin_in_org(@course.course_organization, ENV["MACHINE_USER_NAME"])
+    stub_organization_is_an_org(@course.course_organization)
+    patch course_url(course), params: { course: { name: "patched_course_name" } }
+    
+    assert_redirected_to course_url(course)
+    assert_equal "patched_course_name", Course.where(course_organization: "#{@org}").first.name
+
+  end
+
+  test "instructors should not be able to update other instructors courses" do
+    @user = users(:julie)
+    @user.add_role(:instructor)
+    sign_in @user
+
+    stub_organization_membership_admin_in_org(@course.course_organization, ENV["MACHINE_USER_NAME"])
+    stub_organization_is_an_org(@course.course_organization)
+    patch course_url(@course), params: { course: { name: "patched_course_name" } }
+    assert_redirected_to root_url
+
+
+  end
+
+
 end
