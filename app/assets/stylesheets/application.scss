@@ -37,6 +37,15 @@ main {
   margin-top: 15px;
 }
 
+.float-left {
+  margin-left:-20%;
+}
+
+.float-right {
+  margin-right:-20%;
+}
+
+
 #error_explanation:not(:empty) {
   @extend .alert;
   @extend .alert-danger;

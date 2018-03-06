@@ -16,6 +16,16 @@ class Course < ApplicationRecord
       @org = nil 
     end 
   end 
+
+  def accept_invite_to_course_org
+    Octokit.update_organization_membership(course_organization, {state: "active"})
+  end
+
+  def invite_user_to_course_org(user)
+    unless Octokit.organization_member?(course_organization, user.username)
+      Octokit.update_organization_membership(course_organization, {user: "#{user.username}", role: "member"})
+    end
+  end
   
   def check_course_org_exists 
     # NOTE: this is run as a validation step on creation and update for the organization
@@ -41,13 +51,15 @@ class Course < ApplicationRecord
   def import_students(file, header_map, header_row_exists)
     ext = File.extname(file.original_filename)
     spreadsheet = Roo::Spreadsheet.open(file, extension: ext)
-    
+
     # get index for each param
-    id_index = header_map.index("student_id")
+    id_index = header_map.index("perm")
     email_index = header_map.index("email")
     first_name_index = header_map.index("first_name")
     last_name_index = header_map.index("last_name")
     full_name_index = header_map.index("full_name")
+
+    delete_roster_students(spreadsheet, header_row_exists, id_index)
 
     # start at row 1 if header row exists (via checkbox)
     ((header_row_exists ? 2 : 1 )..spreadsheet.last_row).each do |i|
@@ -56,7 +68,7 @@ class Course < ApplicationRecord
 
       row = {} # build dynaimically based on choices
 
-      row["student_id"] = spreadsheet_row[id_index]
+      row["perm"] = spreadsheet_row[id_index]
       row["email"] = spreadsheet_row[email_index]
 
       if first_name_index
@@ -71,10 +83,10 @@ class Course < ApplicationRecord
       next if row.values.all?(&:nil?) # skip empty rows
 
       # check if there is an existing student in the course or create a new one
-      student = roster_students.find_by(perm: row["student_id"]) ||
+      student = roster_students.find_by(perm: row["perm"]) ||
       roster_students.new
       
-      student.perm = row["student_id"]
+      student.perm = row["perm"]
       student.first_name = row["first_name"]
       student.last_name = row["last_name"]
       student.email = row["email"]
@@ -97,5 +109,24 @@ class Course < ApplicationRecord
         ]
       end
     end
+  end
+
+  def delete_roster_students(spreadsheet, header_row_exists, perm_index)
+    perms = sort_perms_into_hash(spreadsheet, header_row_exists, perm_index)
+    self.roster_students.each do |student|
+      perm = perms[student.perm]
+      if perm.blank?
+        student.destroy
+      end
+    end
+  end
+
+  def sort_perms_into_hash(spreadsheet, header_row_exists, perm_index)
+    perms = Hash.new
+    ((header_row_exists ? 2 : 1 )..spreadsheet.last_row).each do |i|
+      perms[spreadsheet.row(i)[perm_index]] = spreadsheet.row(i)[perm_index]
+    end
+
+    return perms
   end
 end

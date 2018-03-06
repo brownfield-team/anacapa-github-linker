@@ -1,4 +1,7 @@
 <p>You are an administrator of this course</p>
+<p>This course belongs to the github organization:
+  <%= link_to(@course.course_organization, "https://github.com/" + @course.course_organization)%>
+</p>
 
 <%#= link_to "View Course Roster (#{@course.roster_students.length} enrolled)", course_roster_students_path(@course), class: "btn", role: "button" %>
 
@@ -27,7 +30,7 @@
     <table class="table">
       <thead>
         <tr>
-          <th>Student ID</th>
+          <th>Perm</th>
           <th>First name</th>
           <th>Last name</th>
           <th>Email</th>
@@ -82,7 +85,7 @@
         </table>
       </div>
       <div class="modal-footer">
-        <h4 id="csv-upload-error" class="hidden" style="width: 100%;text-align: center;float: left;margin-bottom: -20px;"><span class="label label-lg label-danger">ERROR: Please select { {First Name, Last Name } | Full Name, Student ID, Email} </span></h4>
+        <h4 id="csv-upload-error" class="hidden" style="width: 100%;text-align: center;float: left;margin-bottom: -20px;"><span class="label label-lg label-danger">ERROR: Please select { {First Name, Last Name } | Full Name, Perm, Email} </span></h4>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" onclick="uploadSubmit();">Upload</button>
       </div>

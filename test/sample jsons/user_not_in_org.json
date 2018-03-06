@@ -1,0 +1,4 @@
+{
+  "message": "User does not exist or is not a member of the organization",
+  "documentation_url": "https://developer.github.com/v3/orgs/members/#check-membership"
+}
