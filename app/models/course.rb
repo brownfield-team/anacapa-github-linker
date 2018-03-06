@@ -51,13 +51,15 @@ class Course < ApplicationRecord
   def import_students(file, header_map, header_row_exists)
     ext = File.extname(file.original_filename)
     spreadsheet = Roo::Spreadsheet.open(file, extension: ext)
-    
+
     # get index for each param
     id_index = header_map.index("perm")
     email_index = header_map.index("email")
     first_name_index = header_map.index("first_name")
     last_name_index = header_map.index("last_name")
     full_name_index = header_map.index("full_name")
+
+    delete_roster_students(spreadsheet, header_row_exists, id_index)
 
     # start at row 1 if header row exists (via checkbox)
     ((header_row_exists ? 2 : 1 )..spreadsheet.last_row).each do |i|
@@ -107,5 +109,36 @@ class Course < ApplicationRecord
         ]
       end
     end
+  end
+
+  def delete_roster_students(spreadsheet, header_row_exists, perm_index)
+    puts "Roster count beforehand (INSIDE METHOD): #{self.roster_students.count}"
+
+    perms = sort_perms_into_hash(spreadsheet, header_row_exists, perm_index)
+    self.roster_students.each do |student|
+      perm = perms[student.perm.to_s]
+      if perm.blank?
+        puts "Student will be destroyed. Perm: #{student.perm}"
+        # RosterStudent.destroy(student.id)
+        student.destroy
+
+      end
+    end
+
+    puts "Print out remaining students after deletion within method"
+    self.roster_students.each do |student|
+      puts "Student: #{student.inspect}"
+    end
+    puts "Roster count afterwards(INSIDE METHOD): #{self.roster_students.count}"
+
+  end
+
+  def sort_perms_into_hash(spreadsheet, header_row_exists, perm_index)
+    perms = Hash.new
+    ((header_row_exists ? 2 : 1 )..spreadsheet.last_row).each do |i|
+      perms[spreadsheet.row(i)[perm_index]] = spreadsheet.row(i)[perm_index]
+    end
+
+    return perms
   end
 end
