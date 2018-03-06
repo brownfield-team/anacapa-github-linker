@@ -78,7 +78,7 @@ class CourseTest < ActiveSupport::TestCase
     assert_difference('@course.roster_students.count', -1) do
       @course.import_students(csv_file,csv_header_map,true)
     end
-  
+
   end
 
   test "sort perms into hash works" do
@@ -101,12 +101,14 @@ class CourseTest < ActiveSupport::TestCase
                                       first_name: "Jon",
                                       last_name: "Snow",
                                       perm: 8425)
+
     @course.roster_students.push(roster_student)
-    
+
+
     assert_difference('@course.roster_students.count', -2) do
       @course.delete_roster_students(spreadsheet, true, header_map_index)
     end
-
+    @course = Course.where(name: "course1").first
     assert_equal "8425", @course.roster_students.first.perm
   end
 
