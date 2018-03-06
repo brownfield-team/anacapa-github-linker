@@ -18,7 +18,7 @@ $( document ).ready(function() {
            var dropdownHtml = 
                  "<th>" + 
                         "<select index='%i%' class='form-control'>" +
-                         "<option value='invald' >-- select --</option>" +
+                         "<option value='ignore' >-- select --</option>" +
                          "<option value='full_name' >Full Name</option>" +
                          "<option value='first_name' >First Name</option>" +
                          "<option value='last_name' >Last Name</option>" +
