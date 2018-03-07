@@ -28,8 +28,18 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should create course" do
+  test "admin should be able to create course" do
     stub_updating_org_membership("#{@org}")
+    assert_difference('Course.count', 1) do
+      post courses_url, params: { course: { name: "blah", course_organization: "#{@org}" } }
+    end
+
+    assert_redirected_to course_url(Course.last)
+  end
+
+  test "instructor should be able to create course" do
+    stub_updating_org_membership("#{@org}")
+    @user.reassign_role("instructor")
     assert_difference('Course.count', 1) do
       post courses_url, params: { course: { name: "blah", course_organization: "#{@org}" } }
     end
