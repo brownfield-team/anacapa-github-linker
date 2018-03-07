@@ -59,7 +59,8 @@ class Course < ApplicationRecord
     last_name_index = header_map.index("last_name")
     full_name_index = header_map.index("full_name")
 
-    delete_roster_students(spreadsheet, header_row_exists, id_index)
+    # delete_roster_students(spreadsheet, header_row_exists, id_index)
+    unenroll_all_students
 
     # start at row 1 if header row exists (via checkbox)
     ((header_row_exists ? 2 : 1 )..spreadsheet.last_row).each do |i|
@@ -85,7 +86,8 @@ class Course < ApplicationRecord
       # check if there is an existing student in the course or create a new one
       student = roster_students.find_by(perm: row["perm"]) ||
       roster_students.new
-      
+
+      student.enrolled = true
       student.perm = row["perm"]
       student.first_name = row["first_name"]
       student.last_name = row["last_name"]
@@ -129,4 +131,12 @@ class Course < ApplicationRecord
 
     return perms
   end
+
+  def unenroll_all_students
+    self.roster_students.each do |student|
+      student.enrolled = false
+      student.save
+    end
+  end
+
 end

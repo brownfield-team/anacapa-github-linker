@@ -17,6 +17,14 @@ class CourseTest < ActiveSupport::TestCase
     sign_in @user
   end
 
+  test "calling unenroll_all_students should set enrolled to false" do
+    enrolled_count = @course.roster_students.where(enrolled: true).count
+    assert enrolled_count > 0
+
+    @course.unenroll_all_students
+    assert_equal 0, @course.roster_students.where(enrolled: true).count
+  end
+
   test "calling import_students should import students from csv WITHOUT header" do
 
     csv_file = fixture_file_upload('files/students.csv')

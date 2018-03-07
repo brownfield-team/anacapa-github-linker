@@ -34,6 +34,7 @@
           <th>First name</th>
           <th>Last name</th>
           <th>Email</th>
+          <th>Enrolled</th>
           <th>Github ID</th>
           <th>Org Membership</th>
           <th colspan="3"></th>
@@ -47,6 +48,7 @@
             <td><%= student.first_name %></td>
             <td><%= student.last_name %></td>
             <td><%= student.email %></td>
+            <td><%= student.enrolled %></td>
             <% if !student.username.nil? and !student.username.empty? %>
               <td><a href="https://github.com/<%= student.username %>"><%= student.username %></td>
               <td><%#= is_org_member student.username %></td>
