@@ -101,7 +101,6 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     stub_invite_user_to_org(@user.username, @course.course_organization)
     assert_difference('@user.roster_students.count', 1) do
       post course_join_path(course_id: @course.id)
-
     end
     assert_redirected_to courses_url
     assert_equal @enroll_success_flash_notice, flash[:notice]
@@ -112,8 +111,10 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     sign_in user_julie
     user_julie.add_role(:user)
 
-    assert_difference('user_julie.roster_students.count', 0) do
-      post course_join_path(course_id: @course.id)
+    assert_difference('@course.roster_students.count', 0) do
+      assert_difference('user_julie.roster_students.count', 0) do
+        post course_join_path(course_id: @course.id)
+      end
     end
 
     assert_redirected_to courses_url
@@ -126,9 +127,11 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     @course.roster_students.push(roster_students(:roster1))
     @user.roster_students.push(roster_students(:roster1))
 
-    assert_difference('@user.roster_students.count', -1) do
+    assert_difference('@user.roster_students.count', 0) do
       assert_difference('@course.roster_students.count', 0) do
-        post course_leave_path(course_id: @course.id)
+        assert_difference('@course.roster_students.where(enrolled: true).count',-1) do
+          post course_leave_path(course_id: @course.id)
+        end
       end
     end
 

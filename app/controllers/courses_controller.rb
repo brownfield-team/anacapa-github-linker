@@ -68,8 +68,8 @@ class CoursesController < ApplicationController
     course = Course.find(params[:course_id])
 
     roster_student = course.roster_students.find_by(email: current_user.email)
-    roster_student.update_attribute(:enrolled, true)
     if not roster_student.nil?
+      roster_student.update_attribute(:enrolled, true)
       current_user.roster_students.push(roster_student)
       redirect_to courses_path, notice: %Q[You were successfully enrolled in #{course.name}! View you invitation <a href="https://github.com/orgs/#{course.course_organization}/invitation">here</a>.]
       course.invite_user_to_course_org(current_user)
@@ -81,7 +81,6 @@ class CoursesController < ApplicationController
 
   def leave
     roster_student = Course.find(params[:course_id]).roster_students.find_by(email: current_user.email)
-    roster_student.update_attribute(:user_id, nil)
     roster_student.update_attribute(:enrolled, false)
     redirect_to courses_path
   end
