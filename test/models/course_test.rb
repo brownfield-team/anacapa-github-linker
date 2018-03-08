@@ -53,7 +53,7 @@ class CourseTest < ActiveSupport::TestCase
     csv = @course.export_students_to_csv
 
     #NOTE: The roster_students do not yet have a github username but the exported csv provides a column for it
-    expected_csv = "perm,email,first_name,last_name,github_username\n12345678,wes@email.com,Wes,P,\n21345678,tim@email.com,Tim,H,\n"
+    expected_csv = "perm,email,first_name,last_name,github_username,enrolled\n12345678,wes@email.com,Wes,P,,true\n21345678,tim@email.com,Tim,H,,true\n"
     assert_equal csv, expected_csv
   end
 

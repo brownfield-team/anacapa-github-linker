@@ -2,5 +2,5 @@
 
 <%= render 'form', roster_student: @roster_student %>
 
-<%= link_to 'Show', course_roster_student_path %> |
-<%= link_to 'Back', course_path(@parent) %>
+<%= link_to 'Show', course_roster_student_path, :class => "btn btn-outline-secondary" %> |
+<%= link_to 'Back', course_path(@parent), :class => "btn btn-outline-secondary" %>
