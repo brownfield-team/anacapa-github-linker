@@ -59,7 +59,6 @@ class Course < ApplicationRecord
     last_name_index = header_map.index("last_name")
     full_name_index = header_map.index("full_name")
 
-    # delete_roster_students(spreadsheet, header_row_exists, id_index)
     unenroll_all_students
 
     # start at row 1 if header row exists (via checkbox)
@@ -111,25 +110,6 @@ class Course < ApplicationRecord
         ]
       end
     end
-  end
-
-  def delete_roster_students(spreadsheet, header_row_exists, perm_index)
-    perms = sort_perms_into_hash(spreadsheet, header_row_exists, perm_index)
-    self.roster_students.each do |student|
-      perm = perms[student.perm]
-      if perm.blank?
-        student.destroy
-      end
-    end
-  end
-
-  def sort_perms_into_hash(spreadsheet, header_row_exists, perm_index)
-    perms = Hash.new
-    ((header_row_exists ? 2 : 1 )..spreadsheet.last_row).each do |i|
-      perms[spreadsheet.row(i)[perm_index]] = spreadsheet.row(i)[perm_index]
-    end
-
-    return perms
   end
 
   def unenroll_all_students
