@@ -58,9 +58,9 @@ and render differently depending on whether or not the user is privlidged %>
               </td>
             <% else %>
               <%# otherwise they behave as a normal student, show student options. %>
-              <% if course.users.any? {|u| u.id == current_user.id} %>
+              <% if course.roster_students.any? {|student| student.user_id == current_user.id and student.enrolled} %>
                 <td><%= link_to 'Leave', course_leave_path(:course_id => course.id), method: :post, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %></td>
-              <% else %>
+              <% else%>
                 <td><%= link_to 'Join', course_join_path(:course_id => course.id), method: :post, class: 'btn btn-info btn-sm' %></td>
               <% end %>
             <% end %>
