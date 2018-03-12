@@ -59,7 +59,7 @@ class Course < ApplicationRecord
     last_name_index = header_map.index("last_name")
     full_name_index = header_map.index("full_name")
 
-    delete_roster_students(spreadsheet, header_row_exists, id_index)
+    unenroll_all_students
 
     # start at row 1 if header row exists (via checkbox)
     ((header_row_exists ? 2 : 1 )..spreadsheet.last_row).each do |i|
@@ -85,7 +85,8 @@ class Course < ApplicationRecord
       # check if there is an existing student in the course or create a new one
       student = roster_students.find_by(perm: row["perm"]) ||
       roster_students.new
-      
+
+      student.enrolled = true
       student.perm = row["perm"]
       student.first_name = row["first_name"]
       student.last_name = row["last_name"]
@@ -97,7 +98,7 @@ class Course < ApplicationRecord
   # export roster students to a CSV file
   def export_students_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w[perm email first_name last_name github_username]
+      csv << %w[perm email first_name last_name github_username enrolled]
 
       roster_students.each do |user|
         csv << [
@@ -105,28 +106,18 @@ class Course < ApplicationRecord
           user.email,
           user.first_name,
           user.last_name,
-          user.username
+          user.username,
+          user.enrolled
         ]
       end
     end
   end
 
-  def delete_roster_students(spreadsheet, header_row_exists, perm_index)
-    perms = sort_perms_into_hash(spreadsheet, header_row_exists, perm_index)
+  def unenroll_all_students
     self.roster_students.each do |student|
-      perm = perms[student.perm]
-      if perm.blank?
-        student.destroy
-      end
+      student.enrolled = false
+      student.save
     end
   end
 
-  def sort_perms_into_hash(spreadsheet, header_row_exists, perm_index)
-    perms = Hash.new
-    ((header_row_exists ? 2 : 1 )..spreadsheet.last_row).each do |i|
-      perms[spreadsheet.row(i)[perm_index]] = spreadsheet.row(i)[perm_index]
-    end
-
-    return perms
-  end
 end
