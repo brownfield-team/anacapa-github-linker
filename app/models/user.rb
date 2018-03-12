@@ -72,4 +72,12 @@ class User < ApplicationRecord
     self.remove_role(self.get_role.to_sym)
     self.add_role(new_role.to_sym)
   end
+
+  def make_admin
+    self.add_role(:admin)
+  end
+
+  def remove_admin
+    self.remove_role(:admin)
+  end
 end
