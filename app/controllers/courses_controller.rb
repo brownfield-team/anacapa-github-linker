@@ -26,9 +26,11 @@ class CoursesController < ApplicationController
   # POST /courses.json
   def create
     @course = Course.new(course_params)
+    add_instructor
 
     respond_to do |format|
       if @course.save
+        @course.accept_invite_to_course_org
         format.html { redirect_to @course, notice: 'Course was successfully created.' }
         format.json { render :show, status: :created, location: @course }
       else
@@ -67,10 +69,10 @@ class CoursesController < ApplicationController
 
     roster_student = course.roster_students.find_by(email: current_user.email)
     if not roster_student.nil?
+      roster_student.update_attribute(:enrolled, true)
       current_user.roster_students.push(roster_student)
-      redirect_to courses_path, notice: "You were successfully enrolled in #{course.name}!"
-
-      # TODO: add the user to the team
+      redirect_to courses_path, notice: %Q[You were successfully enrolled in #{course.name}! View you invitation <a href="https://github.com/orgs/#{course.course_organization}/invitation">here</a>.]
+      course.invite_user_to_course_org(current_user)
     else
       message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verrified your email address. '
       redirect_to courses_path, alert: message
@@ -79,7 +81,7 @@ class CoursesController < ApplicationController
 
   def leave
     roster_student = Course.find(params[:course_id]).roster_students.find_by(email: current_user.email)
-    current_user.roster_students.delete(roster_student)
+    roster_student.update_attribute(:enrolled, false)
     redirect_to courses_path
   end
 
@@ -92,5 +94,9 @@ class CoursesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_params
       params.require(:course).permit(:name,:course_organization)
+    end
+
+    def add_instructor
+      current_user.add_role :instructor, @course
     end
 end

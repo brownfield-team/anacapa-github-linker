@@ -32,6 +32,16 @@
     <%= form.text_field :email, id: :roster_student_email %>
   </div>
 
+  <div class="field">
+    <br>
+    <%= form.radio_button :enrolled, 'true', checked: @roster_student.enrolled %>
+    <%= label :enrolled_true, 'Enrolled' %>
+    <br>
+    <%= form.radio_button :enrolled, 'false', checked: (!@roster_student.enrolled) %>
+    <%= label :enrolled_false, 'Not Enrolled' %>
+
+  </div>
+
   <div class="actions">
     <%= form.submit %>
   </div>
