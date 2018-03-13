@@ -10,23 +10,22 @@ class Ability
       # manage = perform any action
       # all = on everything
       can :manage, :all
-
-    elsif user.has_role? :instructor
+    end
+    if user.has_role? :instructor
       can :create, Course
       # insturctors can only modify courses they have been granted access
-      can :manage, Course , :id => Course.with_role(:instructor, user).pluck(:id)
+      can :manage, Course, id: Course.with_role(:instructor, user).pluck(:id)
 
       # a bit of a guess here... will need to test this.
       # can [:manage], RosterStudent, :parent => Course.with_role(:instructor, user)
       can :manage, RosterStudent
-    elsif user.has_role? :ta
-      #TAs can read Courses that they have been appointed to
-      can :read, Course , :id => Course.with_role(:ta, user).pluck(:id)
+    end
+    if user.has_role? :user
+      can :read, Course, id: Course.with_role(:ta, user).pluck(:id)
 
       #TAs can create, read or update students that are part of a course they are a TA of
-      can [:create, :read, :update], RosterStudent, :course_id => Course.with_role(:ta, user).pluck(:id)
-      cannot [:view_ta, :update_ta], Course
-    elsif user.has_role? :user
+      can [:show, :index, :update, :import, :edit], RosterStudent, course_id: Course.with_role(:ta, user).pluck(:id)
+
       can [:join, :leave], Course
       can :index, Course
       can :show, Course, :id => user.courses.pluck(:id)

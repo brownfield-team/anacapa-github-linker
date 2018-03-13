@@ -33,7 +33,7 @@ class User < ApplicationRecord
       self.add_role(:admin)
     end
 
-    self.add_role(:user) #if self.roles.blank?
+    self.add_role(:user)
   end
 
   def ability
@@ -66,6 +66,16 @@ class User < ApplicationRecord
     else
       self.add_role(:admin)
     end
+
+  end
+
+  def change_instructor_status
+    if self.has_role? :instructor
+      self.remove_role(:instructor)
+    else
+      self.add_role(:instructor)
+    end
+
   end
 
   def change_ta_status(course)
@@ -75,6 +85,8 @@ class User < ApplicationRecord
       self.add_role :ta, course
     end
   end
+
+
 
 
 end

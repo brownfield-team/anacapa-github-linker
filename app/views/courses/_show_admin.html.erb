@@ -26,7 +26,17 @@
       <%= link_to "Download Roster as CSV", course_roster_students_path(@course, :format => "csv"), method: :get, class: "btn", style: "display:inline-block; float: right; margin-left: 10px;" %>
       <%= link_to 'New Student', new_course_roster_student_path(@course), class: "btn", style: "display: inline-block; float: right; margin-left: 10px;" %>
       <%= link_to "Manage TAs" , course_view_ta_path(@course), class: "btn", style: "display: inline-block; float: right; margin-left: 10px;"%>
+      <%= link_to 'Edit', edit_course_path(@course), class: 'btn'%>
+
     </div>
+
+    <h4>TAs:
+      <% @course.roster_students.each do |student| %>
+        <% if student.user.present? and student.user.has_role? :ta, @course %>
+          <%= "#{student.first_name} #{student.last_name}, " %>
+        <% end %>
+      <% end %>
+    </h4>
 
     <table class="table">
       <thead>

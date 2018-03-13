@@ -26,10 +26,9 @@ class CoursesController < ApplicationController
   # POST /courses.json
   def create
     @course = Course.new(course_params)
-    add_instructor
-
     respond_to do |format|
       if @course.save
+        add_instructor(@course.id)
         @course.accept_invite_to_course_org
         format.html { redirect_to @course, notice: 'Course was successfully created.' }
         format.json { render :show, status: :created, location: @course }
@@ -108,7 +107,7 @@ class CoursesController < ApplicationController
       params.require(:course).permit(:name,:course_organization)
     end
 
-    def add_instructor
-      current_user.add_role :instructor, @course
+    def add_instructor(id)
+      current_user.add_role :instructor, Course.find(id)
     end
 end

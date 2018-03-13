@@ -3,6 +3,7 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
   setup do
     @course = courses(:course1)
+    @course2 = courses(:course2)
     # @roster_student = roster_students(:roster1)
     @user = users(:wes)
     @user.add_role(:admin)
@@ -45,4 +46,33 @@ class UserTest < ActiveSupport::TestCase
     assert_not (@user.has_role? :ta, courses(:course2))
 
   end
+
+  test "if user is instructor, change_instructor_status should remove instructor role" do
+    @user.add_role :instructor
+    @user.change_instructor_status
+    assert_not (@user.has_role? :instructor)
+  end
+
+  test "if user is not instructor, change_instructor_status should add instructor role" do
+    @user.change_instructor_status
+    assert (@user.has_role? :instructor)
+  end
+
+
+  test "a user should still have TA status if still a TA of at least one class" do
+    @user.add_role :ta, @course
+    @user.add_role :ta, @course2
+    @user.change_ta_status(@course2)
+
+    assert @user.has_role? :ta, @course
+    assert_not @user.has_role? :ta, @course2
+  end
+
+  test "A user should no longer be a TA if he is not a TA of any course" do
+    @user.add_role :ta, @course
+    @user.change_ta_status(@course)
+
+    assert_not @user.has_role? :ta, @course
+  end
+
 end

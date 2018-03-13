@@ -11,6 +11,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     @course2 = courses(:course2)
     @user = users(:wes)
     @user.add_role(:admin)
+    @roster_student = roster_students(:roster1)
     sign_in @user
     stub_organization_membership_admin_in_org(@org, ENV["MACHINE_USER_NAME"])
     stub_organization_is_an_org(@org)
@@ -190,7 +191,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
   test "instructors should not be able to update other instructors courses" do
     @user = users(:julie)
-    @user.add_role(:instructor)
+    @user.add_role(:instructor, @course2)
     sign_in @user
 
     stub_organization_membership_admin_in_org(@course.course_organization, ENV["MACHINE_USER_NAME"])
@@ -201,27 +202,55 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
   end
 
-  test "TAs should be able to create or update roster_students" do
-    skip
+  test "TAs should not be able to create new roster_students" do
     @user = users(:julie)
-    @user.add_role(:ta, @course)
+    @user.add_role :ta, @course
     sign_in @user
 
-
+    post course_roster_students_path(
+        course_id: @course.id,
+        params: {
+          roster_student: {
+            email: "email@test.email.com",
+            first_name: "Jon",
+            last_name: "Snow",
+            perm: 293847823795
+          }
+        }
+      )
+    assert_redirected_to root_url
   end
 
-  test "TAs should not be able to update other courses" do
-    skip
+  test "TAs should not be allowed to delete roster_students" do
+    @user = users(:julie)
+    @user.add_role :ta, @course
+    sign_in @user
+
+    assert_difference('RosterStudent.count', 0) do
+      delete course_roster_student_path(@roster_student.course_id, @roster_student.id)
+    end
+
+    assert_redirected_to root_url
+  end
+
+  test "TAs should not be able to view other courses they are not the TA of " do
     @user = users(:julie)
     @user.add_role :ta, @course
     sign_in @user
     
-    patch course_url(@course2), params: { course: { name: "patched_course_name" } }
+
+    get course_url(@course)
     assert_redirected_to root_url
   end
 
   test "TAs should not have access to the Manage TAs page" do
-    skip
+    @user = users(:julie)
+    @user.add_role :ta, @course
+    sign_in @user
+
+    get course_view_ta_path(@course)
+    assert_redirected_to root_url
+
   end
 
 

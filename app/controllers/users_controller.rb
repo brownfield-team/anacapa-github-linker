@@ -9,8 +9,12 @@ class UsersController < ApplicationController
     if params[:commit].include? "Admin"
       @user.change_admin_status
     end
+    if params[:commit].include? "Instructor"
+      @user.change_instructor_status
+    end
     redirect_to users_path
   end
+
 
     # private
     #     def user_params
