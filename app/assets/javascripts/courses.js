@@ -18,11 +18,11 @@ $( document ).ready(function() {
            var dropdownHtml = 
                  "<th>" + 
                         "<select index='%i%' class='form-control'>" +
-                         "<option value='invald' >-- select --</option>" +
+                         "<option value='ignore' >-- select --</option>" +
                          "<option value='full_name' >Full Name</option>" +
                          "<option value='first_name' >First Name</option>" +
                          "<option value='last_name' >Last Name</option>" +
-                         "<option value='student_id' >Student ID</option>" +
+                         "<option value='perm' >Perm</option>" +
                          "<option value='email' >Email</option>" +
                      "</select>" +
                  "</th>";
@@ -150,13 +150,13 @@ $( document ).ready(function() {
      console.log(headings);
  
      var full_split_name_error = headings.includes("full_name") && (headings.includes("first_name") || headings.includes("first_name"));
-     var missing_student_id = !headings.includes("student_id");
+     var missing_perm = !headings.includes("perm");
      var missing_email = !headings.includes("email");
      var any_missing = headings.includes("invalid");
      var first_name_wo_last_name = headings.includes("first_name") && !headings.includes("last_name");
      var last_name_wo_first_name = headings.includes("last_name") && !headings.includes("first_name");
  
-     if (full_split_name_error || missing_student_id || missing_email || first_name_wo_last_name || last_name_wo_first_name || any_missing) {
+     if (full_split_name_error || missing_perm || missing_email || first_name_wo_last_name || last_name_wo_first_name || any_missing) {
          if ($("#csv-upload-error").hasClass('hidden')) {
              $("#csv-upload-error").removeClass( "hidden" );
          } else {
@@ -169,7 +169,12 @@ $( document ).ready(function() {
          // pull data from our psuedo-form into the hidden elements before posting
          // might be better to put this in a little json hash instead
          $("#csv-header-map-hidden-field").val(headings.join(','));
-         $("#csv-header-toggle-hidden-field").checked = $("#first-row-is-header").is(':checked');
+         if($("#first-row-is-header").is(':checked')){
+            $("#csv-header-toggle-hidden-field").val("true");
+         }
+         else{
+            $("#csv-header-toggle-hidden-field").val("false");
+         }
  
  
          $("#roster-upload-form").submit();

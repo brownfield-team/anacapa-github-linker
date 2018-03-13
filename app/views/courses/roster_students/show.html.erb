@@ -20,5 +20,11 @@
   <%= @roster_student.email %>
 </p>
 
-<%= link_to 'Edit', edit_course_roster_student_path(@parent, @roster_student) %> 
-<%= link_to 'Back', course_path(@parent) %>
+<p>
+  <strong>Enrolled:</strong>
+  <%= @roster_student.enrolled ? "True" : "False" %>
+</p>
+
+
+<%= link_to 'Edit', edit_course_roster_student_path(@parent, @roster_student), :class => "btn btn-outline-secondary" %> |  
+<%= link_to 'Back', course_path(@parent), :class => "btn btn-outline-secondary" %>

@@ -12,12 +12,13 @@ class Ability
       can :manage, :all
 
     elsif user.has_role? :instructor
-      can :read, Course
+      can :create, Course
       # insturctors can only modify courses they have been granted access
-      can [:manage], Course, :id => Course.with_role(:instructor, user).pluck(:id)
+      can :manage, Course , :id => Course.with_role(:instructor, user).pluck(:id)
 
       # a bit of a guess here... will need to test this.
-      can [:manage], RosterStudent, :parent => Course.with_role(:instructor, user)
+      # can [:manage], RosterStudent, :parent => Course.with_role(:instructor, user)
+      can :manage, RosterStudent
     elsif user.has_role? :user
       can [:join, :leave], Course
       can :index, Course

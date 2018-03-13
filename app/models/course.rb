@@ -16,6 +16,16 @@ class Course < ApplicationRecord
       @org = nil 
     end 
   end 
+
+  def accept_invite_to_course_org
+    Octokit.update_organization_membership(course_organization, {state: "active"})
+  end
+
+  def invite_user_to_course_org(user)
+    unless Octokit.organization_member?(course_organization, user.username)
+      Octokit.update_organization_membership(course_organization, {user: "#{user.username}", role: "member"})
+    end
+  end
   
   def check_course_org_exists 
     # NOTE: this is run as a validation step on creation and update for the organization
@@ -41,13 +51,15 @@ class Course < ApplicationRecord
   def import_students(file, header_map, header_row_exists)
     ext = File.extname(file.original_filename)
     spreadsheet = Roo::Spreadsheet.open(file, extension: ext)
-    
+
     # get index for each param
-    id_index = header_map.index("student_id")
+    id_index = header_map.index("perm")
     email_index = header_map.index("email")
     first_name_index = header_map.index("first_name")
     last_name_index = header_map.index("last_name")
     full_name_index = header_map.index("full_name")
+
+    unenroll_all_students
 
     # start at row 1 if header row exists (via checkbox)
     ((header_row_exists ? 2 : 1 )..spreadsheet.last_row).each do |i|
@@ -56,7 +68,7 @@ class Course < ApplicationRecord
 
       row = {} # build dynaimically based on choices
 
-      row["student_id"] = spreadsheet_row[id_index]
+      row["perm"] = spreadsheet_row[id_index]
       row["email"] = spreadsheet_row[email_index]
 
       if first_name_index
@@ -71,10 +83,11 @@ class Course < ApplicationRecord
       next if row.values.all?(&:nil?) # skip empty rows
 
       # check if there is an existing student in the course or create a new one
-      student = roster_students.find_by(perm: row["student_id"]) ||
+      student = roster_students.find_by(perm: row["perm"]) ||
       roster_students.new
-      
-      student.perm = row["student_id"]
+
+      student.enrolled = true
+      student.perm = row["perm"]
       student.first_name = row["first_name"]
       student.last_name = row["last_name"]
       student.email = row["email"]
@@ -85,7 +98,7 @@ class Course < ApplicationRecord
   # export roster students to a CSV file
   def export_students_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w[perm email first_name last_name github_username]
+      csv << %w[perm email first_name last_name github_username enrolled]
 
       roster_students.each do |user|
         csv << [
@@ -93,9 +106,18 @@ class Course < ApplicationRecord
           user.email,
           user.first_name,
           user.last_name,
-          user.username
+          user.username,
+          user.enrolled
         ]
       end
     end
   end
+
+  def unenroll_all_students
+    self.roster_students.each do |student|
+      student.enrolled = false
+      student.save
+    end
+  end
+
 end
