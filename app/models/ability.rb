@@ -14,7 +14,7 @@ class Ability
       can :manage, RosterStudent, course_id: Course.with_role(:ta, user).pluck(:id)
       cannot :destroy, RosterStudent
       cannot [:view_ta, :update_ta], Course
-      can [:join, :leave], Course
+      can [:join], Course
       can :index, Course
       can :show, Course, :id => user.courses.pluck(:id)
     end
