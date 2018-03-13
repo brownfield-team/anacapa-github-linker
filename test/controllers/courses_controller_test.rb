@@ -23,6 +23,20 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get view_ta" do
+    get course_view_ta_path(@course)
+    assert_response :success
+  end
+
+  test "update_ta should update ta status of user" do
+    user_julie = users(:julie)
+    user_julie.add_role(:user)
+
+    post course_update_ta_path(@course, user_id: user_julie.id )
+    assert user_julie.has_role? :ta, @course
+    assert_redirected_to course_view_ta_path(@course)
+  end
+
   test "should get new" do
     get new_course_url
     assert_response :success
@@ -36,6 +50,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to course_url(Course.last)
   end
+
 
   test "if org doesn't exist course should not be created and show why" do 
     fake_org_name = "not-a-real-org"
@@ -185,6 +200,30 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
 
   end
+
+  test "TAs should be able to create or update roster_students" do
+    skip
+    @user = users(:julie)
+    @user.add_role(:ta, @course)
+    sign_in @user
+
+
+  end
+
+  test "TAs should not be able to update other courses" do
+    skip
+    @user = users(:julie)
+    @user.add_role :ta, @course
+    sign_in @user
+    
+    patch course_url(@course2), params: { course: { name: "patched_course_name" } }
+    assert_redirected_to root_url
+  end
+
+  test "TAs should not have access to the Manage TAs page" do
+    skip
+  end
+
 
 
 end

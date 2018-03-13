@@ -33,7 +33,7 @@ class User < ApplicationRecord
       self.add_role(:admin)
     end
 
-    self.add_role(:user) if self.roles.blank?
+    self.add_role(:user) #if self.roles.blank?
   end
 
   def ability
@@ -60,24 +60,21 @@ class User < ApplicationRecord
 
   end
 
-  def get_role
-    self.roles.first.name
-  end
-
-
-  def reassign_role(new_role)
-    if self.roles.count > 1
-        raise "This user has more than one role."
+  def change_admin_status
+    if self.has_role? :admin
+      self.remove_role(:admin)
+    else
+      self.add_role(:admin)
     end
-    self.remove_role(self.get_role.to_sym)
-    self.add_role(new_role.to_sym)
   end
 
-  def make_admin
-    self.add_role(:admin)
+  def change_ta_status(course)
+    if self.has_role? :ta, course
+      self.remove_role :ta, course
+    else
+      self.add_role :ta, course
+    end
   end
 
-  def remove_admin
-    self.remove_role(:admin)
-  end
+
 end

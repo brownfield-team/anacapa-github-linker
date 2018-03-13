@@ -1,7 +1,7 @@
 <h1>Users</h1>
 
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm-12">
       <%# search the course list %>
       <div class="input-group">
         <span class="input-group-addon" id="basic-addon1">User Name</span>
@@ -12,37 +12,31 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Role</th>
           <th>Admin</th>
-          <th colspan="3"></th>
-          <th colspan="3"></th>
-          <th colspan="3"></th>
+          <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <% @users.each do |user| %>
           <tr>
             <td><%= user.name %></td>
-            <td><%= user.get_role.titleize%></td>
-            <td><%= user.has_any_role? :admin %></td>
-            <% if user.has_any_role? :admin %>
-              <td>Button to remove admin status</td>
-            <% else %>
-              <td>Button to add admin status</td>
-            <% end %>
-            <td><%=button_to 'Manage Instructor Privledges' %></td>
-            <!-- <td style="white-space:nowrap;">
-              <%= form_for user do |f| %>
+            <td><%= (user.has_role? :admin) ? "True" : "False" %></td>
+              <td>
+                <%= form_for user do |f| %>
+                  <% 
+                    if user.has_any_role? :admin 
+                      submit_text = "Remove Admin"
+                    else
+                      submit_text = "Make Admin"
+                    end
+                  %>
 
-                <%= f.select :roles, options_for_select(
-                [[user.get_role.titleize, user.get_role],
-                ["Admin", :admin],
-                ["Instructor", :instructor],
-                ["User", :user]])%>
+                  <%= f.submit "#{submit_text}" %>
+                <% end %>
+              </td>
+            <td><%= button_to "Manage Instructor Status" %></td>
 
-                <%= f.submit %>
-              <% end %>
-            </td> -->
           </tr>
         <% end %>
       </tbody>

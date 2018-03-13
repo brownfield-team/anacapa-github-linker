@@ -19,6 +19,13 @@ class Ability
       # a bit of a guess here... will need to test this.
       # can [:manage], RosterStudent, :parent => Course.with_role(:instructor, user)
       can :manage, RosterStudent
+    elsif user.has_role? :ta
+      #TAs can read Courses that they have been appointed to
+      can :read, Course , :id => Course.with_role(:ta, user).pluck(:id)
+
+      #TAs can create, read or update students that are part of a course they are a TA of
+      can [:create, :read, :update], RosterStudent, :course_id => Course.with_role(:ta, user).pluck(:id)
+      cannot [:view_ta, :update_ta], Course
     elsif user.has_role? :user
       can [:join, :leave], Course
       can :index, Course

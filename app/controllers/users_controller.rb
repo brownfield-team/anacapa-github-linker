@@ -6,7 +6,9 @@ class UsersController < ApplicationController
 
   def update
     @user = User.find(params[:id])
-    @user.reassign_role(params[:user][:roles])
+    if params[:commit].include? "Admin"
+      @user.change_admin_status
+    end
     redirect_to users_path
   end
 

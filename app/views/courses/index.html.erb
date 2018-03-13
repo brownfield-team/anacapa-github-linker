@@ -37,7 +37,7 @@ and render differently depending on whether or not the user is privlidged %>
           <tr>
             <td>
               <%= 
-                if can? :manage, course
+                if can? :read, course
                   link_to "#{course.name}", course_path(course)
                 else
                   course.name

@@ -64,6 +64,18 @@ class CoursesController < ApplicationController
     end
   end
 
+  def view_ta
+    @course = Course.find(params[:course_id])
+  end
+
+  def update_ta
+    course = Course.find(params[:course_id])
+    user = User.find(params[:user_id])
+    user.change_ta_status(course)
+    redirect_to course_view_ta_path(course), notice: %Q[Successfully modified #{user.name}'s TA status]
+
+  end
+
   def join
     course = Course.find(params[:course_id])
 

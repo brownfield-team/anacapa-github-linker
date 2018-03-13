@@ -22,7 +22,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update users" do
-  	patch user_url(@user2), params: { user: { roles: "admin" } }
+  	patch user_url(@user2), params: {commit: "Admin"}
     assert_redirected_to users_url
 
   end
