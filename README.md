@@ -17,7 +17,7 @@
     - __NOTE:__ GitHub has a policy of limiting each human user to one machine user. Violating this rule violates their terms of service.
   2. Using either the machine user or another trusted GitHub account, visit [Developer Settings](https://github.com/settings/developers) under the user's Settings.  
     - Here you can create a new OAuth application (this one), and get the keys necessary for this application to interact with the GitHub API.
-    - The application callback url will be http://insert-your-heroku-app-link-here/users/auth/github/callback 
+    - The application callback url will be `https://insert-your-heroku-app-link-here/users/auth/github/callback`
   
 
   
