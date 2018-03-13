@@ -29,6 +29,31 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "instructors should be able to see their own view_ta page" do
+    users(:tim).add_role(:instructor)
+    users(:tim).add_role(:instructor, @course)
+    sign_in users(:tim)
+
+    get course_view_ta_path(@course)
+    assert_response :success
+  end
+
+  test "instructors should not be able to see other instructors view_ta page" do
+    users(:tim).add_role(:instructor)
+    users(:tim).add_role(:instructor, @course)
+    sign_in users(:tim)
+
+    get course_view_ta_path(@course2)
+    assert_redirected_to root_url
+  end
+
+  test "regular users should not be able to see the view_ta page" do
+    users(:tim).add_role(:user)
+    sign_in users(:tim)
+    get course_view_ta_path(@course)
+    assert_redirected_to root_url
+  end
+
   test "update_ta should update ta status of user" do
     user_julie = users(:julie)
     user_julie.add_role(:user)
@@ -154,6 +179,35 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to courses_url
   end
 
+  test "an instructor should be able to promote a roster student to a TA" do
+    user_julie = users(:julie)
+    user_julie.add_role(:user)
+
+    user = users(:tim)
+    user.add_role(:instructor)
+    user.add_role(:instructor, @course)
+    sign_in user
+
+    post course_update_ta_path(@course, user_id: user_julie.id )
+    assert user_julie.has_role? :ta, @course
+    assert_redirected_to course_view_ta_path(@course)
+  end
+
+  test "an instructor should be able to remove TA status from a roster student" do
+    user_julie = users(:julie)
+    user_julie.add_role(:user)
+    user_julie.add_role(:ta, @course)
+
+    user = users(:tim)
+    user.add_role(:instructor)
+    user.add_role(:instructor, @course)
+    sign_in user
+
+    post course_update_ta_path(@course, user_id: user_julie.id )
+    assert_not user_julie.has_role? :ta, @course
+    assert_redirected_to course_view_ta_path(@course)
+  end
+
   test "instructors should be able to create courses" do
     user = users(:julie)
     user.add_role(:instructor)
@@ -198,29 +252,86 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     stub_organization_is_an_org(@course.course_organization)
     patch course_url(@course), params: { course: { name: "patched_course_name" } }
     assert_redirected_to root_url
-
-
   end
 
+  test "instructors should be allowed to delete their own courses" do
+    @user = users(:julie)
+    @user.add_role(:instructor, @course2)
+    sign_in @user
+
+    assert_difference('Course.count', -1) do
+      delete course_url(@course2)
+    end
+
+    assert_redirected_to courses_url
+  end
+
+  test "instructors should not be able to delete other instructors courses" do
+    @user = users(:julie)
+    @user.add_role(:instructor, @course2)
+    sign_in @user
+
+    assert_difference('Course.count', 0) do
+      delete course_url(@course)
+    end
+
+    assert_redirected_to root_url
+  end
+
+  test "users should not be able to delete courses" do
+    @user = users(:julie)
+    @user.add_role(:user)
+    sign_in @user
+
+    assert_difference('Course.count', 0) do
+      delete course_url(@course)
+    end
+
+    assert_redirected_to root_url
+  end
+
+  test "TAs should be able to view courses that they are TA of" do
+    @user = users(:julie)
+    @user.add_role :user
+    @user.add_role :ta, @course
+    sign_in @user
+
+    get course_path(@course)
+    assert_response :success
+  end
 
   test "TAs should not be able to view other courses they are not the TA of " do
     @user = users(:julie)
+    @user.add_role :user
     @user.add_role :ta, @course
     sign_in @user
     
-
-    get course_url(@course)
+    get course_url(@course2)
     assert_redirected_to root_url
   end
 
   test "TAs should not have access to the Manage TAs page" do
     @user = users(:julie)
+    @user.add_role :user
     @user.add_role :ta, @course
     sign_in @user
 
     get course_view_ta_path(@course)
     assert_redirected_to root_url
 
+  end
+
+  test "TAs should not be allowed to delete courses" do
+    @user = users(:julie)
+    @user.add_role :user
+    @user.add_role :ta, @course
+    sign_in @user
+
+    assert_difference('Course.count', 0) do
+      delete course_url(@course)
+    end
+
+    assert_redirected_to root_url
   end
 
 

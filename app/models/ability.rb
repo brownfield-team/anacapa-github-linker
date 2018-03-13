@@ -6,10 +6,17 @@ class Ability
 
     # https://github.com/RolifyCommunity/rolify/wiki/Devise---CanCanCan---rolify-Tutorial
     # see this tutorial for information about the Devise--CanCanCan--rolify stack
-    if user.has_role? :admin
-      # manage = perform any action
-      # all = on everything
-      can :manage, :all
+
+    if user.has_role? :user
+      can :read, Course, id: Course.with_role(:ta, user).pluck(:id)
+
+      #TAs can create, read or update students that are part of a course they are a TA of
+      can :manage, RosterStudent, course_id: Course.with_role(:ta, user).pluck(:id)
+      cannot :destroy, RosterStudent
+      cannot [:view_ta, :update_ta], Course
+      can [:join, :leave], Course
+      can :index, Course
+      can :show, Course, :id => user.courses.pluck(:id)
     end
     if user.has_role? :instructor
       can :create, Course
@@ -20,16 +27,13 @@ class Ability
       # can [:manage], RosterStudent, :parent => Course.with_role(:instructor, user)
       can :manage, RosterStudent
     end
-    if user.has_role? :user
-      can :read, Course, id: Course.with_role(:ta, user).pluck(:id)
-
-      #TAs can create, read or update students that are part of a course they are a TA of
-      can [:show, :index, :update, :import, :edit], RosterStudent, course_id: Course.with_role(:ta, user).pluck(:id)
-
-      can [:join, :leave], Course
-      can :index, Course
-      can :show, Course, :id => user.courses.pluck(:id)
+    if user.has_role? :admin
+      # manage = perform any action
+      # all = on everything
+      can :manage, :all
     end
+
+    
 
     # Define abilities for the passed in user here. For example:
     #

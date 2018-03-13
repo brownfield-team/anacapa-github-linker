@@ -101,8 +101,23 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to course_path(@roster_student.course_id)
   end
 
+  test "Instructors should be able to destroy their own roster students" do
+    @user = users(:julie)
+    @user.add_role :user
+    @user.add_role :instructor
+    @user.add_role :instructor, @course
+    sign_in @user
+
+    assert_difference('RosterStudent.count', -1) do
+      delete course_roster_student_path(@roster_student.course_id, @roster_student.id)
+    end
+
+    assert_redirected_to course_path(@roster_student.course_id)
+  end
+
   test "TAs should not be able to create new roster_students" do
     @user = users(:julie)
+    @user.add_role :user
     @user.add_role :ta, @course
     sign_in @user
 
@@ -120,8 +135,52 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
   end
 
+  test "TAs should be able to update their own roster_students" do
+    @user = users(:julie)
+    @user.add_role :user
+    @user.add_role :ta, @course
+    sign_in @user
+
+    patch course_roster_student_path(
+      :course_id=> @roster_student.course_id,
+      :id=> @roster_student.id,
+      params: {
+        roster_student: {
+          email: @roster_student.email,
+          first_name: @roster_student.first_name,
+          last_name: @roster_student.last_name,
+          perm: @roster_student.perm
+        }
+      }
+    )
+    assert_redirected_to course_path(@roster_student.course_id)
+  end
+
+
+  test "TAs should be not be able to update other course's roster_students" do
+    @user = users(:julie)
+    @user.add_role :user
+    @user.add_role :ta, @courrse
+    sign_in @user
+
+    patch course_roster_student_path(
+      :course_id=> @roster_student.course_id,
+      :id=> @roster_student.id,
+      params: {
+        roster_student: {
+          email: @roster_student.email,
+          first_name: @roster_student.first_name,
+          last_name: @roster_student.last_name,
+          perm: @roster_student.perm
+        }
+      }
+    )
+    assert_redirected_to root_url
+  end
+
   test "TAs should not be allowed to delete roster_students" do
     @user = users(:julie)
+    @user.add_role :user
     @user.add_role :ta, @course
     sign_in @user
 
