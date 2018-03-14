@@ -15,7 +15,7 @@
   ### Machine user and application key setup
   1. Create a new Github account. This account will act as the machine user for this application, and will be the user that handles interactions with the GitHub API that require verification (inviting to organizations, editting repos, etc.).
     - __NOTE:__ GitHub has a policy of limiting each human user to one machine user. Violating this rule violates their terms of service.
-  2. Using either the machine user or another trusted GitHub account, visit [Developer Settings](https://github.com/settings/developers) under the user's Settings.  
+  2. Using the machine user visit [Developer Settings](https://github.com/settings/developers) under the user's Settings.  
     - Here you can create a new OAuth application (this one), and get the keys necessary for this application to interact with the GitHub API.
     - The application callback url will be `https://insert-your-heroku-app-link-here/users/auth/github/callback`
   
