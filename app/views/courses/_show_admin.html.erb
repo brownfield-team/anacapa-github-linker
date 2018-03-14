@@ -76,7 +76,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Specify Column Headers</h4>
       </div>
-      <div class="modal-body"  style="overflow: auto; white-space: nowrap;">
+      <div class="modal-body" style="overflow: auto; white-space: nowrap;">
         <p>
           <input type="checkbox" id="first-row-is-header" onchange="headerToggle(this)"> First column is a header
         </p>
@@ -84,6 +84,8 @@
           <thead>
             <!-- dyn populated by JS file for this controller -->
           </thead>
+          <tbody>
+          </tbody>
         </table>
       </div>
       <div class="modal-footer">
