@@ -28,9 +28,7 @@ $( document ).ready(function() {
                  "</td>";
             
            var counter = parsedFile.length;
-           if (counter > 3){
-            counter = 3;
-           }
+
 
            //Assumes every row has the same length
             for(var j = 0; j < parsedFile[0].length; j++){
