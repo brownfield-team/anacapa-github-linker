@@ -6,6 +6,7 @@ class CoursesController < ApplicationController
   # GET /courses.json
   def index
     @courses = Course.all
+    # puts "machine user: #{Octokit.emails}"
   end
 
   # GET /courses/1
@@ -77,8 +78,8 @@ class CoursesController < ApplicationController
 
   def join
     course = Course.find(params[:course_id])
-
     roster_student = course.roster_students.find_by(email: current_user.email)
+
     if not roster_student.nil?
       roster_student.update_attribute(:enrolled, true)
       current_user.roster_students.push(roster_student)
@@ -103,5 +104,9 @@ class CoursesController < ApplicationController
 
     def add_instructor(id)
       current_user.add_role :instructor, Course.find(id)
+    end
+
+    def user_emails
+      Octokit::Client.new :access_token => session[:token]
     end
 end
