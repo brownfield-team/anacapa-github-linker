@@ -17,8 +17,8 @@ $( document ).ready(function() {
  
            var dropdownHtml = 
                  "<td>" + 
-                        "<select index='%i%' class='form-control'>" +
-                         "<option value='ignore' >-- select --</option>" +
+                    "<select index='%i%' class='form-control input-sm' style='width: auto; font-weight: bold;'>" +
+                         "<option value='select' >-- select --</option>" +
                          "<option value='full_name' >Full Name</option>" +
                          "<option value='first_name' >First Name</option>" +
                          "<option value='last_name' >Last Name</option>" +
@@ -28,12 +28,10 @@ $( document ).ready(function() {
                  "</td>";
             
            var counter = parsedFile.length;
-           if (counter > 3){
-            counter = 3;
-           }
 
            //Assumes every row has the same length
             for(var j = 0; j < parsedFile[0].length; j++){
+
 
                 var newRow = "<tr>"
                 var rowSize = 0;
