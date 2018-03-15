@@ -90,12 +90,6 @@ class CoursesController < ApplicationController
     end
   end
 
-  def leave
-    roster_student = Course.find(params[:course_id]).roster_students.find_by(email: current_user.email)
-    roster_student.update_attribute(:enrolled, false)
-    redirect_to courses_path
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course

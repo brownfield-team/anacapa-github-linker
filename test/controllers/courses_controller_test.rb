@@ -163,21 +163,6 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
   end
 
-  test "roster student can leave class" do
-    
-    @course.roster_students.push(roster_students(:roster1))
-    @user.roster_students.push(roster_students(:roster1))
-
-    assert_difference('@user.roster_students.count', 0) do
-      assert_difference('@course.roster_students.count', 0) do
-        assert_difference('@course.roster_students.where(enrolled: true).count',-1) do
-          post course_leave_path(course_id: @course.id)
-        end
-      end
-    end
-
-    assert_redirected_to courses_url
-  end
 
   test "an instructor should be able to promote a roster student to a TA" do
     user_julie = users(:julie)
