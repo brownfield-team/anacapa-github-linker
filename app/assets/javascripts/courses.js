@@ -32,7 +32,8 @@ $( document ).ready(function() {
            //Assumes every row has the same length
             for(var j = 0; j < parsedFile[0].length; j++){
 
-                var newRow = '<tr>'
+
+                var newRow = "<tr>"
                 var rowSize = 0;
                 newRow += dropdownHtml.replace('%i%', j)
                 for(var i = 0; i < counter; i++){

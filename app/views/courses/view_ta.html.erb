@@ -1,0 +1,62 @@
+<h1>TAs</h1>
+
+<div class="row">
+  <!-- <div class="col-sm-12">
+    <h3> Current TAs </h3>
+
+  </div> -->
+
+  <div class="col-sm-12">
+      <%# search the course list %>
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">Name</span>
+        <input id="users_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">
+      </div>
+    <%# table containing the course list %>
+    <table class="table table-sm" id="course_list">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>TA</th>
+          <th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @course.roster_students.each do |student| %>
+          <tr>
+            <td><%= "#{student.first_name} #{student.last_name}" %></td>
+
+            <% if student.user.blank? %>
+              <td>Cannot manage this student's TA status until he/she joins this course</td>
+            <% else %>
+              <td><%= (student.user.has_role? :ta, @course) ? "True" : "False" %></td>
+                <% if student.user.has_role? :ta, @course %>
+                  <td><%= link_to 'Remove TA', course_update_ta_path(@course, user_id: student.user.id), method: :post %></td>
+                <% else %>
+                  <td><%= link_to 'Promote to TA', course_update_ta_path(@course, user_id: student.user.id), method: :post %></td>
+                <% end %>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<script>
+function filter_list_by_keyword() {
+  var keyword = $("#users_search").val().toLowerCase();
+  console.log("search for: " + keyword);
+  $("#course_list tr").each(function(element) {
+    var text = $(this).text();
+    if (text.toLowerCase().indexOf(keyword) === -1) {
+      $(this).hide();
+    } else {
+      $(this).show();
+    }
+  });
+}
+</script>
+
+<%= link_to 'Back to Course', course_path(@course), :class => "btn btn-outline-secondary" %>

@@ -26,10 +26,9 @@ class CoursesController < ApplicationController
   # POST /courses.json
   def create
     @course = Course.new(course_params)
-    add_instructor
-
     respond_to do |format|
       if @course.save
+        add_instructor(@course.id)
         @course.accept_invite_to_course_org
         format.html { redirect_to @course, notice: 'Course was successfully created.' }
         format.json { render :show, status: :created, location: @course }
@@ -64,6 +63,18 @@ class CoursesController < ApplicationController
     end
   end
 
+  def view_ta
+    @course = Course.find(params[:course_id])
+  end
+
+  def update_ta
+    course = Course.find(params[:course_id])
+    user = User.find(params[:user_id])
+    user.change_ta_status(course)
+    redirect_to course_view_ta_path(course), notice: %Q[Successfully modified #{user.name}'s TA status]
+
+  end
+
   def join
     course = Course.find(params[:course_id])
 
@@ -79,12 +90,6 @@ class CoursesController < ApplicationController
     end
   end
 
-  def leave
-    roster_student = Course.find(params[:course_id]).roster_students.find_by(email: current_user.email)
-    roster_student.update_attribute(:enrolled, false)
-    redirect_to courses_path
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course
@@ -96,7 +101,7 @@ class CoursesController < ApplicationController
       params.require(:course).permit(:name,:course_organization)
     end
 
-    def add_instructor
-      current_user.add_role :instructor, @course
+    def add_instructor(id)
+      current_user.add_role :instructor, Course.find(id)
     end
 end

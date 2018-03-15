@@ -3,7 +3,7 @@ and render differently depending on whether or not the user is privlidged %>
 
 
 <h1>Course List</h1>
-<% if can? :create, Course %>
+<% if current_user.has_role? :admin or current_user.has_role? :instructor %>
   <p>Welcome <%= rolename() %>. To manage your courses go to the home page and select the
   course you would like to manage from the list of courses you
   have access to. From this view you can create, edit, or delete 
@@ -17,7 +17,7 @@ and render differently depending on whether or not the user is privlidged %>
 <% end %>
 
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm-6">
       <%# search the course list %>
       <div class="input-group">
         <span class="input-group-addon" id="basic-addon1">Course Name</span>
@@ -37,7 +37,7 @@ and render differently depending on whether or not the user is privlidged %>
           <tr>
             <td>
               <%= 
-                if can? :manage, course
+                if can? :read, course
                   link_to "#{course.name}", course_path(course)
                 else
                   course.name
@@ -46,20 +46,17 @@ and render differently depending on whether or not the user is privlidged %>
                 
             </td>
 
-            <% if can? :update, course or can? :destroy, course %>
+            <% if can? :update, course or can? :delete, course %>
               <%# they are an administrator on this course, show admin options %>
               <td>
-              <% if can? :delete, course %> 
-                <%= link_to 'Edit', edit_course_path(course), class: 'btn btn-sm'%>
-              <% end %>
-              <% if can? :update, course %>
-                <%= link_to 'Delete', course, method: :delete, data: { confirm: "Are you sure you want to PERMANENTLY DELETE '#{course.name}'?"}, class: 'btn btn-danger btn-sm'%>
+              <% if can? :delete, course %>
+                <%= link_to 'Delete', course_path(course), method: :delete, data: { confirm: "Are you sure you want to PERMANENTLY DELETE '#{course.name}'?"}, class: 'btn btn-danger btn-sm'%>
               <% end %>
               </td>
             <% else %>
               <%# otherwise they behave as a normal student, show student options. %>
               <% if course.roster_students.any? {|student| student.user_id == current_user.id and student.enrolled} %>
-                <td><%= link_to 'Leave', course_leave_path(:course_id => course.id), method: :post, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %></td>
+                <td>You have already joined this course</td>
               <% else%>
                 <td><%= link_to 'Join', course_join_path(:course_id => course.id), method: :post, class: 'btn btn-info btn-sm' %></td>
               <% end %>
