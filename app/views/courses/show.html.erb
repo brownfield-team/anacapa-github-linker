@@ -2,7 +2,7 @@
 
 <hr>
 
-<% if current_user.can? :manage, @course %>
+<% if current_user.can? :read, @course %>
   <%= render 'show_admin', course: Course.new %>
 <% elsif current_user.can? :show, @course %>
   <%= render 'show_student', course: Course.new %>

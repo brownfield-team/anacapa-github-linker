@@ -14,7 +14,8 @@ Rails.application.routes.draw do
   # post 'courses/:course_id/leave' => 'courses#leave', :as => :leave_course
   resources :courses do
     post :join
-    post :leave
+    get :view_ta
+    post :update_ta 
     scope module: :courses do
       resources :roster_students do
         collection do
