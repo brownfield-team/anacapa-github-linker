@@ -33,7 +33,7 @@
       <% end %>
 
       <%= link_to "Download Roster as CSV", course_roster_students_path(@course, :format => "csv"), method: :get, class: "btn", style: "display:inline-block; float: right; margin-left: 10px;" %>
-      <% if can? :manage, @course %>
+      <% if can? :create, RosterStudent %>
         <%= link_to 'New Student', new_course_roster_student_path(@course), class: "btn", style: "display: inline-block; float: right; margin-left: 10px;" %>
       <% end %>
       <% if can? :update_ta, @course %>

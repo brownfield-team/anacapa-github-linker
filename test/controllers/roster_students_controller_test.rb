@@ -156,24 +156,26 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
   end
 
-  test "TAs should not be able to create new roster_students" do
+  test "TAs should be able to create new roster_students" do
     @user = users(:julie)
     @user.add_role :user
     @user.add_role :ta, @course
     sign_in @user
 
-    post course_roster_students_path(
-        course_id: @course.id,
-        params: {
-          roster_student: {
-            email: "email@test.email.com",
-            first_name: "Jon",
-            last_name: "Snow",
-            perm: 293847823795
+    assert_difference('RosterStudent.count', 1) do
+      post course_roster_students_path(
+          course_id: @course.id,
+          params: {
+            roster_student: {
+              email: "email@test.email.com",
+              first_name: "Jon",
+              last_name: "Snow",
+              perm: 293847823795
+            }
           }
-        }
-      )
-    assert_redirected_to root_url
+        )
+    end
+    assert_redirected_to  course_path(@roster_student.course_id)
   end
 
   test "TAs should be able to update their own roster_students" do
@@ -267,20 +269,7 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
     sign_in @user
 
     assert_difference('RosterStudent.count', 0) do
-      
       delete course_roster_student_path(@roster_student.course_id, @roster_student.id)
-
-      post course_roster_students_path(
-        course_id: @course.id,
-        params: {
-          roster_student: {
-            email: "email@test.email.com",
-            first_name: "Jon",
-            last_name: "Snow",
-            perm: 293847823795
-          }
-        }
-      )
     end
 
     assert_redirected_to root_url
