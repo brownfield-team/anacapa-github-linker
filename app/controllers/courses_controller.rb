@@ -66,10 +66,13 @@ class CoursesController < ApplicationController
 
   def view_ta
     @course = Course.find(params[:course_id])
+    authorize! :view_ta, @course
   end
 
   def update_ta
     course = Course.find(params[:course_id])
+    authorize! :update_ta, course
+    
     user = User.find(params[:user_id])
     user.change_ta_status(course)
     redirect_to course_view_ta_path(course), notice: %Q[Successfully modified #{user.name}'s TA status]
@@ -118,7 +121,7 @@ class CoursesController < ApplicationController
       # puts "#{session_user.user}"
       
       session_user.emails.each do |email|
-        puts "EMAIL+++++JI+++++++++++++++++#{email[:email]}"
+        # puts "EMAIL+++++JI+++++++++++++++++#{email[:email]}"
         roster_student = email_to_student[email[:email]]
         if roster_student
           return roster_student
