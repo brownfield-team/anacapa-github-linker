@@ -141,6 +141,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   test "user can join class if roster student exists" do
     stub_find_user_in_org(@user.username, @course.course_organization, false)
     stub_invite_user_to_org(@user.username, @course.course_organization)
+    stub_check_user_emails(@user.email)
     assert_difference('@user.roster_students.count', 1) do
       post course_join_path(course_id: @course.id)
     end
@@ -152,7 +153,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     user_julie = users(:julie)
     sign_in user_julie
     user_julie.add_role(:user)
-
+    stub_check_user_emails(user_julie.email)
     assert_difference('@course.roster_students.count', 0) do
       assert_difference('user_julie.roster_students.count', 0) do
         post course_join_path(course_id: @course.id)

@@ -6,7 +6,7 @@ class CoursesController < ApplicationController
   # GET /courses.json
   def index
     @courses = Course.all
-    # puts "machine user: #{Octokit.emails}"
+    puts "+++++++current user: #{session_user.emails}"
   end
 
   # GET /courses/1
@@ -78,8 +78,8 @@ class CoursesController < ApplicationController
 
   def join
     course = Course.find(params[:course_id])
-    roster_student = course.roster_students.find_by(email: current_user.email)
-
+    # roster_student = course.roster_students.find_by(email: current_user.email)
+    roster_student = cross_check_user_emails_with_class(course)
     if not roster_student.nil?
       roster_student.update_attribute(:enrolled, true)
       current_user.roster_students.push(roster_student)
@@ -106,7 +106,25 @@ class CoursesController < ApplicationController
       current_user.add_role :instructor, Course.find(id)
     end
 
-    def user_emails
-      Octokit::Client.new :access_token => session[:token]
+    def session_user
+      client = Octokit::Client.new :access_token => session[:token]
     end
+
+    def cross_check_user_emails_with_class(course)
+      email_to_student = Hash.new
+      course.roster_students.each do |student|
+        email_to_student[student.email] = student
+      end
+      # puts "#{session_user.user}"
+      
+      session_user.emails.each do |email|
+        puts "EMAIL+++++JI+++++++++++++++++#{email[:email]}"
+        roster_student = email_to_student[email[:email]]
+        if roster_student
+          return roster_student
+        end
+      end
+      return nil
+    end
+
 end
