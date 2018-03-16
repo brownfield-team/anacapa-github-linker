@@ -4,9 +4,19 @@
       <%=github_profile_img_for current_user%>
       <span class="caret"></span>
     </a>
+    <%
+    role = "User"
+    if current_user.has_role?(:admin)
+      role = "Admin"
+    elsif current_user.has_role?(:instructor)
+      role = "Instructor"
+    elsif current_user.has_role?(:ta)
+      role = "TA"
+    end 
+    %>
     <ul class="dropdown-menu">
-      <li class="dropdown-header">Signed in as <%=current_user.roles.first.name.titleize %></li>
-      <li class="dropdown-item" style="margin-left:1.5em"><p><b><%= current_user.username %></b></p></li>
+      <li class="dropdown-header">Signed in as <%=role%></li>
+      <li class="dropdown-item" style="margin-left:1.5em;"><p><b><%= current_user.username %></b></p></li>
       <li role="separator" class="divider"></li>
       <li class="dropdown-item"><a href="https://github.com/<%= current_user.username %>">GitHub Profile</a></li>
       <li class="dropdown-item"><%= link_to 'Log out', signout_path, method: :get %></li>
