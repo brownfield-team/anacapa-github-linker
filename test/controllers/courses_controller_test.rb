@@ -78,7 +78,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
 
-  test "if org doesn't exist course should not be created and show why" do 
+  test "if org doesn't exist, course should not be created and show why" do 
     fake_org_name = "not-a-real-org"
     stub_organization_does_not_exist(fake_org_name)
     assert_difference('Course.count', 0) do
@@ -164,7 +164,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to courses_url
-    assert_equal "Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verrified your email address. ", flash[:alert]
+    assert_equal "Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verified your email address. ", flash[:alert]
 
   end
 
@@ -181,6 +181,20 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     post course_update_ta_path(@course, user_id: user_julie.id )
     assert user_julie.has_role? :ta, @course
     assert_redirected_to course_view_ta_path(@course)
+  end
+
+  test "an instructor cannot promote a roster student to TA if the student is from a different course" do
+    user_julie = users(:julie)
+    user_julie.add_role(:user)
+
+    user = users(:tim)
+    user.add_role(:instructor)
+    user.add_role(:instructor, @course2)
+    sign_in user
+
+    post course_update_ta_path(@course, user_id: user_julie.id )
+    assert_not user_julie.has_role? :ta, @course
+    assert_redirected_to root_url
   end
 
   test "an instructor should be able to remove TA status from a roster student" do
@@ -270,7 +284,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
   end
 
-  test "users should not be able to delete courses" do
+  test "users should not be able to delete any courses" do
     @user = users(:julie)
     @user.add_role(:user)
     sign_in @user
@@ -281,6 +295,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to root_url
   end
+
 
   test "TAs should be able to view courses that they are TA of" do
     @user = users(:julie)
@@ -309,6 +324,21 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     sign_in @user
 
     get course_view_ta_path(@course)
+    assert_redirected_to root_url
+
+  end
+
+  test "TAs should not be able to promote a roster student to a TA" do
+    @user = users(:julie)
+    @user.add_role :user
+    @user.add_role :ta, @course
+    sign_in @user
+
+    tim = users(:tim)
+    tim.add_role(:user)
+
+    post course_update_ta_path(@course, user_id: tim.id )
+    assert_not tim.has_role? :ta, @course
     assert_redirected_to root_url
 
   end

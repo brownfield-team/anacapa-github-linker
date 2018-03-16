@@ -72,7 +72,7 @@ class CoursesController < ApplicationController
   def update_ta
     course = Course.find(params[:course_id])
     authorize! :update_ta, course
-    
+
     user = User.find(params[:user_id])
     user.change_ta_status(course)
     redirect_to course_view_ta_path(course), notice: %Q[Successfully modified #{user.name}'s TA status]
@@ -89,7 +89,7 @@ class CoursesController < ApplicationController
       redirect_to courses_path, notice: %Q[You were successfully enrolled in #{course.name}! View you invitation <a href="https://github.com/orgs/#{course.course_organization}/invitation">here</a>.]
       course.invite_user_to_course_org(current_user)
     else
-      message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verrified your email address. '
+      message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verified your email address. '
       redirect_to courses_path, alert: message
     end
   end
