@@ -44,6 +44,7 @@ GEM
     autoprefixer-rails (7.2.5)
       execjs
     bcrypt (3.1.11)
+    bcrypt (3.1.11-x86-mingw32)
     bindex (0.5.0)
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
@@ -86,6 +87,7 @@ GEM
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.18)
+    ffi (1.9.18-x86-mingw32)
     font-awesome-rails (4.7.0.3)
       railties (>= 3.2, < 5.2)
     globalid (0.4.1)
@@ -121,6 +123,8 @@ GEM
     nio4r (2.2.0)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
+    nokogiri (1.8.2-x86-mingw32)
+      mini_portile2 (~> 2.3.0)
     oauth2 (1.4.0)
       faraday (>= 0.8, < 0.13)
       jwt (~> 1.0)
@@ -143,6 +147,7 @@ GEM
       omniauth (~> 1.2)
     orm_adapter (0.5.0)
     pg (0.21.0)
+    pg (0.21.0-x86-mingw32)
     public_suffix (3.0.1)
     puma (3.11.2)
     rack (2.0.4)
@@ -222,6 +227,8 @@ GEM
     turbolinks-source (5.1.0)
     tzinfo (1.2.4)
       thread_safe (~> 0.1)
+    tzinfo-data (1.2018.3)
+      tzinfo (>= 1.0.0)
     uglifier (4.1.6)
       execjs (>= 0.3.0, < 3)
     warden (1.2.7)
@@ -243,6 +250,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86-mingw32
 
 DEPENDENCIES
   bootstrap-sass (~> 3.3.7)

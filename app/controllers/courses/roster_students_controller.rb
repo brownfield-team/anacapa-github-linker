@@ -7,7 +7,8 @@ module Courses
     before_action :load_parent
     before_action :set_roster_student, only: [:show, :edit, :update, :destroy]
     
-    load_and_authorize_resource
+    load_and_authorize_resource :course
+    load_and_authorize_resource :roster_student, through: :course
 
     # GET /roster_students
     # GET /roster_students.json

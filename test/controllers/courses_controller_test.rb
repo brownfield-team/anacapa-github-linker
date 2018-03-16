@@ -39,7 +39,6 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "instructors should not be able to see other instructors view_ta page" do
-    skip
     users(:tim).add_role(:instructor)
     users(:tim).add_role(:instructor, @course)
     sign_in users(:tim)
@@ -246,8 +245,9 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "instructors should be allowed to delete their own courses" do
-    skip "test is correct"
     @user = users(:julie)
+    @user.add_role(:user)
+    @user.add_role(:instructor)
     @user.add_role(:instructor, @course2)
     sign_in @user
 
