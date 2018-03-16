@@ -1,6 +1,6 @@
 $( document ).ready(function() {
 
-    $("#file").on("change", function(e) {
+    document.addEventListener("change", function(e) {
  
          // when file is uploaded, grab it
          var selectedFile = e.target.files[0];
