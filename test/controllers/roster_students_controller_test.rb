@@ -101,6 +101,32 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to course_path(@roster_student.course_id)
   end
 
+  test "an instructor should be able to create a roster student for his class" do
+    user = users(:tim)
+    user.add_role(:user)
+    user.add_role(:instructor)
+    user.add_role(:instructor, @course)
+    sign_in user
+
+    assert_difference('RosterStudent.count',1) do
+      post course_roster_students_path(
+        course_id: @course.id,
+        params: {
+          roster_student: {
+            email: "email@test.email.com",
+            first_name: "Jon",
+            last_name: "Snow",
+            perm: 1337888
+          }
+        }
+      )
+    end
+
+    assert_redirected_to course_path(@course)
+
+
+  end
+
   test "Instructors should be able to destroy their own roster students" do
     @user = users(:julie)
     @user.add_role :user

@@ -11,8 +11,8 @@ class Ability
       can :read, Course, id: Course.with_role(:ta, user).pluck(:id)
 
       #TAs can create, read or update students that are part of a course they are a TA of
-      can :manage, RosterStudent, course_id: Course.with_role(:ta, user).pluck(:id)
-      cannot :destroy, RosterStudent
+      can [:read, :update, :show], RosterStudent, course_id: Course.with_role(:ta, user).pluck(:id)
+      cannot :destroy, :create, RosterStudent
       cannot [:view_ta, :update_ta], Course
       can [:join], Course
       can :index, Course
