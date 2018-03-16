@@ -39,28 +39,17 @@ and render differently depending on whether or not the user is privlidged %>
               <%= 
                 if can? :read, course
                   link_to "#{course.name}", course_path(course)
-                else
-                  course.name
                 end
-              %>
-                
+              %>  
             </td>
-
-            <% if can? :update, course or can? :delete, course %>
-              <%# they are an administrator on this course, show admin options %>
-              <td>
+            <td>
+              <% if can? :update, course %>
+                <%= link_to 'Edit', edit_course_path(course), class: 'btn btn-warning btn-sm'%>
+              <% end %>
               <% if can? :delete, course %>
                 <%= link_to 'Delete', course_path(course), method: :delete, data: { confirm: "Are you sure you want to PERMANENTLY DELETE '#{course.name}'?"}, class: 'btn btn-danger btn-sm'%>
               <% end %>
-              </td>
-            <% else %>
-              <%# otherwise they behave as a normal student, show student options. %>
-              <% if course.roster_students.any? {|student| student.user_id == current_user.id and student.enrolled} %>
-                <td>You have already joined this course</td>
-              <% else%>
-                <td><%= link_to 'Join', course_join_path(:course_id => course.id), method: :post, class: 'btn btn-info btn-sm' %></td>
-              <% end %>
-            <% end %>
+            </td>
           </tr>
         <% end %>
       </tbody>
