@@ -16,37 +16,38 @@ $( document ).ready(function() {
            $("#upload-modal").modal();
  
            var dropdownHtml = 
-                 "<th>" + 
-                        "<select index='%i%' class='form-control'>" +
-                         "<option value='ignore' >-- select --</option>" +
+                 "<td>" + 
+                    "<select index='%i%' class='form-control input-sm' style='width: auto; font-weight: bold;'>" +
+                         "<option value='select' >-- select --</option>" +
                          "<option value='full_name' >Full Name</option>" +
                          "<option value='first_name' >First Name</option>" +
                          "<option value='last_name' >Last Name</option>" +
                          "<option value='perm' >Perm</option>" +
                          "<option value='email' >Email</option>" +
                      "</select>" +
-                 "</th>";
- 
-           for(var i = 0; i < parsedFile.length; i++) {
- 
-               var newRow = "<tr>";
-               var rowSize = 0;
- 
-               for(var j = 0; j < parsedFile[i].length; j++) {
-                   rowSize += parsedFile[i][j].length;
-                   newRow += ("<td>" + parsedFile[i][j] + "</td>");
-                   if (i == 0) {
-                       $("#upload-modal .table thead").append(dropdownHtml.replace('%i%', j));
-                   }
+                 "</td>";
+            
+           var counter = parsedFile.length;
+
+           //Assumes every row has the same length
+            for(var j = 0; j < parsedFile[0].length; j++){
+
+
+                var newRow = "<tr>"
+                var rowSize = 0;
+                newRow += dropdownHtml.replace('%i%', j)
+                for(var i = 0; i < counter; i++){
+
+                    rowSize += parsedFile[i].length;
+                    newRow += ("<td>" + parsedFile[i][j] + "</td>");
                }
- 
                newRow += "</tr>";
  
                  if (rowSize > 0) { // skip empty rows
                    $("#upload-modal .table").append(newRow);
                  }
- 
-           }
+            }   
+
  
          }
  

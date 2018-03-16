@@ -1,3 +1,4 @@
+require 'Octokit_Wrapper'
 class CoursesController < ApplicationController
   before_action :set_course, only: [:show, :edit, :update, :destroy]
   load_and_authorize_resource
@@ -26,10 +27,9 @@ class CoursesController < ApplicationController
   # POST /courses.json
   def create
     @course = Course.new(course_params)
-    add_instructor
-
     respond_to do |format|
       if @course.save
+        add_instructor(@course.id)
         @course.accept_invite_to_course_org
         format.html { redirect_to @course, notice: 'Course was successfully created.' }
         format.json { render :show, status: :created, location: @course }
@@ -64,25 +64,34 @@ class CoursesController < ApplicationController
     end
   end
 
+  def view_ta
+    @course = Course.find(params[:course_id])
+    authorize! :view_ta, @course
+  end
+
+  def update_ta
+    course = Course.find(params[:course_id])
+    authorize! :update_ta, course
+
+    user = User.find(params[:user_id])
+    user.change_ta_status(course)
+    redirect_to course_view_ta_path(course), notice: %Q[Successfully modified #{user.name}'s TA status]
+
+  end
+
   def join
     course = Course.find(params[:course_id])
-
-    roster_student = course.roster_students.find_by(email: current_user.email)
+    # roster_student = course.roster_students.find_by(email: current_user.email)
+    roster_student = cross_check_user_emails_with_class(course)
     if not roster_student.nil?
       roster_student.update_attribute(:enrolled, true)
       current_user.roster_students.push(roster_student)
       redirect_to courses_path, notice: %Q[You were successfully enrolled in #{course.name}! View you invitation <a href="https://github.com/orgs/#{course.course_organization}/invitation">here</a>.]
       course.invite_user_to_course_org(current_user)
     else
-      message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verrified your email address. '
+      message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verified your email address. '
       redirect_to courses_path, alert: message
     end
-  end
-
-  def leave
-    roster_student = Course.find(params[:course_id]).roster_students.find_by(email: current_user.email)
-    roster_student.update_attribute(:enrolled, false)
-    redirect_to courses_path
   end
 
   private
@@ -96,7 +105,27 @@ class CoursesController < ApplicationController
       params.require(:course).permit(:name,:course_organization)
     end
 
-    def add_instructor
-      current_user.add_role :instructor, @course
+    def add_instructor(id)
+      current_user.add_role :instructor, Course.find(id)
     end
+
+    def session_user
+      client = Octokit_Wrapper::Octokit_Wrapper.session_user(session[:token])
+    end
+
+    def cross_check_user_emails_with_class(course)
+      email_to_student = Hash.new
+      course.roster_students.each do |student|
+        email_to_student[student.email] = student
+      end
+      
+      session_user.emails.each do |email|
+        roster_student = email_to_student[email[:email]]
+        if roster_student
+          return roster_student
+        end
+      end
+      return nil
+    end
+
 end

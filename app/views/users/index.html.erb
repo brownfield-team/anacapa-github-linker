@@ -1,7 +1,11 @@
 <h1>Users</h1>
 
+<p>
+  You can promote users to either admins or Instructors. If you promote a user to an Instructor, then that use will be able to create courses.
+  NOTE: If you remove a user's instructor status, he/she will permanently lose access to all his/her courses.
+</p>
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm-12">
       <%# search the course list %>
       <div class="input-group">
         <span class="input-group-addon" id="basic-addon1">User Name</span>
@@ -12,28 +16,44 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Role</th>
-          <th>Select</th>
-          <th colspan="3"></th>
+          <th>Admin</th>
+          <th></th>
+          <th>Instructor</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <% @users.each do |user| %>
           <tr>
             <td><%= user.name %></td>
-            <td><%= user.get_role.titleize%></td>
-            <td style="white-space:nowrap;">
-              <%= form_for user do |f| %>
+            <td><%= (user.has_role? :admin) ? "True" : "False" %></td>
+              <td>
+                <%= form_for user do |f| %>
+                  <% 
+                    if user.has_role? :admin 
+                      submit_text = "Remove Admin Status"
+                    else
+                      submit_text = "Make Admin"
+                    end
+                  %>
 
-                <%= f.select :roles, options_for_select(
-                [[user.get_role.titleize, user.get_role],
-                ["Admin", :admin],
-                ["Instructor", :instructor],
-                ["User", :user]])%>
+                  <%= f.submit "#{submit_text}" %>
+                <% end %>
+              </td>
+              <td><%= (user.has_role? :instructor) ? "True" : "False" %></td>
+              <td>
+                <%= form_for user do |f| %>
+                  <% 
+                    if user.has_role? :instructor 
+                      submit_text = "Remove Instructor Status"
+                    else
+                      submit_text = "Make Instructor"
+                    end
+                  %>
 
-                <%= f.submit %>
-              <% end %>
-            </td>
+                  <%= f.submit "#{submit_text}" %>
+                <% end %>
+              </td>
           </tr>
         <% end %>
       </tbody>
