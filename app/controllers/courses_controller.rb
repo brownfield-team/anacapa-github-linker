@@ -1,3 +1,4 @@
+require 'Octokit_Wrapper'
 class CoursesController < ApplicationController
   before_action :set_course, only: [:show, :edit, :update, :destroy]
   load_and_authorize_resource
@@ -6,7 +7,6 @@ class CoursesController < ApplicationController
   # GET /courses.json
   def index
     @courses = Course.all
-    puts "+++++++current user: #{session_user.emails}"
   end
 
   # GET /courses/1
@@ -107,7 +107,7 @@ class CoursesController < ApplicationController
     end
 
     def session_user
-      client = Octokit::Client.new :access_token => session[:token]
+      client = Octokit_Wrapper::Octokit_Wrapper.session_user(session[:token])
     end
 
     def cross_check_user_emails_with_class(course)

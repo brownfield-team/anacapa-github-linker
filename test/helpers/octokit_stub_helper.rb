@@ -37,7 +37,7 @@ module OctokitStubHelper
   end
   
   def stub_check_user_emails(email)
-    stub_request(:get, "https://api.github.com/user/emails?per_page=100").
+    stub_request(:get, "https://api.github.com/user/emails").
       with(  headers: {
         'Accept'=>'application/vnd.github.v3+json',
         'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
