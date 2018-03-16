@@ -43,7 +43,9 @@ module OctokitStubHelper
         'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
         'Content-Type'=>'application/json',
         'User-Agent'=>'Octokit Ruby Gem 4.8.0'
-        }).to_return(status: 200, body: octokit_get_emails(email), headers: {})
+        }).to_return(status: 200, 
+                      body: octokit_get_emails(email), 
+                      headers: {'Content-Type'=>'application/json'})
   end
 
   def stub_invite_user_to_org(github_id, org_name)

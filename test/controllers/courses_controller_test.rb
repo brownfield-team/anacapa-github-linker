@@ -129,7 +129,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "user will not be reinvited if already in org" do
-    skip
+    
     stub_find_user_in_org(@user.username, @course.course_organization, true)
     stub_check_user_emails(@user.email)
     assert_difference('@user.roster_students.count', 1) do
@@ -141,7 +141,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "user can join class if roster student exists" do
-    skip
+    
     stub_find_user_in_org(@user.username, @course.course_organization, false)
     stub_invite_user_to_org(@user.username, @course.course_organization)
     stub_check_user_emails(@user.email)
@@ -153,7 +153,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "roster student can NOT join class if NOT on class roster" do
-    skip
+    
     user_julie = users(:julie)
     sign_in user_julie
     user_julie.add_role(:user)
