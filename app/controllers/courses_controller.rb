@@ -118,10 +118,8 @@ class CoursesController < ApplicationController
       course.roster_students.each do |student|
         email_to_student[student.email] = student
       end
-      # puts "#{session_user.user}"
       
       session_user.emails.each do |email|
-        # puts "EMAIL+++++JI+++++++++++++++++#{email[:email]}"
         roster_student = email_to_student[email[:email]]
         if roster_student
           return roster_student
