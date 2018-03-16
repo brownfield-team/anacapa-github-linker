@@ -13,22 +13,70 @@
   <% elsif current_user.has_role? :user %>
     <h1> Welcome Student </h1>
     <p> If you are looking to enroll in a course head over to the <%= link_to 'courses', courses_path %> page.
-    Otherwise you can find a list of courses you are enrolled in below.
+    Otherwise you can find a list of courses you are enrolled in below. </p>
   <% end %>
 
+  <p>Note: You can manage a class with a blue name</p>
   <div class="row">
-    <div class="col-sm-6">
-      <ul class="list-group">
-        <% current_user.courses.each do |course| %>
-          <% if can? :manage, course %>
-            <%= link_to course.name, course, method: :get, class: "list-group-item justify-content-between list-group-item-info"%>
-          <% else %>
-            <%= link_to course.name, course, method: :get, class: "list-group-item justify-content-between"%>
-          <% end %>
+  <div class="col-sm-6">
+      <%# search the course list %>
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">Course Name</span>
+        <input id="courses_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">
+      </div>
+
+    <%# table containing the course list %>
+    <table class="table table-sm" id="course_list">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th colspan="2"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @courses.each do |course| %>
+          <tr>
+            <td>
+              <%= 
+                if can? :mange, course
+                  link_to "#{course.name}", course_path(course),class: "list-group-item justify-content-between list-group-item-info"
+                elsif can? :read, course
+                  link_to "#{course.name}", course_path(course),class: "list-group-item justify-content-between"
+                else
+                  course.name
+                end
+              %>
+                
+            </td>
+              <%# otherwise they behave as a normal student, show student options. %>
+            <% if course.roster_students.any? {|student| student.user_id == current_user.id and student.enrolled} %>
+              <td>You have already joined this course</td>
+            <% else%>
+              <td><%= link_to 'Join', course_join_path(:course_id => course.id), method: :post, class: 'btn btn-info btn-sm' %></td>
+            <% end %>
+          </tr>
         <% end %>
-      </ul>
-    </div>
+      </tbody>
+    </table>
   </div>
-  <p>Note that if you see a class with a green name it means you can manage the class</p>
+</div>
+
+<script>
+
+function filter_list_by_keyword() {
+  var keyword = $("#courses_search").val().toLowerCase();
+  console.log("search for: " + keyword);
+  $("#course_list tr").each(function(element) {
+    var text = $(this).text();
+    if (text.toLowerCase().indexOf(keyword) === -1) {
+      $(this).hide();
+    } else {
+      $(this).show();
+    }
+  });
+}
+</script>
+
+<br>
   
 <%end%>
