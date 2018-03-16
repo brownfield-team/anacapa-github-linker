@@ -1,0 +1,20 @@
+[
+  {
+    "email": "wesleypeery+anacapa-throwaway@gmail.com",
+    "primary": true,
+    "verified": true,
+    "visibility": "private"
+  },
+  {
+    "email": "32622613+anacapa-throwaway@users.noreply.github.com",
+    "primary": false,
+    "verified": true,
+    "visibility": null
+  },
+  {
+    "email": "user_email",
+    "primary":false,
+    "verified":true,
+    "visibility":null
+  }
+]

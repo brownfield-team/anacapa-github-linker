@@ -1,3 +1,4 @@
+require 'Octokit_Wrapper'
 class Course < ApplicationRecord
   # validates :name,  presence: true,
   #                   length: { minimum: 3 }
@@ -10,7 +11,7 @@ class Course < ApplicationRecord
   def org
     return @org if @org or @no_org
     begin
-      @org = Octokit.organization(course_organization)
+      @org = Octokit_Wrapper::Octokit_Wrapper.machine_user.organization(course_organization)
     rescue Octokit::NotFound 
       @no_org = true 
       @org = nil 
@@ -18,12 +19,12 @@ class Course < ApplicationRecord
   end 
 
   def accept_invite_to_course_org
-    Octokit.update_organization_membership(course_organization, {state: "active"})
+    Octokit_Wrapper::Octokit_Wrapper.machine_user.update_organization_membership(course_organization, {state: "active"})
   end
 
   def invite_user_to_course_org(user)
-    unless Octokit.organization_member?(course_organization, user.username)
-      Octokit.update_organization_membership(course_organization, {user: "#{user.username}", role: "member"})
+    unless Octokit_Wrapper::Octokit_Wrapper.machine_user.organization_member?(course_organization, user.username)
+      Octokit_Wrapper::Octokit_Wrapper.machine_user.update_organization_membership(course_organization, {user: "#{user.username}", role: "member"})
     end
   end
   
@@ -31,7 +32,7 @@ class Course < ApplicationRecord
     # NOTE: this is run as a validation step on creation and update for the organization
     if org then 
       begin 
-        membership = Octokit.organization_membership(course_organization)
+        membership = Octokit_Wrapper::Octokit_Wrapper.machine_user.organization_membership(course_organization)
         if membership.role != "admin" then 
           errors.add(:base, "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed.")
         end

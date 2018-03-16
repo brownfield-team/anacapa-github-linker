@@ -1,3 +1,4 @@
+require 'Octokit_Wrapper'
 class CoursesController < ApplicationController
   before_action :set_course, only: [:show, :edit, :update, :destroy]
   load_and_authorize_resource
@@ -6,7 +7,6 @@ class CoursesController < ApplicationController
   # GET /courses.json
   def index
     @courses = Course.all
-    # puts "machine user: #{Octokit.emails}"
   end
 
   # GET /courses/1
@@ -66,10 +66,13 @@ class CoursesController < ApplicationController
 
   def view_ta
     @course = Course.find(params[:course_id])
+    authorize! :view_ta, @course
   end
 
   def update_ta
     course = Course.find(params[:course_id])
+    authorize! :update_ta, course
+
     user = User.find(params[:user_id])
     user.change_ta_status(course)
     redirect_to course_view_ta_path(course), notice: %Q[Successfully modified #{user.name}'s TA status]
@@ -78,15 +81,15 @@ class CoursesController < ApplicationController
 
   def join
     course = Course.find(params[:course_id])
-    roster_student = course.roster_students.find_by(email: current_user.email)
-
+    # roster_student = course.roster_students.find_by(email: current_user.email)
+    roster_student = cross_check_user_emails_with_class(course)
     if not roster_student.nil?
       roster_student.update_attribute(:enrolled, true)
       current_user.roster_students.push(roster_student)
       redirect_to courses_path, notice: %Q[You were successfully enrolled in #{course.name}! View you invitation <a href="https://github.com/orgs/#{course.course_organization}/invitation">here</a>.]
       course.invite_user_to_course_org(current_user)
     else
-      message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verrified your email address. '
+      message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verified your email address. '
       redirect_to courses_path, alert: message
     end
   end
@@ -106,7 +109,25 @@ class CoursesController < ApplicationController
       current_user.add_role :instructor, Course.find(id)
     end
 
-    def user_emails
-      Octokit::Client.new :access_token => session[:token]
+    def session_user
+      client = Octokit_Wrapper::Octokit_Wrapper.session_user(session[:token])
     end
+
+    def cross_check_user_emails_with_class(course)
+      email_to_student = Hash.new
+      course.roster_students.each do |student|
+        email_to_student[student.email] = student
+      end
+      # puts "#{session_user.user}"
+      
+      session_user.emails.each do |email|
+        # puts "EMAIL+++++JI+++++++++++++++++#{email[:email]}"
+        roster_student = email_to_student[email[:email]]
+        if roster_student
+          return roster_student
+        end
+      end
+      return nil
+    end
+
 end

@@ -12,6 +12,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     def create_session_octokit(auth)
       token = auth.credentials.token
       session[:token] = token
+      puts token
       client = Octokit::Client.new :access_token => token
       session[:user_emails] = client.emails
     end
