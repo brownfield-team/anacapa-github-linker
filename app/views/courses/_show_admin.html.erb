@@ -24,9 +24,15 @@
       <% end %>
 
       <%= link_to "Download Roster as CSV", course_roster_students_path(@course, :format => "csv"), method: :get, class: "btn", style: "display:inline-block; float: right; margin-left: 10px;" %>
-      <%= link_to 'New Student', new_course_roster_student_path(@course), class: "btn", style: "display: inline-block; float: right; margin-left: 10px;" %>
-      <%= link_to "Manage TAs" , course_view_ta_path(@course), class: "btn", style: "display: inline-block; float: right; margin-left: 10px;"%>
-      <%= link_to 'Edit', edit_course_path(@course), class: 'btn'%>
+      <% if can? :manage, @course %>
+        <%= link_to 'New Student', new_course_roster_student_path(@course), class: "btn", style: "display: inline-block; float: right; margin-left: 10px;" %>
+      <% end %>
+      <% if can? :update_ta, @course %>
+        <%= link_to "Manage TAs" , course_view_ta_path(@course), class: "btn", style: "display: inline-block; float: right; margin-left: 10px;"%>
+      <% end %>
+      <% if can? :update, @course %>
+        <%= link_to 'Edit', edit_course_path(@course), class: 'btn'%>
+      <% end %>
 
     </div>
 
@@ -69,7 +75,9 @@
             <% end %>
             <td><%= link_to 'Show', course_roster_student_path(@course, student) %></td>
             <td><%= link_to 'Edit', edit_course_roster_student_path(@course, student) %></td>
-            <td><%= link_to 'Remove', course_roster_student_path(@course, student), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+            <% if can? :destroy, student %>
+              <td><%= link_to 'Remove', course_roster_student_path(@course, student), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+            <% end %>
           </tr>
         <% end %>
       </tbody>
