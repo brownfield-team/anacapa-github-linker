@@ -2,8 +2,9 @@
 and render differently depending on whether or not the user is privlidged %>
 
 
-<h1>Course List</h1>
+
 <% if current_user.has_role? :admin or current_user.has_role? :instructor %>
+  <h1>Course List</h1>
   <p>Welcome <%= rolename() %>. To manage your courses go to the home page and select the
   course you would like to manage from the list of courses you
   have access to. From this view you can create, edit, or delete 
@@ -14,6 +15,10 @@ and render differently depending on whether or not the user is privlidged %>
       <%= render 'form', course: Course.new %>
     </div>
   </div>
+<% else %>
+  <h1>Currently Enrolled Courses List</h1>
+  <p> If you are looking to enroll in a course, head over to the <%= link_to 'home', root_url %> page.
+    Otherwise you can find a list of courses you are enrolled in below. </p>
 <% end %>
 
 <div class="row">
