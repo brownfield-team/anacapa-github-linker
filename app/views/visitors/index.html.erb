@@ -4,19 +4,20 @@
   <% if current_user.has_role? :admin %>
     <h1> Welcome Admin </h1>
     <p> Proceed to the courses page to manage classes or to the users page to manage users </p>
+  <p>Note: You can manage a class with a blue name</p>
     
   <% elsif current_user.has_role? :instructor %>
     
     <h1> Welcome Instructor </h1>
     <p> Proceed to the courses page to manage your classes or the users page to manage users with access to your classes </p>
+    <p>Note: You can manage a class with a blue name</p>
 
   <% elsif current_user.has_role? :user %>
     <h1> Welcome Student </h1>
-    <p> If you are looking to enroll in a course head over to the <%= link_to 'courses', courses_path %> page.
-    Otherwise you can find a list of courses you are enrolled in below. </p>
+    <p> If you are looking for courses you are currently enrolled in, go to the <%= link_to 'courses', courses_path %> page.
+    Otherwise you can find a list of courses you can enroll in. </p>
   <% end %>
 
-  <p>Note: You can manage a class with a blue name</p>
   <div class="row">
   <div class="col-sm-6">
       <%# search the course list %>
