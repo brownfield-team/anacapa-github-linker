@@ -33,6 +33,19 @@ This is a rails application that allows for course management in conjunction wit
   2. Run `rake db:migrate`.
   3. Try the app!
 
+## Admins
+  - The very first user to log in will automatically be promoted to admin. Every other user afterwards be a regular user. Only admins have access to the Users  page. From there, an admin can promote other users to admins or instructors.
+  - Admins can manage all courses and users
+  - Instructors can create courses and only manage their own courses.
+
+## How do Instructors Create a Course
+  1. Identify your course name and quarter (e.g. CMPSC16-S18)
+  2. Identify the github organization associated with your course (e.g. ucsb-cs16-w18-mirza or ucsb-cs32-w18)
+  3. Add the machine user that you used in the setup (e.g. phtcon for the UCSB-CS instance) as an owner of your organization. This gives the application the ability to add students to the organization.
+  4. Login to the app and create your course. Be sure the course organization field EXACTLY matches the github organization name.
+  - An instructor can promote any of the students in a course to a TA. A TA can create students in the course, import a roster via CSV, download the roster to a CSV, and update a student in the course. 
+  - TAs cannot delete a student, promote other students to TAs, or modify the course itself in any way.  
+
 ## Rulebook
 
 ## Configuration
