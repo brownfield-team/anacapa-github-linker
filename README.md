@@ -33,18 +33,31 @@ This is a rails application that allows for course management in conjunction wit
   2. Run `rake db:migrate`.
   3. Try the app!
 
-## Admins
+## How to use
+  ### Admins
   - The very first user to log in will automatically be promoted to admin. Every other user afterwards be a regular user. Only admins have access to the Users  page. From there, an admin can promote other users to admins or instructors.
   - Admins can manage all courses and users
   - Instructors can create courses and only manage their own courses.
 
-## How do Instructors Create a Course
+  ### How do instructors create a course
   1. Identify your course name and quarter (e.g. CMPSC16-S18)
   2. Identify the github organization associated with your course (e.g. ucsb-cs16-w18-mirza or ucsb-cs32-w18)
   3. Add the machine user that you used in the setup (e.g. phtcon for the UCSB-CS instance) as an owner of your organization. This gives the application the ability to add students to the organization.
   4. Login to the app and create your course. Be sure the course organization field EXACTLY matches the github organization name.
   - An instructor can promote any of the students in a course to a TA. A TA can create students in the course, import a roster via CSV, download the roster to a CSV, and update a student in the course. 
-  - TAs cannot delete a student, promote other students to TAs, or modify the course itself in any way.  
+  - TAs cannot delete a student, promote other students to TAs, or modify the course itself in any way. 
+
+  __NOTE:__Remember to go to "Member Privileges" and change "Repository Permission" for Organization Members to "None"  
+
+  ### Instructions for students
+  Dear Student:  We will be using github.com in this course.   We have created an organization called ___(insert org name here___ on github.com where you can create repositories (repos) for your assignments in this course.   The advantage of creating private repos under that organization is that the course staff (your instructors, TAs and mentors) will be able to see your code and provide you with help, without you having to do anything special.
+
+  To join this organization, you need to do three things.
+
+  1. If you don't already have a github.com account, create one on the "free" plan.
+  2. If you don't already have your ___@umail.ucsb.edu email address associated with your github.com account. go to "settings", add that email, and confirm that email address.
+  3.  Visit https://ucsb-cs-github-linker.herokuapp.com, login with your github.com account, click "Home", find this course, and click the "join course button".   That will automatically send you an invitation to join the course organization.
+  4.  Visit that invitation and accept it.
 
 ## Rulebook
 
