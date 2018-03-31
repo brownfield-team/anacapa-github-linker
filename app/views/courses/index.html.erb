@@ -39,23 +39,27 @@ and render differently depending on whether or not the user is privlidged %>
       </thead>
       <tbody>
         <% @courses.each do |course| %>
-          <tr>
-            <td>
-              <%= 
-                if can? :read, course
-                  link_to "#{course.name}", course_path(course)
-                end
-              %>  
-            </td>
-            <td>
-              <% if can? :update, course %>
-                <%= link_to 'Edit', edit_course_path(course), class: 'btn btn-warning btn-sm'%>
-              <% end %>
-              <% if can? :delete, course %>
-                <%= link_to 'Delete', course_path(course), method: :delete, data: { confirm: "Are you sure you want to PERMANENTLY DELETE '#{course.name}'?"}, class: 'btn btn-danger btn-sm'%>
-              <% end %>
-            </td>
-          </tr>
+          <% if can? :read, course or course.roster_students.any? {|student| student.user_id == current_user.id and student.enrolled} %>
+            <tr>
+              <td>
+                <%= 
+                  if can? :read, course
+                    link_to "#{course.name}", course_path(course)
+                  else
+                    course.name
+                  end
+                %>  
+              </td>
+              <td>
+                <% if can? :update, course %>
+                  <%= link_to 'Edit', edit_course_path(course), class: 'btn btn-warning btn-sm'%>
+                <% end %>
+                <% if can? :delete, course %>
+                  <%= link_to 'Delete', course_path(course), method: :delete, data: { confirm: "Are you sure you want to PERMANENTLY DELETE '#{course.name}'?"}, class: 'btn btn-danger btn-sm'%>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
         <% end %>
       </tbody>
     </table>
