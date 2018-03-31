@@ -47,7 +47,7 @@ This is a rails application that allows for course management in conjunction wit
   - An instructor can promote any of the students in a course to a TA. A TA can create students in the course, import a roster via CSV, download the roster to a CSV, and update a student in the course. 
   - TAs cannot delete a student, promote other students to TAs, or modify the course itself in any way. 
 
-  __NOTE:__Remember to go to "Member Privileges" and change "Repository Permission" for Organization Members to "None"  
+  ___NOTE:Remember to go to "Member Privileges" and change "Repository Permission" for Organization Members to "None"___  
 
   ### Instructions for students
   Dear Student:  We will be using github.com in this course.   We have created an organization called ___(insert org name here___ on github.com where you can create repositories (repos) for your assignments in this course.   The advantage of creating private repos under that organization is that the course staff (your instructors, TAs and mentors) will be able to see your code and provide you with help, without you having to do anything special.
