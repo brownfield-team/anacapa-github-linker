@@ -118,7 +118,7 @@ class CoursesController < ApplicationController
       course.roster_students.each do |student|
         email_to_student[student.email] = student
       end
-      
+
       session_user.emails.each do |email|
         roster_student = email_to_student[email[:email]]
         if roster_student
