@@ -7,10 +7,10 @@
 <div class="row">
   <div class="col-sm-12">
       <%# search the course list %>
-      <div class="input-group">
-        <span class="input-group-addon" id="basic-addon1">User Name</span>
-        <input id="users_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">
-      </div>
+<!--      <div class="input-group">-->
+<!--        <span class="input-group-addon" id="basic-addon1">User Name</span>-->
+<!--        <input id="users_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">-->
+<!--      </div>-->
     <%# table containing the course list %>
     <table class="table table-sm" id="course_list">
       <thead>
@@ -29,8 +29,8 @@
             <td><%= (user.has_role? :admin) ? "True" : "False" %></td>
               <td>
                 <%= form_for user do |f| %>
-                  <% 
-                    if user.has_role? :admin 
+                  <%
+                    if user.has_role? :admin
                       submit_text = "Remove Admin Status"
                     else
                       submit_text = "Make Admin"
@@ -43,8 +43,8 @@
               <td><%= (user.has_role? :instructor) ? "True" : "False" %></td>
               <td>
                 <%= form_for user do |f| %>
-                  <% 
-                    if user.has_role? :instructor 
+                  <%
+                    if user.has_role? :instructor
                       submit_text = "Remove Instructor Status"
                     else
                       submit_text = "Make Instructor"
@@ -58,21 +58,23 @@
         <% end %>
       </tbody>
     </table>
+    <div><%= page_entries_info @users %></div>
+    <div><%= paginate @users, window: 5 %></div>
   </div>
 </div>
 
 
-<script>
-function filter_list_by_keyword() {
-  var keyword = $("#users_search").val().toLowerCase();
-  console.log("search for: " + keyword);
-  $("#course_list tr").each(function(element) {
-    var text = $(this).text();
-    if (text.toLowerCase().indexOf(keyword) === -1) {
-      $(this).hide();
-    } else {
-      $(this).show();
-    }
-  });
-}
-</script>
+<!--<script>-->
+<!--function filter_list_by_keyword() {-->
+<!--  var keyword = $("#users_search").val().toLowerCase();-->
+<!--  console.log("search for: " + keyword);-->
+<!--  $("#course_list tr").each(function(element) {-->
+<!--    var text = $(this).text();-->
+<!--    if (text.toLowerCase().indexOf(keyword) === -1) {-->
+<!--      $(this).hide();-->
+<!--    } else {-->
+<!--      $(this).show();-->
+<!--    }-->
+<!--  });-->
+<!--}-->
+<!--</script>-->
