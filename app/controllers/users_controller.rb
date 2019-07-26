@@ -1,7 +1,8 @@
 class UsersController < ApplicationController
   load_and_authorize_resource
   def index
-    @users = User.all
+    # @users = User.all
+    @users = User.order(:name).page params[:page]
   end
 
   def update
