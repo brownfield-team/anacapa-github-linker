@@ -78,7 +78,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
 
-  test "if org doesn't exist, course should not be created and show why" do 
+  test "if org doesn't exist, course should not be created and show why" do
     fake_org_name = "not-a-real-org"
     stub_organization_does_not_exist(fake_org_name)
     assert_difference('Course.count', 0) do
@@ -112,11 +112,20 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should update course" do
-    stub_organization_membership_admin_in_org(@course.course_organization, ENV["MACHINE_USER_NAME"])
-    stub_organization_is_an_org(@course.course_organization)
-    patch course_url(@course), params: { course: { name: "patched_course_name" } }
-    assert_redirected_to course_url(@course)
+  test "should update course name" do
+    new_course_name = 'new_course_name'
+    course_organization = "course_org"
+
+    stub_organization_membership_admin_in_org(course_organization, ENV["MACHINE_USER_NAME"])
+    stub_organization_is_an_org(course_organization)
+
+    course = Course.create(name: "old course name", course_organization: course_organization, hidden: false)
+    assert_nil Course.find_by(name: new_course_name)
+
+    patch course_url(course), params: { course: { name: new_course_name } }
+
+    assert_not_nil Course.find_by(name: new_course_name)
+    assert_redirected_to course_url(course)
   end
 
   test "should destroy course" do
@@ -128,7 +137,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "user will not be reinvited if already in org" do
-    
+
     stub_find_user_in_org(@user.username, @course.course_organization, true)
     stub_check_user_emails(@user.email)
     assert_difference('@user.roster_students.count', 1) do
@@ -140,7 +149,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "user can join class if roster student exists" do
-    
+
     stub_find_user_in_org(@user.username, @course.course_organization, false)
     stub_invite_user_to_org(@user.username, @course.course_organization)
     stub_check_user_emails(@user.email)
@@ -152,7 +161,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "roster student can NOT join class if NOT on class roster" do
-    
+
     user_julie = users(:julie)
     sign_in user_julie
     user_julie.add_role(:user)
@@ -241,7 +250,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     stub_organization_membership_admin_in_org(@course.course_organization, ENV["MACHINE_USER_NAME"])
     stub_organization_is_an_org(@course.course_organization)
     patch course_url(course), params: { course: { name: "patched_course_name" } }
-    
+
     assert_redirected_to course_url(course)
     assert_equal "patched_course_name", Course.where(course_organization: "#{@org}").first.name
 
@@ -312,7 +321,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     @user.add_role :user
     @user.add_role :ta, @course
     sign_in @user
-    
+
     get course_url(@course2)
     assert_redirected_to root_url
   end

@@ -21,6 +21,11 @@
     <%= form.text_field :course_organization, id: :course_name %>
   </div>
 
+  <div class="field">
+    <%= form.label :hidden %>
+    <%= form.check_box :hidden %>
+  </div>
+
   <div class="actions">
     <%= form.submit %>
   </div>

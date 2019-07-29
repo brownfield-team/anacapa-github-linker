@@ -6,17 +6,18 @@ class Course < ApplicationRecord
   validates :course_organization, presence: true, length: {minimum: 3}, uniqueness: true
   validate :check_course_org_exists
   has_many :roster_students, dependent: :destroy
+
   resourcify
 
   def org
     return @org if @org or @no_org
     begin
       @org = Octokit_Wrapper::Octokit_Wrapper.machine_user.organization(course_organization)
-    rescue Octokit::NotFound 
-      @no_org = true 
-      @org = nil 
-    end 
-  end 
+    rescue Octokit::NotFound
+      @no_org = true
+      @org = nil
+    end
+  end
 
   def accept_invite_to_course_org
     Octokit_Wrapper::Octokit_Wrapper.machine_user.update_organization_membership(course_organization, {state: "active"})
@@ -27,24 +28,24 @@ class Course < ApplicationRecord
       Octokit_Wrapper::Octokit_Wrapper.machine_user.update_organization_membership(course_organization, {user: "#{user.username}", role: "member"})
     end
   end
-  
-  def check_course_org_exists 
+
+  def check_course_org_exists
     # NOTE: this is run as a validation step on creation and update for the organization
-    if org then 
-      begin 
+    if org then
+      begin
         membership = Octokit_Wrapper::Octokit_Wrapper.machine_user.organization_membership(course_organization)
-        if membership.role != "admin" then 
+        if membership.role != "admin" then
           errors.add(:base, "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed.")
         end
-      rescue Octokit::NotFound 
+      rescue Octokit::NotFound
         errors.add(:base, "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed.")
       end
-    else 
+    else
       errors.add(:base, "You must create a github organization with the name of your class and add #{ENV['MACHINE_USER_NAME']} as an owner of that organization.")
     end
-  end 
+  end
 
-  def users 
+  def users
     return (self.roster_students.map {|student| student.user }).compact
   end
 

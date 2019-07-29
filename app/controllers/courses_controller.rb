@@ -102,7 +102,7 @@ class CoursesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_params
-      params.require(:course).permit(:name,:course_organization)
+      params.require(:course).permit(:name,:course_organization,:hidden)
     end
 
     def add_instructor(id)
@@ -118,7 +118,7 @@ class CoursesController < ApplicationController
       course.roster_students.each do |student|
         email_to_student[student.email] = student
       end
-      
+
       session_user.emails.each do |email|
         roster_student = email_to_student[email[:email]]
         if roster_student
