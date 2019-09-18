@@ -26,6 +26,9 @@ rvm:
 # the default script option for Travis and most Rails projects will want this
 # when starting out as this usually runs `rake test`.
 
+services:
+  - postgresql
+
 script:
   - bin/rake db:migrate RAILS_ENV=test
   - bin/rake
