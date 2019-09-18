@@ -1,0 +1,21 @@
+# NOTE: There should be no spaces around = in assigments in shell syntax
+# Copy this example file using
+#   cp dotenv.example .env
+# Then edit the values below to be the correct ones
+
+# These should not normally need to be edited
+GIT_PROVIDER_URL=github.com
+OMNIAUTH_STRATEGY=github
+
+# Get these by creating a new OAuth app in Github
+OMNIAUTH_PROVIDER_KEY=<your omniauth provider key>
+OMNIAUTH_PROVIDER_SECRET=<your omniauth provider secret>
+
+# Provide a github user, and an access token for that github user
+# The scopes should be user:email,admin:org
+
+MACHINE_USER_NAME=<your machine user's name>
+MACHINE_USER_KEY=<your machine user's key>
+
+# This can be any arbitrary value; it is used for crytographic security
+DEVISE_SECRET_KEY=<a random alphunmeric string used by devise to salt its sessions>
