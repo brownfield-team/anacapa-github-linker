@@ -64,3 +64,19 @@ This is a rails application that allows for course management in conjunction wit
 ## Configuration
   - /users/auth/github/callback is the omniauth callback path
   - TODO: fill out the documentation
+
+## Getting Started on Localhost
+
+You will need:
+* Clone the repo, and run `bundle install`
+* Make sure that Postgres is running locally
+   - You might need to do `createuser -s -r postgres` per this [StackOverflow post](https://stackoverflow.com/questions/7863770/rails-and-postgresql-role-postgres-does-not-exist)
+* `bundle exec rake db:create`
+* `bundle exec rake db:migrate`
+* Do  `cp dotenv.example .env`
+   * Note that `.env` is a file in the `.gitignore` because you will configure it with secrets
+   * Therefore it SHOULD NOT be committed to github
+* Edit `.env` with the appropriate values.  These are NOT shell environment variables, but rather variables
+   that are read into the Rails environment by the [dotenv-rails](https://github.com/bkeepers/dotenv) gem.
+* Finally, run `rails s` and the application should come up.
+
