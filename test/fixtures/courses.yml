@@ -3,7 +3,9 @@
 course1:
   name: course1
   course_organization: org1
+  hidden: false
 
 course2:
   name: course2
   course_organization: org2
+  hidden: false

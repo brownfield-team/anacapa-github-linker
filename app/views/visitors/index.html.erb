@@ -36,7 +36,7 @@
       </thead>
       <tbody>
         <% @courses.each do |course| %>
-          <tr>
+          <tr class="is_course_row">
             <td>
               <%= 
                 if can? :mange, course
