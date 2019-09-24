@@ -15,7 +15,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     sign_in @user
     stub_organization_membership_admin_in_org(@org, ENV["MACHINE_USER_NAME"])
     stub_organization_is_an_org(@org)
-    @enroll_success_flash_notice = %Q[You were successfully enrolled in #{@course.name}! View you invitation <a href="https://github.com/orgs/#{@course.course_organization}/invitation">here</a>.]
+    @enroll_success_flash_notice = %Q[You were successfully invited to #{@course.name}! View and accept your invitation <a href="https://github.com/orgs/#{@course.course_organization}/invitation">here</a>.]
   end
 
   test "should get index" do

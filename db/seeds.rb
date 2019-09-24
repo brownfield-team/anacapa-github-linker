@@ -23,9 +23,9 @@ when "development"
   #   [ "Fake  9 User", "fakeuser09" ],
   #   [ "Fake 10 User", "fakeuser10" ]
   # ]
-  users.each do |name, username|
-    User.create!( name: name, username: username, email: "#{username}@example.org", password: SecureRandom.alphanumeric )
-  end
+  # users.each do |name, username|
+  #   User.create!( name: name, username: username, email: "#{username}@example.org", password: SecureRandom.alphanumeric )
+  # end
 when "production"
 
 when "test"
