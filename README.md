@@ -72,6 +72,7 @@ You will need:
 * Postgres needs to be installed:
    - For MacOS, I suggest: <https://postgresapp.com/> (latest stable version)
 * `rvm install ruby-2.6.3` (note that this Ruby version might be different by the time you read this)
+* `gem install bundler`
 * Clone the repo, and run `bundle install`
 * Make sure that Postgres is running locally
    - You might need to do `createuser -s -r postgres` per this [StackOverflow post](https://stackoverflow.com/questions/7863770/rails-and-postgresql-role-postgres-does-not-exist)
