@@ -68,6 +68,10 @@ This is a rails application that allows for course management in conjunction wit
 ## Getting Started on Localhost
 
 You will need:
+* Ruby installed; I suggest installing rvm from <https://rvm.io>
+* Postgres needs to be installed:
+   - For MacOS, I suggest: <https://postgresapp.com/> (latest stable version)
+* `rvm install ruby-2.6.3` (note that this Ruby version might be different by the time you read this)
 * Clone the repo, and run `bundle install`
 * Make sure that Postgres is running locally
    - You might need to do `createuser -s -r postgres` per this [StackOverflow post](https://stackoverflow.com/questions/7863770/rails-and-postgresql-role-postgres-does-not-exist)
