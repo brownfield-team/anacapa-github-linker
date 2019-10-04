@@ -16,6 +16,24 @@ class User < ApplicationRecord
   delegate :can?, :cannot?, :to => :ability
 
   def self.from_omniauth(auth)
+    user = where(provider: auth.provider, uid: auth.uid).first
+    if user.nil?
+      User.create(
+        provider: auth.provider,
+        uid: auth.uid,
+        email: auth.info.email,
+        name: auth.info.name,
+        username: auth.info.nickname,
+        password: Devise.friendly_token[0,20],
+      )
+    else
+      user.update(
+        email: auth.info.email,
+        name: auth.info.name,
+        username: auth.info.nickname,
+      )
+    end
+
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
       user.email = auth.info.email
       user.name = auth.info.name
