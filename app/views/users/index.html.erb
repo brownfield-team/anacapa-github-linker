@@ -16,6 +16,8 @@
       <thead>
         <tr>
           <th>Name</th>
+          <th>Username</th>
+          <th>uid</th>
           <th>Admin</th>
           <th></th>
           <th>Instructor</th>
@@ -26,6 +28,8 @@
         <% @users.each do |user| %>
           <tr>
             <td><%= user.name %></td>
+            <td><%= user.username %></td>
+            <td><%= user.uid %></td>
             <td><%= (user.has_role? :admin) ? "True" : "False" %></td>
               <td>
                 <%= form_for user do |f| %>
