@@ -17,12 +17,17 @@
 
 <p>
   <strong>Email:</strong>
-  <%= @roster_student.email %>
+  <a href="mailto:<%= @roster_student.email %>"><%= @roster_student.email %> </a>
 </p>
 
 <p>
   <strong>Enrolled:</strong>
   <%= @roster_student.enrolled ? "True" : "False" %>
+</p>
+
+<p>
+  <strong>Github ID:</strong>
+  <a href="https://github.com/<%= @roster_student.username %>"><%= @roster_student.username %> </a>
 </p>
 
 
