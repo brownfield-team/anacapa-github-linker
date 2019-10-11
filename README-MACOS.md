@@ -24,3 +24,10 @@ Once you have either `brew` or `macports`, then make sure that you have `gpg2`.
 
 * TODO: Figure out the command for that and put it here.
 
+# Step 2: Put the Postgres.app on your Mac (the Elephant)
+
+Visit: <https://postgresapp.com/> and install the "Elephant" version of Postgres (a SQL database) on your Mac.
+
+Why Postgres and not MySQL, or `sqlite`, etc.?  Because: Heroku.
+
+# That's it!  You are ready for [README.md]
