@@ -30,4 +30,4 @@ Visit: <https://postgresapp.com/> and install the "Elephant" version of Postgres
 
 Why Postgres and not MySQL, or `sqlite`, etc.?  Because: Heroku.
 
-# That's it!  You are ready for [README.md]
+# That's it!  You are ready for [README.md](README.md)
