@@ -17,7 +17,7 @@
 
 <p>
   <strong>Email:</strong>
-  <%= @roster_student.email %>
+  <a href="mailto:<%= @roster_student.email %>"><%= @roster_student.email %> </a>
 </p>
 
 <p>
@@ -25,6 +25,16 @@
   <%= @roster_student.enrolled ? "True" : "False" %>
 </p>
 
+<% if @roster_student.username.nil? %>
+<p>
+  <strong>Github ID:</strong><span class="js-no-github-id"> Unknown</span>
+</p>
+<% else %>
+<p>
+  <strong>Github ID:</strong>
+  <a class="js-github-id" href="https://github.com/<%= @roster_student.username %>"><%= @roster_student.username %></a>
+</p>
+<% end %>
 
 <%= link_to 'Edit', edit_course_roster_student_path(@parent, @roster_student), :class => "btn btn-outline-secondary" %> |  
 <%= link_to 'Back', course_path(@parent), :class => "btn btn-outline-secondary" %>

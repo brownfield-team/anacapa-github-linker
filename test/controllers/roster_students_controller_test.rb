@@ -11,6 +11,33 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:wes)
     @user.add_role(:admin)
     sign_in @user
+
+    @user2 = User.create!(
+      name: 'Chris',
+      username: 'cgaucho',
+      uid: 1234567,
+      provider: 'GitHub',
+      email: 'cgaucho@example.edu',
+      password: 'a9sd8ua98fu9as'
+    )
+    @roster_student_with_github = RosterStudent.create!(
+      perm: 1234,
+      first_name: 'Chris',
+      last_name: 'Gaucho',
+      email: 'cgaucho@example.edu',
+      course: @course2,
+      enrolled: false,
+      user: @user2
+    )
+    @roster_student_with_no_github = RosterStudent.create!(
+      perm: 5678,
+      first_name: 'Lyn',
+      last_name: 'DelPlaya',
+      email: 'ldelplaya@example.edu',
+      course: @course2,
+      enrolled: false,
+      user: nil
+    )
   end
 
   test "should get new" do
@@ -71,6 +98,18 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
   test "should show roster_student" do
     get course_roster_student_path(:course_id=> @roster_student.course_id, :id=> @roster_student.id)
     assert_response :success
+  end
+
+  test "should show github id if roster_student has one" do
+    get course_roster_student_path(:course_id=> @roster_student_with_github.course_id, :id=> @roster_student_with_github.id)
+    assert_response :success
+    assert_select 'a.js-github-id[href=?]','https://github.com/cgaucho'
+  end
+
+  test "should not show github id if roster_student has none" do
+    get course_roster_student_path(:course_id=> @roster_student_with_no_github.course_id, :id=> @roster_student_with_no_github.id)
+    assert_response :success
+    assert_select 'span.js-no-github-id'
   end
 
   test "should get edit" do
