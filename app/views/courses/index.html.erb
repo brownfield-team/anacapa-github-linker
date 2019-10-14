@@ -9,12 +9,9 @@ and render differently depending on whether or not the user is privlidged %>
   course you would like to manage from the list of courses you
   have access to. From this view you can create, edit, or delete
   your courses. </p>
-  <div class="panel panel-default">
-    <div class="panel-heading">Create a new course</div>
-    <div class="panel-body">
-      <%= render 'form', course: Course.new %>
-    </div>
-  </div>
+    <p class="js-new-course">
+    <%= link_to 'New Course', new_course_path, class: "btn btn-default ", role: "button" %>
+    </p>
 <% else %>
   <h1>Currently Enrolled Courses List</h1>
   <p> If you are looking to enroll in a course, head over to the <%= link_to 'home', root_url %> page.
@@ -23,12 +20,13 @@ and render differently depending on whether or not the user is privlidged %>
 
 <div class="row">
   <div class="col-sm-6">
+     <!--
       <%# search the course list %>
       <div class="input-group">
         <span class="input-group-addon" id="basic-addon1">Course Name</span>
         <input id="courses_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">
       </div>
-
+      -->
     <%# table containing the course list %>
     <table class="table table-sm" id="course_list">
       <thead>
@@ -88,4 +86,3 @@ function filter_list_by_keyword() {
 
 <br>
 
-<!-- <%= link_to 'New Course', new_course_path %> -->

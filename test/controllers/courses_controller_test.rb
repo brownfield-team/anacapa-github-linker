@@ -38,6 +38,24 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "instructors should be able to see the add course button" do
+    users(:tim).add_role(:instructor)
+    sign_in users(:tim)
+
+    get courses_url
+    assert_response :success
+    assert_select 'p.js-new-course a[href=?]', new_course_path
+  end
+
+  test "noninstructors should not be able to see the add course button" do
+    users(:tim).add_role(:user)
+    sign_in users(:tim)
+
+    get courses_url
+    assert_response :success
+    assert_select 'p.js-new-course a[href=?]', new_course_path, count:0
+  end
+
   test "instructors should not be able to see other instructors view_ta page" do
     users(:tim).add_role(:instructor)
     users(:tim).add_role(:instructor, @course)
