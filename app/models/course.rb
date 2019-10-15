@@ -122,4 +122,5 @@ class Course < ApplicationRecord
     end
   end
 
+  
 end
