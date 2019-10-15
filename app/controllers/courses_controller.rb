@@ -99,6 +99,12 @@ class CoursesController < ApplicationController
     end
   end
 
+
+  def is_org_member(username)
+    machine_user.organization_member?(@course.course_organization, username)
+  end
+  helper_method :is_org_member
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course
@@ -112,6 +118,10 @@ class CoursesController < ApplicationController
 
     def add_instructor(id)
       current_user.add_role :instructor, Course.find(id)
+    end
+    
+    def machine_user
+      client = Octokit_Wrapper::Octokit_Wrapper.machine_user
     end
 
     def session_user
