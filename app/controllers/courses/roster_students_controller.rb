@@ -1,6 +1,7 @@
 # This controller is nested in the routing hierarchy as a child controller of 
 # courses_controller
 # see this tutorial for details on how we do this https://gist.github.com/jhjguxin/3074080
+require 'Octokit_Wrapper'
 
 module Courses 
   class RosterStudentsController < ApplicationController
@@ -85,10 +86,42 @@ module Courses
       end
     end
 
+    def find_org_repos
+      organization_repos = machine_user.organization_repositories(@parent.course_organization)
+      repo_list = ""
+      filtered_repos = organization_repos.select {|repo| repo.name.downcase.include?(@roster_student.username.downcase) }
+      filtered_repos.each do |repo|
+        repo_list += repo.name
+      end
+      filtered_repos
+    end
+    helper_method :find_org_repos
+
+    def find_other_contributors(repo_name)
+      student_list = @parent.roster_students
+      contributors = student_list.select do |student|
+        unless student.username.nil?
+          next(repo_name.downcase.include?((student.username).downcase) && student.username != @roster_student.username)
+        else
+          next(false)
+        end
+      end
+      other_contributor_string = ""
+      contributors.each do |student|
+        other_contributor_string += student.first_name + " " + student.last_name + ", "
+      end
+      other_contributor_string.delete_suffix(", ")
+    end
+    helper_method :find_other_contributors
+
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_roster_student
         @roster_student = RosterStudent.find(params[:id])
+      end
+
+      def machine_user
+        client = Octokit_Wrapper::Octokit_Wrapper.machine_user
       end
 
       # Never trust parameters from the scary internet, only allow the white list through.
