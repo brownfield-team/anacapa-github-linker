@@ -1,8 +1,10 @@
 require 'test_helper'
+require 'helpers/octokit_stub_helper'
 
 class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
 
   include Devise::Test::IntegrationHelpers
+  include OctokitStubHelper
 
   setup do
     @course = courses(:course1)
@@ -100,16 +102,20 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should show github id if roster_student has one" do
+  test "should show github id and repo table if roster_student has one" do
+    course = Course.find(@roster_student_with_github.course_id)
+    stub_org_repo_list_for_github_id(course.course_organization)
     get course_roster_student_path(:course_id=> @roster_student_with_github.course_id, :id=> @roster_student_with_github.id)
     assert_response :success
     assert_select 'a.js-github-id[href=?]','https://github.com/cgaucho'
+    assert_select 'p.repo-list-table'
   end
 
-  test "should not show github id if roster_student has none" do
+  test "should not show github id or repo table if roster_student has none" do
     get course_roster_student_path(:course_id=> @roster_student_with_no_github.course_id, :id=> @roster_student_with_no_github.id)
     assert_response :success
     assert_select 'span.js-no-github-id'
+    assert_select 'p.no-repo-list-table'
   end
 
   test "should get edit" do

@@ -88,10 +88,11 @@ module Courses
 
     def find_org_repos
       organization_repos = machine_user.organization_repositories(@parent.course_organization)
-      repo_list = ""
-      filtered_repos = organization_repos.select {|repo| repo.name.downcase.include?(@roster_student.username.downcase) }
-      filtered_repos.each do |repo|
-        repo_list += repo.name
+      filtered_repos = []
+      if organization_repos.respond_to? :select
+        filtered_repos = organization_repos.select do |repo|
+          repo.name.downcase.include?(@roster_student.username.downcase)
+        end
       end
       filtered_repos
     end
@@ -101,7 +102,8 @@ module Courses
       student_list = @parent.roster_students
       contributors = student_list.select do |student|
         unless student.username.nil?
-          next(repo_name.downcase.include?((student.username).downcase) && student.username != @roster_student.username)
+          does_not_equal_current_student = student.username != @roster_student.username
+          next(repo_name.downcase.include?((student.username).downcase) && does_not_equal_current_student)
         else
           next(false)
         end
