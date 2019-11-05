@@ -142,7 +142,17 @@ module OctokitStubHelper
       to_return(status: 200,
                 body: "#{octokit_organization_membership_admin_in_org(org_name, username)}",
                 headers: {'Content-Type'=>'application/json'})
+  end
 
+  def stub_org_repo_list_for_github_id(org_name)
+    stub_request(:get, "https://api.github.com/orgs/" + org_name + "/repos").
+      with(  headers: {
+        'Accept'=>'application/vnd.github.v3+json',
+        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+        'Content-Type'=>'application/json',
+        'User-Agent'=>'Octokit Ruby Gem 4.8.0'
+      }).
+    to_return(status: 200, body: "", headers: {})
   end
 
 end
