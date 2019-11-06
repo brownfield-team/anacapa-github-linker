@@ -9,7 +9,9 @@ module Octokit_Wrapper
     end
 
     def self.user_with(token)
-      Octokit::Client.new :access_token => token
+      client = Octokit::Client.new :access_token => token
+      client.auto_paginate = true
+      client
     end
   end
 end
