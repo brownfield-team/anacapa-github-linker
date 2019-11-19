@@ -113,7 +113,7 @@ module Courses
         other_contributor_string += student.first_name + " " + student.last_name + ", "
       end
       if other_contributor_string != ""
-        other_contributor_string[0..-2]
+        other_contributor_string = other_contributor_string[0..-2]
       end
       # Not supported before Ruby 2.5:
       # other_contributor_string.delete_suffix(", ")
