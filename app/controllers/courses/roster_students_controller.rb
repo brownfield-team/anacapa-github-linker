@@ -112,7 +112,7 @@ module Courses
       contributors.each do |student|
         other_contributor_string += student.first_name + " " + student.last_name + ", "
       end
-      other_contributor_string.delete_suffix(", ")
+      # other_contributor_string.delete_suffix(", ")
     end
     helper_method :find_other_contributors
 
