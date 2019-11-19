@@ -113,7 +113,7 @@ module Courses
         other_contributor_string += student.first_name + " " + student.last_name + ", "
       end
       if other_contributor_string != ""
-        other_contributor_string = other_contributor_string[0..-2]
+        other_contributor_string = other_contributor_string[0..-3]
       end
       # Not supported before Ruby 2.5:
       # other_contributor_string.delete_suffix(", ")
@@ -130,10 +130,11 @@ module Courses
       def machine_user
         client = Octokit_Wrapper::Octokit_Wrapper.machine_user
       end
-
+x
       # Never trust parameters from the scary internet, only allow the white list through.
       def roster_student_params
         params.require(:roster_student).permit(:perm, :first_name, :last_name, :email, :enrolled)
+        boolean test = true
       end
 
       def load_parent
