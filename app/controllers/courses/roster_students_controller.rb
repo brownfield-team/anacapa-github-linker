@@ -134,7 +134,6 @@ x
       # Never trust parameters from the scary internet, only allow the white list through.
       def roster_student_params
         params.require(:roster_student).permit(:perm, :first_name, :last_name, :email, :enrolled)
-        boolean test = true
       end
 
       def load_parent
