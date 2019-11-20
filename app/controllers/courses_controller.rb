@@ -88,7 +88,7 @@ class CoursesController < ApplicationController
       message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verified your email address. '
       return redirect_to courses_path, alert: message
     end
-    
+
     begin
        course.invite_user_to_course_org(current_user)
        roster_student.update_attribute(:enrolled, true)
@@ -140,7 +140,7 @@ class CoursesController < ApplicationController
     def add_instructor(id)
       current_user.add_role :instructor, Course.find(id)
     end
-    
+
     def machine_user
       client = Octokit_Wrapper::Octokit_Wrapper.machine_user
     end
