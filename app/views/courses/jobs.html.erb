@@ -1,4 +1,4 @@
-<h1> <%= @course.name %> </h1>
+<h1> <%= link_to @course.name, course_path(@course) %> </h1>
 
 <div class="panel panel-default">
   <div class="panel-heading">
@@ -17,8 +17,19 @@
       <tbody>
       <tr>
         <td>Test Job</td>
-        <td>Not Implemented</td>
-        <td><%= link_to 'Run Job', course_trigger_test_job_path %></td>
+        <% unless CompletedJob.where(job_name: 'Test Job').last.nil? %>
+          <td><%= CompletedJob.where(job_name: 'Test Job').last.created_at %></td>
+        <% end %>
+        <td><%= link_to 'Run Job', course_test_job_path %></td>
+      </tr>
+      <tr>
+        <td>Refresh Student Org Membership</td>
+        <% unless CompletedJob.where(job_name: 'Refresh Student Org Membership').last.nil? %>
+          <td><%= CompletedJob.where(job_name: 'Refresh Student Org Membership').last.created_at %></td>
+        <% else %>
+          <td></td>
+        <% end %>
+        <td><%= link_to 'Run Job', course_update_org_membership_job_path %></td>
       </tr>
       </tbody>
     </table>
@@ -37,15 +48,15 @@
       <tr>
         <th>Job Name</th>
         <th>Date Triggered</th>
-        <th>URL Called From</th>
+        <th>Summary</th>
       </tr>
       </thead>
       <tbody>
-      <% CompletedJob.where('course_id = ' + @course.id.to_s).each do |completed_job| %>
+      <% CompletedJob.where(course_id: @course.id).reverse_order.limit(10).each do |completed_job| %>
         <tr>
           <td><%= completed_job.job_name %></td>
           <td><%= completed_job.created_at %></td>
-          <td><%= completed_job.url_triggered_from %></td>
+          <td><%= completed_job.summary %></td>
         </tr>
       <% end %>
       </tbody>

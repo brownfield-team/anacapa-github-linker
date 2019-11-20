@@ -111,8 +111,14 @@ class CoursesController < ApplicationController
     authorize! :jobs, @course
   end
 
-  def trigger_test_job
-    TestJob.perform_in(5, "/courses/" + params[:course_id] + "/jobs", params[:course_id])
+  def test_job
+    TestJob.perform_in(1, params[:course_id])
+    redirect_to course_jobs_path
+  end
+
+  def update_org_membership_job
+    @course = Course.find(params[:course_id])
+    StudentsOrgMembershipCheckJob.perform_in(1, @course.id)
     redirect_to course_jobs_path
   end
 

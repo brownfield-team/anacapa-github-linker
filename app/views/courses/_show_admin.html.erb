@@ -31,7 +31,9 @@
         <input type="checkbox" style="display: none;" checked="false" id="csv-header-toggle-hidden-field" name="csv_header_toggle" >
         
       <% end %>
-
+      <%= link_to "View Jobs", course_jobs_path(@course), method: :get, class: "btn",
+                  style:
+          "display:inline-block; float: right; margin-left: 10px;" %>
       <%= link_to "Download Roster as CSV", course_roster_students_path(@course, :format => "csv"), method: :get, class: "btn", style: "display:inline-block; float: right; margin-left: 10px;" %>
       <% if can? :create, RosterStudent %>
         <%= link_to 'New Student', new_course_roster_student_path(@course), class: "btn", style: "display: inline-block; float: right; margin-left: 10px;" %>
@@ -83,7 +85,7 @@
             <td><%= student.enrolled ? "True" : "False" %></td>
             <% if !student.username.nil? and !student.username.empty? %>
               <td><a href="https://github.com/<%= student.username %>"><%= student.username %></td>
-              <td><%= is_org_member student.username %></td>
+              <td><%= student.is_org_member %></td>
             <% else %>
               <td></td>
               <td></td>

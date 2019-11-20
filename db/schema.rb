@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191120023633) do
+ActiveRecord::Schema.define(version: 20191120061955) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,8 +19,8 @@ ActiveRecord::Schema.define(version: 20191120023633) do
     t.string "job_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "url_triggered_from"
     t.bigint "course_id"
+    t.string "summary"
     t.index ["course_id"], name: "index_completed_jobs_on_course_id"
   end
 
@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(version: 20191120023633) do
     t.bigint "course_id"
     t.bigint "user_id"
     t.boolean "enrolled", default: true
+    t.boolean "is_org_member"
     t.index ["course_id"], name: "index_roster_students_on_course_id"
     t.index ["email", "course_id"], name: "index_roster_students_on_email_and_course_id", unique: true
     t.index ["perm", "course_id"], name: "index_roster_students_on_perm_and_course_id", unique: true
