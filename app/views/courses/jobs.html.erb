@@ -1,0 +1,55 @@
+<h1> <%= @course.name %> </h1>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Jobs</h3>
+  </div>
+  <div class="panel-body">
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Job Name</th>
+        <th>Last Run</th>
+        <th colspan="1"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Test Job</td>
+        <td>Not Implemented</td>
+        <td><%= link_to 'Run Job', course_trigger_test_job_path %></td>
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Completed Job Log</h3>
+  </div>
+  <div class="panel-body">
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Job Name</th>
+        <th>Date Triggered</th>
+        <th>URL Called From</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% CompletedJob.where('course_id = ' + @course.id.to_s).each do |completed_job| %>
+        <tr>
+          <td><%= completed_job.job_name %></td>
+          <td><%= completed_job.created_at %></td>
+          <td><%= completed_job.url_triggered_from %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>

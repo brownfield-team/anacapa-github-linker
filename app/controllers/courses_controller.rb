@@ -1,4 +1,5 @@
 require 'Octokit_Wrapper'
+
 class CoursesController < ApplicationController
   before_action :set_course, only: [:show, :edit, :update, :destroy]
   load_and_authorize_resource
@@ -104,6 +105,16 @@ class CoursesController < ApplicationController
     machine_user.organization_member?(@course.course_organization, username)
   end
   helper_method :is_org_member
+
+  def jobs
+    @course = Course.find(params[:course_id])
+    authorize! :jobs, @course
+  end
+
+  def trigger_test_job
+    TestJob.perform_in(5, "/courses/" + params[:course_id] + "/jobs", params[:course_id])
+    redirect_to course_jobs_path
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
