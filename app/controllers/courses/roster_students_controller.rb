@@ -87,21 +87,17 @@ module Courses
     end
 
     def find_org_repos
-      binding.pry
       @roster_student.user.github_repos
     end
     helper_method :find_org_repos
 
     def find_other_contributors(repo_name)
-      student_list = @parent.roster_students
-      contributors = student_list.select do |student|
-        unless student.username.nil?
-          does_not_equal_current_student = student.username != @roster_student.username
-          next(repo_name.downcase.include?((student.username).downcase) && does_not_equal_current_student)
-        else
-          next(false)
-        end
-      end
+      student_list = @roster_student.user.github_repos.users.select { |user| user.id != @roster_student.user.id}
+      other_contributor_string(student_list)
+    end
+    helper_method :find_other_contributors
+
+    def other_contributor_string(student_list)
       other_contributor_string = ""
       contributors.each do |student|
         other_contributor_string += student.first_name + " " + student.last_name + ", "
@@ -113,7 +109,6 @@ module Courses
       # other_contributor_string.delete_suffix(", ")
       other_contributor_string
     end
-    helper_method :find_other_contributors
 
     private
       # Use callbacks to share common setup or constraints between actions.
