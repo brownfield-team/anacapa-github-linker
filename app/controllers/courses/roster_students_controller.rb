@@ -3,11 +3,11 @@
 # see this tutorial for details on how we do this https://gist.github.com/jhjguxin/3074080
 require 'Octokit_Wrapper'
 
-module Courses 
+module Courses
   class RosterStudentsController < ApplicationController
     before_action :load_parent
     before_action :set_roster_student, only: [:show, :edit, :update, :destroy]
-    
+
     load_and_authorize_resource :course
     load_and_authorize_resource :roster_student, through: :course
 
@@ -39,7 +39,7 @@ module Courses
 
     # GET /roster_students/new
     def new
-      @roster_student = @parent.roster_students.new 
+      @roster_student = @parent.roster_students.new
     end
 
     # GET /roster_students/1/edit
