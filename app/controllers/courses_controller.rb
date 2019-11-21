@@ -112,13 +112,17 @@ class CoursesController < ApplicationController
   end
 
   def test_job
-    TestJob.perform_in(1, params[:course_id])
+    TestJob.perform_async(params[:course_id])
     redirect_to course_jobs_path
   end
 
   def update_org_membership_job
-    @course = Course.find(params[:course_id])
-    StudentsOrgMembershipCheckJob.perform_in(1, @course.id)
+    StudentsOrgMembershipCheckJob.perform_async(params[:course_id])
+    redirect_to course_jobs_path
+  end
+
+  def update_github_repos_job
+    RefreshGithubReposJob.perform_async(params[:course_id])
     redirect_to course_jobs_path
   end
 

@@ -16,20 +16,19 @@
       </thead>
       <tbody>
       <tr>
-        <td>Test Job</td>
-        <% unless CompletedJob.where(job_name: 'Test Job').last.nil? %>
-          <td><%= CompletedJob.where(job_name: 'Test Job').last.created_at %></td>
-        <% end %>
+        <td><%= TestJob.job_name %></td>
+        <td><%= TestJob.last_run %></td>
         <td><%= link_to 'Run Job', course_test_job_path %></td>
       </tr>
       <tr>
-        <td>Refresh Student Org Membership</td>
-        <% unless CompletedJob.where(job_name: 'Refresh Student Org Membership').last.nil? %>
-          <td><%= CompletedJob.where(job_name: 'Refresh Student Org Membership').last.created_at %></td>
-        <% else %>
-          <td></td>
-        <% end %>
+        <td><%= StudentsOrgMembershipCheckJob.job_name %></td>
+        <td><%= StudentsOrgMembershipCheckJob.last_run %></td>
         <td><%= link_to 'Run Job', course_update_org_membership_job_path %></td>
+      </tr>
+      <tr>
+        <td><%= RefreshGithubReposJob.job_name %></td>
+        <td><%= RefreshGithubReposJob.last_run %></td>
+        <td><%= link_to 'Run Job', course_update_github_repos_job_path %></td>
       </tr>
       </tbody>
     </table>

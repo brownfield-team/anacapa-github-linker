@@ -49,7 +49,7 @@
     </thead>
     <% find_org_repos.each do |repo| %>
       <tr>
-        <td><a href=<%= repo.html_url %>><%= repo.name %></td>
+        <td><a href=<%= repo.url %>><%= repo.name %></td>
         <td><%= find_other_contributors(repo.name) %></td>
         <td><%= repo.updated_at %></td>
       </tr>

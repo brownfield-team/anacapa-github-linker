@@ -87,14 +87,8 @@ module Courses
     end
 
     def find_org_repos
-      organization_repos = machine_user.organization_repositories(@parent.course_organization)
-      filtered_repos = []
-      if organization_repos.respond_to? :select
-        filtered_repos = organization_repos.select do |repo|
-          repo.name.downcase.include?(@roster_student.username.downcase)
-        end
-      end
-      filtered_repos
+      binding.pry
+      @roster_student.user.github_repos
     end
     helper_method :find_org_repos
 

@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     get :jobs
     get :test_job
     get :update_org_membership_job
+    get :update_github_repos_job
     post :update_ta
     scope module: :courses do
       resources :roster_students do

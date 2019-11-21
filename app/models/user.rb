@@ -8,6 +8,7 @@ class User < ApplicationRecord
          :omniauthable, :omniauth_providers => [:github]
 
   has_many :roster_students, dependent: :destroy
+  has_and_belongs_to_many :github_repos
 
   # install rolify
   rolify

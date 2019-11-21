@@ -1,20 +1,18 @@
-require 'Octokit_Wrapper'
+class StudentsOrgMembershipCheckJob < CourseJob
 
-class StudentsOrgMembershipCheckJob
-  include SuckerPunch::Job
+  @job_name = "Refresh Student Org Membership"
 
   def perform(course_id)
     course = Course.find(course_id)
-    client = Octokit_Wrapper::Octokit_Wrapper.machine_user
-    org_member_ids = client.organization_members(course.course_organization).map {|member| member.id}
-    if org_member_ids.size == 0
-      CompletedJob.create(job_name: "Refresh Student Org Membership", course_id: course_id, summary: "Failed to fetch
-        user IDs from GitHub.")
+    org_member_ids = github_machine_user.organization_members(course.course_organization).map {|member|
+      member.id}
+    unless org_member_ids.respond_to? :each == 0
+      summary = "Failed to fetch org members from GitHub."
+      CompletedJob.create(job_name: "Refresh Student Org Membership", course_id: course_id, summary: summary)
       return
     end
 
     roster_students = course.roster_students
-
     num_changed = 0
     roster_students.each do |student|
       unless student.user.uid.nil?

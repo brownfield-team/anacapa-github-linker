@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191120061955) do
+ActiveRecord::Schema.define(version: 20191121031312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,35 @@ ActiveRecord::Schema.define(version: 20191120061955) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "hidden"
+    t.boolean "enable_web_hooks", default: false, null: false
+    t.string "slack"
+    t.bigint "slack_workspace_id"
+    t.index ["slack_workspace_id"], name: "index_courses_on_slack_workspace_id"
+  end
+
+  create_table "github_repos", force: :cascade do |t|
+    t.string "name"
+    t.string "url"
+    t.bigint "course_id"
+    t.datetime "last_updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "repo_id"
+    t.index ["course_id"], name: "index_github_repos_on_course_id"
+  end
+
+  create_table "github_repos_users", id: false, force: :cascade do |t|
+    t.bigint "github_repo_id", null: false
+    t.bigint "user_id", null: false
+  end
+
+  create_table "hook_events", force: :cascade do |t|
+    t.string "hooktype"
+    t.string "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "course_id"
+    t.index ["course_id"], name: "index_hook_events_on_course_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -58,6 +87,16 @@ ActiveRecord::Schema.define(version: 20191120061955) do
     t.index ["email", "course_id"], name: "index_roster_students_on_email_and_course_id", unique: true
     t.index ["perm", "course_id"], name: "index_roster_students_on_perm_and_course_id", unique: true
     t.index ["user_id"], name: "index_roster_students_on_user_id"
+  end
+
+  create_table "slack_workspaces", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "access_token"
+    t.string "bot_access_token"
+    t.string "slack_url"
+    t.string "scope"
   end
 
   create_table "users", force: :cascade do |t|
@@ -90,6 +129,9 @@ ActiveRecord::Schema.define(version: 20191120061955) do
   end
 
   add_foreign_key "completed_jobs", "courses"
+  add_foreign_key "courses", "slack_workspaces"
+  add_foreign_key "github_repos", "courses"
+  add_foreign_key "hook_events", "courses"
   add_foreign_key "roster_students", "courses"
   add_foreign_key "roster_students", "users"
 end
