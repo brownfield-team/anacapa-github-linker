@@ -3,12 +3,12 @@ class StudentsOrgMembershipCheckJob < CourseJob
   @job_name = "Refresh Student Org Membership"
 
   def perform(course_id)
-    course = Course.find(course_id)
+    course = Course.find(course_id.to_i)
     org_member_ids = github_machine_user.organization_members(course.course_organization).map {|member|
       member.id}
-    unless org_member_ids.respond_to? :each == 0
+    unless org_member_ids.respond_to? :each
       summary = "Failed to fetch org members from GitHub."
-      CompletedJob.create(job_name: "Refresh Student Org Membership", course_id: course_id, summary: summary)
+      CompletedJob.create(job_name: StudentsOrgMembershipCheckJob.job_name, course_id: course_id, summary: summary)
       return
     end
 
@@ -23,7 +23,7 @@ class StudentsOrgMembershipCheckJob < CourseJob
         end
       end
     end
-    CompletedJob.create(job_name: "Refresh Student Org Membership", course_id: course_id, summary: num_changed.to_s +
+    CompletedJob.create(job_name: StudentsOrgMembershipCheckJob.job_name, course_id: course_id, summary: num_changed.to_s +
         " org membership statuses updated")
   end
 end

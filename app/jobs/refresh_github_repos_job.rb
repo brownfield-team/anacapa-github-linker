@@ -24,24 +24,27 @@ class RefreshGithubReposJob < CourseJob
   def get_users_for_repo(github_repo, students)
     repo_name = github_repo.name.downcase
     students.select { |student| repo_name.include?(student.username.downcase) }
-    students.map { |student| student.user}
+    students.map { |student| student.user }
   end
 
   def create_repo_record(github_repo, course, students)
     num_created = 0
     repo_record = GithubRepo.new
     existing_record = GithubRepo.find_by_repo_id(github_repo.id)
-
     unless existing_record.nil?
       repo_record = existing_record
     else
       num_created += 1
+      repo_record = GithubRepo.new
+      repo_record.repo_id = github_repo.id
+      repo_record.course = course
     end
 
     repo_record.name = github_repo.name
     repo_record.url = github_repo.html_url
-    repo_record.course = course
     repo_record.users << get_users_for_repo(github_repo, students)
+    repo_record.last_updated_at = github_repo.updated_at
+
     repo_record.save
 
     num_created

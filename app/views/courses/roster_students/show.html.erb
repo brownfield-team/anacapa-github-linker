@@ -51,7 +51,7 @@
       <tr>
         <td><a href=<%= repo.url %>><%= repo.name %></td>
         <td><%= find_other_contributors(repo.name) %></td>
-        <td><%= repo.updated_at %></td>
+        <td><%= repo.last_updated_at %></td>
       </tr>
     <% end %>
   </table>

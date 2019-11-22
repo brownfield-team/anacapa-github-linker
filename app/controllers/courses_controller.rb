@@ -100,7 +100,6 @@ class CoursesController < ApplicationController
     end
   end
 
-
   def is_org_member(username)
     machine_user.organization_member?(@course.course_organization, username)
   end
@@ -111,18 +110,18 @@ class CoursesController < ApplicationController
     authorize! :jobs, @course
   end
 
-  def test_job
-    TestJob.perform_async(params[:course_id])
-    redirect_to course_jobs_path
-  end
-
-  def update_org_membership_job
-    StudentsOrgMembershipCheckJob.perform_async(params[:course_id])
-    redirect_to course_jobs_path
-  end
-
-  def update_github_repos_job
-    RefreshGithubReposJob.perform_async(params[:course_id])
+  def run_course_job
+    job_name = params[:job_name]
+    job = CourseJob
+    case job_name
+    when TestJob.job_name
+      job = TestJob
+    when StudentsOrgMembershipCheckJob.job_name
+      job = StudentsOrgMembershipCheckJob
+    when RefreshGithubReposJob.job_name
+      job = RefreshGithubReposJob
+    end
+    job.perform_async(params[:course_id])
     redirect_to course_jobs_path
   end
 

@@ -18,17 +18,17 @@
       <tr>
         <td><%= TestJob.job_name %></td>
         <td><%= TestJob.last_run %></td>
-        <td><%= link_to 'Run Job', course_test_job_path %></td>
+        <td><%= link_to 'Run Job', course_run_course_job_path(@course, job_name: TestJob.job_name) %></td>
       </tr>
       <tr>
         <td><%= StudentsOrgMembershipCheckJob.job_name %></td>
         <td><%= StudentsOrgMembershipCheckJob.last_run %></td>
-        <td><%= link_to 'Run Job', course_update_org_membership_job_path %></td>
+        <td><%= link_to 'Run Job', course_run_course_job_path(@course, job_name: StudentsOrgMembershipCheckJob.job_name) %></td>
       </tr>
       <tr>
         <td><%= RefreshGithubReposJob.job_name %></td>
         <td><%= RefreshGithubReposJob.last_run %></td>
-        <td><%= link_to 'Run Job', course_update_github_repos_job_path %></td>
+        <td><%= link_to 'Run Job', course_run_course_job_path(@course, job_name: RefreshGithubReposJob.job_name) %></td>
       </tr>
       </tbody>
     </table>
@@ -51,6 +51,7 @@
       </tr>
       </thead>
       <tbody>
+      <!--   Display last 10 completed jobs   -->
       <% CompletedJob.where(course_id: @course.id).reverse_order.limit(10).each do |completed_job| %>
         <tr>
           <td><%= completed_job.job_name %></td>

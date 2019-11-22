@@ -13,7 +13,7 @@ class CourseJob
     if CompletedJob.where(job_name: @job_name).last.nil?
       return "N/A"
     end
-    CompletedJob.where(job_name: 'Refresh Student Org Membership').last.created_at
+    CompletedJob.where(job_name: @job_name).last.created_at
   end
 
   def github_machine_user
@@ -26,5 +26,9 @@ class CourseJob
     job_record.summary = summary
     job_record.course = course
     job_record.save
+  end
+
+  def perform(course_id)
+
   end
 end

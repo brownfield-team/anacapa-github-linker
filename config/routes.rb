@@ -16,9 +16,7 @@ Rails.application.routes.draw do
     post :join
     get :view_ta
     get :jobs
-    get :test_job
-    get :update_org_membership_job
-    get :update_github_repos_job
+    get :run_course_job
     post :update_ta
     scope module: :courses do
       resources :roster_students do
@@ -27,6 +25,7 @@ Rails.application.routes.draw do
         end
       end
     end
+
   end
 
   resources :users

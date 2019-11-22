@@ -92,14 +92,16 @@ module Courses
     helper_method :find_org_repos
 
     def find_other_contributors(repo_name)
-      student_list = @roster_student.user.github_repos.users.select { |user| user.id != @roster_student.user.id}
+      repo_for_name = @roster_student.user.github_repos.find_by_name(repo_name)
+      student_list = repo_for_name.users.select { |user| user.id != @roster_student.user.id}
       other_contributor_string(student_list)
     end
     helper_method :find_other_contributors
 
-    def other_contributor_string(student_list)
+    def other_contributor_string(user_list)
       other_contributor_string = ""
-      contributors.each do |student|
+      student_list = user_list.map { |user| @parent.roster_students.find_by_user_id(user.id) }
+      student_list.each do |student|
         other_contributor_string += student.first_name + " " + student.last_name + ", "
       end
       if other_contributor_string != ""
