@@ -32,8 +32,7 @@ class RefreshGithubReposJob < CourseJob
       repo_record.repo_id = github_repo.id
       repo_record.course = course
     end
-
-    repo_record.name = github_repo.name
+    repo_record.name = github_repo.full_name  # full_name includes organization name e.g. test-org/test-repo
     repo_record.url = github_repo.html_url
     repo_record.users << get_users_for_repo(repo_record, students)
     repo_record.last_updated_at = github_repo.updated_at
