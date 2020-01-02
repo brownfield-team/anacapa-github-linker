@@ -13,7 +13,7 @@ class StudentsOrgMembershipCheckJob < CourseJob
       roster_students = course.roster_students
       num_changed = 0
       roster_students.each do |student|
-        unless student.user.uid.nil?
+        unless student.user.nil? or student.user.uid.nil?
           is_org_member = org_member_ids.include?(student.user.uid.to_i)
           if is_org_member != student.is_org_member
             student.is_org_member = is_org_member
