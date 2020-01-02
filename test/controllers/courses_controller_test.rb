@@ -29,6 +29,11 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get show jobs" do
+    get course_jobs_path(@course)
+    assert_response :success
+  end
+
   test "instructors should be able to see their own view_ta page" do
     users(:tim).add_role(:instructor)
     users(:tim).add_role(:instructor, @course)

@@ -112,18 +112,20 @@ class CoursesController < ApplicationController
 
   def run_course_job
     job_name = params[:job_name]
-    job = CourseJob
-    case job_name
-    when TestJob.job_name
-      job = TestJob
-    when StudentsOrgMembershipCheckJob.job_name
-      job = StudentsOrgMembershipCheckJob
-    when RefreshGithubReposJob.job_name
-      job = RefreshGithubReposJob
-    end
+    job = jobs_list.find { |job| job.job_short_name == job_name }
     job.perform_async(params[:course_id])
     redirect_to course_jobs_path
   end
+
+  def jobs_list
+    [TestJob, StudentsOrgMembershipCheckJob, RefreshGithubReposJob]
+  end
+  helper_method :jobs_list
+
+  def last_ten_jobs
+    CompletedJob.where(course_id: @course.id).reverse_order.limit(10)
+  end
+  helper_method :last_ten_jobs
 
   private
     # Use callbacks to share common setup or constraints between actions.
