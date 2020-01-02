@@ -46,7 +46,9 @@ class RefreshGithubReposJob < CourseJob
   def get_users_for_repo(repo_record, students)
     repo_name = repo_record.name.downcase
     filtered_students = students.select do |student|
-      next(repo_name.include?(student.username.downcase) && !repo_record.users.include?(student.user))
+      unless student.username.nil?
+        next(repo_name.include?(student.username.downcase) && !repo_record.users.include?(student.user))
+      end
     end
     filtered_students.map { |student| student.user }
   end
