@@ -42,9 +42,9 @@ class CourseJobsTest < ActionDispatch::IntegrationTest
     )
   end
 
-
-  test "should return org member statuses from repo users table" do
-
-  end
+  #
+  # test "should return org member statuses from repo users table" do
+  #
+  # end
 
 end
