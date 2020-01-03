@@ -3,11 +3,11 @@
 # see this tutorial for details on how we do this https://gist.github.com/jhjguxin/3074080
 require 'Octokit_Wrapper'
 
-module Courses 
+module Courses
   class RosterStudentsController < ApplicationController
     before_action :load_parent
     before_action :set_roster_student, only: [:show, :edit, :update, :destroy]
-    
+
     load_and_authorize_resource :course
     load_and_authorize_resource :roster_student, through: :course
 
@@ -39,7 +39,7 @@ module Courses
 
     # GET /roster_students/new
     def new
-      @roster_student = @parent.roster_students.new 
+      @roster_student = @parent.roster_students.new
     end
 
     # GET /roster_students/1/edit
@@ -87,29 +87,21 @@ module Courses
     end
 
     def find_org_repos
-      organization_repos = machine_user.organization_repositories(@parent.course_organization)
-      filtered_repos = []
-      if organization_repos.respond_to? :select
-        filtered_repos = organization_repos.select do |repo|
-          repo.name.downcase.include?(@roster_student.username.downcase)
-        end
-      end
-      filtered_repos
+      @roster_student.user.github_repos
     end
     helper_method :find_org_repos
 
     def find_other_contributors(repo_name)
-      student_list = @parent.roster_students
-      contributors = student_list.select do |student|
-        unless student.username.nil?
-          does_not_equal_current_student = student.username != @roster_student.username
-          next(repo_name.downcase.include?((student.username).downcase) && does_not_equal_current_student)
-        else
-          next(false)
-        end
-      end
+      repo_object = @roster_student.user.github_repos.find_by_name(repo_name)
+      student_list = repo_object.users.select { |user| user.id != @roster_student.user.id}
+      other_contributor_string(student_list)
+    end
+    helper_method :find_other_contributors
+
+    def other_contributor_string(user_list)
       other_contributor_string = ""
-      contributors.each do |student|
+      student_list = user_list.map { |user| @parent.roster_students.find_by_user_id(user.id) }
+      student_list.each do |student|
         other_contributor_string += student.first_name + " " + student.last_name + ", "
       end
       if other_contributor_string != ""
@@ -119,7 +111,6 @@ module Courses
       # other_contributor_string.delete_suffix(", ")
       other_contributor_string
     end
-    helper_method :find_other_contributors
 
     private
       # Use callbacks to share common setup or constraints between actions.

@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190726203820) do
+ActiveRecord::Schema.define(version: 20191217022023) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "completed_jobs", force: :cascade do |t|
+    t.string "job_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "course_id"
+    t.string "summary"
+    t.string "job_short_name"
+    t.index ["course_id"], name: "index_completed_jobs_on_course_id"
+  end
 
   create_table "courses", force: :cascade do |t|
     t.string "name", null: false
@@ -21,6 +31,22 @@ ActiveRecord::Schema.define(version: 20190726203820) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "hidden"
+  end
+
+  create_table "github_repos", force: :cascade do |t|
+    t.string "name"
+    t.string "url"
+    t.bigint "course_id"
+    t.datetime "last_updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "repo_id"
+    t.index ["course_id"], name: "index_github_repos_on_course_id"
+  end
+
+  create_table "github_repos_users", id: false, force: :cascade do |t|
+    t.bigint "github_repo_id", null: false
+    t.bigint "user_id", null: false
   end
 
   create_table "roles", force: :cascade do |t|
@@ -44,6 +70,7 @@ ActiveRecord::Schema.define(version: 20190726203820) do
     t.bigint "course_id"
     t.bigint "user_id"
     t.boolean "enrolled", default: true
+    t.boolean "is_org_member"
     t.index ["course_id"], name: "index_roster_students_on_course_id"
     t.index ["email", "course_id"], name: "index_roster_students_on_email_and_course_id", unique: true
     t.index ["perm", "course_id"], name: "index_roster_students_on_perm_and_course_id", unique: true
@@ -79,6 +106,8 @@ ActiveRecord::Schema.define(version: 20190726203820) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  add_foreign_key "completed_jobs", "courses"
+  add_foreign_key "github_repos", "courses"
   add_foreign_key "roster_students", "courses"
   add_foreign_key "roster_students", "users"
 end

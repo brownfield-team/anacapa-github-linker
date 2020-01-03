@@ -88,3 +88,4 @@ gem 'kaminari'
 gem "actionview", ">= 5.1.6.2"
 
 gem 'omniauth-rails_csrf_protection', '~> 0.1'
+gem 'sucker_punch'

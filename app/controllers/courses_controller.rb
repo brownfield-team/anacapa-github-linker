@@ -1,4 +1,5 @@
 require 'Octokit_Wrapper'
+
 class CoursesController < ApplicationController
   before_action :set_course, only: [:show, :edit, :update, :destroy]
   load_and_authorize_resource
@@ -87,7 +88,7 @@ class CoursesController < ApplicationController
       message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verified your email address. '
       return redirect_to courses_path, alert: message
     end
-    
+
     begin
        course.invite_user_to_course_org(current_user)
        roster_student.update_attribute(:enrolled, true)
@@ -99,11 +100,32 @@ class CoursesController < ApplicationController
     end
   end
 
-
   def is_org_member(username)
     machine_user.organization_member?(@course.course_organization, username)
   end
   helper_method :is_org_member
+
+  def jobs
+    @course = Course.find(params[:course_id])
+    authorize! :jobs, @course
+  end
+
+  def run_course_job
+    job_name = params[:job_name]
+    job = jobs_list.find { |job| job.job_short_name == job_name }
+    job.perform_async(params[:course_id])
+    redirect_to course_jobs_path
+  end
+
+  def jobs_list
+    [TestJob, StudentsOrgMembershipCheckJob, RefreshGithubReposJob]
+  end
+  helper_method :jobs_list
+
+  def last_ten_jobs
+    CompletedJob.where(course_id: @course.id).reverse_order.limit(10)
+  end
+  helper_method :last_ten_jobs
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -119,7 +141,7 @@ class CoursesController < ApplicationController
     def add_instructor(id)
       current_user.add_role :instructor, Course.find(id)
     end
-    
+
     def machine_user
       client = Octokit_Wrapper::Octokit_Wrapper.machine_user
     end
