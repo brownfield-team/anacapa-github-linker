@@ -4,6 +4,7 @@ class CoursesController < ApplicationController
   before_action :set_course, only: [:show, :edit, :update, :destroy]
   load_and_authorize_resource
 
+
   # GET /courses
   # GET /courses.json
   def index
@@ -113,12 +114,15 @@ class CoursesController < ApplicationController
   def run_course_job
     job_name = params[:job_name]
     job = jobs_list.find { |job| job.job_short_name == job_name }
-    job.perform_async(params[:course_id])
+    job.perform_async(params[:course_id].to_i)
     redirect_to course_jobs_path
   end
 
+  # The list of jobs to make available to run on the jobs page.
+  @@course_jobs = [TestJob, StudentsOrgMembershipCheckJob, RefreshGithubReposJob]
+
   def jobs_list
-    [TestJob, StudentsOrgMembershipCheckJob, RefreshGithubReposJob]
+    @@course_jobs
   end
   helper_method :jobs_list
 

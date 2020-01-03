@@ -5,7 +5,8 @@ class StudentsOrgMembershipCheckJob < CourseJob
 
   def perform(course_id)
     ActiveRecord::Base.connection_pool.with_connection do
-      course = Course.find(course_id.to_i)
+      super
+      course = Course.find(course_id)
       org_member_ids = github_machine_user.organization_members(course.course_organization).map { |member| member.id }
       summary = ""
       unless org_member_ids.respond_to? :each
@@ -25,7 +26,7 @@ class StudentsOrgMembershipCheckJob < CourseJob
         end
         summary = num_changed.to_s + " org membership statuses updated"
       end
-      create_completed_job_record(summary, course_id)
+      update_job_record_with_completion_summary(summary)
     end
   end
 
