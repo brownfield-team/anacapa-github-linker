@@ -4,20 +4,22 @@ class RefreshGithubReposJob < CourseJob
   @job_short_name = "refresh_course_repos"
 
   def perform(course_id)
-    course = Course.find(course_id)
-    org_repos = github_machine_user.organization_repositories(course.course_organization)
-    students = course.roster_students
-    summary = ""
-    if org_repos.size == 0
-      summary = "Failed to fetch organization's repos. Either none exist or call to GitHub API failed."
-    else
-      num_created = 0
-      org_repos.each do |github_repo|
-        num_created += create_repo_record(github_repo, course, students)
+    ActiveRecord::Base.connection_pool.with_connection do
+      course = Course.find(course_id)
+      org_repos = github_machine_user.organization_repositories(course.course_organization)
+      students = course.roster_students
+      summary = ""
+      if org_repos.size == 0
+        summary = "Failed to fetch organization's repos. Either none exist or call to GitHub API failed."
+      else
+        num_created = 0
+        org_repos.each do |github_repo|
+          num_created += create_repo_record(github_repo, course, students)
+        end
+        summary = num_created.to_s + " repos created, " + (org_repos.size - num_created).to_s + " repos refreshed."
       end
-      summary = num_created.to_s + " repos created, " + (org_repos.size - num_created).to_s + " repos refreshed."
+      create_completed_job_record(summary, course_id)
     end
-    create_completed_job_record(summary, course_id)
   end
 
   def create_repo_record(github_repo, course, students)
