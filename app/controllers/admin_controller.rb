@@ -22,7 +22,8 @@ class AdminController < ApplicationController
   helper_method :table_row_pairs
 
   def admin_jobs_list
-
+    [TestJob]
   end
+  helper_method :admin_jobs_list
 
 end
