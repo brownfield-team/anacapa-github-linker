@@ -6,6 +6,7 @@ class Course < ApplicationRecord
   validates :course_organization, presence: true, length: {minimum: 3}, uniqueness: true
   validate :check_course_org_exists
   has_many :roster_students, dependent: :destroy
+  has_many :completed_jobs, dependent: :destroy
 
   resourcify
 
