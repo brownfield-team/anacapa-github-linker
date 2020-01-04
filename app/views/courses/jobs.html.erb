@@ -31,7 +31,7 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">Completed Job Log</h3>
+    <h3 class="panel-title">Job Log</h3>
   </div>
   <div class="panel-body">
 
@@ -39,7 +39,8 @@
       <thead>
       <tr>
         <th>Job Name</th>
-        <th>Date Completed</th>
+        <th>Date Run</th>
+        <th>Time Elapsed</th>
         <th>Summary</th>
       </tr>
       </thead>
@@ -49,6 +50,7 @@
         <tr>
           <td><%= completed_job.job_name %></td>
           <td><%= completed_job.created_at %></td>
+          <td><%= completed_job.time_elapsed %></td>
           <td><%= completed_job.summary %></td>
         </tr>
       <% end %>
