@@ -6,9 +6,14 @@ require 'action_view'
 include ActionView::Helpers::DateHelper
 
 class CompletedJob < ApplicationRecord
+
   def time_elapsed
     return distance_of_time_in_words_to_now(created_at, include_seconds: true) if summary == "In progress"
     distance_of_time_in_words(created_at, updated_at, include_seconds: true)
+  end
+
+  def self.last_ten_jobs(course_id)
+    CompletedJob.where(course_id: course_id).reverse_order.limit(10)
   end
 
 end

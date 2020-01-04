@@ -15,7 +15,7 @@
       </tr>
       </thead>
       <tbody>
-      <% jobs_list.each do |job| %>
+      <% course_job_list.each do |job| %>
         <tr>
           <td><%= job.job_name %></td>
           <td><%= job.last_run %></td>
@@ -46,7 +46,7 @@
       </thead>
       <tbody>
       <!--   Display last 10 completed jobs   -->
-      <% last_ten_jobs.each do |completed_job| %>
+      <% CompletedJob.last_ten_jobs(@course.id).each do |completed_job| %>
         <tr>
           <td><%= completed_job.job_name %></td>
           <td><%= completed_job.created_at %></td>
