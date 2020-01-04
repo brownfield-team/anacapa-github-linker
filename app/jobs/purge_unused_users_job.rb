@@ -6,7 +6,6 @@ class PurgeUnusedUsersJob < AdminJob
   def perform
     ActiveRecord::Base.connection_pool.with_connection do
       super
-      binding.pry
       num_removed = 0
       users = User.all
       users.each do |user|
