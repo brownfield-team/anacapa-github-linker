@@ -10,7 +10,7 @@ class RefreshGithubReposJob < CourseJob
       org_repos = github_machine_user.organization_repositories(course.course_organization)
       students = course.roster_students
       summary = ""
-      if org_repos.size == 0
+      if org_repos.respond_to? :each
         summary = "Failed to fetch organization's repos. Either none exist or call to GitHub API failed."
       else
         num_created = 0
@@ -18,6 +18,7 @@ class RefreshGithubReposJob < CourseJob
           num_created += create_repo_record(github_repo, course, students)
         end
         summary = num_created.to_s + " repos created, " + (org_repos.size - num_created).to_s + " repos refreshed."
+        RepoCollaboratorsJob.perform_async(course_id)
       end
       update_job_record_with_completion_summary(summary)
     end
@@ -38,22 +39,9 @@ class RefreshGithubReposJob < CourseJob
     repo_record.name = github_repo.name
     repo_record.full_name = github_repo.full_name  # full_name includes organization name e.g. test-org/test-repo
     repo_record.url = github_repo.html_url
-    repo_record.users << get_users_for_repo(repo_record, students)
     repo_record.last_updated_at = github_repo.updated_at
     repo_record.save
 
     num_created
-  end
-
-  # Currently, this simply uses substring matching. In the future, it may actually request
-  # a list of contributors from the GitHub API for the repository.
-  def get_users_for_repo(repo_record, students)
-    repo_name = repo_record.name.downcase
-    filtered_students = students.select do |student|
-      unless student.username.nil?
-        next(repo_name.include?(student.username.downcase) && !repo_record.users.include?(student.user))
-      end
-    end
-    filtered_students.map { |student| student.user }
   end
 end
