@@ -87,7 +87,28 @@ module Courses
     end
 
     def find_org_repos
-      @roster_student.user.github_repos
+      # This query gets all the repositories a user contributes to and how the repo was matched to the user.
+      # It is written in raw SQL because it would take several queries using Rails syntax.
+      result = ActiveRecord::Base.connection.exec_query("select rc.substring_matched, r.name,
+                                                        rc.api_matched, r.full_name, r.url, r.last_updated_at
+                                                        from users u join repo_contributors rc on u.id = rc.user_id
+                                                        join github_repos r on rc.github_repo_id = r.id
+                                                        where u.id = #{@roster_student.user.id}")
+      repo_dict = []
+      result.each do |repo_info|
+        # Generate text to show in how matched column based on column booleans
+        how_matched = ""
+        if repo_info["substring_matched"] && repo_info["api_matched"]
+          how_matched = "GitHub collaborator and in repo name"
+        elsif repo_info["api_matched"]
+          how_matched = "GitHub collaborator"
+        elsif repo_info["substring_matched"]
+          how_matched = "In repo name"
+        end
+        repo_info["how_matched"] = how_matched
+        repo_dict << repo_info
+      end
+      repo_dict
     end
     helper_method :find_org_repos
 
