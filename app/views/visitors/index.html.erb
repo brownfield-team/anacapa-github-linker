@@ -4,6 +4,7 @@
   <% if current_user.has_role? :admin %>
     <h1> Welcome Admin </h1>
     <p> Proceed to the courses page to manage classes or to the users page to manage users </p>
+    <p><%= link_to "Admin Dashboard", admin_dashboard_path %></p>
   <p>Note: You can manage a class with a blue name</p>
     
   <% elsif current_user.has_role? :instructor %>

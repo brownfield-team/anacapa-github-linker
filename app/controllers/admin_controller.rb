@@ -1,7 +1,7 @@
 class AdminController < ApplicationController
 
   def dashboard
-    authorize! :dashboard, :admin
+    authorize! :manage, :all
   end
 
   # This is an intricate bit of code that formats the results of this really messed up SQL query into a dictionary
