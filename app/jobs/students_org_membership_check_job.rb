@@ -1,6 +1,6 @@
 class StudentsOrgMembershipCheckJob < CourseJob
 
-  @job_name = "Refresh Student Org Membership"
+  @job_name = "Refresh Cached Student Org Membership Statuses"
   @job_short_name = "refresh_org_membership"
 
   def perform(course_id)

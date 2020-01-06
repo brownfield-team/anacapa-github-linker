@@ -1,6 +1,6 @@
 class PurgeCourseReposJob < CourseJob
 
-  @job_name = "Purge Course GitHub Repos"
+  @job_name = "Purge Course GitHub Repo Records From DB"
   @job_short_name = "purge_course_repos"
 
   def perform(course_id)
