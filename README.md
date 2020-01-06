@@ -85,3 +85,20 @@ You will need:
    that are read into the Rails environment by the [dotenv-rails](https://github.com/bkeepers/dotenv) gem.
 * Finally, run `rails s` and the application should come up.
 
+# Operations
+
+To create a full backup of the current database:
+
+```
+heroku pg:backups:capture --app ucsb-cs-github-linker
+heroku pg:backups:download --app ucsb-cs-github-linker
+```
+
+This creates `latest.dump` in the current directory.  Then you need to have postgres installed locally so that you can use the `pg_restore` command to convert this to a text `.sql` file like this:
+
+```
+pg_restore -f latest.sql latest.dump 
+```
+
+
+
