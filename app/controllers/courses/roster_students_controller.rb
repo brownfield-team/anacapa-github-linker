@@ -91,8 +91,8 @@ module Courses
     end
     helper_method :find_org_repos
 
-    def find_other_contributors(repo_name)
-      repo_object = @roster_student.user.github_repos.find_by_name(repo_name)
+    def find_other_contributors(repo_full_name)
+      repo_object = @roster_student.user.github_repos.find_by_full_name(repo_full_name)
       student_list = repo_object.users.select { |user| user.id != @roster_student.user.id}
       other_contributor_string(student_list)
     end
