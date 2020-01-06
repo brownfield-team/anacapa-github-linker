@@ -1,6 +1,6 @@
 class RefreshGithubReposJob < CourseJob
 
-  @job_name = "Refresh Course GitHub Repositories"
+  @job_name = "Refresh Course GitHub Repository Records in DB"
   @job_short_name = "refresh_course_repos"
 
   def perform(course_id)
