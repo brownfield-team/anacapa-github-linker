@@ -5,7 +5,8 @@ class TestJob < CourseJob
 
   def perform(course_id)
     ActiveRecord::Base.connection_pool.with_connection do
-      create_completed_job_record("Test completed.", course_id)
+      super
+      update_job_record_with_completion_summary("Test completed.")
     end
   end
 end

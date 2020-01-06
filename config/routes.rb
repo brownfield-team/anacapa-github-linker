@@ -30,6 +30,10 @@ Rails.application.routes.draw do
 
   resources :users
 
+  # Admin management dashboard
+  match 'admin/dashboard' => 'admin#dashboard', :via => :get
+  match 'admin/run_admin_job' => 'admin#run_admin_job', :via => :post
+
   # home page routes
   resources :visitors # NOTE that this defines a number of unused routes that would be good to remove for security
   root :to => "visitors#index"

@@ -5,6 +5,7 @@ class RefreshGithubReposJob < CourseJob
 
   def perform(course_id)
     ActiveRecord::Base.connection_pool.with_connection do
+      super
       course = Course.find(course_id)
       org_repos = github_machine_user.organization_repositories(course.course_organization)
       students = course.roster_students
@@ -18,7 +19,7 @@ class RefreshGithubReposJob < CourseJob
         end
         summary = num_created.to_s + " repos created, " + (org_repos.size - num_created).to_s + " repos refreshed."
       end
-      create_completed_job_record(summary, course_id)
+      update_job_record_with_completion_summary(summary)
     end
   end
 
