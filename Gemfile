@@ -89,3 +89,6 @@ gem "actionview", ">= 5.1.6.2"
 
 gem 'omniauth-rails_csrf_protection', '~> 0.1'
 gem 'sucker_punch'
+
+# More accurate distance_of_time_in_words method
+gem 'dotiw'

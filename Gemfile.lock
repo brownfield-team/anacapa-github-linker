@@ -82,6 +82,9 @@ GEM
     dotenv-rails (2.2.1)
       dotenv (= 2.2.1)
       railties (>= 3.2, < 5.2)
+    dotiw (4.0.1)
+      actionpack (>= 4)
+      i18n
     erubi (1.8.0)
     execjs (2.7.0)
     faraday (0.12.2)
@@ -287,6 +290,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   devise
   dotenv-rails
+  dotiw
   font-awesome-rails
   jbuilder (~> 2.5)
   jquery-rails
