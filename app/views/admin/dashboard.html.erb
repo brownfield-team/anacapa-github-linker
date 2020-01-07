@@ -43,13 +43,13 @@
       </tr>
       </thead>
       <tbody>
-      <% rate_limits.each do |rate_key, rate_value| %>
+      <% rate_limits.each do |api_name, rate_limit_info| %>
         <tr>
-          <td><%= rate_key %></td>
-          <td><%= rate_value[:remaining] %></td>
-          <td><%= rate_value[:limit] %></td>
-          <td><%= rate_value[:until_reset] %></td>
-          <td><%= rate_value[:info] %></td>
+          <td><%= api_name %></td>
+          <td><%= rate_limit_info[:remaining] %></td>
+          <td><%= rate_limit_info[:limit] %></td>
+          <td><%= rate_limit_info[:until_reset] %></td>
+          <td><%= rate_limit_info[:info] %></td>
         </tr>
       <% end %>
       </tbody>
