@@ -53,7 +53,8 @@ class AdminController < ApplicationController
       unless limit_response.limit.nil?
         reset_time = Time.at(limit_response.resets_at)
         return {"remaining": limit_response.remaining, "limit": limit_response.limit, "reset": reset_time,
-                "until_reset": distance_of_time_in_words_to_now(reset_time)}
+                "until_reset": distance_of_time_in_words_to_now(reset_time), "info": "GitHub Machine User: " +
+                ENV['MACHINE_USER_NAME']}
       end
       {"error": "Rate limit API request failed. Try refreshing the page."}
     end

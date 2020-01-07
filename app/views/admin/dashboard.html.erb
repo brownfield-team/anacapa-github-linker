@@ -39,6 +39,7 @@
         <th>Remaining</th>
         <th>Limit</th>
         <th>Time Until Reset</th>
+        <th>Info</th>
       </tr>
       </thead>
       <tbody>
@@ -48,6 +49,7 @@
           <td><%= rate_value[:remaining] %></td>
           <td><%= rate_value[:limit] %></td>
           <td><%= rate_value[:until_reset] %></td>
+          <td><%= rate_value[:info] %></td>
         </tr>
       <% end %>
       </tbody>
