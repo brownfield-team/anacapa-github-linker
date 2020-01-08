@@ -38,18 +38,17 @@ class RepoCollaboratorsJob < CourseJob
     students.each do |student|
       unless student.user.nil? or student.user.username.nil?
         s_user = student.user
-        is_substring_matched = repo_name.include?(s_user.username.downcase)
         is_api_matched = repo_collaborators.include?(s_user.username)
-
-        if is_substring_matched || is_api_matched
+        if is_api_matched
+          binding.pry
+          permissions = repo_collaborators_req.select { |user| user.login == s_user.username}.first.permissions
+          permission_level = permissions.admin ? "admin" : (permissions.push ? "write" : "read")
           existing_record = RepoContributor.where(user: s_user, github_repo: repo_record).first
-          unless existing_record.nil?
-            existing_record.substring_matched = is_substring_matched
-            existing_record.api_matched = is_api_matched
-            existing_record.save
+          if existing_record.nil?
+            RepoContributor.new(user: s_user, github_repo: repo_record, permission_level: permission_level)
           else
-            RepoContributor.new(user: s_user, github_repo: repo_record,
-                                substring_matched: is_substring_matched, api_matched: is_api_matched)
+            existing_record.permission_level = permission_level
+            existing_record.save
           end
           users_matched += 1
         end
