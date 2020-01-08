@@ -23,7 +23,6 @@ class UsersController < ApplicationController
     if params[:commit].include? "Instructor"
       @user.change_instructor_status
     end
-    binding.pry
     redirect_to users_path
   end
 
