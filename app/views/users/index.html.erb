@@ -4,6 +4,13 @@
   You can promote users to either admins or Instructors. If you promote a user to an Instructor, then that use will be able to create courses.
   NOTE: If you remove a user's instructor status, he/she will permanently lose access to all his/her courses.
 </p>
+
+<p>
+  Show only:
+  <%= link_to "All Users", users_path %>
+  <%= link_to "Instructors", users_path(type: "instructor") %>
+  <%= link_to "Administrators", users_path(type: "admin")  %>
+</p>
 <div class="row">
   <div class="col-sm-12">
       <%# search the course list %>
