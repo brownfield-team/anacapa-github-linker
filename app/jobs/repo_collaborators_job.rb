@@ -17,7 +17,7 @@ class RepoCollaboratorsJob < CourseJob
         total_repos_matched += users_matched >= 1 ? 1 : 0  # Repo is only counted in summary if it was matched to >= 1 user
       end
       summary = "#{total_users_matched} collaborators found for #{total_repos_matched} repositories."
-      create_completed_job_record(summary, course_id) # TODO: Replace this when rebasing other PR changes
+      update_job_record_with_completion_summary(summary)
     end
   end
 
