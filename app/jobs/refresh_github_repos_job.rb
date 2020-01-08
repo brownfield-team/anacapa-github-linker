@@ -18,7 +18,7 @@ class RefreshGithubReposJob < CourseJob
           num_created += create_repo_record(github_repo, course, students)
         end
         summary = num_created.to_s + " repos created, " + (org_repos.size - num_created).to_s + " repos refreshed."
-        RepoCollaboratorsJob.perform_async(course_id)
+        # RepoCollaboratorsJob.perform_async(course_id)
       end
       update_job_record_with_completion_summary(summary)
     end
