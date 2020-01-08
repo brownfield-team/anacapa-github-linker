@@ -87,54 +87,22 @@ module Courses
     end
 
     def find_org_repos
-      # This query gets all the repositories a user contributes to and how the repo was matched to the user.
-      # It is written in raw SQL because it would take several queries using Rails syntax.
-      query = <<-SQL
-        SELECT rc.substring_matched, r.name, rc.api_matched, r.full_name, r.url, r.last_updated_at
-        FROM users u 
-          JOIN repo_contributors rc ON u.id = rc.user_id
-          JOIN github_repos r ON rc.github_repo_id = r.id
-        WHERE u.id = #{@roster_student.user.id}
-      SQL
-      result = ActiveRecord::Base.connection.exec_query(query)
-      repo_dict = []
-      result.each do |repo_info|
-        # Generate text to show in how matched column based on column booleans
-        how_matched = ""
-        if repo_info["substring_matched"] && repo_info["api_matched"]
-          how_matched = "GitHub collaborator and in repo name"
-        elsif repo_info["api_matched"]
-          how_matched = "GitHub collaborator"
-        elsif repo_info["substring_matched"]
-          how_matched = "In repo name"
-        end
-        repo_info["how_matched"] = how_matched
-        repo_dict << repo_info
-      end
-      repo_dict
+      @roster_student.user.github_repos.where(course_id: @parent.id)
     end
     helper_method :find_org_repos
 
-    def find_other_contributors(repo_full_name)
-      repo_object = @roster_student.user.github_repos.find_by_full_name(repo_full_name)
-      student_list = repo_object.users.select { |user| user.id != @roster_student.user.id}
-      other_contributor_string(student_list)
+    def find_contributors(repo_full_name)
+      # This query gets all the repositories a user contributes to and how the repo was matched to the user.
+      # It is written in raw SQL because it would take several queries using Rails syntax.
+      query = <<-SQL
+        SELECT rs.first_name, rs.last_name, rs.id, u.username, rc.permission_level
+        FROM users u
+          JOIN roster_students rs ON (u.id = rs.user_id and 1 = rs.course_id)
+          JOIN repo_contributors rc ON u.id = rc.user_id
+      SQL
+      ActiveRecord::Base.connection.exec_query(query)
     end
-    helper_method :find_other_contributors
-
-    def other_contributor_string(user_list)
-      other_contributor_string = ""
-      student_list = user_list.map { |user| @parent.roster_students.find_by_user_id(user.id) }
-      student_list.each do |student|
-        other_contributor_string += student.first_name + " " + student.last_name + ", "
-      end
-      if other_contributor_string != ""
-        other_contributor_string = other_contributor_string[0..-3]
-      end
-      # Not supported before Ruby 2.5:
-      # other_contributor_string.delete_suffix(", ")
-      other_contributor_string
-    end
+    helper_method :find_contributors
 
     private
       # Use callbacks to share common setup or constraints between actions.

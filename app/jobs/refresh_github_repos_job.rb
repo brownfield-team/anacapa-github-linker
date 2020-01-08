@@ -82,8 +82,6 @@ class RefreshGithubReposJob < CourseJob
         if is_substring_matched || is_api_matched
           existing_record = RepoContributor.where(user: s_user, github_repo: repo_record).first
           unless existing_record.nil?
-            existing_record.substring_matched = is_substring_matched
-            existing_record.api_matched = is_api_matched
             existing_record.save
           else
             RepoContributor.new(user: s_user, github_repo: repo_record,

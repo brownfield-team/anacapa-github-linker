@@ -33,6 +33,12 @@ main {
   margin-top: 51px; // accommodate the navbar
 }
 
+.leftMargin td:first-child {
+  position: relative;
+  left: 20px;
+  z-index: 1;
+}
+
 .alert {
   margin-top: 15px;
 }

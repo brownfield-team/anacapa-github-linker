@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200104214922) do
+ActiveRecord::Schema.define(version: 20200106180359) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,8 +48,7 @@ ActiveRecord::Schema.define(version: 20200104214922) do
   create_table "repo_contributors", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "github_repo_id"
-    t.boolean "substring_matched"
-    t.boolean "api_matched"
+    t.string "permission_level"
     t.index ["github_repo_id"], name: "index_repo_contributors_on_github_repo_id"
     t.index ["user_id"], name: "index_repo_contributors_on_user_id"
   end

@@ -101,10 +101,10 @@ class CoursesController < ApplicationController
     end
   end
 
-  def is_org_member(username)
+  def is_org_member?(username)
     machine_user.organization_member?(@course.course_organization, username)
   end
-  helper_method :is_org_member
+  helper_method :is_org_member?
 
   def jobs
     @course = Course.find(params[:course_id])
