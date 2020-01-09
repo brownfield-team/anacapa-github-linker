@@ -1,6 +1,7 @@
 require 'Octokit_Wrapper'
 
 class CourseJob < BackgroundJob
+  @permission_level = "instructor"
 
   @job_description = "Course Job"
 
