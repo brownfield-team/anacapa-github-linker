@@ -9,7 +9,9 @@
   of this course
 </p>
 <p>This course belongs to the github organization:
-  <%= link_to(@course.course_organization, "https://github.com/" + @course.course_organization)%>
+  <% course_org_link = "https://github.com/#{@course.course_organization}" %>
+  <%= link_to @course.course_organization, course_org_link %>.
+  See <%= link_to "Membership and Pending Invitations", "#{course_org_link}/people" %>
 </p>
 
 <%#= link_to "View Course Roster (#{@course.roster_students.length} enrolled)", course_roster_students_path(@course), class: "btn", role: "button" %>
