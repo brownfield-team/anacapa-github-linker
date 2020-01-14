@@ -2,6 +2,8 @@ require 'Octokit_Wrapper'
 
 class CourseJob < BackgroundJob
 
+  @job_description = "Course Job"
+
   def create_in_progress_job_record(course_id)
     # This is a horrifying way to call the superclass method create_in_progress_job_record(),
     # but it would seem this is the only way to call an overloaded parent method in Ruby. Strange design.

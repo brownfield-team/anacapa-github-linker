@@ -1,5 +1,20 @@
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip().on('shown.bs.tooltip', function(e) {
+            /**
+             * If the item that triggered the event has class 'large-tooltip'
+             * then also add it to the currently open tooltip
+             */
+            if ($(this).hasClass('large-tooltip')) {
+                $('body').find('.tooltip[role="tooltip"].show').addClass('large-tooltip');
+            }
+        })
+    });
+</script>
+
 <h1> <%= link_to @course.name, course_path(@course) %> </h1>
 
+<a href="#" data-toggle="tooltip" title="Hooray!">Hover over me</a>
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Jobs</h3>
@@ -17,7 +32,7 @@
       <tbody>
       <% course_job_list.each do |job| %>
         <tr>
-          <td><%= job.job_name %></td>
+          <td><span class="job_name" data-toggle="tooltip" title = "<%= job.job_description %>"><%= job.job_name %></span></td>
           <td><%= job.last_run %></td>
           <td><%= link_to 'Run Job', course_run_course_job_path(@course, job_name: job.job_short_name),
                           method: :post %></td>

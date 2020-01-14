@@ -1,7 +1,8 @@
 class RefreshGithubReposJob < CourseJob
 
-  @job_name = "Refresh Course GitHub Repository Records in DB"
+  @job_name = "Refresh Course GitHub Repository Records"
   @job_short_name = "refresh_course_repos"
+  @job_description = "Fetches all of the course org's repositories from GitHub and refreshes the cached records."
 
   def perform(course_id)
     ActiveRecord::Base.connection_pool.with_connection do

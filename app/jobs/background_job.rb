@@ -9,6 +9,7 @@ class BackgroundJob
   @job_name
   @job_short_name
   @job_record
+  @job_description
 
   def self.job_name
     @job_name
@@ -16,6 +17,10 @@ class BackgroundJob
 
   def self.job_short_name
     @job_short_name
+  end
+
+  def self.job_description
+    @job_description
   end
 
   def self.last_run
