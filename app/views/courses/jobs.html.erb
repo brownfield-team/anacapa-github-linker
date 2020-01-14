@@ -1,20 +1,5 @@
-<script>
-    $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip().on('shown.bs.tooltip', function(e) {
-            /**
-             * If the item that triggered the event has class 'large-tooltip'
-             * then also add it to the currently open tooltip
-             */
-            if ($(this).hasClass('large-tooltip')) {
-                $('body').find('.tooltip[role="tooltip"].show').addClass('large-tooltip');
-            }
-        })
-    });
-</script>
-
 <h1> <%= link_to @course.name, course_path(@course) %> </h1>
 
-<a href="#" data-toggle="tooltip" title="Hooray!">Hover over me</a>
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Jobs</h3>
