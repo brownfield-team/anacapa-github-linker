@@ -19,15 +19,17 @@
 <!--        <input id="users_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">-->
 <!--      </div>-->
     <%# table containing the course list %>
-    <table class="table table-sm" id="course_list">
+    <table class="bootstrap-table" data-toggle="table" data-search="true" data-show-export="true"
+           data-pagination="true" data-show-columns="true"  data-show-columns-toggle-all="true"
+           data-show-pagination-switch="true" id="course_list">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Username</th>
+          <th data-sortable="true">Name</th>
+          <th data-sortable="true">Username</th>
           <th>uid</th>
-          <th>Admin</th>
+          <th data-sortable="true">Admin</th>
           <th></th>
-          <th>Instructor</th>
+          <th data-sortable="true">Instructor</th>
           <th></th>
         </tr>
       </thead>
@@ -69,8 +71,8 @@
         <% end %>
       </tbody>
     </table>
-    <div><%= page_entries_info @users %></div>
-    <div><%= paginate @users, window: 5 %></div>
+<!--    <div><%#= page_entries_info @users %></div>-->
+<!--    <div><%#= paginate @users, window: 5 %></div>-->
   </div>
 </div>
 
