@@ -93,3 +93,4 @@ gem 'sucker_punch'
 # More accurate distance_of_time_in_words method
 gem 'dotiw'
 gem 'bootstrap-table-rails'
+gem 'jquery-turbolinks'
