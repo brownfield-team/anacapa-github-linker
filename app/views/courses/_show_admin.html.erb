@@ -47,19 +47,19 @@
 
     </div>
 
-    <h4>TAs:
-      <% ta_count = 0 %>
-      <% @course.roster_students.each do |student| %>
-        <% if student.user.present? and student.user.has_role? :ta, @course %>
-          <%= ", " unless ta_count == 0 %>
-          <%= "#{student.first_name} #{student.last_name}" %>
-          <% ta_count += 1 %>
-        <% end %>
-      <% end %>
-      <% if ta_count == 0 %>
-        None
-      <% end %>
-    </h4>
+<!--    <h4>TAs:-->
+      <%# ta_count = 0 %>
+      <%# @course.roster_students.each do |student| %>
+        <%# if student.user.present? and student.user.has_role? :ta, @course %>
+          <%#= ", " unless ta_count == 0 %>
+          <%#= "#{student.first_name} #{student.last_name}" %>
+          <%# ta_count += 1 %>
+        <%# end %>
+      <%# end %>
+      <%# if ta_count == 0 %>
+<!--        None-->
+      <%# end %>
+<!--    </h4>-->
 
     <table class="table">
       <thead>
