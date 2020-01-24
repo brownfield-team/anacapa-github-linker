@@ -91,7 +91,7 @@ module Courses
     end
     helper_method :find_org_repos
 
-    def find_contributors(repo_full_name)
+    def find_contributors(repo_id)
       # This query gets certain information about a student, their user, and relationship to the repository in question.
       # It is written in raw SQL because it would take several queries using Rails syntax.
       query = <<-SQL
@@ -99,6 +99,7 @@ module Courses
         FROM users u
           JOIN roster_students rs ON (u.id = rs.user_id and #{@parent.id} = rs.course_id)
           JOIN repo_contributors rc ON u.id = rc.user_id
+        WHERE #{repo_id} = rc.github_repo_id
       SQL
       ActiveRecord::Base.connection.exec_query(query)
     end

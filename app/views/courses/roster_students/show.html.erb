@@ -53,10 +53,10 @@
         <td></td>
         <td></td>
       </tr>
-      <% find_contributors(repo.full_name).each do |contributor| %>
+      <% find_contributors(repo.id).each do |contributor| %>
         <tr class="leftMargin">
           <td><%= link_to "#{contributor["first_name"]} #{contributor["last_name"]}",
-                          course_roster_student_path(@parent, contributor) %></td>
+                          course_roster_student_path(@parent, contributor["id"]) %></td>
           <td><a href="https://github.com/<%= contributor["username"] %>"><%= contributor["username"] %></td>
           <td><a href="<%= repo.url %>/settings/access"><%= contributor["permission_level"] %></td>
         </tr>
