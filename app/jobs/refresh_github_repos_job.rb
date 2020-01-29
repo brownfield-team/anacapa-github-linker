@@ -34,24 +34,12 @@ class RefreshGithubReposJob < CourseJob
       repo_record.repo_id = github_repo.id
       repo_record.course = course
     end
-    repo_record.name = github_repo.full_name  # full_name includes organization name e.g. test-org/test-repo
+    repo_record.name = github_repo.name
+    repo_record.full_name = github_repo.full_name  # full_name includes organization name e.g. test-org/test-repo
     repo_record.url = github_repo.html_url
-    repo_record.users << get_users_for_repo(repo_record, students)
     repo_record.last_updated_at = github_repo.updated_at
     repo_record.save
 
     num_created
-  end
-
-  # Currently, this simply uses substring matching. In the future, it may actually request
-  # a list of contributors from the GitHub API for the repository.
-  def get_users_for_repo(repo_record, students)
-    repo_name = repo_record.name.downcase
-    filtered_students = students.select do |student|
-      unless student.username.nil?
-        next(repo_name.include?(student.username.downcase) && !repo_record.users.include?(student.user))
-      end
-    end
-    filtered_students.map { |student| student.user }
   end
 end
