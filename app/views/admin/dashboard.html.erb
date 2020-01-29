@@ -28,6 +28,38 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
+    <h3 class="panel-title">API Rate Limits</h3>
+  </div>
+  <div class="panel-body">
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>API</th>
+        <th>Remaining</th>
+        <th>Limit</th>
+        <th>Time Until Reset</th>
+        <th>Info</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% rate_limits.each do |api_name, rate_limit_info| %>
+        <tr>
+          <td><%= api_name %></td>
+          <td><%= rate_limit_info[:remaining] %></td>
+          <td><%= rate_limit_info[:limit] %></td>
+          <td><%= rate_limit_info[:until_reset] %></td>
+          <td><%= rate_limit_info[:info] %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
     <h3 class="panel-title">Jobs</h3>
   </div>
   <div class="panel-body">
