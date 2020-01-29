@@ -87,23 +87,30 @@ module Courses
     end
 
     def find_org_repos
-      @roster_student.user.github_repos.where(course_id: @parent.id)
+      @roster_student.user.github_repos
     end
     helper_method :find_org_repos
 
-    def find_contributors(repo_id)
-      # This query gets certain information about a student, their user, and relationship to the repository in question.
-      # It is written in raw SQL because it would take several queries using Rails syntax.
-      query = <<-SQL
-        SELECT rs.first_name, rs.last_name, rs.id, u.username, rc.permission_level
-        FROM users u
-          JOIN roster_students rs ON (u.id = rs.user_id and #{@parent.id} = rs.course_id)
-          JOIN repo_contributors rc ON u.id = rc.user_id
-        WHERE #{repo_id} = rc.github_repo_id
-      SQL
-      ActiveRecord::Base.connection.exec_query(query)
+    def find_other_contributors(repo_name)
+      repo_object = @roster_student.user.github_repos.find_by_name(repo_name)
+      student_list = repo_object.users.select { |user| user.id != @roster_student.user.id}
+      other_contributor_string(student_list)
     end
-    helper_method :find_contributors
+    helper_method :find_other_contributors
+
+    def other_contributor_string(user_list)
+      other_contributor_string = ""
+      student_list = user_list.map { |user| @parent.roster_students.find_by_user_id(user.id) }
+      student_list.each do |student|
+        other_contributor_string += student.first_name + " " + student.last_name + ", "
+      end
+      if other_contributor_string != ""
+        other_contributor_string = other_contributor_string[0..-3]
+      end
+      # Not supported before Ruby 2.5:
+      # other_contributor_string.delete_suffix(", ")
+      other_contributor_string
+    end
 
     private
       # Use callbacks to share common setup or constraints between actions.
