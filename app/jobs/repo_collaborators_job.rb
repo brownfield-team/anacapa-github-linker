@@ -40,7 +40,6 @@ class RepoCollaboratorsJob < CourseJob
         s_user = student.user
         is_api_matched = repo_collaborators.include?(s_user.username)
         if is_api_matched
-          binding.pry
           permissions = repo_collaborators_req.select { |user| user.login == s_user.username}.first.permissions
           permission_level = permissions.admin ? "admin" : (permissions.push ? "write" : "read")
           existing_record = RepoContributor.where(user: s_user, github_repo: repo_record).first
