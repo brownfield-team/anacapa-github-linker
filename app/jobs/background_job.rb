@@ -46,6 +46,24 @@ class BackgroundJob
   end
 
   def perform
+    ActiveRecord::Base.connection_pool.with_connection do
+      begin
+        create_in_progress_job_record
+        attempt_job
+      rescue Exception => e
+        rescue_job(e)
+      end
+    end
+  end
 
+  def attempt_job
+    # What a job actually does
+
+  end
+
+  def rescue_job(exception)
+    # Update job log record and reraise exception
+    update_job_record_with_completion_summary("An exception occurred. Please see the logs for more info.")
+    raise exception
   end
 end

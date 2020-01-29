@@ -6,7 +6,4 @@ class AdminJob < BackgroundJob
     @confirmation_dialog
   end
 
-  def perform
-    create_in_progress_job_record
-  end
 end

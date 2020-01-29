@@ -18,6 +18,17 @@ class CourseJob < BackgroundJob
   end
 
   def perform(course_id)
-    create_in_progress_job_record(course_id)
+    ActiveRecord::Base.connection_pool.with_connection do
+      create_in_progress_job_record(course_id)
+      begin
+        attempt_job(course_id)
+      rescue Exception => e
+        rescue_job(e)
+      end
+    end
+  end
+
+  def attempt_job(course_id)
+
   end
 end

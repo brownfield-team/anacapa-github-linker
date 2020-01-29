@@ -5,10 +5,7 @@ class PurgeCompletedJobsJob < AdminJob
   @confirmation_dialog = "Are you sure you want to delete all records of completed jobs?"
   @job_description = "Deletes all completed job records from the database."
 
-  def perform
-    ActiveRecord::Base.connection_pool.with_connection do
-      super
-      CompletedJob.destroy_all
-    end
+  def attempt_job
+    CompletedJob.destroy_all
   end
 end
