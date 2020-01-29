@@ -5,7 +5,7 @@
     a TA
   <% elsif current_user.has_role? :instructor, @course %>
     an instructor
-  <% end %> 
+  <% end %>
   of this course
 </p>
 <p>This course belongs to the github organization:
@@ -31,7 +31,7 @@
 
         <input type="text" style="display: none;" id="csv-header-map-hidden-field" name="csv_header_map" >
         <input type="checkbox" style="display: none;" checked="false" id="csv-header-toggle-hidden-field" name="csv_header_toggle" >
-        
+
       <% end %>
       <%= link_to "View Jobs", course_jobs_path(@course), method: :get, class: "btn",
                   style:
@@ -49,19 +49,19 @@
 
     </div>
 
-    <h4>TAs:
-      <% ta_count = 0 %>
-      <% @course.roster_students.each do |student| %>
-        <% if student.user.present? and student.user.has_role? :ta, @course %>
-          <%= ", " unless ta_count == 0 %>
-          <%= "#{student.first_name} #{student.last_name}" %>
-          <% ta_count += 1 %>
-        <% end %>
-      <% end %>
-      <% if ta_count == 0 %>
-        None
-      <% end %>
-    </h4>
+<!--    <h4>TAs:-->
+      <%# ta_count = 0 %>
+      <%# @course.roster_students.each do |student| %>
+        <%# if student.user.present? and student.user.has_role? :ta, @course %>
+          <%#= ", " unless ta_count == 0 %>
+          <%#= "#{student.first_name} #{student.last_name}" %>
+          <%# ta_count += 1 %>
+        <%# end %>
+      <%# end %>
+      <%# if ta_count == 0 %>
+<!--        None-->
+      <%# end %>
+<!--    </h4>-->
 
     <table class="table">
       <thead>
@@ -71,6 +71,7 @@
           <th>Last name</th>
           <th>Email</th>
           <th>Enrolled</th>
+          <th>TA</th>
           <th>Github ID</th>
           <th>Org Membership</th>
           <th colspan="3"></th>
@@ -85,6 +86,7 @@
             <td><%= student.last_name %></td>
             <td><%= student.email %></td>
             <td><%= student.enrolled ? "True" : "False" %></td>
+            <td><%= !student.user.nil? and student.user.has_role?(:ta, @course) ? "True" : "False" %></td>
             <% if !student.username.nil? and !student.username.empty? %>
               <td><a href="https://github.com/<%= student.username %>"><%= student.username %></td>
               <td><%= student.is_org_member %></td>
