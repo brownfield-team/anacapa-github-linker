@@ -7,7 +7,6 @@ class Course < ApplicationRecord
   validate :check_course_org_exists
   has_many :roster_students, dependent: :destroy
   has_many :completed_jobs, dependent: :destroy
-  has_many :github_repos, dependent: :destroy
 
   resourcify
 

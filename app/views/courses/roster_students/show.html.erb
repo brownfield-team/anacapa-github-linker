@@ -36,31 +36,23 @@
 </p>
 <% end %>
 
-<% unless @roster_student.user.nil? %>
+<% unless @roster_student.username.nil? %>
 <p class="repo-list-table">
   <strong>User Repositories:</strong>
   <table class="table">
     <thead>
     <tr>
-      <th>Repository (Student Name)</th>
-      <th>GitHub ID</th>
-      <th>Permission Level</th>
+      <th>Repository</th>
+      <th>Other Contributors</th>
+      <th>Last Modified</th>
     </tr>
     </thead>
     <% find_org_repos.each do |repo| %>
       <tr>
         <td><a href=<%= repo.url %>><%= repo.name %></td>
-        <td></td>
-        <td></td>
+        <td><%= find_other_contributors(repo.name) %></td>
+        <td><%= repo.last_updated_at %></td>
       </tr>
-      <% find_contributors(repo.id).each do |contributor| %>
-        <tr class="leftMargin">
-          <td><%= link_to "#{contributor["first_name"]} #{contributor["last_name"]}",
-                          course_roster_student_path(@parent, contributor["id"]) %></td>
-          <td><a href="https://github.com/<%= contributor["username"] %>"><%= contributor["username"] %></td>
-          <td><a href="<%= repo.url %>/settings/access"><%= contributor["permission_level"] %></td>
-        </tr>
-      <% end %>
     <% end %>
   </table>
 </p>
