@@ -1,7 +1,8 @@
 class StudentsOrgMembershipCheckJob < CourseJob
 
-  @job_name = "Refresh Cached Student Org Membership Statuses"
+  @job_name = "Refresh Student Org Membership Statuses"
   @job_short_name = "refresh_org_membership"
+  @job_description = "Updates all students' cached GitHub org membership status in the database/"
 
   def perform(course_id)
     ActiveRecord::Base.connection_pool.with_connection do

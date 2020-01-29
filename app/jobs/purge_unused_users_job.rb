@@ -2,6 +2,7 @@ class PurgeUnusedUsersJob < AdminJob
   @job_name = "Purge Unenrolled Student Users"
   @job_short_name = "purge_unenrolled_users"
   @confirmation_dialog = "Are you sure you want to delete all non-admin/instructor users not enrolled in a course?"
+  @job_description = "Removes all users who are not instructors/admins that are not enrolled in any existing course."
 
   def perform
     ActiveRecord::Base.connection_pool.with_connection do

@@ -75,7 +75,7 @@
       <tbody>
       <% admin_job_list.each do |job| %>
         <tr>
-          <td><%= job.job_name %></td>
+          <td><span class="job_name" data-toggle="tooltip" title = "<%= job.job_description %>"><%= job.job_name %></span></td>
           <td><%= job.last_run %></td>
           <td><%= link_to 'Run Job', admin_run_admin_job_path(job_name: job.job_short_name),
                           method: :post, data: { confirm: job.confirmation_dialog } %></td>

@@ -19,6 +19,14 @@
 @import "bootstrap";
 @import "bootstrap/theme";
 
+.tooltip-inner {
+  min-width: 300px; /* the minimum width */
+}
+
+.job_name {
+  border-bottom: 1px dotted black;
+}
+
 html, body {
   min-height: 100%;
   background-color: #eee;
