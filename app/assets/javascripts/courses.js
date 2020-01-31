@@ -16,15 +16,19 @@ $( document ).ready(function() {
            $("#upload-modal").modal();
  
            var dropdownHtml = 
-                 "<td>" + 
-                    "<select index='%i%' class='form-control input-sm' style='width: auto; font-weight: bold;'>" +
-                         "<option value='select' >-- select --</option>" +
-                         "<option value='full_name' >Full Name</option>" +
-                         "<option value='first_name' >First Name</option>" +
-                         "<option value='last_name' >Last Name</option>" +
-                         "<option value='perm' >Perm</option>" +
-                         "<option value='email' >Email</option>" +
-                     "</select>" +
+                 "<td>" +
+                    "<select id='dropdown-%i%' index='%i%' class='form-control input-sm' style='width: auto;" +
+               " font-weight:" +
+               " bold;'>";
+
+           let fields = [{value: 'select', 'name': '-- select --'}, {value: 'full_name', name: 'Full Name'},
+                        {value: 'first_name', name: 'First Name'}, {value: 'last_name', name: 'Last Name'},
+                        {value: 'perm', name: 'Perm'}, {value:'email', name: 'Email'}];
+
+           for (const field of fields) {
+               dropdownHtml += "<option value='" + field.value + "' >" + field.name + "</option>";
+           }
+           dropdownHtml += "</select>" +
                  "</td>";
             
            var counter = parsedFile.length;
@@ -33,10 +37,10 @@ $( document ).ready(function() {
             for(var j = 0; j < parsedFile[0].length; j++){
 
 
-                var newRow = "<tr>"
+                var newRow = "<tr>";
                 var rowSize = 0;
-                newRow += dropdownHtml.replace('%i%', j)
-                for(var i = 0; i < counter; i++){
+                newRow += dropdownHtml.replace('%i%', j);
+                for(var i = 0; i < counter && i < 6; i++){
 
                     rowSize += parsedFile[i].length;
                     newRow += ("<td>" + parsedFile[i][j] + "</td>");
@@ -46,10 +50,19 @@ $( document ).ready(function() {
                  if (rowSize > 0) { // skip empty rows
                    $("#upload-modal .table").append(newRow);
                  }
-            }   
+            }
 
- 
-         }
+
+            // Basic auto matching of fields to dropdown
+             let cleanedDropdownValues = fields.map(f => f.value.replace(/[^0-9a-z]/gi, '').toLowerCase());
+             for (var k = 0; k < parsedFile[0].length; k++) {
+                 let cleanedCellValue = parsedFile[0][k].replace(/[^0-9a-z]/gi, '').toLowerCase();
+                 let dropdownIndex = cleanedDropdownValues.indexOf(cleanedCellValue);
+                if (dropdownIndex > -1) {
+                    document.getElementById('dropdown-' + k).selectedIndex = dropdownIndex;
+                }
+             }
+         };
  
          // process async above
          reader.readAsText(selectedFile);
@@ -185,8 +198,8 @@ $( document ).ready(function() {
  function headerToggle(caller) {
      var checked = $(caller).is(':checked');
      if (checked) {
-         $("#upload-modal table tr:first-child").addClass("disabled");
+         $("#upload-modal table").addClass("first-row-disabled");
      } else {
-         $("#upload-modal table tr:first-child").removeClass("disabled");
+         $("#upload-modal table").removeClass("first-row-disabled");
      }
  }
