@@ -2,20 +2,7 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.csv tr {
-  display: block;
-  float: left;
-}
-
-.csv td {
-  display: block;
-}
-
-.csv td::before,
-.csv td::after {
-  content: '\00a0'; /* Escaped Unicode representation of a non-breaking space so cell doesn't collapse */
-}
-
-.first-row-disabled tr td:nth-child(2) {
+.first-row-disabled tr:nth-child(2) {
   background-color:lightgray;
+  font-weight: bold;
 }

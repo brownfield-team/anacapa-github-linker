@@ -31,15 +31,19 @@ $(document).ready(function () {
             dropdownHtml += "</select>" +
                 "</td>";
 
-            var counter = parsedFile.length;
+            var dropdownRow = "<tr>";
+            for (var i = 0; i < parsedFile[0].length; i++) {
+                dropdownRow += dropdownHtml.replace('%i%', i);
+            }
+            dropdownRow += "</tr>";
+            $("#upload-modal .table").append(dropdownRow);
 
             const rowsToShow = 6;
             //Assumes every row has the same length
-            for (var j = 0; j < parsedFile[0].length; j++) {
+            for (var i = 0; i < parsedFile.length && i < rowsToShow; i++) {
                 var newRow = "<tr>";
                 var rowSize = 0;
-                newRow += dropdownHtml.replace('%i%', j);
-                for (var i = 0; i < counter && i < rowsToShow; i++) {
+                for (var j = 0; j < parsedFile[0].length; j++) {
 
                     rowSize += parsedFile[i].length;
                     newRow += ("<td>" + parsedFile[i][j] + "</td>");
