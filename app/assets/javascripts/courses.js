@@ -1,46 +1,45 @@
-$( document ).ready(function() {
+$(document).ready(function () {
 
-    document.addEventListener("change", function(e) {
- 
-         // when file is uploaded, grab it
-         var selectedFile = e.target.files[0];
- 
-         var reader = new FileReader();
- 
-         reader.onload = function(e) {
-             // process result of the read
-           var text = reader.result;
-           var parsedFile = CSVToArray( text );
- 
-           // now generate table
-           $("#upload-modal").modal();
- 
-           var dropdownHtml = 
-                 "<td>" +
-                    "<select id='dropdown-%i%' index='%i%' class='form-control input-sm' style='width: auto;" +
-               " font-weight:" +
-               " bold;'>";
+    document.addEventListener("change", function (e) {
 
-           let fields = [{value: 'select', 'name': '-- select --'}, {value: 'full_name', name: 'Full Name'},
-                        {value: 'first_name', name: 'First Name'}, {value: 'last_name', name: 'Last Name'},
-                        {value: 'perm', name: 'Perm'}, {value:'email', name: 'Email'}];
+        // when file is uploaded, grab it
+        var selectedFile = e.target.files[0];
 
-           for (const field of fields) {
-               dropdownHtml += "<option value='" + field.value + "' >" + field.name + "</option>";
-           }
-           dropdownHtml += "</select>" +
-                 "</td>";
-            
-           var counter = parsedFile.length;
+        var reader = new FileReader();
 
-           //Assumes every row has the same length
-            for(var j = 0; j < parsedFile[0].length; j++){
+        reader.onload = function (e) {
+            // process result of the read
+            var text = reader.result;
+            var parsedFile = CSVToArray(text);
 
+            // now generate table
+            $("#upload-modal").modal();
 
+            var dropdownHtml =
+                "<td>" +
+                "<select id='dropdown-%i%' index='%i%' class='form-control input-sm' style='width: auto;" +
+                " font-weight:" +
+                " bold;'>";
+
+            let fields = [{value: 'select', 'name': '-- select --'}, {value: 'full_name', name: 'Full Name'},
+                {value: 'first_name', name: 'First Name'}, {value: 'last_name', name: 'Last Name'},
+                {value: 'perm', name: 'Perm'}, {value: 'email', name: 'Email'}];
+
+            for (const field of fields) {
+                dropdownHtml += "<option value='" + field.value + "' >" + field.name + "</option>";
+            }
+            dropdownHtml += "</select>" +
+                "</td>";
+
+            var counter = parsedFile.length;
+
+            const rowsToShow = 6;
+            //Assumes every row has the same length
+            for (var j = 0; j < parsedFile[0].length; j++) {
                 var newRow = "<tr>";
                 var rowSize = 0;
                 newRow += dropdownHtml.replace('%i%', j);
-                for(var i = 0; i < counter && i < 6; i++){
+                for (var i = 0; i < counter && i < rowsToShow; i++) {
 
                     rowSize += parsedFile[i].length;
                     newRow += ("<td>" + parsedFile[i][j] + "</td>");
@@ -51,7 +50,8 @@ $( document ).ready(function() {
                    $("#upload-modal .table").append(newRow);
                  }
             }
-
+            let rowsNotShownStr = (parsedFile.length - rowsToShow) + " rows not shown.";
+            document.getElementById('rows-not-shown').textContent = rowsNotShownStr;
 
             // Basic auto matching of fields to dropdown
              let cleanedDropdownValues = fields.map(f => f.value.replace(/[^0-9a-z]/gi, '').toLowerCase());
