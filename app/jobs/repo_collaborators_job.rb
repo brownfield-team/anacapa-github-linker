@@ -3,22 +3,19 @@ class RepoCollaboratorsJob < CourseJob
   @job_name = "Get All Repository Collaborators"
   @job_short_name = "get_repo_contributors"
 
-  def perform(course_id)
-    ActiveRecord::Base.connection_pool.with_connection do
-      super
-      course = Course.find(course_id)
-      course_repos = course.github_repos
-      course_students = course.roster_students
+  def attempt_job(course_id)
+    course = Course.find(course_id)
+    course_repos = course.github_repos
+    course_students = course.roster_students
 
-      total_users_matched = 0; total_repos_matched = 0
-      course_repos.each do |repo|
-        users_matched = users_for_repo(repo, course_students)
-        total_users_matched += users_matched
-        total_repos_matched += users_matched >= 1 ? 1 : 0  # Repo is only counted in summary if it was matched to >= 1 user
-      end
-      summary = "#{total_users_matched} collaborators found for #{total_repos_matched} repositories."
-      update_job_record_with_completion_summary(summary)
+    total_users_matched = 0; total_repos_matched = 0
+    course_repos.each do |repo|
+      users_matched = users_for_repo(repo, course_students)
+      total_users_matched += users_matched
+      total_repos_matched += users_matched >= 1 ? 1 : 0  # Repo is only counted in summary if it was matched to >= 1 user
     end
+    summary = "#{total_users_matched} collaborators found for #{total_repos_matched} repositories."
+    update_job_record_with_completion_summary(summary)
   end
 
   # Substring matching and collaborator matching. Collaborator matching:
