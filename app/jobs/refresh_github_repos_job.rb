@@ -9,7 +9,7 @@ class RefreshGithubReposJob < CourseJob
     org_repos = github_machine_user.organization_repositories(course.course_organization)
     students = course.roster_students
     summary = ""
-    if org_repos.respond_to? :each
+    if !org_repos.respond_to? :each
       summary = "Failed to fetch organization's repos. Either none exist or call to GitHub API failed."
     else
       num_created = 0
