@@ -124,6 +124,17 @@ class CoursesController < ApplicationController
   end
   helper_method :course_job_list
 
+  def repo_search(regex)
+    query = <<-SQL
+      SELECT gr.name, gr.url, gr.visibility, u.username, rs.first_name, rs.last_name, rs.id, rc.permission_level
+      FROM github_repos gr
+        JOIN repo_contributors rc ON gr.id = rc.github_repo_id
+        JOIN users u ON u.id = rc.user_id
+        JOIN roster_students rs ON u.id = rs.user_id
+      WHERE gr.course_id = #{@course.id}
+    SQL
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course
