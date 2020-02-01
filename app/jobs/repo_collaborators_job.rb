@@ -41,7 +41,7 @@ class RepoCollaboratorsJob < CourseJob
           permission_level = permissions.admin ? "admin" : (permissions.push ? "write" : "read")
           existing_record = RepoContributor.where(user: s_user, github_repo: repo_record).first
           if existing_record.nil?
-            RepoContributor.new(user: s_user, github_repo: repo_record, permission_level: permission_level)
+            RepoContributor.create(user: s_user, github_repo: repo_record, permission_level: permission_level)
           else
             existing_record.permission_level = permission_level
             existing_record.save
