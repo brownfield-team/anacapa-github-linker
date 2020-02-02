@@ -132,7 +132,7 @@ class CoursesController < ApplicationController
 
   def search_repos
     @course = Course.find(params[:course_id])
-    redirect_to course_repos_path(course_id: @course.id, params: {"search": params[:search]})
+    redirect_to course_repos_path(@course, search: params[:search])
   end
 
   private

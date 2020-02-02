@@ -22,10 +22,10 @@
           <td></td>
           <td><a href=<%= repo.url + "/settings" %>><%= repo.visibility %></td>
         </tr>
-        <% [].each do |contributor| %>
+        <% repo.find_contributors.each do |contributor| %>
           <tr class="leftMargin">
             <td><%= link_to "#{contributor["first_name"]} #{contributor["last_name"]}",
-                            course_roster_student_path(@parent, contributor["id"]) %></td>
+                            course_roster_student_path(@course, contributor["id"]) %></td>
             <td><a href="https://github.com/<%= contributor["username"] %>"><%= contributor["username"] %></td>
             <td><a href="<%= repo.url %>/settings/access"><%= contributor["permission_level"] %></td>
           </tr>
