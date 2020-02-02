@@ -1,7 +1,11 @@
 <h1>GitHub Repositories</h1>
 
 <%= form_tag course_search_repos_path, method: :get do %>
-  <%= text_field_tag :search, "", class: 'form-control', placeholder: "Regular Expression Search" %>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">(.*)</span>
+    <%= text_field_tag :search, (params[:search] or ""), class: 'form-control', placeholder: "Regular Expression Search" %>
+  </div>
+  <p></p>
   <%= submit_tag "Search", class: 'btn btn-primary' %>
 <% end %>
 
