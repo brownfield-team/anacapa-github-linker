@@ -21,7 +21,7 @@ $(document).ready(function () {
                 " font-weight:" +
                 " bold;'>";
 
-            let fields = [{value: 'select', 'name': '-- select --'}, {value: 'full_name', name: 'Full Name'},
+            let fields = [{value: 'select', name: '-- select --'}, {value: 'full_name', name: 'Full Name'},
                 {value: 'first_name', name: 'First Name'}, {value: 'last_name', name: 'Last Name'},
                 {value: 'perm', name: 'Perm'}, {value: 'email', name: 'Email'}];
 
