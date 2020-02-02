@@ -21,12 +21,12 @@ $(document).ready(function () {
                 " font-weight:" +
                 " bold;'>";
 
-            let fields = [{value: 'select', name: '-- select --'}, {value: 'full_name', name: 'Full Name'},
+            var fields = [{value: 'select', name: '-- select --'}, {value: 'full_name', name: 'Full Name'},
                 {value: 'first_name', name: 'First Name'}, {value: 'last_name', name: 'Last Name'},
                 {value: 'perm', name: 'Perm'}, {value: 'email', name: 'Email'}];
 
-            for (const field of fields) {
-                dropdownHtml += "<option value='" + field.value + "' >" + field.name + "</option>";
+            for (var i = 0; i < fields.length; i++) {
+                dropdownHtml += "<option value='" + fields[0].value + "' >" + fields[0].name + "</option>";
             }
             dropdownHtml += "</select>" +
                 "</td>";
@@ -38,7 +38,7 @@ $(document).ready(function () {
             dropdownRow += "</tr>";
             $("#upload-modal .table").append(dropdownRow);
 
-            const rowsToShow = 6;
+            var rowsToShow = 6;
             //Assumes every row has the same length
             for (var i = 0; i < parsedFile.length && i < rowsToShow; i++) {
                 var newRow = "<tr>";
@@ -54,14 +54,15 @@ $(document).ready(function () {
                    $("#upload-modal .table").append(newRow);
                  }
             }
-            let rowsNotShownStr = (parsedFile.length - rowsToShow) + " rows not shown.";
+            var rowsNotShownStr = (parsedFile.length - rowsToShow) + " rows not shown.";
             document.getElementById('rows-not-shown').textContent = rowsNotShownStr;
 
             // Basic auto matching of fields to dropdown
-             let cleanedDropdownValues = fields.map(f => f.value.replace(/[^0-9a-z]/gi, '').toLowerCase());
+
+             var cleanedDropdownValues = fields.map(function(f) { f.value.replace(/[^0-9a-z]/gi, '').toLowerCase(); });
              for (var k = 0; k < parsedFile[0].length; k++) {
-                 let cleanedCellValue = parsedFile[0][k].replace(/[^0-9a-z]/gi, '').toLowerCase();
-                 let dropdownIndex = cleanedDropdownValues.indexOf(cleanedCellValue);
+                 var cleanedCellValue = parsedFile[0][k].replace(/[^0-9a-z]/gi, '').toLowerCase();
+                 var dropdownIndex = cleanedDropdownValues.indexOf(cleanedCellValue);
                 if (dropdownIndex > -1) {
                     document.getElementById('dropdown-' + k).selectedIndex = dropdownIndex;
                 }
