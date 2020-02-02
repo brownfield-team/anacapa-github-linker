@@ -38,5 +38,6 @@ jobs:
           sudo apt-get -yqq install libpq-dev
           gem install bundler
           bundle install --jobs 4 --retry 3
-          bundle exec rails db:create
+          bundle exec rails db:create RAILS_ENV=test
+          bundle exec rails db:migrate RAILS_ENV=test
           bundle exec rails test
