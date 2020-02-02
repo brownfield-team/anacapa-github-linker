@@ -14,6 +14,9 @@ class RefreshGithubReposJob < CourseJob
     else
       num_created = 0
       org_repos.each do |github_repo|
+        if ENV['DEBUG_VERBOSE'] && ENV['DEBUG_VERBOSE'].to_i >= 1
+          puts "GitHub Repository from Octokit: " + github_repo.to_s
+        end
         num_created += create_repo_record(github_repo, course, students)
       end
       summary = num_created.to_s + " repos created, " + (org_repos.size - num_created).to_s + " repos refreshed."
