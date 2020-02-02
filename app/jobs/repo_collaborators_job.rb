@@ -35,7 +35,7 @@ class RepoCollaboratorsJob < CourseJob
     repo_name = repo_record.name.downcase
     begin
       repo_collaborators_req = github_machine_user.collaborators(repo_record.full_name, affiliation: "direct")
-    rescue Exception => e
+    rescue ClientError => e
       puts e
       return -1
     end
