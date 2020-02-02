@@ -63,7 +63,11 @@ class BackgroundJob
 
   def rescue_job(exception)
     # Update job log record and reraise exception
-    update_job_record_with_completion_summary("An exception occurred. Please see the logs for more info.")
+    if ENV['DEBUG_VERBOSE'] >= 1
+      update_job_record_with_completion_summary(exception.to_s)
+    else
+      update_job_record_with_completion_summary("An exception occurred. Please see the logs for more info.")
+    end
     raise exception
   end
 end
