@@ -26,7 +26,7 @@ $(document).ready(function () {
                 {value: 'perm', name: 'Perm'}, {value: 'email', name: 'Email'}];
 
             for (var i = 0; i < fields.length; i++) {
-                dropdownHtml += "<option value='" + fields[0].value + "' >" + fields[0].name + "</option>";
+                dropdownHtml += "<option value='" + fields[i].value + "' >" + fields[i].name + "</option>";
             }
             dropdownHtml += "</select>" +
                 "</td>";
