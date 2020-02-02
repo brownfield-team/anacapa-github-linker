@@ -8,13 +8,20 @@ class RepoCollaboratorsJob < CourseJob
     course_repos = course.github_repos
     course_students = course.roster_students
 
-    total_users_matched = 0; total_repos_matched = 0
+    total_users_matched = 0; total_repos_matched = 0; exceptions = 0
     course_repos.each do |repo|
       users_matched = users_for_repo(repo, course_students)
-      total_users_matched += users_matched
+      if users_matched == -1
+        exceptions += 1
+      else
+        total_users_matched += users_matched
+      end
       total_repos_matched += users_matched >= 1 ? 1 : 0  # Repo is only counted in summary if it was matched to >= 1 user
     end
     summary = "#{total_users_matched} collaborators found for #{total_repos_matched} repositories."
+    if exceptions > 0
+      summary += " #{exceptions} repositories could not be accessed. Check logs for info."
+    end
     update_job_record_with_completion_summary(summary)
   end
 
@@ -26,7 +33,12 @@ class RepoCollaboratorsJob < CourseJob
     users_matched = 0
 
     repo_name = repo_record.name.downcase
-    repo_collaborators_req = github_machine_user.collaborators(repo_record.full_name, affiliation: "direct")
+    begin
+      repo_collaborators_req = github_machine_user.collaborators(repo_record.full_name, affiliation: "direct")
+    rescue ClientError => e
+      puts e
+      return -1
+    end
     if repo_collaborators_req.respond_to? :each
       repo_collaborators = repo_collaborators_req.map { |collaborator| collaborator.login}
     else
