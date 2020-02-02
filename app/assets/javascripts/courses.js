@@ -59,7 +59,7 @@ $(document).ready(function () {
 
             // Basic auto matching of fields to dropdown
 
-             var cleanedDropdownValues = fields.map(function(f) { f.value.replace(/[^0-9a-z]/gi, '').toLowerCase(); });
+             var cleanedDropdownValues = fields.map(function(f) { return f.value.replace(/[^0-9a-z]/gi, '').toLowerCase(); });
              for (var k = 0; k < parsedFile[0].length; k++) {
                  var cleanedCellValue = parsedFile[0][k].replace(/[^0-9a-z]/gi, '').toLowerCase();
                  var dropdownIndex = cleanedDropdownValues.indexOf(cleanedCellValue);
