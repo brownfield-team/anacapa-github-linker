@@ -16,6 +16,8 @@ Rails.application.routes.draw do
     post :join
     get :view_ta
     get :jobs
+    get :repos
+    get :search_repos
     post :run_course_job
     post :update_ta
     scope module: :courses do

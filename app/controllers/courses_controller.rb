@@ -124,15 +124,15 @@ class CoursesController < ApplicationController
   end
   helper_method :course_job_list
 
-  def repo_search(regex)
-    query = <<-SQL
-      SELECT gr.name, gr.url, gr.visibility, u.username, rs.first_name, rs.last_name, rs.id, rc.permission_level
-      FROM github_repos gr
-        JOIN repo_contributors rc ON gr.id = rc.github_repo_id
-        JOIN users u ON u.id = rc.user_id
-        JOIN roster_students rs ON u.id = rs.user_id
-      WHERE gr.course_id = #{@course.id}
-    SQL
+  def repos
+    @course = Course.find(params[:course_id])
+    @repos = GithubRepo.where("name ~* ?", params[:search])
+    authorize! :repos, @course
+  end
+
+  def search_repos
+    @course = Course.find(params[:course_id])
+    redirect_to course_repos_path(course_id: @course.id, params: {"search": params[:search]})
   end
 
   private
@@ -143,7 +143,7 @@ class CoursesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_params
-      params.require(:course).permit(:name,:course_organization,:hidden)
+      params.require(:course).permit(:name,:course_organization,:hidden, :search)
     end
 
     def add_instructor(id)

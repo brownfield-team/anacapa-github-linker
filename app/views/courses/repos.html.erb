@@ -1,0 +1,38 @@
+<h1>GitHub Repositories</h1>
+
+<%= form_tag course_search_repos_path, method: :get do %>
+  <%= text_field_tag :search, "", class: 'form-control', placeholder: "Regular Expression Search" %>
+  <%= submit_tag "Search", class: 'btn btn-primary' %>
+<% end %>
+
+<p></p>
+<% unless @repos.nil? %>
+  <% unless @repos.size == 0 %>
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Repository (Student Name)</th>
+        <th>GitHub ID</th>
+        <th>Visibility (Permission Level)</th>
+      </tr>
+      </thead>
+      <% @repos.each do |repo| %>
+        <tr>
+          <td><a href=<%= repo.url %>><%= repo.name %></td>
+          <td></td>
+          <td><a href=<%= repo.url + "/settings" %>><%= repo.visibility %></td>
+        </tr>
+        <% [].each do |contributor| %>
+          <tr class="leftMargin">
+            <td><%= link_to "#{contributor["first_name"]} #{contributor["last_name"]}",
+                            course_roster_student_path(@parent, contributor["id"]) %></td>
+            <td><a href="https://github.com/<%= contributor["username"] %>"><%= contributor["username"] %></td>
+            <td><a href="<%= repo.url %>/settings/access"><%= contributor["permission_level"] %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </table>
+  <% else %>
+    <p>No results were found for your query.</p>
+  <% end %>
+<% end %>
