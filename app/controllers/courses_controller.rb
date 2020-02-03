@@ -126,7 +126,7 @@ class CoursesController < ApplicationController
 
   def repos
     @course = Course.find(params[:course_id])
-    @repos = GithubRepo.where(course_id: params[:course_id]).where("name ~* ?", params[:search])
+    @repos = GithubRepo.where(course_id: params[:course_id]).where("name ~* ?", params[:search]).order(:name)
     authorize! :repos, @course
   end
 
