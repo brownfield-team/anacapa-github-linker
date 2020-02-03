@@ -114,8 +114,12 @@ class CoursesController < ApplicationController
   def run_course_job
     job_name = params[:job_name]
     job = course_job_list.find { |job| job.job_short_name == job_name }
+    # This is a hack. It should be replaced as soon as possible, hopefully after authorization in the app is redone.
+    if job.permission_level == "admin" && !user.has_role?("admin")
+      redirect_to course_jobs_path, alert: "You do not have permission to run this job. Ask an admin to run it for you."
+    end
     job.perform_async(params[:course_id].to_i)
-    redirect_to course_jobs_path
+    redirect_to course_jobs_path, notice: "Job successfully queued."
   end
 
   # List of course jobs to make available to run

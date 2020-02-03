@@ -10,6 +10,7 @@ class BackgroundJob
   @job_short_name
   @job_record
   @job_description
+  @permission_level
 
   def self.job_name
     @job_name
@@ -28,6 +29,10 @@ class BackgroundJob
       return "N/A"
     end
     CompletedJob.where(job_short_name: @job_short_name).last.created_at
+  end
+
+  def self.permission_level
+    @permission_level
   end
 
   def create_in_progress_job_record
