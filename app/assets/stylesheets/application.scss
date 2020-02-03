@@ -69,6 +69,10 @@ main {
   font-size: 16px;
 }
 
+input.form-control {
+  margin-bottom: 10px;
+}
+
 // // make all images responsive by default
 // img {
 //   @extend .img-responsive;

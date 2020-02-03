@@ -34,9 +34,10 @@
 
       <% end %>
       <%= link_to "View Jobs", course_jobs_path(@course), method: :get, class: "btn",
-                  style:
-          "display:inline-block; float: right; margin-left: 10px;" %>
+                  style: "display:inline-block; float: right; margin-left: 10px;" %>
       <%= link_to "Download Roster as CSV", course_roster_students_path(@course, :format => "csv"), method: :get, class: "btn", style: "display:inline-block; float: right; margin-left: 10px;" %>
+      <%= link_to "Course Repositories", course_repos_path(@course), method: :get, class: "btn",
+                  style: "display:inline-block; float: right; margin-left: 10px;" %>
       <% if can? :create, RosterStudent %>
         <%= link_to 'New Student', new_course_roster_student_path(@course), class: "btn", style: "display: inline-block; float: right; margin-left: 10px;" %>
       <% end %>

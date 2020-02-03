@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 20200106180359) do
     t.datetime "updated_at", null: false
     t.integer "repo_id"
     t.string "full_name"
+    t.string "visibility"
     t.index ["course_id"], name: "index_github_repos_on_course_id"
   end
 

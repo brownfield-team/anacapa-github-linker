@@ -124,6 +124,17 @@ class CoursesController < ApplicationController
   end
   helper_method :course_job_list
 
+  def repos
+    @course = Course.find(params[:course_id])
+    @repos = GithubRepo.where(course_id: params[:course_id]).where("name ~* ?", params[:search])
+    authorize! :repos, @course
+  end
+
+  def search_repos
+    @course = Course.find(params[:course_id])
+    redirect_to course_repos_path(@course, search: params[:search])
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course
@@ -132,7 +143,7 @@ class CoursesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_params
-      params.require(:course).permit(:name,:course_organization,:hidden)
+      params.require(:course).permit(:name,:course_organization,:hidden, :search)
     end
 
     def add_instructor(id)

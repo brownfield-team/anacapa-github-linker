@@ -44,16 +44,16 @@
     <tr>
       <th>Repository (Student Name)</th>
       <th>GitHub ID</th>
-      <th>Permission Level</th>
+      <th>Visibility (Permission Level)</th>
     </tr>
     </thead>
     <% find_org_repos.each do |repo| %>
       <tr>
         <td><a href=<%= repo.url %>><%= repo.name %></td>
         <td></td>
-        <td></td>
+        <td><a href=<%= repo.url + "/settings" %>><%= repo.visibility %></td>
       </tr>
-      <% find_contributors(repo.id).each do |contributor| %>
+      <% repo.find_contributors.each do |contributor| %>
         <tr class="leftMargin">
           <td><%= link_to "#{contributor["first_name"]} #{contributor["last_name"]}",
                           course_roster_student_path(@parent, contributor["id"]) %></td>

@@ -39,6 +39,7 @@ class RefreshGithubReposJob < CourseJob
     end
     repo_record.name = github_repo.name
     repo_record.full_name = github_repo.full_name  # full_name includes organization name e.g. test-org/test-repo
+    repo_record.visibility = github_repo.private ? "private" : "public"
     repo_record.url = github_repo.html_url
     repo_record.last_updated_at = github_repo.updated_at
     repo_record.save
