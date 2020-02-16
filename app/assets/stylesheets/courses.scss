@@ -8,6 +8,7 @@
 }
 
 // Fixes most infuriating display bug of all time where select filters would be misaligned with input ones.
-select.form-control {
-  margin-bottom: 10px;
+
+div.filter-control {
+  padding-bottom: 2px;
 }
