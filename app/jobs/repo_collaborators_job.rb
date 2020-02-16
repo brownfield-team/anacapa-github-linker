@@ -1,7 +1,9 @@
 class RepoCollaboratorsJob < CourseJob
 
-  @job_name = "Get All Repository Collaborators"
+  @job_name = "Refresh All Repository Collaborators"
   @job_short_name = "get_repo_contributors"
+  @job_description = "Fetches a collaborator list for every repository in the organization and associates them with
+the corresponding students."
 
   def attempt_job(course_id)
     course = Course.find(course_id)
