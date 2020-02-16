@@ -2,32 +2,6 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">Database Tables</h3>
-  </div>
-  <div class="panel-body">
-
-    <table class="table">
-      <thead>
-      <tr>
-        <th>Table Name</th>
-        <th>Rows</th>
-      </tr>
-      </thead>
-      <tbody>
-      <% table_row_pairs.each do |table_name, num_rows| %>
-        <tr>
-          <td><%= table_name %></td>
-          <td><%= num_rows %></td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-
-  </div>
-</div>
-
-<div class="panel panel-default">
-  <div class="panel-heading">
     <h3 class="panel-title">API Rate Limits</h3>
   </div>
   <div class="panel-body">
@@ -110,6 +84,32 @@
           <td><%= completed_job.created_at %></td>
           <td><%= completed_job.time_elapsed %></td>
           <td><%= completed_job.summary %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Database Tables</h3>
+  </div>
+  <div class="panel-body">
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Table Name</th>
+        <th>Rows</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% table_row_pairs.each do |table_name, num_rows| %>
+        <tr>
+          <td><%= table_name %></td>
+          <td><%= num_rows %></td>
         </tr>
       <% end %>
       </tbody>
