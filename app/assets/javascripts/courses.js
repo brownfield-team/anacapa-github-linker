@@ -74,7 +74,7 @@ $(document).ready(function () {
          // console.log(CSVToArray(reader.readAsText(selectedFile)));
  
      });
- 
+
  });
  
  // http://stackoverflow.com/questions/1293147/javascript-code-to-parse-csv-data

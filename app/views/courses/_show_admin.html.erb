@@ -66,17 +66,17 @@
 
     <table class="bootstrap-table" data-toggle="table" data-search="true" data-show-export="true"
             data-pagination="true" data-show-columns="true"  data-show-columns-toggle-all="true"
-            data-show-pagination-switch="true">
+            data-show-pagination-switch="true" data-filter-control="true">
       <thead>
         <tr>
-          <th data-sortable="true">Perm</th>
-          <th data-sortable="true">First name</th>
-          <th data-sortable="true">Last name</th>
-          <th data-sortable="true">Email</th>
-          <th data-sortable="true">Enrolled</th>
-          <th data-sortable="true">TA</th>
-	        <th data-sortable="true">Github ID</th>
-          <th data-sortable="true">Org Membership</th>
+          <th data-sortable="true" data-field="Perm" data-filter-control="input">Perm</th>
+          <th data-sortable="true" data-field="FirstName" data-filter-control="input">First name</th>
+          <th data-sortable="true" data-field="LastName" data-filter-control="input">Last name</th>
+          <th data-sortable="true" data-field="Email" data-filter-control="input">Email</th>
+          <th data-sortable="true" data-field="Enrolled" data-filter-control="select">Enrolled</th>
+          <th data-sortable="true" data-field="TA" data-filter-control="select">TA</th>
+	        <th data-sortable="true" data-field="GithubId" data-filter-control="input">Github ID</th>
+          <th data-sortable="true" data-field="OrgMembership" data-filter-control="select">Org Membership</th>
           <th></th>
           <th></th>
           <th></th>
