@@ -124,7 +124,7 @@ class CoursesController < ApplicationController
 
   # List of course jobs to make available to run
   def course_job_list
-    [TestJob, StudentsOrgMembershipCheckJob, RefreshGithubReposJob, RepoCollaboratorsJob, PurgeCourseReposJob, UpdateGithubReposJob]
+    [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, PurgeCourseReposJob]
   end
   helper_method :course_job_list
 

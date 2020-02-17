@@ -18,6 +18,7 @@ class CourseJob < BackgroundJob
     Octokit_Wrapper::Octokit_Wrapper.machine_user
   end
 
+  # TODO: Make this set a course instance variable to avoid code repetition
   def perform(course_id)
     ActiveRecord::Base.connection_pool.with_connection do
       create_in_progress_job_record(course_id)
