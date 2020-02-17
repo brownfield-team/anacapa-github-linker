@@ -91,8 +91,8 @@
             <td><%= student.last_name %></td>
             <td><%= student.email %></td>
             <td><%= student.enrolled ? "True" : "False" %></td>
-            <td><%= !student.user.nil? and student.user.has_role?(:ta, @course) ? "True" : "False" %></td>
-            <% if !student.username.nil? and !student.username.empty? %>
+            <td><%= !student.user.nil? && student.user.has_role?(:ta, @course) ? "True" : "False" %></td>
+            <% if !student.username.nil? && !student.username.empty? %>
               <td><a href="https://github.com/<%= student.username %>"><%= student.username %></td>
               <td><%= student.is_org_member ? "True" : "False" %></td>
             <% else %>
