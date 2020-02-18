@@ -6,26 +6,62 @@ class StudentsOrgMembershipCheckJob < CourseJob
 
   def attempt_job(course_id)
     course = Course.find(course_id)
-    org_member_ids = github_machine_user.organization_members(course.course_organization).map { |member| member.id }
-    summary = ""
-    unless org_member_ids.respond_to? :each
-      summary = "Failed to fetch org members from GitHub."
-    else
-      roster_students = course.roster_students
-      num_changed = 0
-      roster_students.each do |student|
-        unless student.user.nil? or student.user.uid.nil?
-          is_org_member = org_member_ids.include?(student.user.uid.to_i)
-          if is_org_member != student.is_org_member
-            student.is_org_member = is_org_member
-            num_changed += 1
-            student.save
-          end
-        end
-      end
-      summary = num_changed.to_s + " org membership statuses updated"
+    org_members = get_org_members(course.course_organization)
+    num_changed = 0
+    org_members.each do |member|
+      num_changed += update_org_membership_status(member, course.roster_students)
     end
+    summary = num_changed.to_s + " org membership statuses updated"
     update_job_record_with_completion_summary(summary)
+  end
+
+  def update_org_membership_status(org_member, students)
+    updates_made = false
+    student = students.find do |s|
+      s.user.present? && s.user.username == org_member.node.login
+    end
+    if student.nil?
+      return 0
+    end
+    if !student.is_org_member || student.org_membership_type != org_member.role
+      updates_made = true
+      student.is_org_member = true
+      student.org_membership_type = org_member.role
+    end
+    updates_made ? 1 : 0
+  end
+  
+  # TODO: Refactor some GraphQL handling code (especially re: pagination) to the extent possible to avoid repetition
+  def get_org_members(course_org, cursor = "")
+    response = github_machine_user.post '/graphql', {query: graphql_query(course_org, cursor)}.to_json
+    member_list = member_list_from_response(response)
+    if member_list.empty?
+      return member_list
+    end
+    member_list + get_org_members(course_org, member_list.last.cursor)
+  end
+
+  def member_list_from_response(response)
+    response.data.organization.membersWithRole.edges
+  end
+
+  def graphql_query(course_org, cursor)
+    after_arg = cursor != "" ? ", after: \"#{cursor}\"" : ""
+    <<-GRAPHQL
+      query {
+        organization(login:"#{course_org}") {
+          membersWithRole(first:100#{after_arg}) {
+            edges {
+              cursor
+              role
+              node {
+                login
+              }
+            }
+          }
+        }
+      }
+    GRAPHQL
   end
 
 end
