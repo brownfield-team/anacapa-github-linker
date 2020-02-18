@@ -2,7 +2,8 @@ class StudentsOrgMembershipCheckJob < CourseJob
 
   @job_name = "Refresh Student Org Membership Statuses"
   @job_short_name = "refresh_org_membership"
-  @job_description = "Updates all students' cached GitHub org membership status in the database/"
+  @job_description = "Fetches org members from GitHub and updates all students' cached org membership status in
+the database."
 
   def attempt_job(course_id)
     course = Course.find(course_id)

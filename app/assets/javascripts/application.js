@@ -16,6 +16,7 @@
 //= require jquery.turbolinks
 //= require bootstrap-sprockets
 //= require bootstrap-table/bootstrap-table
+//= require bootstrap-table/extensions/filter-control/bootstrap-table-filter-control
 //= require_tree .
 
 $(document).ready(function(){
