@@ -3,6 +3,7 @@
 
 class BackgroundJob
   include SuckerPunch::Job
+  include ActionView::Helpers::TextHelper
 
   # Job name: display name of job
   # Job short name: internal job name. Do not change this, it will break the job history
