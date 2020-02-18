@@ -26,8 +26,9 @@ class StudentsOrgMembershipCheckJob < CourseJob
     if !student.is_org_member || student.org_membership_type != org_member.role
       updates_made = true
       student.is_org_member = true
-      student.org_membership_type = org_member.role
+      student.org_membership_type = org_member.role.capitalize
     end
+    student.save
     updates_made ? 1 : 0
   end
   
