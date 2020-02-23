@@ -33,17 +33,28 @@
         <input type="checkbox" style="display: none;" checked="false" id="csv-header-toggle-hidden-field" name="csv_header_toggle" >
 
       <% end %>
+
+      <div class="btn-group" style="display: inline-block; float: right; margin-left: 10px;">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Manage Students <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <% if can? :create, RosterStudent %>
+              <li> <%= link_to 'New Student', new_course_roster_student_path(@course) %> </li>
+            <% end %>
+            <% if can? :update_ta, @course %>
+              <li> <%= link_to "Manage TAs" , course_view_ta_path(@course) %> </li>
+            <% end %>
+          <li role="separator" class="divider"></li>
+          <li> <%= link_to "Download CSV Roster", course_roster_students_path(@course, :format => "csv"), method: :get %> </li>
+        </ul>
+      </div>
+
       <%= link_to "View Jobs", course_jobs_path(@course), method: :get, class: "btn",
                   style: "display:inline-block; float: right; margin-left: 10px;" %>
-      <%= link_to "Download Roster as CSV", course_roster_students_path(@course, :format => "csv"), method: :get, class: "btn", style: "display:inline-block; float: right; margin-left: 10px;" %>
       <%= link_to "Course Repositories", course_repos_path(@course), method: :get, class: "btn",
                   style: "display:inline-block; float: right; margin-left: 10px;" %>
-      <% if can? :create, RosterStudent %>
-        <%= link_to 'New Student', new_course_roster_student_path(@course), class: "btn", style: "display: inline-block; float: right; margin-left: 10px;" %>
-      <% end %>
-      <% if can? :update_ta, @course %>
-        <%= link_to "Manage TAs" , course_view_ta_path(@course), class: "btn", style: "display: inline-block; float: right; margin-left: 10px;"%>
-      <% end %>
+
       <% if can? :update, @course %>
         <%= link_to 'Edit', edit_course_path(@course), class: 'btn'%>
       <% end %>
