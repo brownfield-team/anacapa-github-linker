@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200218024140) do
+ActiveRecord::Schema.define(version: 20200223084157) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,13 @@ ActiveRecord::Schema.define(version: 20200218024140) do
     t.string "summary"
     t.string "job_short_name"
     t.index ["course_id"], name: "index_completed_jobs_on_course_id"
+  end
+
+  create_table "course_sections", force: :cascade do |t|
+    t.string "name"
+    t.integer "enroll_code"
+    t.bigint "course_id"
+    t.index ["course_id"], name: "index_course_sections_on_course_id"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -46,12 +53,31 @@ ActiveRecord::Schema.define(version: 20200218024140) do
     t.index ["course_id"], name: "index_github_repos_on_course_id"
   end
 
+  create_table "org_teams", force: :cascade do |t|
+    t.string "name"
+    t.string "url"
+    t.bigint "course_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_org_teams_on_course_id"
+  end
+
   create_table "repo_contributors", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "github_repo_id"
     t.string "permission_level"
     t.index ["github_repo_id"], name: "index_repo_contributors_on_github_repo_id"
     t.index ["user_id"], name: "index_repo_contributors_on_user_id"
+  end
+
+  create_table "repo_team_contributors", force: :cascade do |t|
+    t.bigint "org_team_id"
+    t.bigint "github_repo_id"
+    t.string "permission_level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["github_repo_id"], name: "index_repo_team_contributors_on_github_repo_id"
+    t.index ["org_team_id"], name: "index_repo_team_contributors_on_org_team_id"
   end
 
   create_table "roles", force: :cascade do |t|
