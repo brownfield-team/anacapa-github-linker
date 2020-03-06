@@ -98,5 +98,8 @@ This creates `latest.dump` in the current directory.  Then you need to have post
 pg_restore -f latest.sql latest.dump 
 ```
 
-
+To have staging pull in data from production, run the following command (with heroku cli configured):
+ ```
+heroku pg:backups:restore `heroku pg:backups:url --app ucsb-cs-github-linker` DATABASE_URL --app anacapa-github-linker-test --confirm anacapa-github-linker-test
+```
 
