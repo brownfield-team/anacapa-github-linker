@@ -111,6 +111,11 @@ class CoursesController < ApplicationController
     authorize! :jobs, @course
   end
 
+  def teams
+    @course = Course.find(params[:course_id])
+    authorize! :teams, @course
+  end
+
   def run_course_job
     job_name = params[:job_name]
     job = course_job_list.find { |job| job.job_short_name == job_name }
