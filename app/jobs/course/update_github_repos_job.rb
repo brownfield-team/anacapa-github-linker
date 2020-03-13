@@ -92,22 +92,22 @@ class UpdateGithubReposJob < CourseJob
     <<-GRAPHQL
       query {
         organization(login:"#{course_org}") {
-        repositories(first: 100#{after_arg}) {
-          edges {
-            cursor
-            node {
-              name
-              databaseId
-              url
-              nameWithOwner
-              updatedAt
-              isPrivate
-              collaborators(affiliation:DIRECT) {
-                edges {
-                  permission
-                  node {
-                    login
-      }}}}}}}}
+          repositories(first: 100#{after_arg}) {
+            edges {
+              cursor
+              node {
+                name
+                databaseId
+                url
+                nameWithOwner
+                updatedAt
+                isPrivate
+                collaborators(affiliation:DIRECT) {
+                  edges {
+                    permission
+                    node {
+                      login
+      } } } } } } } }
     GRAPHQL
   end
 
@@ -167,17 +167,17 @@ class UpdateGithubReposJob < CourseJob
     query {
       organization(login:"#{course_org}") {
         teams(first: 100#{team_after_arg}) {
-        edges {
-          cursor
-          node {
-            id
-            repositories(first: 100#{repo_after_arg}) {
-              edges {
-                cursor
-                permission
-                node {
-                  databaseId
-    }}}}}}}}
+          edges {
+            cursor
+            node {
+              id
+              repositories(first: 100#{repo_after_arg}) {
+                edges {
+                  cursor
+                  permission
+                  node {
+                    databaseId
+    } } } } } } } }
     GRAPHQL
   end
 
