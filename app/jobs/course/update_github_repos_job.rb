@@ -1,5 +1,5 @@
 class UpdateGithubReposJob < CourseJob
-  @job_name = "Update GitHub Repositories"
+  @job_name = "Refresh GitHub Repository Info"
   @job_short_name = "update_github_info"
   @job_description = "Uses smart querying to quickly update GitHub repositories, and their respective individual and team collaborators."
 
