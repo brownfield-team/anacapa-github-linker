@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200223093457) do
+ActiveRecord::Schema.define(version: 20200313074330) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(version: 20200223093457) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "team_id"
+    t.string "slug"
     t.index ["course_id"], name: "index_org_teams_on_course_id"
   end
 
@@ -108,6 +109,16 @@ ActiveRecord::Schema.define(version: 20200223093457) do
     t.index ["email", "course_id"], name: "index_roster_students_on_email_and_course_id", unique: true
     t.index ["perm", "course_id"], name: "index_roster_students_on_perm_and_course_id", unique: true
     t.index ["user_id"], name: "index_roster_students_on_user_id"
+  end
+
+  create_table "student_team_memberships", force: :cascade do |t|
+    t.bigint "roster_student_id"
+    t.bigint "org_team_id"
+    t.string "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["org_team_id"], name: "index_student_team_memberships_on_org_team_id"
+    t.index ["roster_student_id"], name: "index_student_team_memberships_on_roster_student_id"
   end
 
   create_table "users", force: :cascade do |t|

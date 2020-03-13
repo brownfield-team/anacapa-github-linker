@@ -34,6 +34,9 @@
 
       <% end %>
 
+      <%= link_to "View Jobs", course_jobs_path(@course), method: :get, class: "btn",
+                  style: "display:inline-block; float: right; margin-left: 10px;" %>
+
       <div class="btn-group" style="display: inline-block; float: right; margin-left: 10px;">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Manage Students <span class="caret"></span>
@@ -55,12 +58,10 @@
           GitHub <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
-          <li> <%= link_to "Course Repositories", course_repos_path(@course), method: :get %> </li>
+          <li> <%= link_to "Teams", course_teams_path(@course), method: :get%></li>
+          <li> <%= link_to "Repositories", course_repos_path(@course), method: :get %> </li>
         </ul>
       </div>
-
-      <%= link_to "View Jobs", course_jobs_path(@course), method: :get, class: "btn",
-                  style: "display:inline-block; float: right; margin-left: 10px;" %>
 
       <% if can? :update, @course %>
         <%= link_to 'Edit', edit_course_path(@course), class: 'btn'%>
