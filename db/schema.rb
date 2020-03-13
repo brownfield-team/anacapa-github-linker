@@ -25,13 +25,6 @@ ActiveRecord::Schema.define(version: 20200313074330) do
     t.index ["course_id"], name: "index_completed_jobs_on_course_id"
   end
 
-  create_table "course_sections", force: :cascade do |t|
-    t.string "name"
-    t.integer "enroll_code"
-    t.bigint "course_id"
-    t.index ["course_id"], name: "index_course_sections_on_course_id"
-  end
-
   create_table "courses", force: :cascade do |t|
     t.string "name", null: false
     t.string "course_organization", null: false
