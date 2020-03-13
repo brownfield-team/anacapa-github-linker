@@ -1,5 +1,5 @@
 class UpdateGithubReposJob < CourseJob
-  @job_name = "Update GitHub Repositories and Teams"
+  @job_name = "Update GitHub Repositories"
   @job_short_name = "update_github_info"
   @job_description = "Uses smart querying to quickly update GitHub repositories, and their respective individual and team collaborators."
 
@@ -19,11 +19,10 @@ class UpdateGithubReposJob < CourseJob
     end
     num_updated = all_org_repos.count - num_created
 
-    team_refresh_results = refresh_teams(course)
+    team_refresh_results = refresh_team_collaborators(course)
 
     summary = "#{num_created} repos created, #{num_updated} refreshed. #{collaborators_found} collaborators and
-#{team_refresh_results["num_team_collaborators_found"]} teams found for #{repos_found_collaborators_for} repos.
-#{team_refresh_results["num_created"]} teams created, #{team_refresh_results["num_updated"]} updated."
+#{team_refresh_results} teams found for #{repos_found_collaborators_for} repos."
     update_job_record_with_completion_summary(summary)
   end
   
@@ -74,7 +73,7 @@ class UpdateGithubReposJob < CourseJob
   def get_github_repos(course_org, cursor = "")
     response = github_machine_user.post '/graphql', { query: repository_graphql_query(course_org, cursor) }.to_json
     repo_list = repo_list_from_response(response)
-    if repo_list.empty?
+    if repo_list.count < 100 # If there are less than 100 records, this is the last page
       return repo_list
     end
     repo_list + get_github_repos(course_org, repo_list.last.cursor)
@@ -112,29 +111,16 @@ class UpdateGithubReposJob < CourseJob
     GRAPHQL
   end
 
-  def refresh_teams(course)
-    results = Hash.new
-    results["num_created"] = 0
-    results["num_updated"] = 0
-
-    results["num_team_collaborators_found"] = 0
-    binding.pry
+  def refresh_team_collaborators(course)
+    team_collaborators_found = 0
     all_org_teams = get_org_teams(course.course_organization).map { |team| team.node}
     all_org_teams.each do |team|
       team_to_update = OrgTeam.find_by_team_id(team.id)
-      if team_to_update.nil?
-        team_to_update = OrgTeam.new(team_id: team.id, course_id: course.id)
-        results["num_created"] += 1
-      else
-        results["num_updated"] += 1
+      unless team_to_update.nil?
+        team_collaborators_found += update_team_repo_collaborators(team_to_update, repo_list_from_response_team(team))
       end
-      team_to_update.name = team.name
-      team_to_update.url = team.url
-      team_to_update.save
-      results["num_team_collaborators_found"] += update_team_repo_collaborators(team_to_update, repo_list_from_response_team(team))
     end
-
-    results
+    team_collaborators_found
   end
 
   def update_team_repo_collaborators(team_record, repo_list)
@@ -157,7 +143,7 @@ class UpdateGithubReposJob < CourseJob
   def get_org_teams(course_org, cursor = "")
     response = github_machine_user.post '/graphql', { query: team_graphql_query(course_org, cursor) }.to_json
     team_list = team_list_from_response(response)
-    if team_list.empty?
+    if team_list.count < 100
       return team_list
     end
     team_list + get_org_teams(course_org, team_list.last.cursor)
@@ -184,8 +170,6 @@ class UpdateGithubReposJob < CourseJob
         edges {
           cursor
           node {
-            name
-            url
             id
             repositories(first: 100#{repo_after_arg}) {
               edges {
