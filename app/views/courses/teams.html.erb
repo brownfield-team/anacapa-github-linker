@@ -8,6 +8,7 @@
           <a role="button" data-toggle="collapse" href="#collapse<%= team.id %>" aria-expanded="true" aria-controls="collapse<%= team.id %>">
             <%= team.name %>
           </a>
+          <div class="pull-right"><%= link_to "View on GitHub", team.url %></div>
         </h4>
       </div>
       <div id="collapse<%= team.id %>" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading<%= team.id %>">
@@ -27,11 +28,12 @@
                 </thead>
 
                 <tbody class="students-list">
+                <% role_url = team.url + "/members" %>
                 <% team.student_team_memberships.each do |student| %>
                   <tr>
-                    <td><%= student.roster_student.first_name + " " + student.roster_student.last_name%></td>
-                    <td><%= student.roster_student.user.username %></td>
-                    <td><%= student.role %></td>
+                    <td><%= link_to student.roster_student.first_name + " " + student.roster_student.last_name, course_roster_student_path(@course, student.roster_student) %></td>
+                    <td><%= link_to student.roster_student.user.username, "https://github.com/#{student.roster_student.user.username}" %></td>
+                    <td><%= link_to student.role, role_url + "?query=" + student.roster_student.user.username %></td>
                   </tr>
                 <% end %>
                 </tbody>
@@ -56,7 +58,7 @@
                 <% team.repo_team_contributors.each do |repo| %>
                   <tr>
                     <td><%= link_to repo.github_repo.name, repo.github_repo.url %></td>
-                    <td><%= link_to repo.permission_level, access_url %></td>
+                    <td><%= link_to repo.permission_level, access_url + "?query=" + repo.github_repo.name %></td>
                   </tr>
                 <% end %>
                 </tbody>
