@@ -36,7 +36,7 @@ class RefreshGithubTeamsJob < CourseJob
           if team_membership_record.nil?
             team_membership_record = StudentTeamMembership.new(roster_student_id: student_for_member.id, org_team_id: team_to_update.id)
           end
-          team_membership_record.role = team_member.role
+          team_membership_record.role = team_member.role.downcase
           team_membership_record.save
         end
       end

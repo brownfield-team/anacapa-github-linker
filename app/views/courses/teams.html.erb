@@ -47,16 +47,16 @@
                 <thead>
                 <tr>
                   <th data-sortable="true" data-field="Student" data-filter-control="input">Name</th>
-                  <th data-sortable="true" data-field="Role" data-filter-control="select">Team Access</th>
+                  <th data-sortable="true" data-field="Role" data-filter-control="select">Team Permission Level</th>
                 </tr>
                 </thead>
 
                 <tbody class="students-list">
-                <% team.student_team_memberships.each do |student| %>
+                <% access_url = team.url + "/repositories" %>
+                <% team.repo_team_contributors.each do |repo| %>
                   <tr>
-                    <td><%= student.roster_student.first_name + " " + student.roster_student.last_name%></td>
-                    <td><%= student.roster_student.user.username %></td>
-                    <td><%= student.role %></td>
+                    <td><%= link_to repo.github_repo.name, repo.github_repo.url %></td>
+                    <td><%= link_to repo.permission_level, access_url %></td>
                   </tr>
                 <% end %>
                 </tbody>
