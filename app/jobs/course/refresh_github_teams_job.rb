@@ -28,10 +28,11 @@ class RefreshGithubTeamsJob < CourseJob
       team_to_update.save
 
       team_members = get_team_members(course.course_organization, team_to_update)
+      binding.pry
       team_members.each do |team_member|
-        student_for_member = students_with_users.select { |rs| rs.user.uid == team_member.node.databaseId }.first
+        student_for_member = students_with_users.select { |rs| rs.user.uid == team_member.node.databaseId.to_s }.first
         if student_for_member.present?
-          team_membership_record = StudentTeamMembership.first(roster_student_id: student_for_member.id, org_team_id: team_to_update.id)
+          team_membership_record = StudentTeamMembership.find_by(roster_student_id: student_for_member.id, org_team_id: team_to_update.id)
           if team_membership_record.nil?
             team_membership_record = StudentTeamMembership.new(roster_student_id: student_for_member.id, org_team_id: team_to_update.id)
           end
