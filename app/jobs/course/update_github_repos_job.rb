@@ -73,7 +73,7 @@ class UpdateGithubReposJob < CourseJob
   def get_github_repos(course_org, cursor = "")
     response = github_machine_user.post '/graphql', { query: repository_graphql_query(course_org, cursor) }.to_json
     repo_list = repo_list_from_response(response)
-    if repo_list.count < 100 # If there are less than 100 records, this is the last page
+    if repo_list.count < 100 # If there are less than 100 records (max page size), this is the last page
       return repo_list
     end
     repo_list + get_github_repos(course_org, repo_list.last.cursor)
@@ -126,9 +126,9 @@ class UpdateGithubReposJob < CourseJob
   def update_team_repo_collaborators(team_record, repo_list)
     num_repos_collaborator_for = 0
     repo_list.each do |repo|
-      repo_record = GithubRepo.find_by_repo_id(repo.databaseId)
+      repo_record = GithubRepo.find_by_repo_id(repo.node.databaseId)
       unless repo_record.nil?
-        contributor_record = RepoTeamContributor.first(org_team_id: team_record.id, github_repo_id: repo_record.id)
+        contributor_record = RepoTeamContributor.find_by(org_team_id: team_record.id, github_repo_id: repo_record.id)
         if contributor_record.nil?
           contributor_record = RepoTeamContributor.new(org_team_id: team_record.id, github_repo_id: repo_record.id)
         end
