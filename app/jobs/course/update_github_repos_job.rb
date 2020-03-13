@@ -1,24 +1,29 @@
 class UpdateGithubReposJob < CourseJob
-  @job_name = "Update GitHub Repository Info"
+  @job_name = "Update GitHub Repositories and Teams"
   @job_short_name = "update_github_info"
-  @job_description = "Uses smart querying to quickly update GitHub repositories and their collaborators."
+  @job_description = "Uses smart querying to quickly update GitHub repositories, and their respective individual and team collaborators."
 
   def attempt_job(course_id)
     course = Course.find(course_id)
     course_student_users = course.roster_students.map { |rs| rs.user }.compact
-    all_org_repos = get_github_repos(course.course_organization).map { |repo| repo.node}
 
+    all_org_repos = get_github_repos(course.course_organization).map { |repo| repo.node}
     num_created = 0; collaborators_found = 0; repos_found_collaborators_for = 0
+
     all_org_repos.each do |repo|
       num_created += create_or_update_repo(repo, course_id)
+
       num_repo_collaborators = create_or_update_collaborators(repo, course_student_users)
       collaborators_found += num_repo_collaborators
       repos_found_collaborators_for += num_repo_collaborators > 0 ? 1 : 0
     end
     num_updated = all_org_repos.count - num_created
 
-    summary = "#{num_created} repos created, #{num_updated} refreshed. #{collaborators_found} collaborators found for
- #{repos_found_collaborators_for} repos."
+    team_refresh_results = refresh_teams(course)
+
+    summary = "#{num_created} repos created, #{num_updated} refreshed. #{collaborators_found} collaborators and
+#{team_refresh_results["num_team_collaborators_found"]} teams found for #{repos_found_collaborators_for} repos.
+#{team_refresh_results["num_created"]} teams created, #{team_refresh_results["num_updated"]} updated."
     update_job_record_with_completion_summary(summary)
   end
   
@@ -46,8 +51,10 @@ class UpdateGithubReposJob < CourseJob
   def create_or_update_collaborators(github_repo, course_student_users)
     usernames = course_student_users.map { |user| user.username }
     db_repo_record = GithubRepo.find_by_repo_id(github_repo.databaseId)
+
     collaborator_list = collaborator_list_from_response_repo(github_repo)
     filtered_collaborator_list = collaborator_list.select { |collaborator| usernames.include?(collaborator.node.login) }
+
     filtered_collaborator_list.each do |collaborator|
       user = course_student_users.select { |user| user.username == collaborator.node.login }.first
       existing_record = RepoContributor.find_by(user_id: user.id, github_repo_id: db_repo_record.id)
@@ -62,9 +69,10 @@ class UpdateGithubReposJob < CourseJob
     filtered_collaborator_list.count
   end
 
+  # TODO: Figure out how to refactor this GraphQL handling code so it doesn't have to be constantly repeated
   # We have to manually handle pagination because Octokit has no built-in support for GraphQL
   def get_github_repos(course_org, cursor = "")
-    response = github_machine_user.post '/graphql', { query: graphql_query(course_org, cursor) }.to_json
+    response = github_machine_user.post '/graphql', { query: repository_graphql_query(course_org, cursor) }.to_json
     repo_list = repo_list_from_response(response)
     if repo_list.empty?
       return repo_list
@@ -80,7 +88,7 @@ class UpdateGithubReposJob < CourseJob
     repo_response.collaborators.edges
   end
 
-  def graphql_query(course_org, cursor)
+  def repository_graphql_query(course_org, cursor)
     after_arg = cursor != "" ? ", after: \"#{cursor}\"" : ""
     <<-GRAPHQL
       query {
@@ -100,14 +108,93 @@ class UpdateGithubReposJob < CourseJob
                   permission
                   node {
                     login
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+      }}}}}}}}
     GRAPHQL
   end
+
+  def refresh_teams(course)
+    results = Hash.new
+    results["num_created"] = 0
+    results["num_updated"] = 0
+
+    results["num_team_collaborators_found"] = 0
+    binding.pry
+    all_org_teams = get_org_teams(course.course_organization).map { |team| team.node}
+    all_org_teams.each do |team|
+      team_to_update = OrgTeam.find_by_team_id(team.id)
+      if team_to_update.nil?
+        team_to_update = OrgTeam.new(team_id: team.id, course_id: course.id)
+        results["num_created"] += 1
+      else
+        results["num_updated"] += 1
+      end
+      team_to_update.name = team.name
+      team_to_update.url = team.url
+      team_to_update.save
+      results["num_team_collaborators_found"] += update_team_repo_collaborators(team_to_update, repo_list_from_response_team(team))
+    end
+
+    results
+  end
+
+  def update_team_repo_collaborators(team_record, repo_list)
+    num_repos_collaborator_for = 0
+    repo_list.each do |repo|
+      repo_record = GithubRepo.find_by_repo_id(repo.databaseId)
+      unless repo_record.nil?
+        contributor_record = RepoTeamContributor.first(org_team_id: team_record.id, github_repo_id: repo_record.id)
+        if contributor_record.nil?
+          contributor_record = RepoTeamContributor.new(org_team_id: team_record.id, github_repo_id: repo_record.id)
+        end
+        contributor_record.permission_level = repo.permission.downcase
+        contributor_record.save
+        num_repos_collaborator_for += 1
+      end
+    end
+    num_repos_collaborator_for
+  end
+
+  def get_org_teams(course_org, cursor = "")
+    response = github_machine_user.post '/graphql', { query: team_graphql_query(course_org, cursor) }.to_json
+    team_list = team_list_from_response(response)
+    if team_list.empty?
+      return team_list
+    end
+    team_list + get_org_teams(course_org, team_list.last.cursor)
+  end
+
+  def team_list_from_response(response)
+    response.data.organization.teams.edges
+  end
+
+  # Note that there is a known bug where, if a team has more than 100 repos, those after 100 will not be shown.
+  # This is because of GraphQL paginating a list within a list, and this is enough of an edge case that it isn't worth
+  # the development time it would cost right now.
+  def repo_list_from_response_team(team_response)
+    team_response.repositories.edges
+  end
+
+  def team_graphql_query(course_org, team_cursor = "")
+    team_after_arg = team_cursor != "" ? ", after: \"#{team_cursor}\"" : ""
+    repo_after_arg = ""
+    <<-GRAPHQL
+    query {
+      organization(login:"#{course_org}") {
+        teams(first: 100#{team_after_arg}) {
+        edges {
+          cursor
+          node {
+            name
+            url
+            id
+            repositories(first: 100#{repo_after_arg}) {
+              edges {
+                cursor
+                permission
+                node {
+                  databaseId
+    }}}}}}}}
+    GRAPHQL
+  end
+
 end
