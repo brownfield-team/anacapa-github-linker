@@ -1,12 +1,14 @@
-class RefreshGithubTeams < CourseJob
+class RefreshGithubTeamsJob < CourseJob
   @job_name = "Refresh GitHub Teams"
-  @job_short_name = "update_github_info"
+  @job_short_name = "refresh_github_teams"
   @job_description = "Refreshes GitHub teams associated with this course's organization and updates their membership."
 
   def attempt_job(course_id)
     course = Course.find(course_id)
     course_student_users = course.roster_students.map.select { |student| student.user.present? }
     results = refresh_teams(course, course_student_users)
+    summary = "#{results[:num_created]} teams created, #{results[:num_updated]} updated."
+    update_job_record_with_completion_summary(summary)
   end
 
   def refresh_teams(course, students_with_users)
@@ -21,9 +23,22 @@ class RefreshGithubTeams < CourseJob
         results[:num_updated] += 1
       end
       team_to_update.name = team.name
+      team_to_update.slug = team.slug
       team_to_update.url = team.url
       team_to_update.save
 
+      team_members = get_team_members(course.course_organization, team_to_update)
+      team_members.each do |team_member|
+        student_for_member = students_with_users.select { |rs| rs.user.uid == team_member.node.databaseId }.first
+        if student_for_member.present?
+          team_membership_record = StudentTeamMembership.first(roster_student_id: student_for_member.id, org_team_id: team_to_update.id)
+          if team_membership_record.nil?
+            team_membership_record = StudentTeamMembership.new(roster_student_id: student_for_member.id, org_team_id: team_to_update.id)
+          end
+          team_membership_record.role = team_member.role
+          team_membership_record.save
+        end
+      end
     end
     results
   end
@@ -47,13 +62,14 @@ class RefreshGithubTeams < CourseJob
     query {
       organization(login:"#{course_org}") {
         teams(first: 100#{team_after_arg}) {
-        edges {
-          cursor
-          node {
-            name
-            url
-            id
-    }}}}}
+          edges {
+            cursor
+            node {
+              name
+              url
+              slug
+              id
+    } } } } }
     GRAPHQL
   end
 
@@ -67,7 +83,7 @@ class RefreshGithubTeams < CourseJob
   end
 
   def member_list_from_team_response(team_response)
-    team_response.data.organization.team.members
+    team_response.data.organization.team.members.edges
   end
 
   def team_membership_graphql_query(course_org, team_slug, member_cursor = "")
@@ -76,13 +92,12 @@ class RefreshGithubTeams < CourseJob
     query {
       organization(login:"#{course_org}") {
         team(slug:"#{team_slug}") {
-          name
           members(first: 100#{member_after_arg}) {
             edges {
               role
               node {
                 databaseId
-    }}}}}}
+    } } } } } }
     GRAPHQL
   end
 end
