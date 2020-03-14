@@ -1,7 +1,7 @@
 <h1> <%= link_to @course.name, course_path(@course) %> </h1>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <% OrgTeam.where(course_id: @course.id).each do |team| %>
+  <% @teams.each do |team| %>
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="heading<%= team.id %>">
         <h4 class="panel-title">

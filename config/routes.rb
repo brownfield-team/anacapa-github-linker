@@ -16,7 +16,6 @@ Rails.application.routes.draw do
     post :join
     get :view_ta
     get :jobs
-    get :teams
     get :repos
     get :search_repos
     post :run_course_job
@@ -26,6 +25,9 @@ Rails.application.routes.draw do
         collection do
           post :import
         end
+      end
+      resources :teams do
+
       end
     end
 
