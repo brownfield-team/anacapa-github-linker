@@ -8,6 +8,7 @@ class Course < ApplicationRecord
   has_many :roster_students, dependent: :destroy
   has_many :completed_jobs, dependent: :destroy
   has_many :github_repos, dependent: :destroy
+  has_many :org_teams, dependent: :destroy
 
   resourcify
 
