@@ -5,7 +5,7 @@ class UpdateGithubReposJob < CourseJob
 
   def attempt_job(course_id)
     course = Course.find(course_id)
-    course_student_users = course.roster_students.map { |rs| rs.user }.compact
+    course_student_users = course.users
 
     all_org_repos = get_github_repos(course.course_organization).map { |repo| repo.node}
     num_created = 0; collaborators_found = 0; repos_found_collaborators_for = 0

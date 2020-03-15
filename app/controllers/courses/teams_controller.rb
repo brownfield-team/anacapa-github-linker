@@ -20,14 +20,8 @@ module Courses
       unless repo_name_pattern.include?("{team}")
         redirect_to course_teams_path(@course), alert: "Your naming pattern must include {team} in it."
       end
-      matching_teams = OrgTeam.where(course_id: params[:course_id]).where("name ~* ?", team_name_pattern)
 
-      repo_creation_info = []
-      matching_teams.each do |team|
-        repo_name = repo_name_pattern.sub("{team}", team.slug)
-        repo_creation_info << { :name => repo_name, :team_id => team.team_id, :permission => permission_level }
-      end
-      binding.pry
+      CreateTeamReposJob.perform_async(@parent.id, repo_creation_info)
       redirect_to course_teams_path(@course), notice: "Repository creation successfully queued."
     end
 
