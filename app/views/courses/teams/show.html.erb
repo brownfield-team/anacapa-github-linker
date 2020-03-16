@@ -1,6 +1,8 @@
-<h1> <%= link_to @course.name, course_path(@course) %> </h1>
-
+<h1> <%= link_to @course.name, course_path(@course) %>
+  <%= link_to 'Create Team Repositories', create_repos_course_teams_path, class: "btn btn-primary pull-right", role: "button" %></h1>
+<p></p>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <% collapsed = "in" # slightly messy way to make only the first panel expanded on page load %>
   <% @teams.each do |team| %>
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="heading<%= team.id %>">
@@ -11,7 +13,8 @@
           <div class="pull-right"><%= link_to "View on GitHub", team.url %></div>
         </h4>
       </div>
-      <div id="collapse<%= team.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= team.id %>">
+      <div id="collapse<%= team.id %>" class="panel-collapse collapse <%= collapsed %>" role="tabpanel" aria-labelledby="heading<%= team.id %>">
+        <% collapsed = "" # see above comment %>
         <div class="panel-body">
           <div class="panel panel-default">
             <div class="panel-heading">Members</div>
