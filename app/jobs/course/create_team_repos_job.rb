@@ -9,7 +9,7 @@ class CreateTeamReposJob < CourseJob
     @permission_level = permission_level.downcase
     @org_id = get_org_node_id
 
-    matching_teams = OrgTeam.where(course_id: params[:course_id]).where("name ~* ?", team_pattern)
+    matching_teams = OrgTeam.where(course_id: @course.id).where("name ~* ?", team_pattern)
     repos_created = 0
     matching_teams.each do |team|
       repo_name = repo_pattern.sub("{team}", team.slug)
@@ -25,7 +25,7 @@ class CreateTeamReposJob < CourseJob
     unless response.respond_to? :data then return 0 end
     new_repo_full_name = get_repo_name_and_create_record(response, team.id)
     unless @permission_level == "read"
-      github_machine_user.put("/orgs/#{@course.course_organization}/teams/#{team.slug}/repos/#{new_repo_full_name}")
+      github_machine_user.put("/orgs/#{@course.course_organization}/teams/#{team.slug}/repos/#{new_repo_full_name}", {"permission": "#{@permission_level}"})
     end
     1
   end
@@ -41,6 +41,9 @@ class CreateTeamReposJob < CourseJob
         }) {
           repository {
             name
+            url
+            nameWithOwner
+            databaseId
           }
         }
       }
@@ -48,7 +51,7 @@ class CreateTeamReposJob < CourseJob
   end
 
   def get_repo_name_and_create_record(response, team_record_id)
-    repoInfo = response.data.createRepository
+    repoInfo = response.data.createRepository.repository
 
     new_repo = GithubRepo.create(name: repoInfo.name, url: repoInfo.url, full_name: repoInfo.nameWithOwner,
                               course_id: @course.id, visibility: @visibility.downcase, repo_id: repoInfo.databaseId)
@@ -71,7 +74,7 @@ class CreateTeamReposJob < CourseJob
     GRAPHQL
   end
 
-  def perform(course_id, team_pattern, repo_pattern, permission_level)
+  def perform(course_id, team_pattern, repo_pattern, permission_level, visibility)
     ActiveRecord::Base.connection_pool.with_connection do
       create_in_progress_job_record(course_id)
       begin

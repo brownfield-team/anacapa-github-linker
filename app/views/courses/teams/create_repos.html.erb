@@ -19,11 +19,17 @@
   <p></p>
   <div class="input-group">
     <span class="input-group-addon" id="basic-addon1">Team Permission</span>
-    <% options = '<option value="pull">Read</option>
+    <% permission_options = '<option value="pull">Read</option>
         <option value="push">Write</option>
         <option value="admin">Admin</option>' %>
-    <%= select_tag :permission, raw(options), class: 'form-control'%>
-
+    <%= select_tag :permission, raw(permission_options), class: 'form-control'%>
+  </div>
+  <p></p>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">Repo Visibility</span>
+    <% visibility_options = '<option value="public">Public</option>
+        <option value="private">Private</option>' %>
+    <%= select_tag :visibility, raw(visibility_options), class: 'form-control'%>
   </div>
   <p></p>
   <%= submit_tag "Create Repositories", class: 'btn btn-primary' %>
