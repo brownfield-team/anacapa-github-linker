@@ -34,10 +34,10 @@ class Course < ApplicationRecord
 
   def check_course_org_exists
     # NOTE: this is run as a validation step on creation and update for the organization
-    if org then
+    if org
       begin
         membership = Octokit_Wrapper::Octokit_Wrapper.machine_user.organization_membership(course_organization)
-        if membership.role != "admin" then
+        unless membership.role == "admin"
           errors.add(:base, "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed.")
         end
       rescue Octokit::NotFound
