@@ -22,7 +22,7 @@ class UpdateGithubReposJob < CourseJob
     team_refresh_results = refresh_team_collaborators(course)
 
     summary = "#{num_created} repos created, #{num_updated} refreshed. #{collaborators_found} collaborators and
-#{team_refresh_results} teams found for #{repos_found_collaborators_for} repos."
+#{team_refresh_results[:teams]} team collaborators found for #{repos_found_collaborators_for} and #{team_refresh_results[:repos]} repos, respectively."
     update_job_record_with_completion_summary(summary)
   end
   
@@ -112,15 +112,18 @@ class UpdateGithubReposJob < CourseJob
   end
 
   def refresh_team_collaborators(course)
-    team_collaborators_found = 0
+    num_repos_collaborator_for = 0
+    num_teams_with_repos = 0
     all_org_teams = get_org_teams(course.course_organization).map { |team| team.node}
     all_org_teams.each do |team|
       team_to_update = OrgTeam.find_by_team_id(team.id)
       unless team_to_update.nil?
-        team_collaborators_found += update_team_repo_collaborators(team_to_update, repo_list_from_response_team(team))
+        team_repos = update_team_repo_collaborators(team_to_update, repo_list_from_response_team(team))
+        num_repos_collaborator_for += team_repos
+        num_teams_with_repos += team_repos > 0 ? 1 : 0
       end
     end
-    team_collaborators_found
+    { :repos => num_repos_collaborator_for, :teams => num_teams_with_repos }
   end
 
   def update_team_repo_collaborators(team_record, repo_list)

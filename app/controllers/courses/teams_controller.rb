@@ -5,7 +5,7 @@ module Courses
     before_action :load_parent
     load_and_authorize_resource :course
 
-    def index
+    def show
       @teams = @parent.org_teams
     end
 
@@ -21,7 +21,6 @@ module Courses
       unless repo_name_pattern.include?("{team}")
         redirect_to course_teams_path(@course), alert: "Your naming pattern must include {team} in it."
       end
-
       CreateTeamReposJob.perform_async(@parent.id, team_name_pattern, repo_name_pattern, permission_level, visibility)
       redirect_to course_teams_path(@course), notice: "Repository creation successfully queued."
     end
