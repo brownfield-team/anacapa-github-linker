@@ -17,4 +17,14 @@ class GithubRepo < ApplicationRecord
     SQL
     ActiveRecord::Base.connection.exec_query(query)
   end
+
+  def find_team_contributors
+    query = <<-SQL
+      SELECT t.name, t.id, t.url, t.slug, rtc.permission_level
+      FROM org_teams t
+        JOIN repo_team_contributors rtc ON t.id = rtc.org_team_id
+      WHERE #{self.id} = rtc.github_repo_id
+    SQL
+    ActiveRecord::Base.connection.exec_query(query)
+  end
 end
