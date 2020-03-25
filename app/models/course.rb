@@ -8,6 +8,7 @@ class Course < ApplicationRecord
   has_many :roster_students, dependent: :destroy
   has_many :completed_jobs, dependent: :destroy
   has_many :github_repos, dependent: :destroy
+  has_many :org_teams, dependent: :destroy
 
   resourcify
 
@@ -33,10 +34,10 @@ class Course < ApplicationRecord
 
   def check_course_org_exists
     # NOTE: this is run as a validation step on creation and update for the organization
-    if org then
+    if org
       begin
         membership = Octokit_Wrapper::Octokit_Wrapper.machine_user.organization_membership(course_organization)
-        if membership.role != "admin" then
+        unless membership.role == "admin"
           errors.add(:base, "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed.")
         end
       rescue Octokit::NotFound
@@ -102,7 +103,7 @@ class Course < ApplicationRecord
   # export roster students to a CSV file
   def export_students_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w[perm email first_name last_name github_username enrolled]
+      csv << %w[studentId email first_name last_name github_username enrolled]
 
       roster_students.each do |user|
         csv << [

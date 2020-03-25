@@ -26,6 +26,12 @@ Rails.application.routes.draw do
           post :import
         end
       end
+      resource :teams do
+        collection do
+          get :create_repos
+          post :generate_repos
+        end
+      end
     end
 
   end

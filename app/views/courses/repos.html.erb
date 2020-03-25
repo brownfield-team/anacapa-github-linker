@@ -16,7 +16,7 @@
     <table class="table">
       <thead>
       <tr>
-        <th>Repository (Student Name)</th>
+        <th>Repository (Student/Team Name)</th>
         <th>GitHub ID</th>
         <th>Visibility (Permission Level)</th>
       </tr>
@@ -33,6 +33,14 @@
                             course_roster_student_path(@course, contributor["id"]) %></td>
             <td><a href="https://github.com/<%= contributor["username"] %>"><%= contributor["username"] %></td>
             <td><a href="<%= repo.url %>/settings/access"><%= contributor["permission_level"] %></td>
+          </tr>
+        <% end %>
+        <% repo.find_team_contributors.each do |contributor| %>
+          <tr class="leftMargin">
+            <td><%= link_to contributor["name"], course_teams_path(@course) %></td>
+            <td><a href="<%= contributor["url"]%>"><%= contributor["slug"] %></td>
+            <% access_url = "#{contributor["url"]}/repositories?query=#{contributor["slug"]}" %>
+            <td><a href="<%= access_url %><%= contributor["permission_level"] %>"> <%= contributor["slug"] %></a></td>
           </tr>
         <% end %>
       <% end %>

@@ -1,0 +1,36 @@
+<h1><%= link_to @course.name, course_path(@course) %></h1>
+<h3>Create Team Repositories</h3>
+
+<p>On this page, you can automatically generate repositories for each team. You can specify a naming pattern for the repositories and a
+  Regex pattern for which teams to create repositories for. '{team}' must be included in the naming pattern.</p>
+
+<%= form_tag generate_repos_course_teams_path, method: :post do %>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">Team Name Regex</span>
+    <%= text_field_tag :team_pattern, (params[:team_pattern] or ""), class: 'form-control', placeholder:
+        "e.g. 'team[^1]{2}'" %>
+  </div>
+  <p></p>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">Repo Naming Pattern</span>
+    <%= text_field_tag :repo_pattern, (params[:repo_pattern] or ""), class: 'form-control', placeholder:
+        "e.g. 'feedback-{team}'" %>
+  </div>
+  <p></p>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">Team Permission</span>
+    <% permission_options = '<option value="pull">Read</option>
+        <option value="push">Write</option>
+        <option value="admin">Admin</option>' %>
+    <%= select_tag :permission, raw(permission_options), class: 'form-control'%>
+  </div>
+  <p></p>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">Repo Visibility</span>
+    <% visibility_options = '<option value="public">Public</option>
+        <option value="private">Private</option>' %>
+    <%= select_tag :visibility, raw(visibility_options), class: 'form-control'%>
+  </div>
+  <p></p>
+  <%= submit_tag "Create Repositories", class: 'btn btn-primary', data: {confirm: "Are you sure you want to create these team repositories on GitHub?"} %>
+<% end %>
