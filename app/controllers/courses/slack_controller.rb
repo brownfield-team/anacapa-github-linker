@@ -5,9 +5,11 @@ module Courses
       @workspace = @parent.slack_workspace
     end
 
-    def remove_workspace
-      if @workspace.present?
-        @workspace.destroy
+    def destroy
+      @parent = Course.find(params[:course_id])
+      if @parent.slack_workspace.present?
+        @parent.slack_workspace.destroy
+        @parent.save
         redirect_to course_slack_path(@parent), notice: "Workspace successfully removed from course."
       else
         redirect_to course_slack_path(@parent), alert: "Workspace to delete could not be found."
@@ -21,7 +23,7 @@ module Courses
         return
       end
       client = Slack::Web::Client.new
-      access_token_response = client.oauth_access(
+      access_token_response = client.oauth_v2_access(
           client_id: ENV['SLACK_CLIENT_ID'],
           client_secret: ENV['SLACK_CLIENT_SECRET'],
           code: params[:code]
@@ -31,9 +33,11 @@ module Courses
         return
       end
       workspace = SlackWorkspace.new
-      workspace.access_token = access_token_response[:access_token]
-      workspace.bot_access_token = access_token_response[:bot][:bot_access_token]
-      workspace.name = access_token_response[:team_name]
+      workspace.user_access_token = access_token_response[:authed_user][:access_token]
+      workspace.bot_access_token = access_token_response[:access_token]
+      workspace.name = access_token_response[:team][:name]
+      workspace.team_id = access_token_response[:team][:id]
+      workspace.app_id = access_token_response[:app_id]
       workspace.scope = access_token_response[:scope]
       workspace.save
       course.slack_workspace_id = workspace.id

@@ -3,8 +3,7 @@ class CreateTeamReposJob < CourseJob
   @job_short_name = "create_team_repos"
   @job_description = "Creates a repository named with the provided name pattern for each team matching a specified team name pattern"
 
-  def attempt_job(course_id, team_pattern, repo_pattern, permission_level, visibility)
-    @course = Course.find(course_id)
+  def attempt_job(team_pattern, repo_pattern, permission_level, visibility)
     @visibility = visibility.upcase
     @permission_level = permission_level.downcase
     @org_id = get_org_node_id
@@ -76,9 +75,10 @@ class CreateTeamReposJob < CourseJob
 
   def perform(course_id, team_pattern, repo_pattern, permission_level, visibility)
     ActiveRecord::Base.connection_pool.with_connection do
-      create_in_progress_job_record(course_id)
+      @course = Course.find(course_id)
+      create_in_progress_job_record
       begin
-        attempt_job(course_id, team_pattern, repo_pattern, permission_level, visibility)
+        attempt_job(team_pattern, repo_pattern, permission_level, visibility)
       rescue Exception => e
         rescue_job(e)
       end
