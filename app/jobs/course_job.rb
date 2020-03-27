@@ -5,6 +5,8 @@ class CourseJob < BackgroundJob
   @job_description = "Course Job"
   @course
 
+  attr_accessor :course
+
   def create_in_progress_job_record
     # TODO: This is no longer an overload, and can probably be replaced with cleaner syntax.
     # This is a horrifying way to call the superclass method create_in_progress_job_record(),
@@ -24,6 +26,7 @@ class CourseJob < BackgroundJob
     Slack::Web::Client.new({ :token => @course.slack_workspace.bot_access_token })
   end
 
+  # TODO: Refactor so that all #attempt_job's return a string summary and perform updates the db record.
   def perform(course_id)
     ActiveRecord::Base.connection_pool.with_connection do
       @course = Course.find(course_id)
