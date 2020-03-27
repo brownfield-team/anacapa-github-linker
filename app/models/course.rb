@@ -9,7 +9,7 @@ class Course < ApplicationRecord
   has_many :completed_jobs, dependent: :destroy
   has_many :github_repos, dependent: :destroy
   has_many :org_teams, dependent: :destroy
-  has_one :slack_workspace, dependent: :destroy
+  belongs_to :slack_workspace, dependent: :destroy
 
   resourcify
 

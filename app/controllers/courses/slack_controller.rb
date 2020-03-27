@@ -2,6 +2,16 @@ module Courses
   class SlackController < ApplicationController
     def show
       @parent = Course.find(params[:course_id])
+      @workspace = @parent.slack_workspace
+    end
+
+    def remove_workspace
+      if @workspace.present?
+        @workspace.destroy
+        redirect_to course_slack_path(@parent), notice: "Workspace successfully removed from course."
+      else
+        redirect_to course_slack_path(@parent), alert: "Workspace to delete could not be found."
+      end
     end
 
     def callback
@@ -24,10 +34,11 @@ module Courses
       workspace.access_token = access_token_response[:access_token]
       workspace.bot_access_token = access_token_response[:bot][:bot_access_token]
       workspace.name = access_token_response[:team_name]
+      workspace.scope = access_token_response[:scope]
       workspace.save
       course.slack_workspace_id = workspace.id
       course.save
-      redirect_to course_slack_path(course)
+      redirect_to course_slack_path(course), notice: "Successfully added Slack workspace."
     end
   end
 end
