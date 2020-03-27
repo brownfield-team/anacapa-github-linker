@@ -81,7 +81,9 @@ group :development do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+# Currently, this does nothing but throw a warning. If someone needs to re-enable this, then uncomment this line and run:
+# `bundle lock --add-platform x86-mingw32 x86-mswin32 x64-mingw32 java`
+# gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Pagination
 gem 'kaminari'

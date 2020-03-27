@@ -63,6 +63,9 @@
         </ul>
       </div>
 
+      <%= link_to "Slack", course_slack_path(@course), method: :get, class: "btn btn-default",
+                  style: "display:inline-block; float: right; margin-left: 10px;" %>
+
       <% if can? :update, @course %>
         <%= link_to 'Edit', edit_course_path(@course), class: 'btn'%>
       <% end %>

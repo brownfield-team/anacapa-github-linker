@@ -31,7 +31,8 @@ Rails.application.routes.draw do
           post :generate_repos
         end
       end
-      resource :slack do
+      # While this is somewhat frowned upon in Rails convention, I refuse to name the controller "SlacksController"
+      resource :slack, :controller => 'slack' do
         collection do
 
         end

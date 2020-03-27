@@ -1,0 +1,3 @@
+class SlackWorkspace < ApplicationRecord
+
+end

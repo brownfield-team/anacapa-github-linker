@@ -116,8 +116,7 @@ ActiveRecord::Schema.define(version: 20200327041537) do
   create_table "slack_workspaces", force: :cascade do |t|
     t.string "name"
     t.string "access_token"
-    t.bigint "course_id"
-    t.index ["course_id"], name: "index_slack_workspaces_on_course_id"
+    t.string "bot_access_token"
   end
 
   create_table "student_team_memberships", force: :cascade do |t|
