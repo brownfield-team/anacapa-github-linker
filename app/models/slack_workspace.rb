@@ -1,3 +1,3 @@
 class SlackWorkspace < ApplicationRecord
-  has_one :course, dependent: :nullify
+  belongs_to :course
 end

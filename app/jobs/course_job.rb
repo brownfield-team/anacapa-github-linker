@@ -6,6 +6,7 @@ class CourseJob < BackgroundJob
   @course
 
   def create_in_progress_job_record
+    # TODO: This is no longer an overload, and can probably be replaced with cleaner syntax.
     # This is a horrifying way to call the superclass method create_in_progress_job_record(),
     # but it would seem this is the only way to call an overloaded parent method in Ruby. Strange design.
     # Source: https://stackoverflow.com/a/8616695/3950780
@@ -19,10 +20,10 @@ class CourseJob < BackgroundJob
   end
 
   def slack_machine_user
-    client = Slack::Web::Client.new
+    # TODO: Refactor this into a helper?
+    Slack::Web::Client.new({ :token => @course.slack_workspace.bot_access_token })
   end
 
-  # TODO: Make this set a course instance variable to avoid code repetition
   def perform(course_id)
     ActiveRecord::Base.connection_pool.with_connection do
       @course = Course.find(course_id)

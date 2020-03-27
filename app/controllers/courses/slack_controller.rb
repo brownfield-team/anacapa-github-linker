@@ -17,8 +17,8 @@ module Courses
     end
 
     def callback
-      course = Course.find(params[:state])
-      if course.nil?
+      @course = Course.find(params[:state])
+      if @course.nil?
         redirect_to courses_path, alert: "The course you tried to associate with the Slack workspace could not be found."
         return
       end
@@ -39,9 +39,8 @@ module Courses
       workspace.team_id = access_token_response[:team][:id]
       workspace.app_id = access_token_response[:app_id]
       workspace.scope = access_token_response[:scope]
+      workspace.course = @course
       workspace.save
-      course.slack_workspace_id = workspace.id
-      course.save
       redirect_to course_slack_path(course), notice: "Successfully added Slack workspace."
     end
   end
