@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200327201336) do
+ActiveRecord::Schema.define(version: 20200327212103) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -109,6 +109,15 @@ ActiveRecord::Schema.define(version: 20200327201336) do
     t.index ["email", "course_id"], name: "index_roster_students_on_email_and_course_id", unique: true
     t.index ["perm", "course_id"], name: "index_roster_students_on_perm_and_course_id", unique: true
     t.index ["user_id"], name: "index_roster_students_on_user_id"
+  end
+
+  create_table "slack_users", force: :cascade do |t|
+    t.string "uid"
+    t.string "username"
+    t.string "display_name"
+    t.string "email"
+    t.bigint "roster_student_id"
+    t.index ["roster_student_id"], name: "index_slack_users_on_roster_student_id"
   end
 
   create_table "slack_workspaces", force: :cascade do |t|
