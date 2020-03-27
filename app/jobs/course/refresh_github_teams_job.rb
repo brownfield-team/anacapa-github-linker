@@ -3,21 +3,20 @@ class RefreshGithubTeamsJob < CourseJob
   @job_short_name = "refresh_github_teams"
   @job_description = "Refreshes GitHub teams associated with this course's organization and updates their membership."
 
-  def attempt_job(course_id)
-    course = Course.find(course_id)
-    course_student_users = course.roster_students.map.select { |student| student.user.present? }
-    results = refresh_teams(course, course_student_users)
+  def attempt_job
+    course_student_users = @course.roster_students.map.select { |student| student.user.present? }
+    results = refresh_teams(course_student_users)
     summary = "#{results[:num_created]} teams created, #{results[:num_updated]} updated."
     update_job_record_with_completion_summary(summary)
   end
 
-  def refresh_teams(course, students_with_users)
+  def refresh_teams(students_with_users)
     results = { :num_created => 0, :num_updated => 0 }
-    all_org_teams = get_org_teams(course.course_organization).map { |team| team.node}
+    all_org_teams = get_org_teams(@course.course_organization).map { |team| team.node}
     all_org_teams.each do |team|
       team_to_update = OrgTeam.find_by_team_id(team.id)
       if team_to_update.nil?
-        team_to_update = OrgTeam.new(team_id: team.id, course_id: course.id)
+        team_to_update = OrgTeam.new(team_id: team.id, course_id: @course.id)
         results[:num_created] += 1
       else
         results[:num_updated] += 1
@@ -27,7 +26,7 @@ class RefreshGithubTeamsJob < CourseJob
       team_to_update.url = team.url
       team_to_update.save
 
-      team_members = get_team_members(course.course_organization, team_to_update)
+      team_members = get_team_members(@course.course_organization, team_to_update)
       team_members.each do |team_member|
         student_for_member = students_with_users.select { |rs| rs.user.uid == team_member.node.databaseId.to_s }.first
         if student_for_member.present?
