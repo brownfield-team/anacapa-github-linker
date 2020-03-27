@@ -1,5 +1,25 @@
 <h1><%= link_to @parent.name, course_path(@parent)%></h1>
 
-<a href="https://slack.com/oauth/authorize?client_id=<%= ENV['SLACK_CLIENT_ID'] %>>&scope=incoming-webhook,bot,commands&state=<%= @parent.id %>">
-  <img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png"
-       srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
+<% permission_scope = "incoming-webhook,bot,commands" %>
+<% slack_oauth_link = "https://slack.com/oauth/authorize?client_id=#{ENV['SLACK_CLIENT_ID']}&scope=#{permission_scope}&state=#{@parent.id}"%>
+
+<% if @workspace.nil? %>
+  <a href="<%= slack_oauth_link %>">
+    <img alt="Add Slack Workspace to Course" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png"
+         srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
+
+<% else %>
+  <dl class="" style="padding-left: 0">
+    <dt>Workspace Name</dt>
+      <dd><%= @workspace.name %></dd>
+    <p></p>
+    <dt>Permission Scope</dt>
+      <dd><%= @workspace.scope %></dd>
+  </dl>
+
+  <div class="btn-group" role="group">
+  <%= link_to "Change Workspace", slack_oauth_link, class: "btn btn-secondary" %>
+  <%= link_to "Remove Workspace", remove_workspace_course_slack_path, method: :post, data: { confirm: "Are you sure you want to remove this workspace?" }, class: "btn btn-secondary" %>
+  </div>
+
+<% end %>
