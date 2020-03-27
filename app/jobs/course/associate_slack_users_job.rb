@@ -6,7 +6,7 @@ class AssociateSlackUsersJob < CourseJob
   def attempt_job
     # TODO: Enable pagination of users list
     users_response = slack_machine_user.users_list
-    unless users_response.respond_to? :ok && users_response.ok
+    unless users_response.respond_to?(:ok) && users_response.ok
       puts users_response
       return "Slack API request failed. Please check the log or try again."
     end
@@ -16,7 +16,7 @@ class AssociateSlackUsersJob < CourseJob
       if member.profile.respond_to? :email
         slack_user_record = SlackUser.find_by_uid(member.id)
         if slack_user_record.nil?
-          email = member.profile.email.include? "@ucsb.edu" ? member.profile.email.sub("@ucsb.edu", "@umail.ucsb.edu") : member.profile.email
+          email = member.profile.email.include?("@ucsb.edu") ? member.profile.email.sub("@ucsb.edu", "@umail.ucsb.edu") : member.profile.email
           corresponding_student = RosterStudent.where(course_id: @course.id, email: email).first
           if corresponding_student.nil? then next end
           associations_created += 1

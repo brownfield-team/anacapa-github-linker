@@ -29,7 +29,7 @@ module Courses
           code: params[:code]
       )
       unless access_token_response.respond_to? :access_token
-        redirect_to course_path(@parent), alert: "Failed to get access token from Slack. Please try again."
+        redirect_to course_path(@course), alert: "Failed to get access token from Slack. Please try again."
         return
       end
       workspace = SlackWorkspace.new
@@ -41,7 +41,7 @@ module Courses
       workspace.scope = access_token_response[:scope]
       workspace.course = @course
       workspace.save
-      redirect_to course_slack_path(course), notice: "Successfully added Slack workspace."
+      redirect_to course_slack_path(@course), notice: "Successfully added Slack workspace."
     end
   end
 end
