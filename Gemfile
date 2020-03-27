@@ -95,3 +95,5 @@ gem 'sucker_punch'
 gem 'dotiw'
 gem 'bootstrap-table-rails'
 gem 'jquery-turbolinks'
+
+gem 'slack-ruby-bot-server'
