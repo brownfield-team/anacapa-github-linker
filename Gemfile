@@ -96,4 +96,4 @@ gem 'dotiw'
 gem 'bootstrap-table-rails'
 gem 'jquery-turbolinks'
 
-gem 'slack-ruby-bot-server'
+gem 'slack-ruby-bot'
