@@ -15,7 +15,7 @@ class CreateTeamReposJob < CourseJob
       repos_created += create_team_repo(repo_name, team)
     end
 
-    "#{repos_created} repositories created with team permission level #{@permission_level}."
+    "#{pluralize repos_created, "repository"} created with team permission level #{@permission_level}."
   end
 
   def create_team_repo(repo_name, team)

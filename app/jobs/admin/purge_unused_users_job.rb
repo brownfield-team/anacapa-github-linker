@@ -5,22 +5,17 @@ class PurgeUnusedUsersJob < AdminJob
   @confirmation_dialog = "Are you sure you want to delete all non-admin/instructor users not enrolled in a course?"
   @job_description = "Removes all users who are not instructors/admins that are not enrolled in any existing course."
 
-  def perform
-    ActiveRecord::Base.connection_pool.with_connection do
-      super
-      num_removed = 0
-      users = User.all
-      users.each do |user|
-        if user.roster_students.size == 0
-          unless UsersHelper.instructor_or_admin?(user)
-            user.destroy
-            num_removed += 1
-          end
+  def attempt_job
+    num_removed = 0
+    users = User.all
+    users.each do |user|
+      if user.roster_students.size == 0
+        unless UsersHelper.instructor_or_admin?(user)
+          user.destroy
+          num_removed += 1
         end
       end
-      summary = num_removed.to_s + " users purged from the database."
-      update_job_record_with_completion_summary(summary)
     end
+    "#{pluralize num_removed, "user"} purged from the database."
   end
-
 end

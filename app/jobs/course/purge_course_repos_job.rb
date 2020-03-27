@@ -6,6 +6,6 @@ class PurgeCourseReposJob < CourseJob
 
   def attempt_job
     destroyed_repos = GithubRepo.where(:course_id => @course.id).destroy_all
-    "Purged #{destroyed_repos.size} records from the database."
+    "Purged #{pluralize destroyed_repos.size, "record"} from the database."
   end
 end

@@ -11,7 +11,7 @@ the database."
     org_members.each do |member|
       num_changed += update_org_membership_status(member, @course.roster_students)
     end
-    "#{num_changed} org membership statuses updated."
+    "#{pluralize num_changed, "org membership status"} updated."
   end
 
   def update_org_membership_status(org_member, students)
