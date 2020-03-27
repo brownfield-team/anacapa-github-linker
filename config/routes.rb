@@ -2,7 +2,6 @@ Rails.application.routes.draw do
   # resources :roster_students
   # devise routes
   devise_for :users, :controllers => {
-    # TODO: add support for additional omniauth providers
     :omniauth_callbacks => "users/omniauth_callbacks#github"
   }
   devise_scope :user do
@@ -32,9 +31,15 @@ Rails.application.routes.draw do
           post :generate_repos
         end
       end
-    end
+      resource :slack do
+        collection do
 
+        end
+      end
+    end
   end
+
+  get 'slack/callback', to: 'courses/slack#callback'
 
   resources :users
 
