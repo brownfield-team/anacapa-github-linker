@@ -73,6 +73,8 @@ class CreateTeamReposJob < CourseJob
     GRAPHQL
   end
 
+  # TODO: Instead of manually overriding perform like this, we can probably set up some variable parameter options thing after course_id
+  # which we then pass to #attempt_job
   def perform(course_id, team_pattern, repo_pattern, permission_level, visibility)
     ActiveRecord::Base.connection_pool.with_connection do
       @course = Course.find(course_id)
