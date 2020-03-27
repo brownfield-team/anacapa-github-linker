@@ -32,14 +32,16 @@ Rails.application.routes.draw do
         end
       end
       # While this is somewhat frowned upon in Rails convention, I refuse to name the controller "SlacksController"
-      resource :slack, :controller => 'slack' do
-        collection do
-        end
-      end
+      resource :slack, :controller => 'slack'
     end
   end
 
-  get 'slack/callback', to: 'courses/slack#callback'
+  scope module: 'slack', path: 'slack' do
+    resource :auth, :controller => 'auth' do
+      get :callback
+    end
+    resource :commands
+  end
 
   resources :users
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200327212103) do
+ActiveRecord::Schema.define(version: 20200327234145) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,7 +117,9 @@ ActiveRecord::Schema.define(version: 20200327212103) do
     t.string "display_name"
     t.string "email"
     t.bigint "roster_student_id"
+    t.bigint "slack_workspace_id"
     t.index ["roster_student_id"], name: "index_slack_users_on_roster_student_id"
+    t.index ["slack_workspace_id"], name: "index_slack_users_on_slack_workspace_id"
   end
 
   create_table "slack_workspaces", force: :cascade do |t|
@@ -174,4 +176,5 @@ ActiveRecord::Schema.define(version: 20200327212103) do
   add_foreign_key "github_repos", "courses"
   add_foreign_key "roster_students", "courses"
   add_foreign_key "roster_students", "users"
+  add_foreign_key "slack_users", "slack_workspaces"
 end

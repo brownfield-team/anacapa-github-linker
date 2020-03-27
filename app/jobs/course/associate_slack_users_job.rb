@@ -20,7 +20,7 @@ class AssociateSlackUsersJob < CourseJob
           corresponding_student = RosterStudent.where(course_id: @course.id, email: email).first
           if corresponding_student.nil? then next end
           associations_created += 1
-          slack_user_record = SlackUser.new(uid: member.id, roster_student_id: corresponding_student.id)
+          slack_user_record = SlackUser.new(uid: member.id, roster_student_id: corresponding_student.id, slack_workspace_id: @course.slack_workspace.id)
         else
           associations_updated += 1
         end
