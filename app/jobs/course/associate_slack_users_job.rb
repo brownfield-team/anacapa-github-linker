@@ -8,8 +8,7 @@ class AssociateSlackUsersJob < CourseJob
     users_response = slack_machine_user.users_list
     unless users_response.respond_to? :ok && users_response.ok
       puts users_response
-      update_job_record_with_completion_summary("Slack API request failed. Please check the log or try again.")
-      return
+      return "Slack API request failed. Please check the log or try again."
     end
     slack_members = users_response.members
     associations_created = 0; associations_updated = 0
@@ -30,7 +29,6 @@ class AssociateSlackUsersJob < CourseJob
         slack_user_record.save
       end
     end
-    summary = "#{pluralize associations_created, "association"} created between students and Slack users, #{associations_updated} refreshed."
-    update_job_record_with_completion_summary(summary)
+    "#{pluralize associations_created, "association"} created between students and Slack users, #{associations_updated} refreshed."
   end
 end

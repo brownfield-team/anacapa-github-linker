@@ -6,8 +6,7 @@ class RefreshGithubTeamsJob < CourseJob
   def attempt_job
     course_student_users = @course.roster_students.map.select { |student| student.user.present? }
     results = refresh_teams(course_student_users)
-    summary = "#{results[:num_created]} teams created, #{results[:num_updated]} updated."
-    update_job_record_with_completion_summary(summary)
+    "#{results[:num_created]} teams created, #{results[:num_updated]} updated."
   end
 
   def refresh_teams(students_with_users)

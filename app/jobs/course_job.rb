@@ -32,7 +32,8 @@ class CourseJob < BackgroundJob
       @course = Course.find(course_id)
       create_in_progress_job_record
       begin
-        attempt_job
+        summary = attempt_job || empty_job_summary
+        update_job_record_with_completion_summary(summary)
       rescue Exception => e
         rescue_job(e)
       end

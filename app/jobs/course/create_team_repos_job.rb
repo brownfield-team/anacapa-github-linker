@@ -15,8 +15,7 @@ class CreateTeamReposJob < CourseJob
       repos_created += create_team_repo(repo_name, team)
     end
 
-    summary = "#{repos_created} repositories created with team permission level #{@permission_level}."
-    update_job_record_with_completion_summary(summary)
+    "#{repos_created} repositories created with team permission level #{@permission_level}."
   end
 
   def create_team_repo(repo_name, team)
@@ -80,7 +79,8 @@ class CreateTeamReposJob < CourseJob
       @course = Course.find(course_id)
       create_in_progress_job_record
       begin
-        attempt_job(team_pattern, repo_pattern, permission_level, visibility)
+        summary = attempt_job(team_pattern, repo_pattern, permission_level, visibility) || empty_job_summary
+        update_job_record_with_completion_summary(summary)
       rescue Exception => e
         rescue_job(e)
       end

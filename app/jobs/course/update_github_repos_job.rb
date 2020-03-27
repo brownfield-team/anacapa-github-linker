@@ -20,9 +20,8 @@ class UpdateGithubReposJob < CourseJob
 
     team_refresh_results = refresh_team_collaborators
 
-    summary = "#{num_created} repos created, #{num_updated} refreshed. #{collaborators_found} collaborators and
+    "#{num_created} repos created, #{num_updated} refreshed. #{collaborators_found} collaborators and
 #{team_refresh_results[:teams]} team collaborators found for #{repos_found_collaborators_for} and #{team_refresh_results[:repos]} repos, respectively."
-    update_job_record_with_completion_summary(summary)
   end
   
   def create_or_update_repo(github_repo)
