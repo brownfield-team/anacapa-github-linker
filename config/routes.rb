@@ -36,11 +36,11 @@ Rails.application.routes.draw do
     end
   end
 
-  scope module: 'slack', path: 'slack' do
-    resource :auth, :controller => 'auth' do
+  namespace :slack, path: 'slack' do
+    resource :auth, :controller => 'auth', :only => [] do
       get :callback
     end
-    resource :commands
+    resource :commands, :only => []
   end
 
   resources :users

@@ -2,7 +2,8 @@
 
 <% bot_scope = "calls:read,calls:write,channels:read,chat:write,commands,groups:read,groups:write,im:history,im:read,im:write,incoming-webhook,mpim:history,mpim:read,mpim:write,pins:write,reactions:read,reactions:write,team:read,usergroups:read,usergroups:write,users.profile:read,users:read,users:read.email,users:write" %>
 <% user_scope = "identity.basic" %>
-<% slack_oauth_link = "https://slack.com/oauth/v2/authorize?client_id=#{ENV['SLACK_CLIENT_ID']}&scope=#{bot_scope}&user_scope=#{user_scope}&state=#{@parent.id}"%>
+<% redirect_uri = callback_slack_auth_url %>
+<% slack_oauth_link = "https://slack.com/oauth/v2/authorize?client_id=#{ENV['SLACK_CLIENT_ID']}&scope=#{bot_scope}&user_scope=#{user_scope}&state=#{@parent.id}&redirect_uri=#{redirect_uri}"%>
 
 <% if @workspace.nil? %>
   <a href="<%= slack_oauth_link %>">
