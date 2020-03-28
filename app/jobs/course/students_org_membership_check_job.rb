@@ -5,15 +5,13 @@ class StudentsOrgMembershipCheckJob < CourseJob
   @job_description = "Fetches org members from GitHub and updates all students' cached org membership status in
 the database."
 
-  def attempt_job(course_id)
-    course = Course.find(course_id)
-    org_members = get_org_members(course.course_organization)
+  def attempt_job
+    org_members = get_org_members(@course.course_organization)
     num_changed = 0
     org_members.each do |member|
-      num_changed += update_org_membership_status(member, course.roster_students)
+      num_changed += update_org_membership_status(member, @course.roster_students)
     end
-    summary = num_changed.to_s + " org membership statuses updated"
-    update_job_record_with_completion_summary(summary)
+    "#{pluralize num_changed, "org membership status"} updated."
   end
 
   def update_org_membership_status(org_member, students)

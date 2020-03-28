@@ -6,6 +6,7 @@ class PurgeCompletedJobsJob < AdminJob
   @job_description = "Deletes all completed job records from the database."
 
   def attempt_job
-    CompletedJob.destroy_all
+    jobs_deleted = CompletedJob.destroy_all
+    "#{pluralize jobs_deleted.size, "job"} deleted."
   end
 end

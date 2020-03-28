@@ -3,15 +3,14 @@ class UpdateGithubReposJob < CourseJob
   @job_short_name = "update_github_info"
   @job_description = "Uses smart querying to quickly update GitHub repositories, and their respective individual and team collaborators."
 
-  def attempt_job(course_id)
-    course = Course.find(course_id)
-    course_student_users = course.users
+  def attempt_job
+    course_student_users = @course.users
 
-    all_org_repos = get_github_repos(course.course_organization).map { |repo| repo.node}
+    all_org_repos = get_github_repos(@course.course_organization).map { |repo| repo.node}
     num_created = 0; collaborators_found = 0; repos_found_collaborators_for = 0
 
     all_org_repos.each do |repo|
-      num_created += create_or_update_repo(repo, course_id)
+      num_created += create_or_update_repo(repo)
 
       num_repo_collaborators = create_or_update_collaborators(repo, course_student_users)
       collaborators_found += num_repo_collaborators
@@ -19,14 +18,13 @@ class UpdateGithubReposJob < CourseJob
     end
     num_updated = all_org_repos.count - num_created
 
-    team_refresh_results = refresh_team_collaborators(course)
+    team_refresh_results = refresh_team_collaborators
 
-    summary = "#{num_created} repos created, #{num_updated} refreshed. #{collaborators_found} collaborators and
-#{team_refresh_results[:teams]} team collaborators found for #{repos_found_collaborators_for} and #{team_refresh_results[:repos]} repos, respectively."
-    update_job_record_with_completion_summary(summary)
+    "#{pluralize num_created, "repo"} created, #{num_updated} refreshed. #{pluralize collaborators_found, "collaborator"} and
+#{pluralize team_refresh_results[:teams], "team collaborator"} found for #{repos_found_collaborators_for} and #{pluralize team_refresh_results[:repos], "repo"}, respectively."
   end
   
-  def create_or_update_repo(github_repo, course_id)
+  def create_or_update_repo(github_repo)
     existing_record = GithubRepo.find_by_repo_id(github_repo.databaseId)
     unless existing_record.nil?
       num_created = 0
@@ -35,7 +33,7 @@ class UpdateGithubReposJob < CourseJob
       num_created = 1
       repo_record = GithubRepo.new
       repo_record.repo_id = github_repo.databaseId
-      repo_record.course_id = course_id
+      repo_record.course_id = @course.id
     end
     repo_record.name = github_repo.name
     repo_record.full_name = github_repo.nameWithOwner  # full_name includes organization name e.g. test-org/test-repo
@@ -111,10 +109,10 @@ class UpdateGithubReposJob < CourseJob
     GRAPHQL
   end
 
-  def refresh_team_collaborators(course)
+  def refresh_team_collaborators
     num_repos_collaborator_for = 0
     num_teams_with_repos = 0
-    all_org_teams = get_org_teams(course.course_organization).map { |team| team.node}
+    all_org_teams = get_org_teams(@course.course_organization).map { |team| team.node}
     all_org_teams.each do |team|
       team_to_update = OrgTeam.find_by_team_id(team.id)
       unless team_to_update.nil?

@@ -63,6 +63,9 @@
         </ul>
       </div>
 
+      <%= link_to "Slack", course_slack_path(@course), method: :get, class: "btn btn-default",
+                  style: "display:inline-block; float: right; margin-left: 10px;" %>
+
       <% if can? :update, @course %>
         <%= link_to 'Edit', edit_course_path(@course), class: 'btn'%>
       <% end %>
@@ -94,6 +97,9 @@
           <th data-sortable="true" data-field="Email" data-filter-control="input">Email</th>
           <th data-sortable="true" data-field="Enrolled" data-filter-control="select">Enrolled</th>
           <th data-sortable="true" data-field="TA" data-filter-control="select">TA</th>
+          <% if @course.slack_workspace.present? %>
+            <th data-sortable="true" data-field="Slack" data-filter-control="input">Slack</th>
+          <% end %>
 	        <th data-sortable="true" data-field="GithubId" data-filter-control="input">Github ID</th>
           <th data-sortable="true" data-field="OrgMembership" data-filter-control="select">Org Membership</th>
           <th></th>
@@ -111,6 +117,15 @@
             <td><%= student.email %></td>
             <td><%= student.enrolled ? "True" : "False" %></td>
             <td><%= !student.user.nil? && student.user.has_role?(:ta, @course) ? "True" : "False" %></td>
+            <% if @course.slack_workspace.present? %>
+              <% slack_user = student.slack_user %>
+              <% if slack_user.present? %>
+                <% slack_user_link = "slack://user?team=#{@course.slack_workspace.team_id}&id=#{slack_user.uid}" %>
+                <td><%= link_to slack_user.display_name, slack_user_link %></td>
+              <% else %>
+                <td></td>
+              <% end %>
+            <% end %>
             <% if !student.user.nil? %>
               <td><a href="https://github.com/<%= student.username %>"><%= student.username %></td>
             <% else %>

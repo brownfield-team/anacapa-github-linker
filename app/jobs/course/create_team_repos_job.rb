@@ -3,8 +3,7 @@ class CreateTeamReposJob < CourseJob
   @job_short_name = "create_team_repos"
   @job_description = "Creates a repository named with the provided name pattern for each team matching a specified team name pattern"
 
-  def attempt_job(course_id, team_pattern, repo_pattern, permission_level, visibility)
-    @course = Course.find(course_id)
+  def attempt_job(team_pattern, repo_pattern, permission_level, visibility)
     @visibility = visibility.upcase
     @permission_level = permission_level.downcase
     @org_id = get_org_node_id
@@ -16,8 +15,7 @@ class CreateTeamReposJob < CourseJob
       repos_created += create_team_repo(repo_name, team)
     end
 
-    summary = "#{repos_created} repositories created with team permission level #{@permission_level}."
-    update_job_record_with_completion_summary(summary)
+    "#{pluralize repos_created, "repository"} created with team permission level #{@permission_level}."
   end
 
   def create_team_repo(repo_name, team)
@@ -74,11 +72,15 @@ class CreateTeamReposJob < CourseJob
     GRAPHQL
   end
 
+  # TODO: Instead of manually overriding perform like this, we can probably set up some variable parameter options thing after course_id
+  # which we then pass to #attempt_job
   def perform(course_id, team_pattern, repo_pattern, permission_level, visibility)
     ActiveRecord::Base.connection_pool.with_connection do
-      create_in_progress_job_record(course_id)
+      @course = Course.find(course_id)
+      create_in_progress_job_record
       begin
-        attempt_job(course_id, team_pattern, repo_pattern, permission_level, visibility)
+        summary = attempt_job(team_pattern, repo_pattern, permission_level, visibility) || empty_job_summary
+        update_job_record_with_completion_summary(summary)
       rescue Exception => e
         rescue_job(e)
       end

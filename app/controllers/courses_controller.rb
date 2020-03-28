@@ -129,7 +129,12 @@ class CoursesController < ApplicationController
 
   # List of course jobs to make available to run
   def course_job_list
-    [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, PurgeCourseReposJob]
+    @course = Course.find(params[:course_id])
+    jobs = [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, PurgeCourseReposJob]
+    if @course.slack_workspace.present?
+      jobs << AssociateSlackUsersJob
+    end
+    jobs
   end
   helper_method :course_job_list
 

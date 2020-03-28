@@ -2,7 +2,6 @@ Rails.application.routes.draw do
   # resources :roster_students
   # devise routes
   devise_for :users, :controllers => {
-    # TODO: add support for additional omniauth providers
     :omniauth_callbacks => "users/omniauth_callbacks#github"
   }
   devise_scope :user do
@@ -32,8 +31,18 @@ Rails.application.routes.draw do
           post :generate_repos
         end
       end
+      # While this is somewhat frowned upon in Rails convention, I refuse to name the controller "SlacksController"
+      resource :slack, :controller => 'slack'
     end
+  end
 
+  namespace :slack, path: 'slack' do
+    resource :auth, :controller => 'auth', :only => [] do
+      get :callback
+    end
+    resource :commands, :only => [] do
+      post :whois
+    end
   end
 
   resources :users

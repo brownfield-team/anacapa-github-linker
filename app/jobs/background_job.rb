@@ -36,6 +36,10 @@ class BackgroundJob
     @permission_level
   end
 
+  def empty_job_summary
+    "Job completed without summary. This may indicate something went wrong."
+  end
+
   def create_in_progress_job_record
     job_record = CompletedJob.new
     job_record.job_name = self.class.job_name
@@ -55,7 +59,8 @@ class BackgroundJob
     ActiveRecord::Base.connection_pool.with_connection do
       begin
         create_in_progress_job_record
-        attempt_job
+        summary = attempt_job || empty_job_summary
+        update_job_record_with_completion_summary(summary)
       rescue Exception => e
         rescue_job(e)
       end

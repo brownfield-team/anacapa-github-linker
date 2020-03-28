@@ -2,15 +2,14 @@ require 'Octokit_Wrapper'
 
 class CourseJob < BackgroundJob
   @permission_level = "instructor"
-
   @job_description = "Course Job"
+  @course
 
-  def create_in_progress_job_record(course_id)
-    # This is a horrifying way to call the superclass method create_in_progress_job_record(),
-    # but it would seem this is the only way to call an overloaded parent method in Ruby. Strange design.
-    # Source: https://stackoverflow.com/a/8616695/3950780
-    BackgroundJob.instance_method(:create_in_progress_job_record).bind(self).call
-    @job_record.course_id = course_id
+  attr_accessor :course
+
+  def create_in_progress_job_record
+    super
+    @job_record.course_id = @course.id
     @job_record.save
   end
 
@@ -18,19 +17,26 @@ class CourseJob < BackgroundJob
     Octokit_Wrapper::Octokit_Wrapper.machine_user
   end
 
-  # TODO: Make this set a course instance variable to avoid code repetition
+  def slack_machine_user
+    # TODO: Refactor this into a helper?
+    Slack::Web::Client.new({ :token => @course.slack_workspace.bot_access_token })
+  end
+
+  # TODO: Refactor so that all #attempt_job's return a string summary and perform updates the db record.
   def perform(course_id)
     ActiveRecord::Base.connection_pool.with_connection do
-      create_in_progress_job_record(course_id)
+      @course = Course.find(course_id)
+      create_in_progress_job_record
       begin
-        attempt_job(course_id)
+        summary = attempt_job || empty_job_summary
+        update_job_record_with_completion_summary(summary)
       rescue Exception => e
         rescue_job(e)
       end
     end
   end
 
-  def attempt_job(course_id)
+  def attempt_job
 
   end
 end
