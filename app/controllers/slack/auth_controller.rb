@@ -10,7 +10,8 @@ module Slack
       access_token_response = client.oauth_v2_access(
           client_id: ENV['SLACK_CLIENT_ID'],
           client_secret: ENV['SLACK_CLIENT_SECRET'],
-          code: params[:code]
+          code: params[:code],
+          redirect_uri: callback_slack_auth_url
       )
       unless access_token_response.respond_to? :access_token
         redirect_to course_path(@course), alert: "Failed to get access token from Slack. Please try again."
