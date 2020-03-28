@@ -7,6 +7,9 @@ class Ability
     # https://github.com/RolifyCommunity/rolify/wiki/Devise---CanCanCan---rolify-Tutorial
     # see this tutorial for information about the Devise--CanCanCan--rolify stack
 
+    # Permissions for those not logged in i.e. slack command requests
+    can :slack_command, SlackWorkspace
+
     if user.has_role? :user
       # TAs can read course information and run course jobs, but other users cannot
 

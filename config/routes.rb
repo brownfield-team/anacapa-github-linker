@@ -40,7 +40,9 @@ Rails.application.routes.draw do
     resource :auth, :controller => 'auth', :only => [] do
       get :callback
     end
-    resource :commands, :only => []
+    resource :commands, :only => [] do
+      get :whois
+    end
   end
 
   resources :users
