@@ -8,11 +8,7 @@ class CourseJob < BackgroundJob
   attr_accessor :course
 
   def create_in_progress_job_record
-    # TODO: This is no longer an overload, and can probably be replaced with cleaner syntax.
-    # This is a horrifying way to call the superclass method create_in_progress_job_record(),
-    # but it would seem this is the only way to call an overloaded parent method in Ruby. Strange design.
-    # Source: https://stackoverflow.com/a/8616695/3950780
-    BackgroundJob.instance_method(:create_in_progress_job_record).bind(self).call
+    super
     @job_record.course_id = @course.id
     @job_record.save
   end
