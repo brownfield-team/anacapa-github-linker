@@ -1,44 +1,47 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Perm:</strong>
-  <%= @roster_student.perm %>
-</p>
 
-<p>
-  <strong>First name:</strong>
-  <%= @roster_student.first_name %>
-</p>
+<dl>
+  <dt>Student ID</dt>
+  <dd> <%= @roster_student.perm %></dd>
+  <p></p>
 
-<p>
-  <strong>Last name:</strong>
-  <%= @roster_student.last_name %>
-</p>
+  <dt>First Name</dt>
+  <dd><%= @roster_student.first_name %></dd>
+  <p></p>
 
-<p>
-  <strong>Email:</strong>
-  <a href="mailto:<%= @roster_student.email %>"><%= @roster_student.email %> </a>
-</p>
+  <dt>Last Name</dt>
+  <dd><%= @roster_student.last_name %></dd>
+  <p></p>
 
-<p>
-  <strong>Enrolled:</strong>
-  <%= @roster_student.enrolled ? "True" : "False" %>
-</p>
+  <dt>Email</dt>
+  <dd><%= link_to @roster_student.email, "mailto:#{@roster_student.email}" %></dd>
+  <p></p>
 
-<% if @roster_student.username.nil? %>
-<p>
-  <strong>Github ID:</strong><span class="js-no-github-id"> Unknown</span>
-</p>
-<% else %>
-<p>
-  <strong>Github ID:</strong>
-  <a class="js-github-id" href="https://github.com/<%= @roster_student.username %>"><%= @roster_student.username %></a>
-</p>
-<% end %>
+  <dt>GitHub ID</dt>
+  <% if @roster_student.username.present? %>
+    <dd><%= link_to @roster_student.username, "https://github.com/#{@roster_student.username}", class: "js-github-id" %></dd>
+  <% else %>
+    <dd class="js-no-github-id">Unknown</dd>
+  <% end %>
+  <p></p>
+
+  <dt>Slack ID</dt>
+  <% if @roster_student.slack_user.present? %>
+    <dd><%= link_to @roster_student.slack_user.display_name, @roster_student.slack_user.slack_url %></dd>
+  <% else %>
+    <dd>Unknown</dd>
+  <% end %>
+  <p></p>
+
+  <dt>Enrolled</dt>
+  <dd><%= @roster_student.enrolled ? "True" : "False" %></dd>
+
+</dl>
 
 <% unless @roster_student.user.nil? %>
 <p class="repo-list-table">
-  <strong>User Repositories:</strong>
+  <strong>User Repositories</strong>
   <table class="table">
     <thead>
     <tr>

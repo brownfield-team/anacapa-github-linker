@@ -12,7 +12,7 @@
 
 <% else %>
   <% slack_workspace_url = "slack://open?team=#{@workspace.team_id}" %>
-  <dl class="" style="padding-left: 0">
+  <dl>
     <dt>Workspace Name</dt>
       <dd><%= link_to @workspace.name, slack_workspace_url %></dd>
     <p></p>
