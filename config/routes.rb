@@ -41,7 +41,7 @@ Rails.application.routes.draw do
       get :callback
     end
     resource :commands, :only => [] do
-      get :whois
+      post :whois
     end
   end
 
