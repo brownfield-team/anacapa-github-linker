@@ -120,8 +120,7 @@
             <% if @course.slack_workspace.present? %>
               <% slack_user = student.slack_user %>
               <% if slack_user.present? %>
-                <% slack_user_link = "slack://user?team=#{@course.slack_workspace.team_id}&id=#{slack_user.uid}" %>
-                <td><%= link_to slack_user.display_name, slack_user_link %></td>
+                <td><%= link_to slack_user.display_name, slack_user.slack_url %></td>
               <% else %>
                 <td></td>
               <% end %>
