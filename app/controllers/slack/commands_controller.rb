@@ -26,7 +26,7 @@ module Slack
           if matched_student.present?
             github_id = matched_student.username
             # Markdown linking to GitHub profile
-            github_str = github_id ? "https://github.com/#{github_id}>|<#{github_id}" : "N/A"
+            github_str = github_id ? "<https://github.com/#{github_id}|#{github_id}>" : "N/A"
             # Markdown linking to student show page
             student_name_str = "<#{course_roster_student_url(workspace.course.id, matched_student.id)}|#{matched_student.full_name}>"
             command_output += "*GitHub ID:* #{github_str}, *Student:* #{student_name_str}"
