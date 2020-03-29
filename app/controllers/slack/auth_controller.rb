@@ -26,6 +26,7 @@ module Slack
       workspace.scope = access_token_response[:scope]
       workspace.course = @course
       workspace.save
+      AssociateSlackUsersJob.perform_async(@course.id)
       redirect_to course_slack_path(@course), notice: "Successfully added Slack workspace."
     end
   end

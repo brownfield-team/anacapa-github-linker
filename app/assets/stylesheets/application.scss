@@ -78,6 +78,16 @@ input.repo-search {
   margin-bottom: 10px;
 }
 
+.container dt {
+  width:auto;
+  margin-left:auto;
+  display:inline-block;
+}
+
+.dl-horizontal dd {
+  margin-left: 100px;
+}
+
 // // make all images responsive by default
 // img {
 //   @extend .img-responsive;
