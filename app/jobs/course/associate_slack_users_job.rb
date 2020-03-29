@@ -3,7 +3,7 @@ class AssociateSlackUsersJob < CourseJob
   @job_short_name = "associate_slack_users"
   @job_description = "Fetches a list of users in the linked Slack workspace and associates them by email with students in the course."
 
-  def attempt_job
+  def attempt_job(options)
     slack_members = []
     slack_machine_user.users_list do |response|
       slack_members.concat(response.members)

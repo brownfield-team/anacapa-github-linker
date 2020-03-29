@@ -3,7 +3,7 @@ class RefreshGithubTeamsJob < CourseJob
   @job_short_name = "refresh_github_teams"
   @job_description = "Refreshes GitHub teams associated with this course's organization and updates their membership."
 
-  def attempt_job
+  def attempt_job(options)
     course_student_users = @course.roster_students.map.select { |student| student.user.present? }
     results = refresh_teams(course_student_users)
     "#{pluralize results[:num_created], "team"} created, #{results[:num_updated]} updated."

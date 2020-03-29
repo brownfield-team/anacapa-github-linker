@@ -23,20 +23,16 @@ class CourseJob < BackgroundJob
   end
 
   # TODO: Refactor so that all #attempt_job's return a string summary and perform updates the db record.
-  def perform(course_id)
+  def perform(course_id, options = {})
     ActiveRecord::Base.connection_pool.with_connection do
       @course = Course.find(course_id)
       create_in_progress_job_record
       begin
-        summary = attempt_job || empty_job_summary
+        summary = attempt_job(options) || empty_job_summary
         update_job_record_with_completion_summary(summary)
       rescue Exception => e
         rescue_job(e)
       end
     end
-  end
-
-  def attempt_job
-
   end
 end

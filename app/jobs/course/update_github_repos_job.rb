@@ -3,7 +3,7 @@ class UpdateGithubReposJob < CourseJob
   @job_short_name = "update_github_info"
   @job_description = "Uses smart querying to quickly update GitHub repositories, and their respective individual and team collaborators."
 
-  def attempt_job
+  def attempt_job(options)
     course_student_users = @course.users
 
     all_org_repos = get_github_repos(@course.course_organization).map { |repo| repo.node}

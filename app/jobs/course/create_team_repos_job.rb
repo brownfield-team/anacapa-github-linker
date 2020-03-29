@@ -3,15 +3,15 @@ class CreateTeamReposJob < CourseJob
   @job_short_name = "create_team_repos"
   @job_description = "Creates a repository named with the provided name pattern for each team matching a specified team name pattern"
 
-  def attempt_job(team_pattern, repo_pattern, permission_level, visibility)
-    @visibility = visibility.upcase
-    @permission_level = permission_level.downcase
+  def attempt_job(options)
+    @visibility = options[:visibility].upcase
+    @permission_level = options[:permission_level].downcase
     @org_id = get_org_node_id
 
-    matching_teams = OrgTeam.where(course_id: @course.id).where("name ~* ?", team_pattern)
+    matching_teams = OrgTeam.where(course_id: @course.id).where("name ~* ?", options[:team_pattern])
     repos_created = 0
     matching_teams.each do |team|
-      repo_name = repo_pattern.sub("{team}", team.slug)
+      repo_name = options[:repo_pattern].sub("{team}", team.slug)
       repos_created += create_team_repo(repo_name, team)
     end
 
@@ -20,7 +20,9 @@ class CreateTeamReposJob < CourseJob
 
   def create_team_repo(repo_name, team)
     response = github_machine_user.post '/graphql', { query: create_team_repo_query(repo_name, team.team_id) }.to_json
-    unless response.respond_to? :data then return 0 end
+    if !response.respond_to?(:data) || response.respond_to?(:errors)
+      return 0
+    end
     new_repo_full_name = get_repo_name_and_create_record(response, team.id)
     unless @permission_level == "read"
       github_machine_user.put("/orgs/#{@course.course_organization}/teams/#{team.slug}/repos/#{new_repo_full_name}", {"permission": "#{@permission_level}"})
@@ -70,20 +72,5 @@ class CreateTeamReposJob < CourseJob
         }
       }
     GRAPHQL
-  end
-
-  # TODO: Instead of manually overriding perform like this, we can probably set up some variable parameter options thing after course_id
-  # which we then pass to #attempt_job
-  def perform(course_id, team_pattern, repo_pattern, permission_level, visibility)
-    ActiveRecord::Base.connection_pool.with_connection do
-      @course = Course.find(course_id)
-      create_in_progress_job_record
-      begin
-        summary = attempt_job(team_pattern, repo_pattern, permission_level, visibility) || empty_job_summary
-        update_job_record_with_completion_summary(summary)
-      rescue Exception => e
-        rescue_job(e)
-      end
-    end
   end
 end
