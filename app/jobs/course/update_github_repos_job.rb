@@ -66,7 +66,6 @@ class UpdateGithubReposJob < CourseJob
     filtered_collaborator_list.count
   end
 
-  # TODO: Figure out how to refactor this GraphQL handling code so it doesn't have to be constantly repeated
   # We have to manually handle pagination because Octokit has no built-in support for GraphQL
   def get_github_repos(course_org, cursor = "")
     response = github_machine_user.post '/graphql', { query: repository_graphql_query(course_org, cursor) }.to_json
