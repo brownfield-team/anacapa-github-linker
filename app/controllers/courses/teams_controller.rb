@@ -30,6 +30,23 @@ module Courses
 
     end
 
+    def generate_teams
+      team_csv = params[:file]
+      team_hash = Hash.new
+      ignore_first_row = params[:ignore_first_row]
+      CSV.foreach(team_csv.path) do |row|
+        if ignore_first_row != 0
+          ignore_first_row = 0
+          next
+        end
+        team_name = row[1].strip
+        team_hash[team_name] ||= []
+        team_hash[team_name] << row[0].strip
+      end
+      CreateGithubTeamsJob.perform_async(@course.id, { :teams => team_hash })
+      redirect_to course_teams_path(@course), notice: "Team creation successfully queued."
+    end
+
     private
       def load_parent
         @parent = Course.find(params[:course_id])

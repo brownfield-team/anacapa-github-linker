@@ -1,4 +1,8 @@
 class CreateGithubTeamsJob < CourseJob
+  @job_name = "Create GitHub Teams"
+  @job_short_name = "create_github_teams"
+  @job_description = "Generates GitHub teams from an uploaded CSV file of users and their associated teams."
+
   def attempt_job(options)
     teams_to_create = options[:teams]
     current_user = github_machine_user.user.login
@@ -32,7 +36,10 @@ class CreateGithubTeamsJob < CourseJob
         puts e
       end
     end
-    "#{pluralize teams_created, "team"} created and #{pluralize users_added, "user"} to teams. Failed to create #{pluralize teams_not_created, "team"} and
-failed to add #{pluralize users_not_added, "user"}"
+    # Now, we just refresh all the teams to make sure we have the most up-to-date data. We use #perform and not #perform_async
+    # because we don't want this job to complete until the local data is up to date.
+    RefreshGithubTeamsJob.new.perform(@course.id)
+    "#{pluralize teams_created, "team"} created and added #{pluralize users_added, "user"} to teams. Failed to create #{pluralize teams_not_created, "team"} and
+failed to add #{pluralize users_not_added, "user"} to teams."
   end
 end
