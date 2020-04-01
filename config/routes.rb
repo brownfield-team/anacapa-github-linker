@@ -29,6 +29,7 @@ Rails.application.routes.draw do
         collection do
           get :create_repos
           post :generate_repos
+          get :create_teams
         end
       end
       # While this is somewhat frowned upon in Rails convention, I refuse to name the controller "SlacksController"
