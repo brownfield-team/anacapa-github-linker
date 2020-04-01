@@ -10,7 +10,7 @@ class CreateGithubTeamsJob < CourseJob
     # it blows up the whole operation. So, we just do everything one by one for safety.
     # These operations with unverified data are very exception prone, and we don't want one already-existing team or
     # failed user add to crash the whole thing, so all the requests are wrapped in exception handling blocks.
-    teams_created = 0; users_added = 0; teams_not_created = 0; users_not_added = 0
+    teams_created = 0; users_added = 0; teams_not_created = 0
     teams_to_create.each do |team_name, members|
       begin
         response = github_machine_user.create_team(@course.course_organization, { :name => team_name, :privacy => "closed" })
@@ -29,7 +29,6 @@ class CreateGithubTeamsJob < CourseJob
         begin
           github_machine_user.add_team_member(team_id, user)
         rescue Octokit::Error => e
-          users_not_added += 1
           puts e
         end
       end
@@ -45,7 +44,6 @@ class CreateGithubTeamsJob < CourseJob
     # Now, we just refresh all the teams to make sure we have the most up-to-date data. We use #perform and not #perform_async
     # because we don't want this job to complete until the local data is up to date.
     RefreshGithubTeamsJob.new.perform(@course.id)
-    "#{pluralize teams_created, "team"} created and added #{pluralize users_added, "user"} to teams. Failed to create #{pluralize teams_not_created, "team"} and
-failed to add #{pluralize users_not_added, "user"} to teams."
+    "#{pluralize teams_created, "team"} created and added #{pluralize users_added, "user"} to teams. Failed to create #{pluralize teams_not_created, "team"}."
   end
 end
