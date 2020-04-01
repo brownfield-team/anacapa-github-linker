@@ -35,7 +35,7 @@ module Courses
       team_hash = Hash.new
       ignore_first_row = params[:ignore_first_row]
       CSV.foreach(team_csv.path) do |row|
-        if ignore_first_row != 0
+        if ignore_first_row.present? && ignore_first_row != 0
           ignore_first_row = 0
           next
         end
