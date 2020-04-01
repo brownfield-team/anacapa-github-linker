@@ -50,7 +50,7 @@ class AdminController < ApplicationController
 
   private
     def github_v3_rate_limit
-      limit_response = machine_user.rate_limit
+      limit_response = github_machine_user.rate_limit
       if limit_response.respond_to? :limit
         reset_time = Time.at(limit_response.resets_at)
         return {"remaining": limit_response.remaining, "limit": limit_response.limit, "reset": reset_time,
@@ -61,7 +61,7 @@ class AdminController < ApplicationController
     end
 
     def github_v4_rate_limit
-      limit_response = Octokit_Wrapper::Octokit_Wrapper.machine_user.post '/graphql', { query: rate_limit_graphql_query }.to_json
+      limit_response = github_machine_user.post '/graphql', { query: rate_limit_graphql_query }.to_json
       if limit_response.respond_to? :data
         rateLimitInfo = limit_response.data.rateLimit
         reset_time = Time.parse(rateLimitInfo.resetAt)

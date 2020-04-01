@@ -164,10 +164,6 @@ class CoursesController < ApplicationController
       current_user.add_role :instructor, Course.find(id)
     end
 
-    def machine_user
-      client = Octokit_Wrapper::Octokit_Wrapper.machine_user
-    end
-
     def session_user
       client = Octokit_Wrapper::Octokit_Wrapper.session_user(session[:token])
     end

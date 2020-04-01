@@ -11,7 +11,7 @@
 </h1>
 <p></p>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <% collapsed = "in" # slightly messy way to make only the first panel expanded on page load %>
+  <% collapsed = "in" # slightly messy way to make only the first panel expanded on page load while allowing more than one to be expanded at a time %>
   <% @teams.each do |team| %>
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="heading<%= team.id %>">
