@@ -21,7 +21,7 @@ module Slack
       else
         command_output = ""
         @students = workspace.course.roster_students.select { |student| student.slack_user.present? }
-        user_id_matches.each do |match, index|
+        user_id_matches.each do |match|
           matched_student = @students.find { |student| student.slack_user.uid == match }
           if matched_student.present?
             github_id = matched_student.username
@@ -35,14 +35,9 @@ module Slack
             end
             teams_str.empty? ? teams_str.delete_suffix!(", ") : teams_str = "N/A"
             command_output += "*GitHub ID:* #{github_str}, *Student:* #{student_name_str}, *Teams:* #{teams_str}"
-            unless index == user_id_matches.size - 1
-              command_output += "\n"
-            end
           end
         end
-        if command_output == ""
-          command_output = "No students found for the provided user(s)."
-        end
+        command_output.empty? ? command_output = "No students found for the provided user(s)." : command_output.delete_suffix!("\n")
         render json: { :text => command_output }
       end
     end
