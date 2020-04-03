@@ -27,7 +27,7 @@ class CreateGithubTeamsJob < CourseJob
       end
       members.each do |user|
         begin
-          github_machine_user.add_team_member(team_id, user)
+          github_machine_user.put("teams/#{team_id}/memberships/#{user}", { :role => "maintainer" })
         rescue Octokit::Error => e
           puts e
         end
