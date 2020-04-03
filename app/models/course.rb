@@ -64,6 +64,7 @@ class Course < ApplicationRecord
     first_name_index = header_map.index("first_name")
     last_name_index = header_map.index("last_name")
     full_name_index = header_map.index("full_name")
+    section_index = header_map.index("section")
 
     unenroll_all_students
 
@@ -76,6 +77,7 @@ class Course < ApplicationRecord
 
       row["perm"] = spreadsheet_row[id_index]
       row["email"] = spreadsheet_row[email_index]
+      row["section"] = spreadsheet_row[section_index]
 
       if first_name_index
         row["first_name"] = spreadsheet_row[first_name_index]
@@ -97,6 +99,7 @@ class Course < ApplicationRecord
       student.first_name = row["first_name"]
       student.last_name = row["last_name"]
       student.email = row["email"]
+      student.section = row["section"]
       student.save
     end
   end
@@ -104,7 +107,7 @@ class Course < ApplicationRecord
   # export roster students to a CSV file
   def export_students_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w[studentId email first_name last_name github_username enrolled]
+      csv << %w[studentId email first_name last_name enrolled section github_username org_member_status]
 
       roster_students.each do |user|
         csv << [
@@ -112,8 +115,10 @@ class Course < ApplicationRecord
           user.email,
           user.first_name,
           user.last_name,
+          user.enrolled,
+          user.section,
           user.username,
-          user.enrolled
+          user.is_org_member
         ]
       end
     end

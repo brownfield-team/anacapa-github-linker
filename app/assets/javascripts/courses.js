@@ -23,7 +23,7 @@ $(document).ready(function () {
 
             var fields = [{value: 'select', name: '-- select --'}, {value: 'full_name', name: 'Full Name'},
                 {value: 'first_name', name: 'First Name'}, {value: 'last_name', name: 'Last Name'},
-                {value: 'perm', name: 'Student ID'}, {value: 'email', name: 'Email'}];
+                {value: 'perm', name: 'Student ID'}, {value: 'email', name: 'Email'}, {value: 'section', name: 'Section'}];
 
             for (var i = 0; i < fields.length; i++) {
                 dropdownHtml += "<option value='" + fields[i].value + "' >" + fields[i].name + "</option>";
