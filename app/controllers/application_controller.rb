@@ -10,4 +10,8 @@ class ApplicationController < ActionController::Base
       format.js   { head :forbidden, content_type: 'text/html' }
     end
   end
+
+  def github_machine_user
+    Octokit_Wrapper::Octokit_Wrapper.machine_user
+  end
 end

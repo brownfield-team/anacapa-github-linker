@@ -55,11 +55,11 @@ class BackgroundJob
     job_record.save
   end
 
-  def perform
+  def perform(options = {})
     ActiveRecord::Base.connection_pool.with_connection do
       begin
         create_in_progress_job_record
-        summary = attempt_job || empty_job_summary
+        summary = attempt_job(options) || empty_job_summary
         update_job_record_with_completion_summary(summary)
       rescue Exception => e
         rescue_job(e)
@@ -67,7 +67,7 @@ class BackgroundJob
     end
   end
 
-  def attempt_job
+  def attempt_job(options)
     # What a job actually does
 
   end

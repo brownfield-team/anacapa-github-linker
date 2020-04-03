@@ -5,7 +5,7 @@ class StudentsOrgMembershipCheckJob < CourseJob
   @job_description = "Fetches org members from GitHub and updates all students' cached org membership status in
 the database."
 
-  def attempt_job
+  def attempt_job(options)
     org_members = get_org_members(@course.course_organization)
     num_changed = 0
     org_members.each do |member|

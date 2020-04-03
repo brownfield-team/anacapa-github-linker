@@ -42,15 +42,27 @@ class AdminController < ApplicationController
 
     def rate_limits
       rate_limits = Hash.new
-      rate_limits["GitHub API"] = github_rate_limit
+      rate_limits["GitHub v3 API (REST)"] = github_v3_rate_limit
+      rate_limits["GitHub v4 API (GraphQL)"] = github_v4_rate_limit
       rate_limits
     end
     helper_method :rate_limits
 
   private
-    def github_rate_limit
-      limit_response = Octokit_Wrapper::Octokit_Wrapper.machine_user.post '/graphql', { query: rate_limit_graphql_query }.to_json
-      if limit_response.data.present?
+    def github_v3_rate_limit
+      limit_response = github_machine_user.rate_limit
+      if limit_response.respond_to? :limit
+        reset_time = Time.at(limit_response.resets_at)
+        return {"remaining": limit_response.remaining, "limit": limit_response.limit, "reset": reset_time,
+                "until_reset": distance_of_time_in_words_to_now(reset_time), "info": "GitHub Machine User: " +
+                ENV['MACHINE_USER_NAME']}
+      end
+      {"error": "Rate limit API request failed. Try refreshing the page."}
+    end
+
+    def github_v4_rate_limit
+      limit_response = github_machine_user.post '/graphql', { query: rate_limit_graphql_query }.to_json
+      if limit_response.respond_to? :data
         rateLimitInfo = limit_response.data.rateLimit
         reset_time = Time.parse(rateLimitInfo.resetAt)
         return {"remaining": rateLimitInfo.remaining, "limit": rateLimitInfo.limit, "reset": reset_time,

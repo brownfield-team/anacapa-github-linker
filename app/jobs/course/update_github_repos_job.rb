@@ -3,7 +3,7 @@ class UpdateGithubReposJob < CourseJob
   @job_short_name = "update_github_info"
   @job_description = "Uses smart querying to quickly update GitHub repositories, and their respective individual and team collaborators."
 
-  def attempt_job
+  def attempt_job(options)
     course_student_users = @course.users
 
     all_org_repos = get_github_repos(@course.course_organization).map { |repo| repo.node}
@@ -66,7 +66,6 @@ class UpdateGithubReposJob < CourseJob
     filtered_collaborator_list.count
   end
 
-  # TODO: Figure out how to refactor this GraphQL handling code so it doesn't have to be constantly repeated
   # We have to manually handle pagination because Octokit has no built-in support for GraphQL
   def get_github_repos(course_org, cursor = "")
     response = github_machine_user.post '/graphql', { query: repository_graphql_query(course_org, cursor) }.to_json
