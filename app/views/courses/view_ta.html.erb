@@ -27,7 +27,7 @@
             <td><%= "#{student.first_name} #{student.last_name}" %></td>
 
             <% if student.user.blank? %>
-              <td>Cannot manage this student's TA status until he/she joins this course</td>
+              <td>Cannot manage this student's TA status until they join this course</td>
             <% else %>
               <td><%= (student.user.has_role? :ta, @course) ? "True" : "False" %></td>
                 <% if student.user.has_role? :ta, @course %>

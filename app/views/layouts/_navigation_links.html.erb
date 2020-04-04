@@ -6,3 +6,7 @@
 <% if can? :update, User %>
 	<li><%= nav_link 'Users', users_path %></li>
 <% end %>
+
+<% if can? :manage, :all %>
+  <li><%= nav_link "Admin", admin_dashboard_path %></li>
+<% end %>

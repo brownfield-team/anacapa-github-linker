@@ -2,7 +2,14 @@
 
 <p>
   You can promote users to either admins or Instructors. If you promote a user to an Instructor, then that use will be able to create courses.
-  NOTE: If you remove a user's instructor status, he/she will permanently lose access to all his/her courses.
+  NOTE: If you remove a user's instructor status, they will permanently lose access to all their courses.
+</p>
+
+<p>
+  Show only:
+  <%= link_to "All Users", users_path %>
+  <%= link_to "Instructors", users_path(type: "instructor") %>
+  <%= link_to "Administrators", users_path(type: "admin")  %>
 </p>
 <div class="row">
   <div class="col-sm-12">
@@ -12,16 +19,17 @@
 <!--        <input id="users_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">-->
 <!--      </div>-->
     <%# table containing the course list %>
-    <table class="table table-sm" id="course_list">
+    <table class="bootstrap-table" data-toggle="table" data-search="true" data-show-export="true" data-show-columns="true"
+           data-show-columns-toggle-all="true" id="course_list">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Username</th>
+          <th data-sortable="true">Name</th>
+          <th data-sortable="true">Username</th>
           <th>uid</th>
-          <th>Admin</th>
-          <th></th>
-          <th>Instructor</th>
-          <th></th>
+          <th data-sortable="true">Admin</th>
+          <th>Make Admin</th>
+          <th data-sortable="true">Instructor</th>
+          <th>Make Instructor</th>
         </tr>
       </thead>
       <tbody>

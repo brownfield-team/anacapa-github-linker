@@ -5,11 +5,12 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+ruby '2.6.5'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.4'
 # Use Puma as the app server
-gem 'puma', '~> 3.7'
+gem 'puma', '~> 3.12'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -19,7 +20,7 @@ gem 'uglifier', '>= 1.3.0'
 
 gem "pg", "~> 0.18"
 
-gem "loofah", '~> 2.2.1'
+gem "loofah", '~> 2.3.1'
 
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
@@ -80,9 +81,21 @@ group :development do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+# Currently, this does nothing but throw a warning. If someone needs to re-enable this, then uncomment this line and run:
+# `bundle lock --add-platform x86-mingw32 x86-mswin32 x64-mingw32 java`
+# gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Pagination
 gem 'kaminari'
 
 gem "actionview", ">= 5.1.6.2"
+
+gem 'omniauth-rails_csrf_protection', '~> 0.1'
+gem 'sucker_punch'
+
+# More accurate distance_of_time_in_words method
+gem 'dotiw'
+gem 'bootstrap-table-rails'
+gem 'jquery-turbolinks'
+
+gem 'slack-ruby-bot'

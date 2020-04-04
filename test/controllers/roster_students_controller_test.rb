@@ -114,7 +114,7 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
   test "should not show github id or repo table if roster_student has none" do
     get course_roster_student_path(:course_id=> @roster_student_with_no_github.course_id, :id=> @roster_student_with_no_github.id)
     assert_response :success
-    assert_select 'span.js-no-github-id'
+    assert_select 'dd.js-no-github-id'
     assert_select 'p.no-repo-list-table'
   end
 

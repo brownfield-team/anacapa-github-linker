@@ -1,42 +1,49 @@
-$( document ).ready(function() {
+$(document).ready(function () {
 
-    document.addEventListener("change", function(e) {
- 
-         // when file is uploaded, grab it
-         var selectedFile = e.target.files[0];
- 
-         var reader = new FileReader();
- 
-         reader.onload = function(e) {
-             // process result of the read
-           var text = reader.result;
-           var parsedFile = CSVToArray( text );
- 
-           // now generate table
-           $("#upload-modal").modal();
- 
-           var dropdownHtml = 
-                 "<td>" + 
-                    "<select index='%i%' class='form-control input-sm' style='width: auto; font-weight: bold;'>" +
-                         "<option value='select' >-- select --</option>" +
-                         "<option value='full_name' >Full Name</option>" +
-                         "<option value='first_name' >First Name</option>" +
-                         "<option value='last_name' >Last Name</option>" +
-                         "<option value='perm' >Perm</option>" +
-                         "<option value='email' >Email</option>" +
-                     "</select>" +
-                 "</td>";
-            
-           var counter = parsedFile.length;
+    document.addEventListener("change", function (e) {
 
-           //Assumes every row has the same length
-            for(var j = 0; j < parsedFile[0].length; j++){
+        // when file is uploaded, grab it
+        var selectedFile = e.target.files[0];
 
+        var reader = new FileReader();
 
-                var newRow = "<tr>"
+        reader.onload = function (e) {
+            // process result of the read
+            var text = reader.result;
+            var parsedFile = CSVToArray(text);
+
+            // now generate table
+            $("#upload-modal").modal();
+
+            var dropdownHtml =
+                "<td>" +
+                "<select id='dropdown-%i%' index='%i%' class='form-control input-sm' style='width: auto;" +
+                " font-weight:" +
+                " bold;'>";
+
+            var fields = [{value: 'select', name: '-- select --'}, {value: 'full_name', name: 'Full Name'},
+                {value: 'first_name', name: 'First Name'}, {value: 'last_name', name: 'Last Name'},
+                {value: 'perm', name: 'Student ID'}, {value: 'email', name: 'Email'}];
+
+            for (var i = 0; i < fields.length; i++) {
+                dropdownHtml += "<option value='" + fields[i].value + "' >" + fields[i].name + "</option>";
+            }
+            dropdownHtml += "</select>" +
+                "</td>";
+
+            var dropdownRow = "<tr>";
+            for (var i = 0; i < parsedFile[0].length; i++) {
+                dropdownRow += dropdownHtml.replace('%i%', i);
+            }
+            dropdownRow += "</tr>";
+            $("#upload-modal .table").append(dropdownRow);
+
+            var rowsToShow = 6;
+            //Assumes every row has the same length
+            for (var i = 0; i < parsedFile.length && i < rowsToShow; i++) {
+                var newRow = "<tr>";
                 var rowSize = 0;
-                newRow += dropdownHtml.replace('%i%', j)
-                for(var i = 0; i < counter; i++){
+                for (var j = 0; j < parsedFile[0].length; j++) {
 
                     rowSize += parsedFile[i].length;
                     newRow += ("<td>" + parsedFile[i][j] + "</td>");
@@ -46,17 +53,28 @@ $( document ).ready(function() {
                  if (rowSize > 0) { // skip empty rows
                    $("#upload-modal .table").append(newRow);
                  }
-            }   
+            }
+            var rowsNotShownStr = (parsedFile.length - rowsToShow) + " rows not shown.";
+            document.getElementById('rows-not-shown').textContent = rowsNotShownStr;
 
- 
-         }
+            // Basic auto matching of fields to dropdown
+
+             var cleanedDropdownValues = fields.map(function(f) { return f.value.replace(/[^0-9a-z]/gi, '').toLowerCase(); });
+             for (var k = 0; k < parsedFile[0].length; k++) {
+                 var cleanedCellValue = parsedFile[0][k].replace(/[^0-9a-z]/gi, '').toLowerCase();
+                 var dropdownIndex = cleanedDropdownValues.indexOf(cleanedCellValue);
+                if (dropdownIndex > -1) {
+                    document.getElementById('dropdown-' + k).selectedIndex = dropdownIndex;
+                }
+             }
+         };
  
          // process async above
          reader.readAsText(selectedFile);
          // console.log(CSVToArray(reader.readAsText(selectedFile)));
  
      });
- 
+
  });
  
  // http://stackoverflow.com/questions/1293147/javascript-code-to-parse-csv-data
@@ -185,8 +203,8 @@ $( document ).ready(function() {
  function headerToggle(caller) {
      var checked = $(caller).is(':checked');
      if (checked) {
-         $("#upload-modal table tr:first-child").addClass("disabled");
+         $("#upload-modal table").addClass("first-row-disabled");
      } else {
-         $("#upload-modal table tr:first-child").removeClass("disabled");
+         $("#upload-modal table").removeClass("first-row-disabled");
      }
  }

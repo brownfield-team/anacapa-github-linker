@@ -31,7 +31,7 @@ class VisitorsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:tim)
     @user.add_role(:admin)
     # sign_in @user
-    get user_github_omniauth_authorize_path
+    post user_github_omniauth_authorize_path
     #For some reason, this generates this print statement when testing:
     #I, [2018-02-16T16:54:53.885865 #1938]  INFO -- omniauth: (github) Request phase initiated.
     assert path.include?('github')

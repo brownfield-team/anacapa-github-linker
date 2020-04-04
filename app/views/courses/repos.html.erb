@@ -1,0 +1,51 @@
+<h1>Course Repositories</h1>
+
+<%= form_tag course_search_repos_path, method: :get do %>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">(.*)</span>
+    <%= text_field_tag :search, (params[:search] or ""), class: 'repo-search form-control', placeholder:
+        "Regular Expression Search" %>
+  </div>
+  <p></p>
+  <%= submit_tag "Search", class: 'btn btn-primary' %>
+<% end %>
+
+<p></p>
+<% unless @repos.nil? %>
+  <% unless @repos.size == 0 %>
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Repository (Student/Team Name)</th>
+        <th>GitHub ID</th>
+        <th>Visibility (Permission Level)</th>
+      </tr>
+      </thead>
+      <% @repos.each do |repo| %>
+        <tr>
+          <td><a href=<%= repo.url %>><%= repo.name %></td>
+          <td></td>
+          <td><a href=<%= repo.url + "/settings" %>><%= repo.visibility %></td>
+        </tr>
+        <% repo.find_contributors.each do |contributor| %>
+          <tr class="leftMargin">
+            <td><%= link_to "#{contributor["first_name"]} #{contributor["last_name"]}",
+                            course_roster_student_path(@course, contributor["id"]) %></td>
+            <td><a href="https://github.com/<%= contributor["username"] %>"><%= contributor["username"] %></td>
+            <td><a href="<%= repo.url %>/settings/access"><%= contributor["permission_level"] %></td>
+          </tr>
+        <% end %>
+        <% repo.find_team_contributors.each do |contributor| %>
+          <tr class="leftMargin">
+            <td><%= link_to contributor["name"], course_teams_path(@course) %></td>
+            <td><a href="<%= contributor["url"]%>"><%= contributor["slug"] %></td>
+            <% access_url = "#{contributor["url"]}/repositories?query=#{contributor["slug"]}" %>
+            <td><a href="<%= access_url %><%= contributor["permission_level"] %>"> <%= contributor["slug"] %></a></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </table>
+  <% else %>
+    <p>No results were found for your query.</p>
+  <% end %>
+<% end %>

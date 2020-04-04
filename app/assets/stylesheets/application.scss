@@ -18,6 +18,20 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "bootstrap/theme";
+@import "bootstrap-table/bootstrap-table";
+@import "bootstrap-table/extensions/filter-control/bootstrap-table-filter-control";
+
+.navbar-signin-btn {
+  padding-right: 25px;
+}
+
+.tooltip-inner {
+  min-width: 300px; /* the minimum width */
+}
+
+.job_name {
+  border-bottom: 1px dotted black;
+}
 
 html, body {
   min-height: 100%;
@@ -31,6 +45,12 @@ main {
   padding-bottom: 80px;
   width: 100%;
   margin-top: 51px; // accommodate the navbar
+}
+
+.leftMargin td:first-child {
+  position: relative;
+  left: 20px;
+  z-index: 1;
 }
 
 .alert {
@@ -52,6 +72,20 @@ main {
 }
 #error_explanation h2 {
   font-size: 16px;
+}
+
+input.repo-search {
+  margin-bottom: 10px;
+}
+
+.container dt {
+  width:auto;
+  margin-left:auto;
+  display:inline-block;
+}
+
+.dl-horizontal dd {
+  margin-left: 100px;
 }
 
 // // make all images responsive by default

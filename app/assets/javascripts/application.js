@@ -11,8 +11,22 @@
 // about supported directives.
 //
 //= require rails-ujs
-//= require turbolinks
 //= require jquery3
 //= require jquery_ujs
+//= require jquery.turbolinks
 //= require bootstrap-sprockets
+//= require bootstrap-table/bootstrap-table
+//= require bootstrap-table/extensions/filter-control/bootstrap-table-filter-control
 //= require_tree .
+
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip().on('shown.bs.tooltip', function(e) {
+        /**
+         * If the item that triggered the event has class 'large-tooltip'
+         * then also add it to the currently open tooltip
+         */
+        if ($(this).hasClass('large-tooltip')) {
+            $('body').find('.tooltip[role="tooltip"].show').addClass('large-tooltip');
+        }
+    })
+});

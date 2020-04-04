@@ -3,6 +3,22 @@ require 'webmock/minitest'
 
 module OctokitStubHelper
 
+  def accept_header
+    'application/vnd.github.v3+json'
+  end
+
+  def encoding_header
+    'gzip;q=1.0,deflate;q=0.6,identity;q=0.3'
+  end
+
+  def content_type
+    'application/json'
+  end
+
+  def user_agent
+    'Octokit Ruby Gem 4.15.0'
+  end
+
   def octokit_update_org
   end
 
@@ -35,17 +51,26 @@ module OctokitStubHelper
     text = File.open('test/sample jsons/user_email.json').read
     text = text.gsub("user_email", "#{email}")
   end
-  
+
   def stub_check_user_emails(email)
+    stub_request(:get, "https://api.github.com/user/emails?per_page=100").
+        with(  headers: {
+            'Accept'=>accept_header,
+            'Accept-Encoding'=>encoding_header,
+            'Content-Type'=>content_type,
+            'User-Agent'=>user_agent
+        }).to_return(status: 200,
+                     body: octokit_get_emails(email),
+                     headers: {'Content-Type'=>content_type})
     stub_request(:get, "https://api.github.com/user/emails").
-      with(  headers: {
-        'Accept'=>'application/vnd.github.v3+json',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Content-Type'=>'application/json',
-        'User-Agent'=>'Octokit Ruby Gem 4.8.0'
-        }).to_return(status: 200, 
-                      body: octokit_get_emails(email), 
-                      headers: {'Content-Type'=>'application/json'})
+        with(  headers: {
+            'Accept'=>accept_header,
+            'Accept-Encoding'=>encoding_header,
+            'Content-Type'=>content_type,
+            'User-Agent'=>user_agent
+        }).to_return(status: 200,
+                     body: octokit_get_emails(email),
+                     headers: {'Content-Type'=>content_type})
   end
 
   def stub_invite_user_to_org(github_id, org_name)
@@ -53,10 +78,10 @@ module OctokitStubHelper
       with(
         body: "{\"role\":\"member\"}",
         headers: {
-        'Accept'=>'application/vnd.github.v3+json',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Content-Type'=>'application/json',
-        'User-Agent'=>'Octokit Ruby Gem 4.8.0'
+        'Accept'=>accept_header,
+        'Accept-Encoding'=>encoding_header,
+        'Content-Type'=>content_type,
+        'User-Agent'=>user_agent
         }).
         to_return(status: 200, body: octokit_invited_new_user_to_organization(org_name, github_id), headers: {})
   end
@@ -71,10 +96,10 @@ module OctokitStubHelper
 
     stub_request(:get, "https://api.github.com/orgs/#{org_name}/members/#{student_github_id}").
       with(  headers: {
-        'Accept'=>'application/vnd.github.v3+json',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Content-Type'=>'application/json',
-        'User-Agent'=>'Octokit Ruby Gem 4.8.0'
+        'Accept'=>accept_header,
+        'Accept-Encoding'=>encoding_header,
+        'Content-Type'=>content_type,
+        'User-Agent'=>user_agent
         }).
         to_return(status: code, body: body, headers: {})
   end
@@ -83,10 +108,10 @@ module OctokitStubHelper
     stub_request(:patch, "https://api.github.com/user/memberships/orgs/#{org_name}").with(
       body: "{\"state\":\"active\"}",
       headers: {
-      'Accept'=>'application/vnd.github.v3+json',
-      'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-      'Content-Type'=>'application/json',
-      'User-Agent'=>'Octokit Ruby Gem 4.8.0'
+      'Accept'=>accept_header,
+      'Accept-Encoding'=>encoding_header,
+      'Content-Type'=>content_type,
+      'User-Agent'=>user_agent
       }).
     to_return(status: 200, body: "", headers: {})
   end
@@ -94,65 +119,73 @@ module OctokitStubHelper
   def stub_organization_is_an_org(org_name)
     stub_request(:get, "https://api.github.com/orgs/#{org_name}").
     with(  headers: {
-      'Accept'=>'application/vnd.github.v3+json',
-      'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-      'Content-Type'=>'application/json',
-      'User-Agent'=>'Octokit Ruby Gem 4.8.0'
+      'Accept'=>accept_header,
+      'Accept-Encoding'=>encoding_header,
+      'Content-Type'=>content_type,
+      'User-Agent'=>user_agent
       }).
-    to_return(status: 200, 
-              body: "#{octokit_organization_is_an_org(org_name)}", 
-              headers: {'Content-Type'=>'application/json'})
+    to_return(status: 200,
+              body: "#{octokit_organization_is_an_org(org_name)}",
+              headers: {'Content-Type'=>content_type})
 
   end
 
   def stub_organization_exists_but_not_admin_in_org(org_name)
     stub_request(:get, "https://api.github.com/user/memberships/orgs/#{org_name}").
       with(  headers: {
-        'Accept'=>'application/vnd.github.v3+json',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Content-Type'=>'application/json',
-        'User-Agent'=>'Octokit Ruby Gem 4.8.0'
+        'Accept'=>accept_header,
+        'Accept-Encoding'=>encoding_header,
+        'Content-Type'=>content_type,
+        'User-Agent'=>user_agent
         }).
       to_return(status: 404,
                 body: "#{octokit_organization_does_not_exist}",
-                headers: {'Content-Type'=>'application/json'})
+                headers: {'Content-Type'=>content_type})
   end
 
   def stub_organization_does_not_exist(org_name)
     stub_request(:get, "https://api.github.com/orgs/#{org_name}").
     with(  headers: {
-      'Accept'=>'application/vnd.github.v3+json',
-      'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-      'Content-Type'=>'application/json',
-      'User-Agent'=>'Octokit Ruby Gem 4.8.0'
+      'Accept'=>accept_header,
+      'Accept-Encoding'=>encoding_header,
+      'Content-Type'=>content_type,
+      'User-Agent'=>user_agent
       }).
-    to_return(status: 404, 
-              body: "#{octokit_organization_does_not_exist}", 
-              headers: {'Content-Type'=>'application/json'})
+    to_return(status: 404,
+              body: "#{octokit_organization_does_not_exist}",
+              headers: {'Content-Type'=>content_type})
   end
 
   def stub_organization_membership_admin_in_org(org_name, username)
     stub_request(:get, "https://api.github.com/user/memberships/orgs/#{org_name}").
       with(  headers: {
-        'Accept'=>'application/vnd.github.v3+json',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Content-Type'=>'application/json',
-        'User-Agent'=>'Octokit Ruby Gem 4.8.0'
+        'Accept'=>accept_header,
+        'Accept-Encoding'=>encoding_header,
+        'Content-Type'=>content_type,
+        'User-Agent'=>user_agent
         }).
       to_return(status: 200,
                 body: "#{octokit_organization_membership_admin_in_org(org_name, username)}",
-                headers: {'Content-Type'=>'application/json'})
+                headers: {'Content-Type'=>content_type})
   end
 
   def stub_org_repo_list_for_github_id(org_name)
     stub_request(:get, "https://api.github.com/orgs/" + org_name + "/repos").
       with(  headers: {
-        'Accept'=>'application/vnd.github.v3+json',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Content-Type'=>'application/json',
-        'User-Agent'=>'Octokit Ruby Gem 4.8.0'
+        'Accept'=>accept_header,
+        'Accept-Encoding'=>encoding_header,
+        'Content-Type'=>content_type,
+        'User-Agent'=>user_agent
       }).
     to_return(status: 200, body: "", headers: {})
+    stub_request(:get, "https://api.github.com/orgs/test-course-org-two/repos?per_page=100").
+        with(  headers: {
+            'Accept'=>accept_header,
+            'Accept-Encoding'=>encoding_header,
+            'Content-Type'=>content_type,
+            'User-Agent'=>user_agent
+        }).
+        to_return(status: 200, body: "", headers: {})
   end
 
 end

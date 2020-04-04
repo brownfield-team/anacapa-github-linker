@@ -1,7 +1,9 @@
 require 'Octokit_Wrapper'
+
 class CoursesController < ApplicationController
   before_action :set_course, only: [:show, :edit, :update, :destroy]
   load_and_authorize_resource
+
 
   # GET /courses
   # GET /courses.json
@@ -87,7 +89,7 @@ class CoursesController < ApplicationController
       message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verified your email address. '
       return redirect_to courses_path, alert: message
     end
-    
+
     begin
        course.invite_user_to_course_org(current_user)
        roster_student.update_attribute(:enrolled, true)
@@ -99,11 +101,53 @@ class CoursesController < ApplicationController
     end
   end
 
-
-  def is_org_member(username)
+  def is_org_member?(username)
     machine_user.organization_member?(@course.course_organization, username)
   end
-  helper_method :is_org_member
+  helper_method :is_org_member?
+
+  def jobs
+    @course = Course.find(params[:course_id])
+    authorize! :jobs, @course
+  end
+
+  def teams
+    @course = Course.find(params[:course_id])
+    authorize! :teams, @course
+  end
+
+  def run_course_job
+    job_name = params[:job_name]
+    job = course_job_list.find { |job| job.job_short_name == job_name }
+    # This is a hack. It should be replaced as soon as possible, hopefully after authorization in the app is redone.
+    if job.permission_level == "admin" && !user.has_role?("admin")
+      redirect_to course_jobs_path, alert: "You do not have permission to run this job. Ask an admin to run it for you."
+    end
+    job.perform_async(params[:course_id].to_i)
+    redirect_to course_jobs_path, notice: "Job successfully queued."
+  end
+
+  # List of course jobs to make available to run
+  def course_job_list
+    @course = Course.find(params[:course_id])
+    jobs = [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, PurgeCourseReposJob]
+    if @course.slack_workspace.present?
+      jobs << AssociateSlackUsersJob
+    end
+    jobs
+  end
+  helper_method :course_job_list
+
+  def repos
+    @course = Course.find(params[:course_id])
+    @repos = GithubRepo.where(course_id: params[:course_id]).where("name ~* ?", params[:search]).order(:name)
+    authorize! :repos, @course
+  end
+
+  def search_repos
+    @course = Course.find(params[:course_id])
+    redirect_to course_repos_path(@course, search: params[:search])
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -113,15 +157,11 @@ class CoursesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_params
-      params.require(:course).permit(:name,:course_organization,:hidden)
+      params.require(:course).permit(:name,:course_organization,:hidden, :search)
     end
 
     def add_instructor(id)
       current_user.add_role :instructor, Course.find(id)
-    end
-    
-    def machine_user
-      client = Octokit_Wrapper::Octokit_Wrapper.machine_user
     end
 
     def session_user

@@ -23,8 +23,8 @@
     </ul>
   </li>
 <% else %>
-  <li><p class="navbar-btn">
-    <%= link_to user_github_omniauth_authorize_path, class: 'btn btn-info' do %>
+  <li><p class="navbar-btn navbar-signin-btn">
+    <%= link_to user_github_omniauth_authorize_path, method: :post, class: 'btn btn-info' do %>
       <%= fa_icon 'github', text: 'Sign in' %>
     <% end %>
   </p></li>

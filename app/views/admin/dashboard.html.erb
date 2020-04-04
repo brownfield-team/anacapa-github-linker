@@ -1,0 +1,119 @@
+<h1> Resource Dashboard </h1>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">API Rate Limits</h3>
+  </div>
+  <div class="panel-body">
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>API</th>
+        <th>Remaining</th>
+        <th>Limit</th>
+        <th>Time Until Reset</th>
+        <th>Info</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% rate_limits.each do |api_name, rate_limit_info| %>
+        <tr>
+          <td><%= api_name %></td>
+          <td><%= rate_limit_info[:remaining] %></td>
+          <td><%= rate_limit_info[:limit] %></td>
+          <td><%= rate_limit_info[:until_reset] %></td>
+          <td><%= rate_limit_info[:info] %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Jobs</h3>
+  </div>
+  <div class="panel-body">
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Job Name</th>
+        <th>Last Run</th>
+        <th colspan="1"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% admin_job_list.each do |job| %>
+        <tr>
+          <td><span class="job_name" data-toggle="tooltip" title = "<%= job.job_description %>"><%= job.job_name %></span></td>
+          <td><%= job.last_run %></td>
+          <td><%= link_to 'Run Job', admin_run_admin_job_path(job_name: job.job_short_name),
+                          method: :post, data: { confirm: job.confirmation_dialog } %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Job Log</h3>
+  </div>
+  <div class="panel-body">
+
+    <table data-toggle="table">
+      <thead>
+      <tr>
+        <th data-sortable="true">Job Name</th>
+        <th data-sortable="true">Date Run</th>
+        <th>Time Elapsed</th>
+        <th>Summary</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!--   Display last 10 completed jobs   -->
+      <% CompletedJob.last_ten_jobs(nil).each do |completed_job| %>
+        <tr>
+          <td><%= completed_job.job_name %></td>
+          <td><%= completed_job.created_at %></td>
+          <td><%= completed_job.time_elapsed %></td>
+          <td><%= completed_job.summary %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Database Tables</h3>
+  </div>
+  <div class="panel-body">
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Table Name</th>
+        <th>Rows</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% table_row_pairs.each do |table_name, num_rows| %>
+        <tr>
+          <td><%= table_name %></td>
+          <td><%= num_rows %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>

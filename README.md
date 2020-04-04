@@ -3,10 +3,6 @@
 
 This is a rails application that allows for course management in conjunction with GitHub and GitHub organizations. It pairs classes with GitHub organizations and invites students to the GitHub organization when the students join the course.
 
-# Developer information
-
-Skip down to the section "localhost" below.
-
 ### Status
 [![Build Status](https://travis-ci.org/project-anacapa/anacapa-github-linker.png)](https://travis-ci.org/project-anacapa/anacapa-github-linker)
 
@@ -111,7 +107,6 @@ You will need:
    that are read into the Rails environment by the [dotenv-rails](https://github.com/bkeepers/dotenv) gem.
 * Finally, run `rails s` and the application should come up.
 
-
 # `.env` values
 
 The `dotenv.example` file contains example values and some information on the values
@@ -182,4 +177,24 @@ The final value can be any string that you type. It is used a cryptographic "sal
 
 ```
 DEVISE_SECRET_KEY=<a random alphunmeric string used by devise to salt its sessions>
+```
+
+# Operations
+
+To create a full backup of the current database:
+
+```
+heroku pg:backups:capture --app ucsb-cs-github-linker
+heroku pg:backups:download --app ucsb-cs-github-linker
+```
+
+This creates `latest.dump` in the current directory.  Then you need to have postgres installed locally so that you can use the `pg_restore` command to convert this to a text `.sql` file like this:
+
+```
+pg_restore -f latest.sql latest.dump 
+```
+
+To have staging pull in data from production, run the following command (with heroku cli configured):
+ ```
+heroku pg:backups:restore `heroku pg:backups:url --app ucsb-cs-github-linker` DATABASE_URL --app anacapa-github-linker-test --confirm anacapa-github-linker-test
 ```

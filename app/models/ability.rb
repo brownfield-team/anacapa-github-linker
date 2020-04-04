@@ -7,8 +7,14 @@ class Ability
     # https://github.com/RolifyCommunity/rolify/wiki/Devise---CanCanCan---rolify-Tutorial
     # see this tutorial for information about the Devise--CanCanCan--rolify stack
 
+    # Permissions for those not logged in i.e. slack command requests
+    can :slack_command, SlackWorkspace
+
     if user.has_role? :user
+      # TAs can read course information and run course jobs, but other users cannot
+
       can :read, Course, id: Course.with_role(:ta, user).pluck(:id)
+      can :run_course_job, Course, id: Course.with_role(:ta, user).pluck(:id)
 
       #TAs can create, read or update students that are part of a course they are a TA of
       can :manage, RosterStudent, course_id: Course.with_role(:ta, user).pluck(:id)
@@ -20,7 +26,7 @@ class Ability
     end
     if user.has_role? :instructor
       can :create, Course
-      # insturctors can only modify courses they have been granted access
+      # instructors can only modify courses they have been granted access
       can :manage, Course, id: Course.with_role(:instructor, user).pluck(:id)
 
       can :manage, RosterStudent, course_id: Course.with_role(:instructor, user).pluck(:id)
