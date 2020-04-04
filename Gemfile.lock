@@ -94,6 +94,10 @@ GEM
     ffi (1.12.2)
     font-awesome-rails (4.7.0.5)
       railties (>= 3.2, < 6.1)
+    github_webhook (1.1.1)
+      activesupport (>= 4)
+      rack (>= 1.3)
+      railties (>= 4)
     gli (2.19.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -300,6 +304,7 @@ DEPENDENCIES
   dotenv-rails
   dotiw
   font-awesome-rails
+  github_webhook (~> 1.1)
   jbuilder (~> 2.5)
   jquery-rails
   jquery-turbolinks
