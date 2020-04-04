@@ -34,7 +34,8 @@ module Slack
               teams_str += "<#{team.url}|#{team.name}>, "
             end
             teams_str.empty? ? teams_str.delete_suffix!(", ") : teams_str = "N/A"
-            command_output += "*GitHub ID:* #{github_str}, *Student:* #{student_name_str}, *Teams:* #{teams_str}"
+            section_str = matched_student.section
+            command_output += "*GitHub ID:* #{github_str}, *Student:* #{student_name_str}, *Section:* #{section_str} *Teams:* #{teams_str}"
           end
         end
         command_output.empty? ? command_output = "No students found for the provided user(s)." : command_output.delete_suffix!("\n")
