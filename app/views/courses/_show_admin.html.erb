@@ -92,8 +92,7 @@
       <thead>
         <tr>
           <th data-sortable="true" data-field="StudentID" data-filter-control="input">Student ID</th>
-          <th data-sortable="true" data-field="FirstName" data-filter-control="input">First name</th>
-          <th data-sortable="true" data-field="LastName" data-filter-control="input">Last name</th>
+          <th data-sortable="true" data-field="FirstName" data-filter-control="input">Name</th>
           <th data-sortable="true" data-field="Email" data-filter-control="input">Email</th>
           <th data-sortable="true" data-field="Enrolled" data-filter-control="select">Enrolled</th>
           <th data-sortable="true" data-field="TA" data-filter-control="select">TA</th>
@@ -104,7 +103,6 @@
           <th data-sortable="true" data-field="OrgMembership" data-filter-control="select">Org Membership</th>
           <th></th>
           <th></th>
-          <th></th>
         </tr>
       </thead>
 
@@ -112,8 +110,7 @@
         <% @course.roster_students.each do |student| %>
           <tr>
             <td><%= student.perm %></td>
-            <td><%= student.first_name %></td>
-            <td><%= student.last_name %></td>
+            <td><%= student.full_name %></td>
             <td><%= student.email %></td>
             <td><%= student.enrolled ? "True" : "False" %></td>
             <td><%= !student.user.nil? && student.user.has_role?(:ta, @course) ? "True" : "False" %></td>
@@ -132,7 +129,6 @@
             <% end %>
               <td><%= student.org_membership_type.present? ? student.org_membership_type : "Non-member" %></td>
             <td><%= link_to 'Show', course_roster_student_path(@course, student) %></td>
-            <td><%= link_to 'Edit', edit_course_roster_student_path(@course, student) %></td>
             <% if can? :destroy, student %>
               <td><%= link_to 'Remove', course_roster_student_path(@course, student), method: :delete, data: { confirm: 'Are you sure?' } %></td>
             <% end %>

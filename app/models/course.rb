@@ -107,9 +107,11 @@ class Course < ApplicationRecord
   # export roster students to a CSV file
   def export_students_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w[studentId email first_name last_name enrolled section github_username org_status]
+      csv << %w[studentId email first_name last_name enrolled section github_username org_status teams]
 
       roster_students.each do |user|
+        org_member_status = user.org_membership_type || user.is_org_member
+
         csv << [
           user.perm,
           user.email,
@@ -118,7 +120,8 @@ class Course < ApplicationRecord
           user.enrolled,
           user.section,
           user.username,
-          user.is_org_member
+          org_member_status,
+          user.teams_string
         ]
       end
     end

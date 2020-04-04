@@ -16,4 +16,14 @@ class RosterStudent < ApplicationRecord
   def full_name
     "#{first_name} #{last_name}"
   end
+
+  # Used when exporting CSV
+  def teams_string
+    team_str = ""
+    user.org_teams.each do |team|
+      team_str += "#{team.slug}/"
+    end
+    team_str.delete_suffix!("/") unless team_str.empty?
+    team_str
+  end
 end
