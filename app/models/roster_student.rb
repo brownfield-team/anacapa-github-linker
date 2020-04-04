@@ -20,7 +20,7 @@ class RosterStudent < ApplicationRecord
   # Used when exporting CSV
   def teams_string
     team_str = ""
-    user.org_teams.each do |team|
+    org_teams.each do |team|
       team_str += "#{team.slug}/"
     end
     team_str.delete_suffix!("/") unless team_str.empty?

@@ -95,6 +95,7 @@
           <th data-sortable="true" data-field="FirstName" data-filter-control="input">Name</th>
           <th data-sortable="true" data-field="Email" data-filter-control="input">Email</th>
           <th data-sortable="true" data-field="Enrolled" data-filter-control="select">Enrolled</th>
+          <th data-sortable="true" data-field="Section" data-filter-control="select">Section</th>
           <th data-sortable="true" data-field="TA" data-filter-control="select">TA</th>
           <% if @course.slack_workspace.present? %>
             <th data-sortable="true" data-field="Slack" data-filter-control="input">Slack</th>
@@ -113,6 +114,7 @@
             <td><%= student.full_name %></td>
             <td><%= student.email %></td>
             <td><%= student.enrolled ? "True" : "False" %></td>
+            <td><%= student.section %></td>
             <td><%= !student.user.nil? && student.user.has_role?(:ta, @course) ? "True" : "False" %></td>
             <% if @course.slack_workspace.present? %>
               <% slack_user = student.slack_user %>
