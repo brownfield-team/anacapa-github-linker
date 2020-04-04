@@ -1,7 +1,10 @@
 # README
 
+
 This is a rails application that allows for course management in conjunction with GitHub and GitHub organizations. It pairs classes with GitHub organizations and invites students to the GitHub organization when the students join the course.
 
+### Status
+[![Build Status](https://travis-ci.org/project-anacapa/anacapa-github-linker.png)](https://travis-ci.org/project-anacapa/anacapa-github-linker)
 
 ## Deploying to Heroku
   ### Selecting version/branch on heroku from this repository
@@ -66,9 +69,29 @@ This is a rails application that allows for course management in conjunction wit
 ## Getting Started on Localhost
 
 You will need:
-* Ruby installed; I suggest installing rvm from <https://rvm.io>
-* Postgres needs to be installed:
+* Ruby installed; I suggest installing `rvm` from <https://rvm.io>
+   * If working on windows, we strongly recommend using Windows Subsystem for Linux (WSL)
+   * First step in installing `rvm` is usually installing `gpg2`.
+      * For Mac, see: [README-MACOS.md](README-MACOS.md)
+      * For WSL, try: `sudo apt install gnupg2`
+   * Installing `rvm` may take a while (10-20 minutes)
+* Postgres (an SQL database) needs to be installed:
    - For MacOS, I suggest: <https://postgresapp.com/> (latest stable version)
+   - For WSL:
+     ```
+     sudo apt install postgresql
+     sudo service postgresql start
+     sudo su - postgres
+     createuser --superuser $USER # where $USER is your username
+     psql
+     ```
+     
+     Then:
+        * `\password $USER` is typed into the `psql console to set up your account
+	* `\q` to exit `psql`
+	* `exit` to exit the `postgres` user shell and go back to a regular user shell
+
+     
 * `rvm install ruby-2.6.3` (note that this Ruby version might be different by the time you read this)
 * `gem install bundler`
 * Clone the repo, and run `bundle install`
@@ -79,9 +102,82 @@ You will need:
 * Do  `cp dotenv.example .env`
    * Note that `.env` is a file in the `.gitignore` because you will configure it with secrets
    * Therefore it SHOULD NOT be committed to github
-* Edit `.env` with the appropriate values.  These are NOT shell environment variables, but rather variables
+   * Note that `.env` is a hidden file, so you'll need `ls -a` to see it in your directory.
+* Edit `.env` with the appropriate values. For advice on "appropriate values", see the section ".env values" below.   Note that these are NOT shell environment variables, but rather variables
    that are read into the Rails environment by the [dotenv-rails](https://github.com/bkeepers/dotenv) gem.
 * Finally, run `rails s` and the application should come up.
+
+# `.env` values
+
+The `dotenv.example` file contains example values and some information on the values
+you shoudl put into your `.env`.  Here is a bit more information.
+
+
+The following two values can typically be left as is.  Originally, we had intended that
+the code would work for different strategies and different git providers.  For the time being
+it is only known to work with these values.  However, these values to have to be provided.
+
+```
+GIT_PROVIDER_URL=github.com
+OMNIAUTH_STRATEGY=github
+```
+
+The next two values require you to set up a Github OAuth application.  
+
+To configure an OAuth App for Github:
+
+1. This link should take you directly to the page to create a new OAuth App: <https://github.com/settings/applications/new>
+   
+   Or you can navigate to it this way:
+      * Go to the Settings page for your own github account
+      * Find the tab down the left column that says "Developer Settings"
+      * Click the tab for `OAuth Apps`
+      * Click the button `New OAuth App`
+
+2.  You now have a form to fill in.
+
+    * Application name: Fill in something like `anacapa-github-linker on localhost`
+     
+    * Homepage URL: Enter
+       * `http://localhost:3000` or
+
+       
+    * Application Description is optional.  If you fill it in, users will see it when they are asked to authorize access to their GitHub account.
+    
+    * Authorization callback URL:
+       * `http://localhost:3000/users/auth/github/callback
+       
+3.  Once you enter this information, you'll get a client id and a client secret.
+
+    * The client id goes in the `OMNIAUTH_PROVIDER_KEY`
+    * The client secret goes in the `OMNIAUTH_PROVIDER_SECRET`
+
+Next we have the machine user name.
+
+For the machine user name, for testing purposes, use your own github userid.
+
+```
+MACHINE_USER_NAME=<your machine user's name>
+```
+
+For the machine user key, go to your settings, under developer settings, under personal access tokens, i.e. <https://github.com/settings/tokens>
+
+Create a personal access token with the following scopes:
+
+```
+admin:org, admin:org_hook, notifications, repo
+```
+
+Put the access token value in for the machine users key.  Note that you should treat that
+value VERY carefully, as it is equivalent to a password to your github account.
+
+Revoke it when you are finished testing the application.
+
+The final value can be any string that you type. It is used a cryptographic "salt", so it just needs to be arbitrary.
+
+```
+DEVISE_SECRET_KEY=<a random alphunmeric string used by devise to salt its sessions>
+```
 
 # Operations
 
@@ -102,4 +198,3 @@ To have staging pull in data from production, run the following command (with he
  ```
 heroku pg:backups:restore `heroku pg:backups:url --app ucsb-cs-github-linker` DATABASE_URL --app anacapa-github-linker-test --confirm anacapa-github-linker-test
 ```
-
