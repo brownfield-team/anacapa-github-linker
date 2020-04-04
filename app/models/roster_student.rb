@@ -23,7 +23,7 @@ class RosterStudent < ApplicationRecord
     org_teams.each do |team|
       team_str += "#{team.slug}/"
     end
-    team_str.delete_suffix!("/") unless team_str.empty?
-    team_str
+    return nil if team_str.empty?
+    team_str.delete_suffix("/")
   end
 end

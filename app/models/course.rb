@@ -77,7 +77,8 @@ class Course < ApplicationRecord
 
       row["student_id"] = spreadsheet_row[id_index]
       row["email"] = spreadsheet_row[email_index]
-      row["section"] = spreadsheet_row[section_index]
+      row["section"] = spreadsheet_row[section_index] unless section_index.nil?
+
 
       if first_name_index
         row["first_name"] = spreadsheet_row[first_name_index]
@@ -91,7 +92,7 @@ class Course < ApplicationRecord
       next if row.values.all?(&:nil?) # skip empty rows
 
       # check if there is an existing student in the course or create a new one
-      student = roster_students.find_by(perm: row["perm"]) ||
+      student = roster_students.find_by(perm: row["student_id"]) ||
       roster_students.new
 
       student.enrolled = true
@@ -100,7 +101,7 @@ class Course < ApplicationRecord
       student.first_name = row["first_name"]
       student.last_name = row["last_name"]
       student.email = row["email"]
-      student.section = row["section"]
+      student.section = row["section"] unless section_index.nil?
       student.save
     end
   end

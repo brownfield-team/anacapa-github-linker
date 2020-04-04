@@ -136,7 +136,7 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
         }
       }
     )
-    assert_redirected_to course_path(@roster_student.course_id)
+    assert_redirected_to course_roster_student_path(@roster_student.course_id)
   end
 
   test "should destroy roster_student" do
@@ -241,7 +241,7 @@ class RosterStudentsControllerTest < ActionDispatch::IntegrationTest
         }
       }
     )
-    assert_redirected_to course_path(@roster_student.course_id)
+    assert_redirected_to course_roster_student_path(@roster_student.course_id)
   end
 
   test "a TA of one class cannot update roster student for a different class" do
