@@ -23,7 +23,7 @@ $(document).ready(function () {
 
             var fields = [{value: 'select', name: '-- select --'}, {value: 'full_name', name: 'Full Name'},
                 {value: 'first_name', name: 'First Name'}, {value: 'last_name', name: 'Last Name'},
-                {value: 'perm', name: 'Student ID'}, {value: 'email', name: 'Email'}, {value: 'section', name: 'Section'}];
+                {value: 'student_id', name: 'Student ID'}, {value: 'email', name: 'Email'}, {value: 'section', name: 'Section'}];
 
             for (var i = 0; i < fields.length; i++) {
                 dropdownHtml += "<option value='" + fields[i].value + "' >" + fields[i].name + "</option>";
@@ -169,13 +169,13 @@ $(document).ready(function () {
      console.log(headings);
  
      var full_split_name_error = headings.includes("full_name") && (headings.includes("first_name") || headings.includes("first_name"));
-     var missing_perm = !headings.includes("perm");
+     var missing_student_id = !headings.includes("student_id");
      var missing_email = !headings.includes("email");
      var any_missing = headings.includes("invalid");
      var first_name_wo_last_name = headings.includes("first_name") && !headings.includes("last_name");
      var last_name_wo_first_name = headings.includes("last_name") && !headings.includes("first_name");
  
-     if (full_split_name_error || missing_perm || missing_email || first_name_wo_last_name || last_name_wo_first_name || any_missing) {
+     if (full_split_name_error || missing_student_id || missing_email || first_name_wo_last_name || last_name_wo_first_name || any_missing) {
          if ($("#csv-upload-error").hasClass('hidden')) {
              $("#csv-upload-error").removeClass( "hidden" );
          } else {
