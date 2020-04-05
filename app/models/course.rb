@@ -10,6 +10,9 @@ class Course < ApplicationRecord
   has_many :github_repos, dependent: :destroy
   has_many :org_teams, dependent: :destroy
   has_one :slack_workspace, dependent: :destroy
+  has_one :github_webhook, dependent: :destroy
+
+  before_save :update_github_webhook, if: :will_save_change_to_github_webhooks_enabled?
 
   resourcify
 
@@ -33,11 +36,52 @@ class Course < ApplicationRecord
     end
   end
 
-  def add_webhook_to_course_org(user)
+  def update_github_webhook
+    if github_webhooks_enabled
+      remove_webhook_from_course_org
+    else
+      add_webhook_to_course_org
+    end
+  end
+
+  def add_webhook_to_course_org
     # Register course webhook
-    github_machine_user.create_org_hook(@course.course_organization, {
-        :url => course_github_webhooks_url
-    })
+    begin
+      response = github_machine_user.create_org_hook(@course.course_organization, {
+          :url => course_github_webhooks_url,
+          :content_type => 'json',
+          :secret => ENV['GITHUB_WEBHOOK_SECRET']
+        }, {
+          :events => ['repository', 'member', 'team', 'membership', 'organization'],
+          :active => true
+      })
+      GithubWebhook.create(hook_id: response.id, hook_url: response.url, course: self)
+    rescue Octokit::Error => e
+      self.github_webhooks_enabled = false
+      self.save
+      error = "Failed to add webhook to course organization."
+      if ENV['DEBUG_VERBOSE'] && ENV['DEBUG_VERBOSE'] == 1
+        error += e.to_s
+      end
+      puts e
+      errors.add(:base, error)
+    end
+  end
+
+  def remove_webhook_from_course_org
+    begin
+      github_machine_user.remove_org_hook(course_organization, github_webhook.hook_id)
+      github_webhook.destroy
+      self.github_webhooks_enabled = false
+      self.save
+    rescue Octokit::Error => e
+      error = "Failed to remove webhook from course organization."
+      if ENV['DEBUG_VERBOSE'] && ENV['DEBUG_VERBOSE'] == 1
+        error += e.to_s
+      end
+      puts e
+      errors.add(:base, error)
+    end
   end
 
   def check_course_org_exists
