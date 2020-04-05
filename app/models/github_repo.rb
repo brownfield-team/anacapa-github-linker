@@ -2,8 +2,8 @@ class GithubRepo < ApplicationRecord
   belongs_to :course
   has_many :repo_contributors
   has_many :users, through: :repo_contributors
-  has_many :repo_team_contributors
-  has_many :org_teams, through: :repo_team_contributors, dependent: :destroy
+  has_many :repo_team_contributors, dependent: :destroy
+  has_many :org_teams, through: :repo_team_contributors
 
   def find_contributors
     # This query gets certain information about a student, their user, and relationship to the repository in question.
