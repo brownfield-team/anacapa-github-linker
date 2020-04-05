@@ -56,7 +56,6 @@ class Course < ApplicationRecord
           :events => ['repository', 'member', 'team', 'membership', 'organization'],
           :active => true
       })
-      binding.pry
       OrgWebhook.create(hook_id: response.id, hook_url: response.url, course: self)
     rescue Octokit::Error => e
       self.github_webhooks_enabled = false
@@ -71,7 +70,8 @@ class Course < ApplicationRecord
 
   def remove_webhook_from_course_org
     begin
-      github_machine_user.remove_org_hook(course_organization, github_webhook.hook_id)
+      return if org_webhook.nil?
+      github_machine_user.remove_org_hook(course_organization, org_webhook.hook_id)
       org_webhook.destroy
     rescue Octokit::Error => e
       error = "Failed to remove webhook from course organization."

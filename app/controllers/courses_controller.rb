@@ -48,6 +48,8 @@ class CoursesController < ApplicationController
   # PATCH/PUT /courses/1
   # PATCH/PUT /courses/1.json
   def update
+    # Allows the webhook handler in the model to get the full url path. Kind of a hack, we can maybe accomplish this better using env variables
+    Rails.application.routes.default_url_options[:host] = request.base_url
     respond_to do |format|
       if @course.update(course_params)
         format.html { redirect_to @course, notice: 'Course was successfully updated.' }
@@ -103,11 +105,6 @@ class CoursesController < ApplicationController
       redirect_to courses_path, alert: message
     end
   end
-
-  def is_org_member?(username)
-    machine_user.organization_member?(@course.course_organization, username)
-  end
-  helper_method :is_org_member?
 
   def jobs
     @course = Course.find(params[:course_id])
