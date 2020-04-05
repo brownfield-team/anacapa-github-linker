@@ -14,6 +14,7 @@ class Course < ApplicationRecord
   has_one :org_webhook, dependent: :destroy
 
   before_save :update_org_webhook, if: :will_save_change_to_github_webhooks_enabled?
+  before_destroy :remove_webhook_from_course_org
 
   resourcify
 
@@ -25,6 +26,11 @@ class Course < ApplicationRecord
       @no_org = true
       @org = nil
     end
+  end
+
+  def student_for_username(username)
+    # Because this is a pure SQL query rather than a bunch of Ruby array operations, it is several times faster than previous approaches.
+    RosterStudent.where(course_id: self.id).includes(:user).references(:user).merge(User.where(username: username)).first
   end
 
   def accept_invite_to_course_org
