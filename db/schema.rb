@@ -47,13 +47,6 @@ ActiveRecord::Schema.define(version: 20200405072640) do
     t.index ["course_id"], name: "index_github_repos_on_course_id"
   end
 
-  create_table "github_webhooks", force: :cascade do |t|
-    t.integer "hook_id"
-    t.bigint "course_id"
-    t.string "hook_url"
-    t.index ["course_id"], name: "index_github_webhooks_on_course_id"
-  end
-
   create_table "org_teams", force: :cascade do |t|
     t.string "name"
     t.string "url"
@@ -63,6 +56,13 @@ ActiveRecord::Schema.define(version: 20200405072640) do
     t.string "team_id"
     t.string "slug"
     t.index ["course_id"], name: "index_org_teams_on_course_id"
+  end
+
+  create_table "org_webhooks", force: :cascade do |t|
+    t.integer "hook_id"
+    t.bigint "course_id"
+    t.string "hook_url"
+    t.index ["course_id"], name: "index_org_webhooks_on_course_id"
   end
 
   create_table "repo_contributors", force: :cascade do |t|
@@ -176,7 +176,7 @@ ActiveRecord::Schema.define(version: 20200405072640) do
 
   add_foreign_key "completed_jobs", "courses"
   add_foreign_key "github_repos", "courses"
-  add_foreign_key "github_webhooks", "courses"
+  add_foreign_key "org_webhooks", "courses"
   add_foreign_key "roster_students", "courses"
   add_foreign_key "roster_students", "users"
   add_foreign_key "slack_users", "slack_workspaces"

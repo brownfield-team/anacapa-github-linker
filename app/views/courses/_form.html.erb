@@ -22,6 +22,11 @@
   </div>
 
   <div class="field">
+    <%= form.label :github_webhooks_enabled %>
+    <%= form.check_box :github_webhooks_enabled, id: :course_github_webhooks_enabled %>
+  </div>
+
+  <div class="field">
     <%= form.label :hidden %>
     <%= form.check_box :hidden %>
   </div>
