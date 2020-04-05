@@ -7,7 +7,7 @@ class GithubRepo < ApplicationRecord
 
   # Note: most (if not all) of the GitHub-related objects store a unique identifier for that object assigned by GitHub.
   # These are, by our convention, something like #repo_id, #hook_id, #team_id, etc.
-  # For all but repositories, we use the "node_id" string provided by GitHub to fill this field. HOWEVER, for repositories (repo_id),
+  # For all but repositories and users (uid), we use the "node_id" string provided by GitHub to fill this field. HOWEVER, for repositories (repo_id),
   # because GitHub sometimes omits the node_id for repos, we use the GitHub "id" integer (in GraphQL responses, this is called the "databaseId").
 
   def find_contributors
