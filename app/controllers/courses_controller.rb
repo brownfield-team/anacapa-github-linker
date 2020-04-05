@@ -33,6 +33,9 @@ class CoursesController < ApplicationController
       if @course.save
         add_instructor(@course.id)
         @course.accept_invite_to_course_org
+        if @course.github_webhooks_enabled
+
+        end
         format.html { redirect_to @course, notice: 'Course was successfully created.' }
         format.json { render :show, status: :created, location: @course }
       else

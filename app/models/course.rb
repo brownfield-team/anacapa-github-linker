@@ -16,7 +16,7 @@ class Course < ApplicationRecord
   def org
     return @org if @org or @no_org
     begin
-      @org = Octokit_Wrapper::Octokit_Wrapper.machine_user.organization(course_organization)
+      @org = github_machine_user.organization(course_organization)
     rescue Octokit::NotFound
       @no_org = true
       @org = nil
@@ -24,20 +24,27 @@ class Course < ApplicationRecord
   end
 
   def accept_invite_to_course_org
-    Octokit_Wrapper::Octokit_Wrapper.machine_user.update_organization_membership(course_organization, {state: "active"})
+    github_machine_user.update_organization_membership(course_organization, {state: "active"})
   end
 
   def invite_user_to_course_org(user)
-    unless Octokit_Wrapper::Octokit_Wrapper.machine_user.organization_member?(course_organization, user.username)
-      Octokit_Wrapper::Octokit_Wrapper.machine_user.update_organization_membership(course_organization, {user: "#{user.username}", role: "member"})
+    unless github_machine_user.organization_member?(course_organization, user.username)
+      github_machine_user.update_organization_membership(course_organization, {user: "#{user.username}", role: "member"})
     end
+  end
+
+  def add_webhook_to_course_org(user)
+    # Register course webhook
+    github_machine_user.create_org_hook(@course.course_organization, {
+        :url => course_github_webhooks_url
+    })
   end
 
   def check_course_org_exists
     # NOTE: this is run as a validation step on creation and update for the organization
     if org
       begin
-        membership = Octokit_Wrapper::Octokit_Wrapper.machine_user.organization_membership(course_organization)
+        membership = github_machine_user.organization_membership(course_organization)
         unless membership.role == "admin"
           errors.add(:base, "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed.")
         end

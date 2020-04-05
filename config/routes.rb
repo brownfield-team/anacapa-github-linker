@@ -31,6 +31,10 @@ Rails.application.routes.draw do
         get :create_teams
         post :generate_teams
       end
+
+      resource :github_webhooks, :only => [:create], :defaults => { :format => :json } do
+
+      end
       # While this is somewhat frowned upon in Rails convention, I refuse to name the controller "SlacksController"
       resource :slack, :controller => 'slack'
     end
@@ -51,10 +55,6 @@ Rails.application.routes.draw do
   resource :admin, :controller => 'admin', :only => [] do
     get :dashboard
     post :run_admin_job
-  end
-
-  resource :github_webhooks, :only => [:create], :defaults => { :format => :json } do
-
   end
 
   # home page routes

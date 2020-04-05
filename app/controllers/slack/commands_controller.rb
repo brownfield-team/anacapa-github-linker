@@ -48,7 +48,7 @@ module Slack
 
     private
     def verify_request
-      authorize! :slack_command, SlackWorkspace\
+      authorize! :slack_command, SlackWorkspace
       # Credit: https://github.com/slack-ruby/slack-ruby-client/issues/238#issuecomment-442981145
       signing_secret = ENV['SLACK_SIGNING_SECRET']
       version_number = 'v0' # always v0 for now

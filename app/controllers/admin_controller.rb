@@ -37,7 +37,7 @@ class AdminController < ApplicationController
       job_name = params[:job_name]
       job = admin_job_list.find { |job| job.job_short_name == job_name }
       job.perform_async
-      redirect_to admin_dashboard_path
+      redirect_to dashboard_admin_path
     end
 
     def rate_limits
