@@ -5,6 +5,11 @@ class GithubRepo < ApplicationRecord
   has_many :repo_team_contributors, dependent: :destroy
   has_many :org_teams, through: :repo_team_contributors
 
+  # Note: most (if not all) of the GitHub-related objects store a unique identifier for that object assigned by GitHub.
+  # These are, by our convention, something like #repo_id, #hook_id, #team_id, etc.
+  # For all but repositories, we use the "node_id" string provided by GitHub to fill this field. HOWEVER, for repositories (repo_id),
+  # because GitHub sometimes omits the node_id for repos, we use the GitHub "id" integer (in GraphQL responses, this is called the "databaseId").
+
   def find_contributors
     # This query gets certain information about a student, their user, and relationship to the repository in question.
     # It is written in raw SQL because it would take several queries using Rails syntax.
