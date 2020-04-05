@@ -28,9 +28,9 @@ class Course < ApplicationRecord
     end
   end
 
-  def student_for_username(username)
+  def student_for_uid(uid)
     # Because this is a pure SQL query rather than a bunch of Ruby array operations, it is several times faster than previous approaches.
-    RosterStudent.where(course_id: self.id).includes(:user).references(:user).merge(User.where(username: username)).first
+    RosterStudent.where(course_id: self.id).includes(:user).references(:user).merge(User.where(uid: uid)).first
   end
 
   def accept_invite_to_course_org
