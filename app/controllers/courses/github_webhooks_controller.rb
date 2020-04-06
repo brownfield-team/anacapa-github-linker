@@ -92,7 +92,6 @@ module Courses
       when "created"
         existing_team_record.try(:destroy)
         team = OrgTeam.create(name: team_info[:name], slug: team_info[:slug], url: team_info[:html_url], team_id: team_info[:node_id], course: @course)
-        add_student_to_team_if_found(team, payload)
       when "deleted"
         existing_team_record.try(:destroy)
       when "edited"
