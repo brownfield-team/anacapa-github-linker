@@ -33,27 +33,30 @@ module Courses
     end
 
     def github_repository(payload)
+      repo_info = payload[:repository]
+      existing_repo = GithubRepo.where(course: @course, repo_id: repo_info[:id]).first
       case payload[:action]
       when "created"
+        existing_repo.try(:destroy)
+        repo_visibility = repo_info[:private] ? "private" : "public"
+        GithubRepo.create(course: @course, name: repo_info[:name], full_name: repo_info[:full_name], url: repo_info[:html_url], repo_id: repo_info[:id], visibility: repo_visibility)
       when "deleted"
-        repo_to_delete = GithubRepo.where(course: @course, repo_id: payload[:repository][:id]).first
-        repo_to_delete.try(:destroy)
+        existing_repo.try(:destroy)
       when "edited"
         # Nothing to do here for now
       when "renamed"
-        repo_to_rename = GithubRepo.where(course: @course, repo_id: payload[:repository][:id]).first
-        return if repo_to_rename.nil?
-        repo_to_rename.name = payload[:repository][:name]
-        repo_to_rename.full_name = payload[:repository][:full_name]
-        repo_to_rename.save
+        return if existing_repo.nil?
+        existing_repo.name = payload[:repository][:name]
+        existing_repo.full_name = payload[:repository][:full_name]
+        existing_repo.save
       when "publicized"
-        repo_to_modify = GithubRepo.where(course: @course, repo_id: payload[:repository][:id]).first
-        repo_to_modify.visibility = "public"
-        repo_to_modify.save
+        return if existing_repo.nil?
+        existing_repo.visibility = "public"
+        existing_repo.save
       when "privatized"
-        repo_to_modify = GithubRepo.where(course: @course, repo_id: payload[:repository][:id]).first
-        repo_to_modify.visibility = "private"
-        repo_to_modify.save
+        return if existing_repo.nil?
+        existing_repo.visibility = "private"
+        existing_repo.save
       else
         return
       end
