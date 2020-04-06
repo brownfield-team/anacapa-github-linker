@@ -4,7 +4,6 @@ module Courses
     load_resource :course
     skip_before_action :verify_authenticity_token
     skip_before_action :authenticate_user!
-    skip_before_action :authenticate_github_request!
 
     def github_organization(payload)
       case payload[:action]
@@ -105,7 +104,7 @@ module Courses
       when "removed_from_repository"
         return if existing_team_record.nil?
         contributor_record = RepoTeamContributor.where(org_team: existing_team_record)
-            .includes(:github_repo).references(:github_repo).merge(GithubRepo.where(repo_id: payload[:repository][:node_id])).first
+            .includes(:github_repo).references(:github_repo).merge(GithubRepo.where(repo_id: payload[:repository][:id])).first
         contributor_record.try(:destroy)
       else
         return
