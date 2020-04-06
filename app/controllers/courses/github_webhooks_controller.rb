@@ -4,6 +4,7 @@ module Courses
     load_resource :course
     skip_before_action :verify_authenticity_token
     skip_before_action :authenticate_user!
+    skip_before_action :authenticate_github_request!
 
     def github_organization(payload)
       case payload[:action]
@@ -179,7 +180,7 @@ module Courses
     end
 
     def upsert_team_repo_permissions(team, payload)
-      repo_record = GithubRepo.where(repo_id: payload[:repository][:id])
+      repo_record = GithubRepo.where(repo_id: payload[:repository][:id]).first
       return if repo_record.nil?
       contributor_record = RepoTeamContributor.where(org_team: team, github_repo: repo_record).first_or_initialize
       repo_permissions = payload[:repository][:permissions]
