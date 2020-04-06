@@ -63,8 +63,8 @@ module Courses
     end
 
     def github_member(payload)
-      user = User.where(uid: payload[:member][:id])
-      repository = GithubRepo.where(repo_id: payload[:repository][:id])
+      user = User.where(uid: payload[:member][:id]).first
+      repository = GithubRepo.where(repo_id: payload[:repository][:id]).first
       return if user.nil? || repository.nil?
       existing_contributor_record = RepoContributor.where(github_repo: repository, user: user).first
       case payload[:action]
@@ -136,8 +136,8 @@ module Courses
 
     def get_user_repo_permission(repo_name, user_id)
       response = github_machine_user.post '/graphql', { query: user_repo_permission_query(repo_name) }.to_json
-      collaborator = response.data.repository.collaborators.edges
-      user_collaborator = contributors.find { |c| c.node.databaseId == user_id }
+      collaborators = response.data.repository.collaborators.edges
+      user_collaborator = collaborators.find { |c| c.node.databaseId == user_id }
       return nil if user_collaborator.nil?
       user_collaborator.permission.capitalize
     end
