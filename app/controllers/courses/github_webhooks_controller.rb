@@ -104,7 +104,7 @@ module Courses
       when "removed_from_repository"
         return if existing_team_record.nil?
         contributor_record = RepoTeamContributor.where(org_team: existing_team_record)
-            .includes(:github_repo).references(:github_repo).merge(GithubRepo.where(repo_id: payload[:repository][:node_id]))
+            .includes(:github_repo).references(:github_repo).merge(GithubRepo.where(repo_id: payload[:repository][:node_id])).first
         contributor_record.try(:destroy)
       else
         return
@@ -157,7 +157,7 @@ module Courses
       return if student_member.nil?
       response = github_machine_user.post '/graphql', { query: team_member_role_query(team.slug) }.to_json
       team_members = response.data.organization.team.members.edges
-      found_member = team_members.find { |m| m.node.databaseId == student_member.user.uid }
+      found_member = team_members.find { |m| m.node.databaseId == student_member.user.uid.to_i }
       return if found_member.nil?
       membership = StudentTeamMembership.where(org_team: team, roster_student: student_member).first_or_initialize
       membership.role = found_member.role.downcase
