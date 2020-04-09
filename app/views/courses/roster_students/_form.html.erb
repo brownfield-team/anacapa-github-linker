@@ -33,6 +33,11 @@
   </div>
 
   <div class="field">
+    <%= form.label :section %>
+    <%= form.text_field :section, id: :roster_student_section %>
+  </div>
+
+  <div class="field">
     <br>
     <%= form.radio_button :enrolled, 'true', checked: @roster_student.enrolled %>
     <%= label :enrolled_true, 'Enrolled' %>

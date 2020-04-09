@@ -21,7 +21,7 @@ module Slack
       else
         command_output = ""
         @students = workspace.course.roster_students.select { |student| student.slack_user.present? }
-        user_id_matches.each do |match, index|
+        user_id_matches.each do |match|
           matched_student = @students.find { |student| student.slack_user.uid == match }
           if matched_student.present?
             github_id = matched_student.username
@@ -29,15 +29,16 @@ module Slack
             github_str = github_id ? "<https://github.com/#{github_id}|#{github_id}>" : "N/A"
             # Markdown linking to student show page
             student_name_str = "<#{course_roster_student_url(workspace.course.id, matched_student.id)}|#{matched_student.full_name}>"
-            command_output += "*GitHub ID:* #{github_str}, *Student:* #{student_name_str}"
-            unless index == user_id_matches.size - 1
-              command_output += "\n"
+            teams_str = ""
+            matched_student.org_teams.each do |team|
+              teams_str += "<#{team.url}|#{team.name}>, "
             end
+            teams_str.empty? ? teams_str.delete_suffix!(", ") : teams_str = "N/A"
+            section_str = matched_student.section
+            command_output += "*GitHub ID:* #{github_str}, *Student:* #{student_name_str}, *Section:* #{section_str} *Teams:* #{teams_str}"
           end
         end
-        if command_output == ""
-          command_output = "No students found for the provided user(s)."
-        end
+        command_output.empty? ? command_output = "No students found for the provided user(s)." : command_output.delete_suffix!("\n")
         render json: { :text => command_output }
       end
     end

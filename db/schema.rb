@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200327234145) do
+ActiveRecord::Schema.define(version: 20200403222035) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,6 +98,7 @@ ActiveRecord::Schema.define(version: 20200327234145) do
     t.boolean "enrolled", default: true
     t.boolean "is_org_member"
     t.string "org_membership_type"
+    t.string "section"
     t.index ["course_id"], name: "index_roster_students_on_course_id"
     t.index ["email", "course_id"], name: "index_roster_students_on_email_and_course_id", unique: true
     t.index ["perm", "course_id"], name: "index_roster_students_on_perm_and_course_id", unique: true

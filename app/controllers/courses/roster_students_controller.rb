@@ -67,7 +67,7 @@ module Courses
     def update
       respond_to do |format|
         if @roster_student.update(roster_student_params)
-          format.html { redirect_to course_path(@parent), notice: 'Roster student was successfully updated.' }
+          format.html { redirect_to course_roster_student_path(@parent, @roster_student), notice: 'Roster student was successfully updated.' }
           format.json { render :show, status: :ok, location: @roster_student }
         else
           format.html { render :edit }
@@ -103,7 +103,7 @@ module Courses
 
       # Never trust parameters from the scary internet, only allow the white list through.
       def roster_student_params
-        params.require(:roster_student).permit(:perm, :first_name, :last_name, :email, :enrolled)
+        params.require(:roster_student).permit(:perm, :first_name, :last_name, :email, :enrolled, :section)
       end
 
       def load_parent

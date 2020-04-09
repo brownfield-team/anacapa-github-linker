@@ -59,11 +59,12 @@ class Course < ApplicationRecord
     spreadsheet = Roo::Spreadsheet.open(file, extension: ext)
 
     # get index for each param
-    id_index = header_map.index("perm")
+    id_index = header_map.index("student_id")
     email_index = header_map.index("email")
     first_name_index = header_map.index("first_name")
     last_name_index = header_map.index("last_name")
     full_name_index = header_map.index("full_name")
+    section_index = header_map.index("section")
 
     unenroll_all_students
 
@@ -74,8 +75,10 @@ class Course < ApplicationRecord
 
       row = {} # build dynaimically based on choices
 
-      row["perm"] = spreadsheet_row[id_index]
+      row["student_id"] = spreadsheet_row[id_index]
       row["email"] = spreadsheet_row[email_index]
+      row["section"] = spreadsheet_row[section_index] unless section_index.nil?
+
 
       if first_name_index
         row["first_name"] = spreadsheet_row[first_name_index]
@@ -89,14 +92,16 @@ class Course < ApplicationRecord
       next if row.values.all?(&:nil?) # skip empty rows
 
       # check if there is an existing student in the course or create a new one
-      student = roster_students.find_by(perm: row["perm"]) ||
+      student = roster_students.find_by(perm: row["student_id"]) ||
       roster_students.new
 
       student.enrolled = true
-      student.perm = row["perm"]
+      # We're changing the outward references to student id, but not renaming the perm column for now
+      student.perm = row["student_id"]
       student.first_name = row["first_name"]
       student.last_name = row["last_name"]
       student.email = row["email"]
+      student.section = row["section"] unless section_index.nil?
       student.save
     end
   end
@@ -104,16 +109,21 @@ class Course < ApplicationRecord
   # export roster students to a CSV file
   def export_students_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w[studentId email first_name last_name github_username enrolled]
+      csv << %w[student_id email first_name last_name enrolled section github_username org_status teams]
 
       roster_students.each do |user|
+        org_member_status = user.org_membership_type || user.is_org_member
+
         csv << [
           user.perm,
           user.email,
           user.first_name,
           user.last_name,
+          user.enrolled,
+          user.section,
           user.username,
-          user.enrolled
+          org_member_status,
+          user.teams_string
         ]
       end
     end
