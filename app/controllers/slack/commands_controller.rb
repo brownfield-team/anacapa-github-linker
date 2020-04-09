@@ -14,6 +14,7 @@ module Slack
       command_text = params[:text]
       # When a user is tagged, it is provided to the command in the form <@U012ABCDEF|worf> or <@U012ABCDEF>
       # This Regex string plucks U012ABCDEF, the user id from the string.
+      puts request.to_s
       pluck_user_id_regex = /<@([^|]*)[|>]/
       user_id_matches = command_text.scan(pluck_user_id_regex)
       if user_id_matches.empty?
@@ -38,6 +39,8 @@ module Slack
             command_output += "*GitHub ID:* #{github_str}, *Student:* #{student_name_str}, *Section:* #{section_str} *Teams:* #{teams_str}"
           end
         end
+        puts "SLACK COMMAND OUTPUT BEFORE EMPTY CHECK"
+        puts command_output
         command_output.empty? ? command_output = "No students found for the provided user(s)." : command_output.delete_suffix!("\n")
         render json: { :text => command_output }
       end
