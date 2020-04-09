@@ -34,7 +34,7 @@ module Slack
             matched_student.org_teams.each do |team|
               teams_str += "<#{team.url}|#{team.name}>, "
             end
-            teams_str.empty? ? teams_str.delete_suffix!(", ") : teams_str = "N/A"
+            teams_str.empty? ? teams_str = "N/A" : teams_str.delete_suffix!(", ")
             section_str = matched_student.section
             command_output += "*GitHub ID:* #{github_str}, *Student:* #{student_name_str}, *Section:* #{section_str} *Teams:* #{teams_str}"
           end
