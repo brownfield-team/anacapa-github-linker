@@ -22,7 +22,7 @@ module Slack
       else
         command_output = ""
         @students = workspace.course.roster_students.select { |student| student.slack_user.present? }
-        user_id_matches.each do |match|
+        user_id_matches.each do |match, index|
           matched_student = @students.find { |student| student.slack_user.uid == match }
           if matched_student.present?
             github_id = matched_student.username
