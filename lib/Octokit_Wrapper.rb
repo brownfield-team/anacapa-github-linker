@@ -5,7 +5,7 @@ module Octokit_Wrapper
     end
 
     def self.session_user(token)
-      Octokit_Wrapper.user_with(token)
+      user_with(token)
     end
 
     def self.user_with(token)
