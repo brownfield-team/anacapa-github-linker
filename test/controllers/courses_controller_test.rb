@@ -24,22 +24,8 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get view_ta" do
-    get course_view_ta_path(@course)
-    assert_response :success
-  end
-
   test "should get show jobs" do
     get course_jobs_path(@course)
-    assert_response :success
-  end
-
-  test "instructors should be able to see their own view_ta page" do
-    users(:tim).add_role(:instructor)
-    users(:tim).add_role(:instructor, @course)
-    sign_in users(:tim)
-
-    get course_view_ta_path(@course)
     assert_response :success
   end
 
@@ -61,29 +47,12 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_select 'p.js-new-course a[href=?]', new_course_path, count:0
   end
 
-  test "instructors should not be able to see other instructors view_ta page" do
-    users(:tim).add_role(:instructor)
-    users(:tim).add_role(:instructor, @course)
-    sign_in users(:tim)
-
-    get course_view_ta_path(@course2)
-    assert_redirected_to root_url
-  end
-
-  test "regular users should not be able to see the view_ta page" do
-    users(:tim).add_role(:user)
-    sign_in users(:tim)
-    get course_view_ta_path(@course)
-    assert_redirected_to root_url
-  end
-
   test "update_ta should update ta status of user" do
     user_julie = users(:julie)
     user_julie.add_role(:user)
 
     post course_update_ta_path(@course, user_id: user_julie.id )
     assert user_julie.has_role? :ta, @course
-    assert_redirected_to course_view_ta_path(@course)
   end
 
   test "should get new" do
@@ -253,7 +222,6 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
     post course_update_ta_path(@course, user_id: user_julie.id )
     assert user_julie.has_role? :ta, @course
-    assert_redirected_to course_view_ta_path(@course)
   end
 
   test "an instructor cannot promote a roster student to TA if the student is from a different course" do
@@ -282,7 +250,6 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
     post course_update_ta_path(@course, user_id: user_julie.id )
     assert_not user_julie.has_role? :ta, @course
-    assert_redirected_to course_view_ta_path(@course)
   end
 
   test "instructors should be able to create courses" do
@@ -388,17 +355,6 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
     get course_url(@course2)
     assert_redirected_to root_url
-  end
-
-  test "TAs should not have access to the Manage TAs page" do
-    @user = users(:julie)
-    @user.add_role :user
-    @user.add_role :ta, @course
-    sign_in @user
-
-    get course_view_ta_path(@course)
-    assert_redirected_to root_url
-
   end
 
   test "TAs should not be able to promote a roster student to a TA" do

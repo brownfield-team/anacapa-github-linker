@@ -66,19 +66,13 @@ class CoursesController < ApplicationController
     end
   end
 
-  def view_ta
-    @course = Course.find(params[:course_id])
-    authorize! :view_ta, @course
-  end
-
   def update_ta
-    course = Course.find(params[:course_id])
-    authorize! :update_ta, course
-
-    user = User.find(params[:user_id])
-    user.change_ta_status(course)
-    redirect_to course_view_ta_path(course), notice: %Q[Successfully modified #{user.name}'s TA status]
-
+    @course = Course.find(params[:course_id])
+    @roster_student = RosterStudent.find(params[:student_id])
+    user = @roster_student.user
+    return redirect_to course_roster_student_path(@course, @roster_student), notice: "Could not find user for that student." if user.nil?
+    user.change_ta_status(@course)
+    redirect_to course_roster_student_path(@course, @roster_student), notice: "Successfully modified #{@roster_student.first_name}'s TA status"
   end
 
   def join

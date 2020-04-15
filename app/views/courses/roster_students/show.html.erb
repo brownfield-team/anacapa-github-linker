@@ -43,6 +43,12 @@
 
 <% unless @roster_student.user.nil? %>
 
+  <% if can? :update_ta, @course %>
+    <% change_ta_status_label = @roster_student.user.has_role?(:ta, @course) ? 'Remove TA' : 'Promote to TA' %>
+    <%= link_to change_ta_status_label, course_update_ta_path(@course, student_id: @roster_student.id), method: :post %>
+    <p></p>
+  <% end %>
+
   <% unless @roster_student.org_teams.empty? %>
   <p>
     <strong>Teams</strong>

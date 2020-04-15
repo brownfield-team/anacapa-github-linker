@@ -45,9 +45,6 @@
             <% if can? :create, RosterStudent %>
               <li> <%= link_to 'New Student', new_course_roster_student_path(@course) %> </li>
             <% end %>
-            <% if can? :update_ta, @course %>
-              <li> <%= link_to "Manage TAs" , course_view_ta_path(@course) %> </li>
-            <% end %>
           <li role="separator" class="divider"></li>
           <li> <%= link_to "Download CSV Roster", course_roster_students_path(@course, :format => "csv"), method: :get %> </li>
         </ul>
@@ -101,7 +98,7 @@
             <th data-sortable="true" data-field="Slack" data-filter-control="input">Slack</th>
           <% end %>
 	        <th data-sortable="true" data-field="GithubId" data-filter-control="input">Github ID</th>
-          <th data-sortable="true" data-field="OrgMembership" data-filter-control="select">Org Membership</th>
+          <th data-sortable="true" data-field="OrgMembership" data-filter-control="select">Org Status</th>
           <th></th>
           <th></th>
         </tr>
