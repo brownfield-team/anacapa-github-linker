@@ -117,7 +117,10 @@
             <% if @course.slack_workspace.present? %>
               <% slack_user = student.slack_user %>
               <% if slack_user.present? %>
-                <td><%= link_to slack_user.display_name, slack_user.slack_url %></td>
+                <td>
+                  <div id="<%= slack_user.display_name %>" class="hidden-sort-div"></div>
+                  <%= link_to slack_user.display_name, slack_user.slack_url %>
+                </td>
               <% else %>
                 <td></td>
               <% end %>

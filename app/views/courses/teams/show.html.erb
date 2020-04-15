@@ -43,9 +43,15 @@
                 <% role_url = team.url + "/members" %>
                 <% team.student_team_memberships.each do |student| %>
                   <tr>
-                    <td><%= link_to student.roster_student.first_name + " " + student.roster_student.last_name, course_roster_student_path(@course, student.roster_student) %></td>
+                    <td>
+                      <div id="<%= student.full_name %>" class="hidden-sort-div"></div>
+                      <%= link_to student.roster_student.full_name, course_roster_student_path(@course, student.roster_student) %>
+                      </td>
                     <td><%= link_to student.roster_student.user.username, "https://github.com/#{student.roster_student.user.username}" %></td>
-                    <td><%= link_to student.role, role_url + "?query=" + student.roster_student.user.username %></td>
+                    <td>
+                      <div id="<%= student.role %>" class="hidden-sort-div"></div>
+                      <%= link_to student.role, role_url + "?query=" + student.roster_student.user.username %>
+                    </td>
                   </tr>
                 <% end %>
                 </tbody>
@@ -70,7 +76,10 @@
                 <% team.repo_team_contributors.each do |repo| %>
                   <tr>
                     <td><%= link_to repo.github_repo.name, repo.github_repo.url %></td>
-                    <td><%= link_to repo.permission_level, access_url + "?query=" + repo.github_repo.name %></td>
+                    <td>
+                      <div id="<%= repo.permission_level %>" class="hidden-sort-div"></div>
+                      <%= link_to repo.permission_level, access_url + "?query=" + repo.github_repo.name %>
+                    </td>
                   </tr>
                 <% end %>
                 </tbody>
