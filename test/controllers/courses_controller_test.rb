@@ -50,8 +50,8 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   test "update_ta should update ta status of user" do
     user_julie = users(:julie)
     user_julie.add_role(:user)
-
-    post course_update_ta_path(@course, user_id: user_julie.id )
+    student_julie = RosterStudent.create(user: user_julie, course: @course, perm: 0, email: "julie@example.com")
+    post course_update_ta_path(@course, student_id: student_julie.id )
     assert user_julie.has_role? :ta, @course
   end
 
@@ -214,26 +214,28 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   test "an instructor should be able to promote a roster student to a TA" do
     user_julie = users(:julie)
     user_julie.add_role(:user)
+    student_julie = RosterStudent.create(user: user_julie, course: @course, perm: 0, email: "julie@example.com")
 
     user = users(:tim)
     user.add_role(:instructor)
     user.add_role(:instructor, @course)
     sign_in user
 
-    post course_update_ta_path(@course, user_id: user_julie.id )
+    post course_update_ta_path(@course, student_id: student_julie.id )
     assert user_julie.has_role? :ta, @course
   end
 
   test "an instructor cannot promote a roster student to TA if the student is from a different course" do
     user_julie = users(:julie)
     user_julie.add_role(:user)
+    student_julie = RosterStudent.create(user: user_julie, course: @course, perm: 0, email: "julie@example.com")
 
     user = users(:tim)
     user.add_role(:instructor)
     user.add_role(:instructor, @course2)
     sign_in user
 
-    post course_update_ta_path(@course, user_id: user_julie.id )
+    post course_update_ta_path(@course, student_id: student_julie.id )
     assert_not user_julie.has_role? :ta, @course
     assert_redirected_to root_url
   end
@@ -242,13 +244,14 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     user_julie = users(:julie)
     user_julie.add_role(:user)
     user_julie.add_role(:ta, @course)
+    student_julie = RosterStudent.create(user: user_julie, course: @course, perm: 0, email: "julie@example.com")
 
     user = users(:tim)
     user.add_role(:instructor)
     user.add_role(:instructor, @course)
     sign_in user
 
-    post course_update_ta_path(@course, user_id: user_julie.id )
+    post course_update_ta_path(@course, student_id: student_julie.id )
     assert_not user_julie.has_role? :ta, @course
   end
 

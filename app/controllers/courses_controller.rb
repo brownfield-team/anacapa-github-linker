@@ -68,6 +68,7 @@ class CoursesController < ApplicationController
 
   def update_ta
     @course = Course.find(params[:course_id])
+    authorize! :update_ta, @course
     @roster_student = RosterStudent.find(params[:student_id])
     user = @roster_student.user
     return redirect_to course_roster_student_path(@course, @roster_student), notice: "Could not find user for that student." if user.nil?
