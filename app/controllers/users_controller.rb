@@ -2,16 +2,14 @@ class UsersController < ApplicationController
 
   load_and_authorize_resource
   def index
-    # @users = User.all
-    unless params[:type].nil?
-      # This very... different implementation of displaying the users when a filter parameter is added is due to the
-      # way Rails converts a set of records to a traditional Ruby array when using the select method. Kaminari
-      # requires this syntax when paginating a normal array.
-      filtered_users = User.select{ |user| user.has_role? params[:type]}.sort_by(&:name)
-      @users = Kaminari.paginate_array(filtered_users).page params[:page]
-    else
-      @users = User.order(:name).page params[:page]
+    users = User.all
+    unless params[:search].nil?
+      users = users.where("name ~* ?", params[:search]).sort_by(&:name)
     end
+    unless params[:type].nil?
+      users = users.select { |u| u.has_role? params[:type] }
+    end
+    @users = Kaminari.paginate_array(users).page params[:page]
   end
 
   def update
