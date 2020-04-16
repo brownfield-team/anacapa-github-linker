@@ -44,7 +44,7 @@
                 <% team.student_team_memberships.each do |student| %>
                   <tr>
                     <td>
-                      <div id="<%= student.full_name %>" class="hidden-sort-div"></div>
+                      <div id="<%= student.roster_student.full_name %>" class="hidden-sort-div"></div>
                       <%= link_to student.roster_student.full_name, course_roster_student_path(@course, student.roster_student) %>
                       </td>
                     <td><%= link_to student.roster_student.user.username, "https://github.com/#{student.roster_student.user.username}" %></td>
