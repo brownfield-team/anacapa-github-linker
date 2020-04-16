@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200403222035) do
+ActiveRecord::Schema.define(version: 20200405072640) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 20200403222035) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "hidden"
+    t.boolean "github_webhooks_enabled"
   end
 
   create_table "github_repos", force: :cascade do |t|
@@ -55,6 +56,13 @@ ActiveRecord::Schema.define(version: 20200403222035) do
     t.string "team_id"
     t.string "slug"
     t.index ["course_id"], name: "index_org_teams_on_course_id"
+  end
+
+  create_table "org_webhooks", force: :cascade do |t|
+    t.integer "hook_id"
+    t.bigint "course_id"
+    t.string "hook_url"
+    t.index ["course_id"], name: "index_org_webhooks_on_course_id"
   end
 
   create_table "repo_contributors", force: :cascade do |t|
@@ -168,6 +176,7 @@ ActiveRecord::Schema.define(version: 20200403222035) do
 
   add_foreign_key "completed_jobs", "courses"
   add_foreign_key "github_repos", "courses"
+  add_foreign_key "org_webhooks", "courses"
   add_foreign_key "roster_students", "courses"
   add_foreign_key "roster_students", "users"
   add_foreign_key "slack_users", "slack_workspaces"

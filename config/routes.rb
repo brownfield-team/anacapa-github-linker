@@ -26,12 +26,14 @@ Rails.application.routes.draw do
         end
       end
       resource :teams do
-        collection do
-          get :create_repos
-          post :generate_repos
-          get :create_teams
-          post :generate_teams
-        end
+        get :create_repos
+        post :generate_repos
+        get :create_teams
+        post :generate_teams
+      end
+
+      resource :github_webhooks, :only => [:create], :defaults => { :format => :json } do
+
       end
       # While this is somewhat frowned upon in Rails convention, I refuse to name the controller "SlacksController"
       resource :slack, :controller => 'slack'
@@ -50,8 +52,10 @@ Rails.application.routes.draw do
   resources :users
 
   # Admin management dashboard
-  match 'admin/dashboard' => 'admin#dashboard', :via => :get
-  match 'admin/run_admin_job' => 'admin#run_admin_job', :via => :post
+  resource :admin, :controller => 'admin', :only => [] do
+    get :dashboard
+    post :run_admin_job
+  end
 
   # home page routes
   resources :visitors # NOTE that this defines a number of unused routes that would be good to remove for security

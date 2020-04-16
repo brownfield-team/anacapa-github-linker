@@ -3,9 +3,9 @@ module Slack
     # TODO: Set up Slack global request configuration to validate signing secret. We can't check CSRF token, so it's all the more important
     skip_before_action :verify_authenticity_token
     skip_before_action :authenticate_user!
+    before_action :verify_request
 
     def whois
-      authorize! :slack_command, SlackWorkspace
       workspace = SlackWorkspace.find_by_team_id(params[:team_id])
       if workspace.nil?
         render json: { :text => "Associated workspace could not be found in the database." }
@@ -43,6 +43,32 @@ module Slack
         puts command_output
         command_output.empty? ? command_output = "No students found for the provided user(s)." : command_output.delete_suffix!("\n")
         render json: { :text => command_output }
+      end
+    end
+
+    private
+    def verify_request
+      authorize! :slack_command, SlackWorkspace
+      # Credit: https://github.com/slack-ruby/slack-ruby-client/issues/238#issuecomment-442981145
+      signing_secret = ENV['SLACK_SIGNING_SECRET']
+      version_number = 'v0' # always v0 for now
+      timestamp = request.headers['X-Slack-Request-Timestamp']
+      raw_body = request.body.read # raw body JSON string
+
+      if Time.at(timestamp.to_i) < 5.minutes.ago
+        # could be a replay attack
+        render nothing: true, status: :bad_request
+        return
+      end
+
+      sig_basestring = [version_number, timestamp, raw_body].join(':')
+      digest = OpenSSL::Digest::SHA256.new
+      hex_hash = OpenSSL::HMAC.hexdigest(digest, signing_secret, sig_basestring)
+      computed_signature = [version_number, hex_hash].join('=')
+      slack_signature = request.headers['X-Slack-Signature']
+
+      if computed_signature != slack_signature
+        render nothing: true, status: :unauthorized
       end
     end
 

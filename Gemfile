@@ -98,4 +98,7 @@ gem 'dotiw'
 gem 'bootstrap-table-rails'
 gem 'jquery-turbolinks'
 
+# TODO: This can be changed to slack-ruby-client, which is a subset of the bot gem features.
 gem 'slack-ruby-bot'
+
+gem 'github_webhook', '~> 1.1'

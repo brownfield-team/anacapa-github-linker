@@ -1,4 +1,5 @@
 require 'Octokit_Wrapper'
+
 class Course < ApplicationRecord
   # validates :name,  presence: true,
   #                   length: { minimum: 3 }
@@ -10,26 +11,81 @@ class Course < ApplicationRecord
   has_many :github_repos, dependent: :destroy
   has_many :org_teams, dependent: :destroy
   has_one :slack_workspace, dependent: :destroy
+  has_one :org_webhook, dependent: :destroy
+
+  before_save :update_org_webhook, if: :will_save_change_to_github_webhooks_enabled?
+  before_destroy :remove_webhook_from_course_org
 
   resourcify
 
   def org
     return @org if @org or @no_org
     begin
-      @org = Octokit_Wrapper::Octokit_Wrapper.machine_user.organization(course_organization)
+      @org = github_machine_user.organization(course_organization)
     rescue Octokit::NotFound
       @no_org = true
       @org = nil
     end
   end
 
+  def student_for_uid(uid)
+    # Because this is a pure SQL query rather than a bunch of Ruby array operations, it is several times faster than previous approaches.
+    RosterStudent.where(course_id: self.id).includes(:user).references(:user).merge(User.where(uid: uid.to_s)).first
+  end
+
   def accept_invite_to_course_org
-    Octokit_Wrapper::Octokit_Wrapper.machine_user.update_organization_membership(course_organization, {state: "active"})
+    github_machine_user.update_organization_membership(course_organization, {state: "active"})
   end
 
   def invite_user_to_course_org(user)
-    unless Octokit_Wrapper::Octokit_Wrapper.machine_user.organization_member?(course_organization, user.username)
-      Octokit_Wrapper::Octokit_Wrapper.machine_user.update_organization_membership(course_organization, {user: "#{user.username}", role: "member"})
+    unless github_machine_user.organization_member?(course_organization, user.username)
+      github_machine_user.update_organization_membership(course_organization, {user: "#{user.username}", role: "member"})
+    end
+  end
+
+  def update_org_webhook
+    if github_webhooks_enabled
+      add_webhook_to_course_org
+    else
+      remove_webhook_from_course_org
+    end
+  end
+
+  def add_webhook_to_course_org
+    # Register course webhook
+    begin
+      response = github_machine_user.create_org_hook(course_organization, {
+          :url => Rails.application.routes.url_helpers.course_github_webhooks_url(self),
+          :content_type => 'json',
+          :secret => ENV['GITHUB_WEBHOOK_SECRET']
+        }, {
+          :events => ['repository', 'member', 'team', 'membership', 'organization'],
+          :active => true
+      })
+      OrgWebhook.create(hook_id: response.id, hook_url: response.url, course: self)
+    rescue Octokit::Error => e
+      self.github_webhooks_enabled = false
+      error = "Failed to add webhook to course organization."
+      if ENV['DEBUG_VERBOSE'] && ENV['DEBUG_VERBOSE'] == 1
+        error += e.to_s
+      end
+      puts e
+      errors.add(:base, error)
+    end
+  end
+
+  def remove_webhook_from_course_org
+    begin
+      return if org_webhook.nil?
+      github_machine_user.remove_org_hook(course_organization, org_webhook.hook_id)
+      org_webhook.destroy
+    rescue Octokit::Error => e
+      error = "Failed to remove webhook from course organization."
+      if ENV['DEBUG_VERBOSE'] && ENV['DEBUG_VERBOSE'] == 1
+        error += e.to_s
+      end
+      puts e
+      errors.add(:base, error)
     end
   end
 
@@ -37,7 +93,7 @@ class Course < ApplicationRecord
     # NOTE: this is run as a validation step on creation and update for the organization
     if org
       begin
-        membership = Octokit_Wrapper::Octokit_Wrapper.machine_user.organization_membership(course_organization)
+        membership = github_machine_user.organization_membership(course_organization)
         unless membership.role == "admin"
           errors.add(:base, "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed.")
         end

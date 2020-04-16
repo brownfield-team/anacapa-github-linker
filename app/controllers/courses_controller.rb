@@ -33,6 +33,9 @@ class CoursesController < ApplicationController
       if @course.save
         add_instructor(@course.id)
         @course.accept_invite_to_course_org
+        if @course.github_webhooks_enabled
+          @course.add_webhook_to_course_org
+        end
         format.html { redirect_to @course, notice: 'Course was successfully created.' }
         format.json { render :show, status: :created, location: @course }
       else
@@ -45,6 +48,8 @@ class CoursesController < ApplicationController
   # PATCH/PUT /courses/1
   # PATCH/PUT /courses/1.json
   def update
+    # Allows the webhook handler in the model to get the full url path. Kind of a hack, we can maybe accomplish this better using env variables
+    Rails.application.routes.default_url_options[:host] = request.base_url
     respond_to do |format|
       if @course.update(course_params)
         format.html { redirect_to @course, notice: 'Course was successfully updated.' }
@@ -101,11 +106,6 @@ class CoursesController < ApplicationController
     end
   end
 
-  def is_org_member?(username)
-    machine_user.organization_member?(@course.course_organization, username)
-  end
-  helper_method :is_org_member?
-
   def jobs
     @course = Course.find(params[:course_id])
     authorize! :jobs, @course
@@ -157,7 +157,7 @@ class CoursesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_params
-      params.require(:course).permit(:name,:course_organization,:hidden, :search)
+      params.require(:course).permit(:name,:course_organization,:hidden, :search, :github_webhooks_enabled)
     end
 
     def add_instructor(id)
