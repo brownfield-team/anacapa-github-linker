@@ -5,12 +5,24 @@
   NOTE: If you remove a user's instructor status, they will permanently lose access to all their courses.
 </p>
 
-<p>
-  Show only:
-  <%= link_to "All Users", users_path %>
-  <%= link_to "Instructors", users_path(type: "instructor") %>
-  <%= link_to "Administrators", users_path(type: "admin")  %>
-</p>
+Show only:
+<div class="btn-group" role="group" aria-label="Show only">
+  <%= link_to "All Users", users_path, class: "btn btn-secondary" %>
+  <%= link_to "Instructors", users_path(type: "instructor"), class: "btn btn-secondary" %>
+  <%= link_to "Administrators", users_path(type: "admin"), class: "btn btn-secondary"  %>
+</div>
+<p></p>
+<%= form_tag users_path, method: :get do %>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">🔎</span>
+    <%= text_field_tag :search, (params[:search] or ""), class: 'repo-search form-control', placeholder:
+        "" %>
+  </div>
+  <p></p>
+  <%= submit_tag "Search", class: 'btn btn-primary' %>
+<% end %>
+<p></p>
+
 <div class="row">
   <div class="col-sm-12">
       <%# search the course list %>
@@ -19,17 +31,14 @@
 <!--        <input id="users_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">-->
 <!--      </div>-->
     <%# table containing the course list %>
-    <table class="bootstrap-table" data-toggle="table" data-search="true" data-show-export="true" data-show-columns="true"
-           data-show-columns-toggle-all="true" id="course_list">
+    <table class="bootstrap-table" data-toggle="table" id="course_list">
       <thead>
         <tr>
-          <th data-sortable="true">Name</th>
-          <th data-sortable="true">Username</th>
-          <th>uid</th>
-          <th data-sortable="true">Admin</th>
-          <th>Make Admin</th>
-          <th data-sortable="true">Instructor</th>
-          <th>Make Instructor</th>
+          <th data-sortable="true" data-field="Name">Name</th>
+          <th data-sortable="true" data-field="Username">Username</th>
+          <th data-sortable="true" data-field="Uid">uid</th>
+          <th data-sortable="true" data-field="Admin">Admin Status</th>
+          <th data-sortable="true" data-field="Instructor">Instructor Status</th>
         </tr>
       </thead>
       <tbody>
@@ -38,8 +47,8 @@
             <td><%= user.name %></td>
             <td><%= user.username %></td>
             <td><%= user.uid %></td>
-            <td><%= (user.has_role? :admin) ? "True" : "False" %></td>
               <td>
+                <div id="<%= user.has_role? :admin%>" class="hidden-sort-div"></div>
                 <%= form_for user do |f| %>
                   <%
                     if user.has_role? :admin
@@ -52,8 +61,8 @@
                   <%= f.submit "#{submit_text}" %>
                 <% end %>
               </td>
-              <td><%= (user.has_role? :instructor) ? "True" : "False" %></td>
               <td>
+                <div id="<%= user.has_role? :instructor %>" class="hidden-sort-div"></div>
                 <%= form_for user do |f| %>
                   <%
                     if user.has_role? :instructor

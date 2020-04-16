@@ -13,7 +13,6 @@ Rails.application.routes.draw do
   # post 'courses/:course_id/leave' => 'courses#leave', :as => :leave_course
   resources :courses do
     post :join
-    get :view_ta
     get :jobs
     get :repos
     get :search_repos
