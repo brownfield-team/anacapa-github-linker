@@ -102,3 +102,6 @@ gem 'jquery-turbolinks'
 gem 'slack-ruby-bot'
 
 gem 'github_webhook', '~> 1.1'
+
+gem 'react_on_rails', '~> 11.3.0'
+gem 'webpacker', '~> 4'
