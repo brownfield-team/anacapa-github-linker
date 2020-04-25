@@ -15,6 +15,7 @@
 </p>
 
 <%#= link_to "View Course Roster (#{@course.roster_students.length} enrolled)", course_roster_students_path(@course), class: "btn", role: "button" %>
+<%= react_component("HelloWorld", props: @course.attributes, prerender: true) %>
 
 <div class="panel panel-default">
   <div class="panel-heading">
