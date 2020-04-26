@@ -18,17 +18,18 @@ class UsersController < ApplicationController
   end
 
   def update
-    # TODO: Rewrite this update method. It is poorly designed and possible vulnerable to attack.
     @user = User.find(params[:id])
-    if params[:commit].include? "Admin"
-      @user.change_admin_status
+    @user.change_role(params[:role]) if params[:role].present?
+    respond_to do |format|
+      format.html {
+        redirect_to users_path
+      }
+      format.json {
+        head :no_content
+      }
     end
-    if params[:commit].include? "Instructor"
-      @user.change_instructor_status
-    end
-    redirect_to users_path
-  end
 
+  end
 
     # private
     #     def user_params

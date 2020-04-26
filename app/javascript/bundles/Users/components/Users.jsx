@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, {func} from 'prop-types';
 import { Alert, Form } from 'react-bootstrap';
 import UsersTable from './UsersTable';
 import {debounce} from "debounce";
@@ -38,6 +38,23 @@ class Users extends Component {
     paginationHandler = (page, pageSize) => {
         this.setState({page: page, pageSize: pageSize}, () => {
             this.updateUsers();
+        });
+    }
+
+    onUserRoleChange = (user) => {
+        const params = {role: user.role}
+        const self = this;
+        Rails.ajax({
+            url: "/users/" + user.id + ".json",
+            type: "put",
+            data: $.param(params),
+            beforeSend: function() {
+                return true;
+            },
+            success: function (data) {},
+            error: function (data) {
+                self.setState({error: data});
+            }
         });
     }
 
@@ -90,6 +107,7 @@ class Users extends Component {
                     pageSize={this.state.pageSize}
                     totalSize={this.state.totalSize}
                     paginationHandler={this.paginationHandler}
+                    onUserRoleChange={this.onUserRoleChange}
                 />
             </div>
         );

@@ -110,9 +110,40 @@ class User < ApplicationRecord
     end
   end
 
+  def change_role(new_role_str)
+    if new_role_str == "Admin"
+      self.add_role :admin
+    elsif new_role_str == "Instructor"
+      if self.has_role? :admin
+        self.remove_role :admin
+      end
+      self.add_role :instructor
+    elsif new_role_str == "User"
+      if self.has_role? :admin
+        self.remove_role :admin
+      end
+      if self.has_role? :instructor
+        self.remove_role :instructor
+      end
+    end
+  end
+
+  def highest_role
+    if self.has_role? :admin
+      return "Admin"
+    elsif self.has_role? :instructor
+      return "Instructor"
+    end
+    "User"
+  end
+
+  def as_json(options = nil)
+    super.tap { |hash| hash["role"] = highest_role }
+  end
+
   def self.users_with_role(users = User.all, role_str)
     return users if role_str == ""
-    users.joins(:roles).where("roles.name = ?", role_str)
+    users.joins(:roles).where("roles.name = ?", role_str).where("roles.resource_id is null")
   end
 
 end

@@ -25,13 +25,13 @@ class UsersTable extends Component {
             editor: {
                 type: Type.SELECT,
                 options: [{
-                    value: 'user',
+                    value: 'User',
                     label: 'User'
                 }, {
-                    value: 'instructor',
+                    value: 'Instructor',
                     label: 'Instructor'
                 }, {
-                    value: 'admin',
+                    value: 'Admin',
                     label: 'Admin'
                 }]
             }
@@ -39,6 +39,7 @@ class UsersTable extends Component {
 
     onTableChange = (type, newState) => {
         if (type !== "pagination") {
+            // For now, sort and filter are disabled.
             return;
         }
         this.props.paginationHandler(newState.page, newState.sizePerPage);
@@ -49,7 +50,29 @@ class UsersTable extends Component {
             totalSize: this.props.totalSize,
             page: this.props.page,
             sizePerPage: this.props.pageSize
-        })
+        });
+    }
+
+    cellEditOptions = () => {
+        return cellEditFactory({
+            mode: 'click',
+            blurToSave: true,
+            beforeSaveCell: this.confirmRoleChange,
+            afterSaveCell: (oldValue, newValue, row, column) => {
+                this.props.onUserRoleChange(row);
+            }
+        });
+    }
+
+    confirmRoleChange(oldValue, newValue, row, column, done) {
+        setTimeout(() => {
+            if (oldValue !== newValue && confirm("Are you sure you want to change this user's role?")) {
+                done(true);
+            } else {
+                done(false);
+            }
+        }, 0);
+        return { async: true };
     }
 
     render() {
@@ -62,6 +85,7 @@ class UsersTable extends Component {
                     remote={ { pagination: true, filter: false, sort: false } }
                     pagination={ this.paginationOptions() }
                     onTableChange={ this.onTableChange }
+                    cellEdit={ this.cellEditOptions() }
                 />
             </Fragment>
         );
@@ -71,6 +95,7 @@ class UsersTable extends Component {
 UsersTable.propTypes = {
     users: PropTypes.array.isRequired,
     paginationHandler: PropTypes.func.isRequired,
+    onUserRoleChange: PropTypes.func.isRequired,
     page: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,
     totalSize: PropTypes.number.isRequired
