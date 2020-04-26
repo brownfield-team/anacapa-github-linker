@@ -6,13 +6,15 @@ class UsersController < ApplicationController
       format.html { }
       format.json {
         @users = User.all
-        unless params[:search].nil?
-          @users = @users.where("users.name ~* ?", params[:search]).or(User.where("users.username ~* ?", params[:search]))
+        search_query = params[:search]
+        type_query = params[:type]
+        unless search_query.nil? || search_query.empty?
+          @users = @users.search(search_query)
         end
-        unless params[:type].nil?
-          @users = User.users_with_role(@users, params[:type])
+        unless type_query.nil? || type_query.empty?
+          @users = User.users_with_role(@users, type_query)
         end
-        paginate json: @users.distinct
+        paginate json: @users
       }
     end
   end

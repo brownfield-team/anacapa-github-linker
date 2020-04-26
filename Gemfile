@@ -107,3 +107,5 @@ gem 'github_webhook', '~> 1.1'
 gem 'react_on_rails', '~> 11.3.0'
 gem 'webpacker', '~> 4'
 gem 'mini_racer', platforms: :ruby
+
+gem 'pg_search'

@@ -1,4 +1,9 @@
 class User < ApplicationRecord
+  include PgSearch::Model
+  pg_search_scope :search, against: %i(username name email uid), using: {
+      tsearch: { prefix: true }
+  }
+
   paginates_per 25
   max_paginates_per 100
 
@@ -142,7 +147,6 @@ class User < ApplicationRecord
   end
 
   def self.users_with_role(users = User.all, role_str)
-    return users if role_str == ""
     users.joins(:roles).where("roles.name = ?", role_str).where("roles.resource_id is null")
   end
 

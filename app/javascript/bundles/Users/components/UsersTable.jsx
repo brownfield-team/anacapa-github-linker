@@ -19,6 +19,10 @@ class UsersTable extends Component {
             text: 'Username',
             editable: false
         }, {
+            dataField: 'email',
+            text: 'Email Address',
+            editable: false
+        }, {
             dataField: 'uid',
             text: 'UID',
             editable: false
