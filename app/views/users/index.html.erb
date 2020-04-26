@@ -1,1 +1,2 @@
-<%= react_component("Users", props: { search: params[:search], type: params[:type] }, prerender: true) %>
+<%= javascript_pack_tag 'users-bundle' %>
+<%= react_component("Users", props: { search: params[:search], type: params[:type] }, prerender: false) %>

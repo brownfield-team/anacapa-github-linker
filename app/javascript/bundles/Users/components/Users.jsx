@@ -10,7 +10,6 @@ class Users extends Component {
         super(props);
         this.state = { search: this.props.search ?? "", type: this.props.type ?? "", error: "", users: [], page: 1, pageSize: 25, totalSize: 0 };
         this.onSearchChanged = debounce(this.onSearchChanged, 500);
-        // this.onTypeChanged = debounce(this.onTypeChanged, 500);
     }
 
     componentDidMount() {
