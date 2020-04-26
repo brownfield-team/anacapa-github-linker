@@ -84,7 +84,7 @@ class Users extends Component {
         const error = this.state.error;
         return (
             <div>
-            { error === "" &&
+            { error !== "" &&
                 <Alert id="error-alert" variant="danger"> {error} </Alert>
             }
             </div>
