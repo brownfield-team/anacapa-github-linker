@@ -2,7 +2,9 @@
 VENDOR_PATH = File.expand_path('..', __dir__)
 Dir.chdir(VENDOR_PATH) do
   begin
-    exec "yarnpkg #{ARGV.join(" ")}"
+    unless Rake::Task.task_defined?("yarn:install")
+      exec "yarnpkg #{ARGV.join(" ")}"
+    end
   rescue Errno::ENOENT
     $stderr.puts "Yarn executable was not detected in the system."
     $stderr.puts "Download Yarn at https://yarnpkg.com/en/docs/install"
