@@ -12,7 +12,7 @@ class UsersController < ApplicationController
         unless params[:type].nil?
           @users = User.users_with_role(@users, params[:type])
         end
-        paginate json: @users
+        paginate json: @users.distinct
       }
     end
   end

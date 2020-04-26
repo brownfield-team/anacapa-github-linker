@@ -12,16 +12,28 @@ class UsersTable extends Component {
         [{
             dataField: 'name',
             text: 'Name',
-            sort: true
         }, {
             dataField: 'username',
             text: 'Username',
-            sort: true
         }, {
             dataField: 'uid',
             text: 'UID',
-            sort: true
         }];
+
+    onTableChange = (type, newState) => {
+        if (type !== "pagination") {
+            return;
+        }
+        this.props.paginationHandler(newState.page, newState.sizePerPage);
+    }
+
+    paginationOptions = () => {
+        return paginationFactory({
+            totalSize: this.props.totalSize,
+            page: this.props.page,
+            sizePerPage: this.props.per_page
+        })
+    }
 
     render() {
         return (
@@ -30,8 +42,9 @@ class UsersTable extends Component {
                     columns={this.columns}
                     data={this.props.users}
                     keyField="uid"
-                    pagination={ paginationFactory() }
                     remote={ { pagination: true, filter: false, sort: false } }
+                    pagination={ this.paginationOptions() }
+                    onTableChange={ this.onTableChange }
                 />
             </Fragment>
         );
@@ -39,7 +52,11 @@ class UsersTable extends Component {
 }
 
 UsersTable.propTypes = {
-    users: PropTypes.array.isRequired
+    users: PropTypes.array.isRequired,
+    paginationHandler: PropTypes.func.isRequired,
+    page: PropTypes.number.isRequired,
+    per_page: PropTypes.number.isRequired,
+    totalSize: PropTypes.number.isRequired
 };
 
 export default UsersTable;

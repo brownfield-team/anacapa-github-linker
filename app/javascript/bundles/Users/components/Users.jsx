@@ -8,7 +8,7 @@ import UsersSearch from "./UsersSearch";
 class Users extends Component {
     constructor(props) {
         super(props);
-        this.state = { search: this.props.search ?? "", type: this.props.type ?? "", error: "", users: [] };
+        this.state = { search: this.props.search ?? "", type: this.props.type ?? "", error: "", users: [], page: 1, per_page: 25, totalSize: 0 };
         this.onSearchChanged = debounce(this.onSearchChanged, 500);
         // this.onTypeChanged = debounce(this.onTypeChanged, 500);
     }
@@ -35,8 +35,14 @@ class Users extends Component {
         });
     }
 
-    updateUsers() {
-        const params = {search: this.state.search, type: this.state.type};
+    paginationHandler = (page, per_page) => {
+        this.setState({page: page, per_page: per_page}, () => {
+            this.updateUsers();
+        });
+    }
+
+    updateUsers = () => {
+        const params = {search: this.state.search, type: this.state.type, page: this.state.page, per_page: this.state.per_page};
         // Otherwise, calling setState fails because the scope for "this" is the success/error function.
         const self = this;
         Rails.ajax({
@@ -46,8 +52,12 @@ class Users extends Component {
             beforeSend: function() {
                 return true;
             },
-            success: function (data) {
-                self.setState({ users: data, error: "" });
+            success: function (data, status, xhr) {
+                const totalRecords = parseInt(xhr.getResponseHeader("X-Total"));
+                const page = parseInt(xhr.getResponseHeader("X-Page"));
+                self.setState({ users: data, totalSize: totalRecords, page: page, error: "" }, () => {
+                    console.log("State updated");
+                });
             },
             error: function (data) {
                 self.setState({ error: data });
@@ -60,9 +70,7 @@ class Users extends Component {
         return (
             <div>
             { error === "" &&
-                <Alert id="error-alert" variant="danger">
-                    {error}
-                </Alert>
+                <Alert id="error-alert" variant="danger"> {error} </Alert>
             }
             </div>
         );
@@ -73,9 +81,18 @@ class Users extends Component {
             <div>
                 <h1>Users</h1>
                 { this.renderError() }
-                <UsersSearch onSearchChanged={this.onSearchChanged} onTypeChanged={this.onTypeChanged} />
+                <UsersSearch
+                    onSearchChanged={this.onSearchChanged}
+                    onTypeChanged={this.onTypeChanged}
+                />
                 <br />
-                <UsersTable users={this.state.users} />
+                <UsersTable
+                    users={this.state.users}
+                    page={this.state.page}
+                    per_page={this.state.per_page}
+                    totalSize={this.state.totalSize}
+                    paginationHandler={this.paginationHandler}
+                />
             </div>
         );
     }
