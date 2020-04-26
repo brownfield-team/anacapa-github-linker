@@ -94,8 +94,8 @@ class Users extends Component {
     render() {
         return (
             <div>
-                <h1>Users</h1>
                 { this.renderError() }
+                <h1>Users</h1>
                 <UsersSearch
                     onSearchChanged={this.onSearchChanged}
                     onTypeChanged={this.onTypeChanged}
