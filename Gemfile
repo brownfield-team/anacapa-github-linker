@@ -87,6 +87,7 @@ end
 
 # Pagination
 gem 'kaminari'
+gem 'api-pagination'
 
 gem "actionview", ">= 5.1.6.2"
 

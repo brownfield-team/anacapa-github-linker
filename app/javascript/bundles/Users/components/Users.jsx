@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import { Alert, Form } from 'react-bootstrap';
 import UsersTable from './UsersTable';
 import {debounce} from "debounce";
+import UsersSearch from "./UsersSearch";
 
 class Users extends Component {
     constructor(props) {
         super(props);
         this.state = { search: this.props.search ?? "", type: this.props.type ?? "", error: "", users: [] };
-        this.onSearchChanged = debounce(this.onSearchChanged, 500)
+        this.onSearchChanged = debounce(this.onSearchChanged, 500);
+        this.onTypeChanged = debounce(this.onSearchChanged, 500);
     }
 
     componentDidMount() {
@@ -68,10 +70,8 @@ class Users extends Component {
             <div>
                 <h1>Users</h1>
                 { this.renderError() }
-                <Form.Control type="text" onChange={ (event) => {
-                    this.onSearchChanged(event.target.value)
-                }
-                } />
+                <UsersSearch onSearchChanged={this.onSearchChanged} onTypeChanged={this.onTypeChanged} />
+                <br />
                 <UsersTable users={this.state.users} />
             </div>
         );

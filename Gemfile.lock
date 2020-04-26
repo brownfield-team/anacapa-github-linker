@@ -40,6 +40,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
+    api-pagination (4.8.2)
     arel (8.0.0)
     autoprefixer-rails (9.7.4)
       execjs
@@ -128,7 +129,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.0)
     kaminari-core (1.2.0)
-    libv8 (7.3.492.27.1-x86_64-darwin-19)
+    libv8 (7.3.492.27.1)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -311,6 +312,7 @@ PLATFORMS
 
 DEPENDENCIES
   actionview (>= 5.1.6.2)
+  api-pagination
   bootstrap-sass (~> 3.4.1)
   bootstrap-table-rails
   byebug
