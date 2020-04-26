@@ -6,9 +6,6 @@ export default class HelloWorld extends React.Component {
     name: PropTypes.string.isRequired,
   };
 
-  /**
-   * @param props - Comes from your rails view.
-   */
   constructor(props) {
     super(props);
     this.state = { name: this.props.name };
