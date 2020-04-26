@@ -11,14 +11,27 @@ export default class HelloWorld extends React.Component {
    */
   constructor(props) {
     super(props);
-
-    // How to set initial state in ES6 class syntax
-    // https://reactjs.org/docs/state-and-lifecycle.html#adding-local-state-to-a-class
     this.state = { name: this.props.name };
   }
 
   updateName = (name) => {
-    this.setState({ name });
+    this.setState({ name: name });
+    console.log("here");
+    var params = {search: "", type: ""};
+    Rails.ajax({
+      url: "/users.json",
+      type: "get",
+      data: $.param(params),
+      beforeSend: function() {
+        return true;
+      },
+      success: function (data) {
+        console.log(data);
+      },
+      error: function (data) {
+        console.log(data);
+      }
+    });
   };
 
   render() {

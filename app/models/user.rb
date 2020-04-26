@@ -10,6 +10,7 @@ class User < ApplicationRecord
   has_many :roster_students, dependent: :destroy
   has_many :repo_contributors
   has_many :github_repos, through: :repo_contributors
+  has_many :users_roles
 
   # install rolify
   rolify
@@ -109,7 +110,9 @@ class User < ApplicationRecord
     end
   end
 
-
-
+  def self.users_with_role(users = User.all, role_str)
+    return users if role_str == ""
+    users.joins(:roles).where("roles.name = ?", role_str)
+  end
 
 end

@@ -5,6 +5,7 @@
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
+    "react-bootstrap-table-next": "^4.0.1",
     "react-dom": "^16.13.1",
     "react-on-rails": "11.3.0"
   },

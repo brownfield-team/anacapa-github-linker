@@ -4,12 +4,19 @@ class UsersController < ApplicationController
   def index
     users = User.all
     unless params[:search].nil?
-      users = users.where("name ~* ?", params[:search]).sort_by(&:name)
+      users = users.where("users.name ~* ?", params[:search]).or(User.where("users.username ~* ?", params[:search]))
     end
     unless params[:type].nil?
-      users = users.select { |u| u.has_role? params[:type] }
+      users = User.users_with_role(users, params[:type])
     end
-    @users = Kaminari.paginate_array(users).page params[:page]
+    respond_to do |format|
+      format.html {
+        @users = Kaminari.paginate_array(users).page params[:page]
+      }
+      format.json {
+        render json: users
+      }
+    end
   end
 
   def update
