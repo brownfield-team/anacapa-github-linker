@@ -7,6 +7,17 @@ class UsersSearch extends Component {
         return (
             <Fragment>
                 <Form.Group>
+                    <Form.Label>User Type</Form.Label>
+                    <Form.Control
+                        as="select"
+                        onChange={ (event) => { this.props.onTypeChanged(event.target.value) } }>
+                        <option value="">All Users</option>
+                        <option value="admin">Admins</option>
+                        <option value="instructor">Instructors</option>
+                    </Form.Control>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label>Search</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Search users"

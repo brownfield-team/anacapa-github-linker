@@ -10,14 +10,12 @@ class Users extends Component {
         super(props);
         this.state = { search: this.props.search ?? "", type: this.props.type ?? "", error: "", users: [] };
         this.onSearchChanged = debounce(this.onSearchChanged, 500);
-        this.onTypeChanged = debounce(this.onSearchChanged, 500);
+        // this.onTypeChanged = debounce(this.onTypeChanged, 500);
     }
 
     componentDidMount() {
         this.updateUsers();
     }
-
-    rateLimited = false;
 
     onSearchChanged = (searchValue) => {
         if (searchValue === this.props.search) {
@@ -28,8 +26,13 @@ class Users extends Component {
         });
     }
 
-    onTypeChanged = (event) => {
-
+    onTypeChanged = (typeValue) => {
+        if (typeValue === this.props.type) {
+            return;
+        }
+        this.setState({type: typeValue}, () => {
+           this.updateUsers();
+        });
     }
 
     updateUsers() {

@@ -2,18 +2,16 @@ class UsersController < ApplicationController
 
   load_and_authorize_resource
   def index
-    @users = User.all
-    unless params[:search].nil?
-      @users = users.where("users.name ~* ?", params[:search]).or(User.where("users.username ~* ?", params[:search]))
-    end
-    unless params[:type].nil?
-      @users = User.users_with_role(users, params[:type])
-    end
     respond_to do |format|
-      format.html {
-        @users = Kaminari.paginate_array(users).page params[:page]
-      }
+      format.html { }
       format.json {
+        @users = User.all
+        unless params[:search].nil?
+          @users = @users.where("users.name ~* ?", params[:search]).or(User.where("users.username ~* ?", params[:search]))
+        end
+        unless params[:type].nil?
+          @users = User.users_with_role(@users, params[:type])
+        end
         paginate json: @users
       }
     end
