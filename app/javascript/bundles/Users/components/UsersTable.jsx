@@ -13,12 +13,15 @@ class UsersTable extends Component {
         [{
             dataField: 'name',
             text: 'Name',
+            editable: false
         }, {
             dataField: 'username',
             text: 'Username',
+            editable: false
         }, {
             dataField: 'uid',
             text: 'UID',
+            editable: false
         }, {
             dataField: 'role',
             text: 'Role',
