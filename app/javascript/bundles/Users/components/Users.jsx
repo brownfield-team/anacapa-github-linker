@@ -8,7 +8,7 @@ import UsersSearch from "./UsersSearch";
 class Users extends Component {
     constructor(props) {
         super(props);
-        this.state = { search: this.props.search ?? "", type: this.props.type ?? "", error: "", users: [], page: 1, per_page: 25, totalSize: 0 };
+        this.state = { search: this.props.search ?? "", type: this.props.type ?? "", error: "", users: [], page: 1, pageSize: 25, totalSize: 0 };
         this.onSearchChanged = debounce(this.onSearchChanged, 500);
         // this.onTypeChanged = debounce(this.onTypeChanged, 500);
     }
@@ -35,14 +35,14 @@ class Users extends Component {
         });
     }
 
-    paginationHandler = (page, per_page) => {
-        this.setState({page: page, per_page: per_page}, () => {
+    paginationHandler = (page, pageSize) => {
+        this.setState({page: page, pageSize: pageSize}, () => {
             this.updateUsers();
         });
     }
 
     updateUsers = () => {
-        const params = {search: this.state.search, type: this.state.type, page: this.state.page, per_page: this.state.per_page};
+        const params = {search: this.state.search, type: this.state.type, page: this.state.page, per_page: this.state.pageSize};
         // Otherwise, calling setState fails because the scope for "this" is the success/error function.
         const self = this;
         Rails.ajax({
@@ -55,9 +55,7 @@ class Users extends Component {
             success: function (data, status, xhr) {
                 const totalRecords = parseInt(xhr.getResponseHeader("X-Total"));
                 const page = parseInt(xhr.getResponseHeader("X-Page"));
-                self.setState({ users: data, totalSize: totalRecords, page: page, error: "" }, () => {
-                    console.log("State updated");
-                });
+                self.setState({ users: data, totalSize: totalRecords, page: page, error: "" });
             },
             error: function (data) {
                 self.setState({ error: data });
@@ -89,7 +87,7 @@ class Users extends Component {
                 <UsersTable
                     users={this.state.users}
                     page={this.state.page}
-                    per_page={this.state.per_page}
+                    pageSize={this.state.pageSize}
                     totalSize={this.state.totalSize}
                     paginationHandler={this.paginationHandler}
                 />

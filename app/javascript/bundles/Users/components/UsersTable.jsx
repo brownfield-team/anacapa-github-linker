@@ -2,6 +2,7 @@ import React, {Fragment, Component} from 'react';
 import PropTypes from 'prop-types';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
+import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 
 class UsersTable extends Component {
     constructor(props) {
@@ -18,6 +19,22 @@ class UsersTable extends Component {
         }, {
             dataField: 'uid',
             text: 'UID',
+        }, {
+            dataField: 'role',
+            text: 'Role',
+            editor: {
+                type: Type.SELECT,
+                options: [{
+                    value: 'user',
+                    label: 'User'
+                }, {
+                    value: 'instructor',
+                    label: 'Instructor'
+                }, {
+                    value: 'admin',
+                    label: 'Admin'
+                }]
+            }
         }];
 
     onTableChange = (type, newState) => {
@@ -31,7 +48,7 @@ class UsersTable extends Component {
         return paginationFactory({
             totalSize: this.props.totalSize,
             page: this.props.page,
-            sizePerPage: this.props.per_page
+            sizePerPage: this.props.pageSize
         })
     }
 
@@ -55,7 +72,7 @@ UsersTable.propTypes = {
     users: PropTypes.array.isRequired,
     paginationHandler: PropTypes.func.isRequired,
     page: PropTypes.number.isRequired,
-    per_page: PropTypes.number.isRequired,
+    pageSize: PropTypes.number.isRequired,
     totalSize: PropTypes.number.isRequired
 };
 
