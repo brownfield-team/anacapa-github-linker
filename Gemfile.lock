@@ -339,7 +339,7 @@ DEPENDENCIES
   omniauth-github
   omniauth-gitlab
   omniauth-rails_csrf_protection (~> 0.1)
-  pg (~> 0.18)
+  pg (~> 0.21)
   pg_search
   pry-byebug
   puma (~> 3.12)
