@@ -23,9 +23,9 @@ class TeamsTable extends Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {this.props.teams.map(team =>
-                        <TeamRow team={team} />
-                    )}
+                    {/*{this.props.teams.map(team =>*/}
+                    {/*    <TeamRow team={team} key={team.id} />*/}
+                    {/*)}*/}
                     <tr>
                         <td>1</td>
                         <td>Mark</td>

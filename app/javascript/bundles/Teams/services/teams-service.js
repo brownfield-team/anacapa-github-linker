@@ -1,12 +1,18 @@
 import axios from '../../../axios-rails';
-import {unaddedTeamsRoute} from "./teams-service-routes";
+import {projectTeamsRoute, unaddedTeamsRoute} from "./teams-service-routes";
 
 class TeamsService {
-    static getProjectTeams(courseId) {
-
+    constructor(courseId) {
+        this.courseId = courseId;
     }
 
-    static async getUnaddedTeams(courseId) {
-        return axios.get(unaddedTeamsRoute(courseId)).then(response => response.data);
+    async getProjectTeams() {
+        return axios.get(projectTeamsRoute(this.courseId)).then(response => response.data);
+    }
+
+    async getUnaddedTeams() {
+        return axios.get(unaddedTeamsRoute(this.courseId)).then(response => response.data);
     }
 }
+
+export default TeamsService;

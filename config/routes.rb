@@ -24,12 +24,18 @@ Rails.application.routes.draw do
           post :import
         end
       end
-      resources :teams do
+      resources :org_teams do
         collection do
           get :create_repos
           post :generate_repos
           get :create_teams
           post :generate_teams
+          get :unadded
+        end
+      end
+      resources :project_teams do
+        collection do
+
         end
       end
       resource :github_webhooks, :only => [:create], :defaults => {:format => :json} do

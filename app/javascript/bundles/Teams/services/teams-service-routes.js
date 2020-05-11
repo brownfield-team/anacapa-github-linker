@@ -1,1 +1,3 @@
-export const unaddedTeamsRoute = (courseId) => `/courses/${courseId}/unadded_teams.json`;
+const courseTeamsRoute = (courseId) => `/courses/${courseId}/teams`
+export const projectTeamsRoute = (courseId) => `${courseTeamsRoute(courseId)}.json`
+export const unaddedTeamsRoute = (courseId) => `${courseTeamsRoute(courseId)}/unadded.json`;

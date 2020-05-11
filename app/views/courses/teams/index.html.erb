@@ -1,3 +1,0 @@
-<%= javascript_pack_tag 'teams-bundle' %>
-<h1><%= link_to @parent.name, course_path(@parent) %></h1>
-<%= react_component("TeamsDashboard", props: { search: params[:search], type: params[:type] }, prerender: false) %>

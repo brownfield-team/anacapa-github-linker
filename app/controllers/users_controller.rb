@@ -1,10 +1,11 @@
 class UsersController < ApplicationController
 
   load_and_authorize_resource
+
   def index
     respond_to do |format|
-      format.html { }
-      format.json {
+      format.html {}
+      format.json do
         @users = User.all
         search_query = params[:search]
         type_query = params[:type]
@@ -15,7 +16,7 @@ class UsersController < ApplicationController
           @users = User.users_with_role(@users, type_query)
         end
         paginate json: @users
-      }
+      end
     end
   end
 
@@ -33,8 +34,8 @@ class UsersController < ApplicationController
 
   end
 
-    # private
-    #     def user_params
-    #         params.require(:user).permit(:roles)
-    #     end
+  # private
+  #     def user_params
+  #         params.require(:user).permit(:roles)
+  #     end
 end
