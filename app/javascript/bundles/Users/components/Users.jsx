@@ -21,7 +21,6 @@ class Users extends Component {
             return;
         }
         this.setState({search: searchValue}, () => {
-            this.updateUsers();
         });
     }
 
