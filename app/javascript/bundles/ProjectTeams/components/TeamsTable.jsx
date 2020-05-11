@@ -10,7 +10,7 @@ class TeamsTable extends Component {
                 <Table striped hover>
                     <thead>
                     <tr>
-                        <th>Team Name</th>
+                        <th className="col-sm-3 px-0">Team Name</th>
                         <th>Meeting Time</th>
                         <th>Project</th>
                         <th>Members</th>
@@ -23,26 +23,26 @@ class TeamsTable extends Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {/*{this.props.teams.map(team =>*/}
-                    {/*    <TeamRow team={team} key={team.id} />*/}
-                    {/*)}*/}
-                    <tr>
-                        <td>1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td colSpan="2">Larry the Bird</td>
-                        <td>@twitter</td>
-                    </tr>
+                    {this.props.teams.map(team =>
+                        <TeamRow team={team} key={team.id} />
+                    )}
+                    {/*<tr>*/}
+                    {/*    <td>1</td>*/}
+                    {/*    <td>Mark</td>*/}
+                    {/*    <td>Otto</td>*/}
+                    {/*    <td>@mdo</td>*/}
+                    {/*</tr>*/}
+                    {/*<tr>*/}
+                    {/*    <td>2</td>*/}
+                    {/*    <td>Jacob</td>*/}
+                    {/*    <td>Thornton</td>*/}
+                    {/*    <td>@fat</td>*/}
+                    {/*</tr>*/}
+                    {/*<tr>*/}
+                    {/*    <td>3</td>*/}
+                    {/*    <td colSpan="2">Larry the Bird</td>*/}
+                    {/*    <td>@twitter</td>*/}
+                    {/*</tr>*/}
                     </tbody>
                 </Table>
             </Fragment>

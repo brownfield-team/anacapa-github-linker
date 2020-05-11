@@ -81,6 +81,8 @@ ActiveRecord::Schema.define(version: 20200511064706) do
     t.bigint "org_team_id"
     t.string "repo_url"
     t.string "project"
+    t.string "milestones_url"
+    t.string "project_board_url"
     t.index ["course_id"], name: "index_project_teams_on_course_id"
     t.index ["github_repo_id"], name: "index_project_teams_on_github_repo_id"
     t.index ["org_team_id"], name: "index_project_teams_on_org_team_id"

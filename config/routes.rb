@@ -33,11 +33,7 @@ Rails.application.routes.draw do
           get :unadded
         end
       end
-      resources :project_teams do
-        collection do
-
-        end
-      end
+      resources :project_teams
       resource :github_webhooks, :only => [:create], :defaults => {:format => :json} do
 
       end

@@ -6,7 +6,11 @@ class ProjectTeam < ApplicationRecord
   def as_json(options = nil)
     super(:include => {
         :student_team_memberships => {
-            :include => :roster_student
+            :include => {
+                :roster_student => {
+                    :methods => :full_name
+                }
+            }
         }
     })
   end

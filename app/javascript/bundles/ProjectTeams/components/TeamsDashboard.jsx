@@ -4,12 +4,18 @@ import TeamsTable from "./TeamsTable";
 import {Button} from "react-bootstrap";
 import AddTeamDialog from "./AddTeamDialog";
 import TeamsService from "../services/teams-service";
+import '../TeamsDashboard.css';
 
 class TeamsDashboard extends Component {
     constructor(props) {
         super(props);
         const teamsService = new TeamsService(this.props.course_id);
-        this.state = {addTeamDialogOpen: false, teams: this.props.teams, teamsService: teamsService};
+        this.state = {addTeamDialogOpen: false, teams: [], teamsService: teamsService};
+    }
+
+
+    componentDidMount() {
+        this.updateTeams();
     }
 
     updateTeams = () => {
@@ -31,6 +37,7 @@ class TeamsDashboard extends Component {
             <Fragment>
                 <AddTeamDialog open={this.state.addTeamDialogOpen} toggleOpen={this.toggleAddTeamDialog}/>
                 <Button variant="primary" onClick={() => this.toggleAddTeamDialog}>Add Team</Button>
+                <br />
                 <TeamsTable teams={this.state.teams} />
             </Fragment>
         );
@@ -38,8 +45,7 @@ class TeamsDashboard extends Component {
 }
 
 TeamsDashboard.propTypes = {
-    course_id: PropTypes.number.isRequired,
-    teams: PropTypes.array.isRequired
+    course_id: PropTypes.number.isRequired
 };
 
 export default TeamsDashboard;

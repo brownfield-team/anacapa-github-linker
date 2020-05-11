@@ -1,2 +1,2 @@
 <h1><%= link_to @parent.name, course_path(@parent) %></h1>
-<%= react_component("TeamsDashboard", props: {course_id: @parent.id, teams: @parent.project_teams}, prerender: false) %>
+<%= react_component("TeamsDashboard", props: {course_id: @parent.id}, prerender: false) %>
