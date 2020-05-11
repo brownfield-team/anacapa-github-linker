@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200405072640) do
+ActiveRecord::Schema.define(version: 20200509002802) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,6 +63,25 @@ ActiveRecord::Schema.define(version: 20200405072640) do
     t.bigint "course_id"
     t.string "hook_url"
     t.index ["course_id"], name: "index_org_webhooks_on_course_id"
+  end
+
+  create_table "project_roles", force: :cascade do |t|
+    t.string "name"
+    t.string "color"
+  end
+
+  create_table "project_teams", force: :cascade do |t|
+    t.string "name"
+    t.string "qa_url"
+    t.string "production_url"
+    t.string "team_chat_url"
+    t.string "meeting_time"
+    t.bigint "course_id"
+    t.bigint "github_repo_id"
+    t.bigint "org_team_id"
+    t.index ["course_id"], name: "index_project_teams_on_course_id"
+    t.index ["github_repo_id"], name: "index_project_teams_on_github_repo_id"
+    t.index ["org_team_id"], name: "index_project_teams_on_org_team_id"
   end
 
   create_table "repo_contributors", force: :cascade do |t|
@@ -141,7 +160,9 @@ ActiveRecord::Schema.define(version: 20200405072640) do
     t.string "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "project_role_id"
     t.index ["org_team_id"], name: "index_student_team_memberships_on_org_team_id"
+    t.index ["project_role_id"], name: "index_student_team_memberships_on_project_role_id"
     t.index ["roster_student_id"], name: "index_student_team_memberships_on_roster_student_id"
   end
 
@@ -177,7 +198,10 @@ ActiveRecord::Schema.define(version: 20200405072640) do
   add_foreign_key "completed_jobs", "courses"
   add_foreign_key "github_repos", "courses"
   add_foreign_key "org_webhooks", "courses"
+  add_foreign_key "project_teams", "github_repos"
+  add_foreign_key "project_teams", "org_teams"
   add_foreign_key "roster_students", "courses"
   add_foreign_key "roster_students", "users"
   add_foreign_key "slack_users", "slack_workspaces"
+  add_foreign_key "student_team_memberships", "project_roles"
 end

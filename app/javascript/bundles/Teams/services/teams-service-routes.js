@@ -1,0 +1,1 @@
+export const unaddedTeamsRoute = (courseId) => `/courses/${courseId}/unadded_teams.json`;

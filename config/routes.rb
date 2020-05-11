@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   # resources :roster_students
   # devise routes
   devise_for :users, :controllers => {
-    :omniauth_callbacks => "users/omniauth_callbacks#github"
+      :omniauth_callbacks => "users/omniauth_callbacks#github"
   }
   devise_scope :user do
     get 'sign_out', :to => 'devise/sessions#destroy', :as => :signout
@@ -24,14 +24,15 @@ Rails.application.routes.draw do
           post :import
         end
       end
-      resource :teams do
-        get :create_repos
-        post :generate_repos
-        get :create_teams
-        post :generate_teams
+      resources :teams do
+        collection do
+          get :create_repos
+          post :generate_repos
+          get :create_teams
+          post :generate_teams
+        end
       end
-
-      resource :github_webhooks, :only => [:create], :defaults => { :format => :json } do
+      resource :github_webhooks, :only => [:create], :defaults => {:format => :json} do
 
       end
       # While this is somewhat frowned upon in Rails convention, I refuse to name the controller "SlacksController"

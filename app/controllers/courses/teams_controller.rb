@@ -5,7 +5,7 @@ module Courses
     before_action :load_parent
     load_and_authorize_resource :course
 
-    def show
+    def index
       @teams = @parent.org_teams
     end
 
@@ -45,6 +45,10 @@ module Courses
       end
       CreateGithubTeamsJob.perform_async(@course.id, { :teams => team_hash })
       redirect_to course_teams_path(@course), notice: "Team creation successfully queued."
+    end
+
+    def unadded_teams
+
     end
 
     private
