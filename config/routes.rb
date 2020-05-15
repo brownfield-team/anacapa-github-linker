@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     resources :courses do
       scope module: :courses do
         resources :project_teams
+        resources :org_teams
       end
     end
   end

@@ -3,9 +3,9 @@ import * as PropTypes from 'prop-types';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import ProjectTeamsRouter from "./ProjectTeamsRouter";
 import TeamsDashboard from "./TeamsDashboard";
-import NewProjectTeam from "./Forms/NewProjectTeam";
-import ShowProjectTeam from "./ShowProjectTeam";
-import EditProjectTeam from "./Forms/EditProjectTeam";
+import NewProjectTeam from "./NewProjectTeam";
+import ProjectTeam from "./ShowProjectTeam";
+import EditProjectTeam from "./EditProjectTeam";
 
 class ProjectTeams extends Component {
 
@@ -19,7 +19,7 @@ class ProjectTeams extends Component {
                 <Switch>
                     <Route exact path={rootPath} component={TeamsDashboard}/>
                     <Route exact path={newProjectTeamPath} component={NewProjectTeam}/>
-                    <Route exact path={projectTeamPath} component={ShowProjectTeam}/>
+                    <Route exact path={projectTeamPath} component={ProjectTeam}/>
                     <Route path={editProjectTeamPath} component={EditProjectTeam}/>
                 </Switch>
             </Fragment>

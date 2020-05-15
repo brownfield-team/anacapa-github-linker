@@ -47,16 +47,6 @@ module Courses
       redirect_to course_teams_path(@course), notice: "Team creation successfully queued."
     end
 
-    # OrgTeams without associated ProjectTeams in the course
-    def unadded
-      unadded_teams = OrgTeam.without_project_teams.where(course_id: @parent.id)
-      respond_to do |format|
-        format.json do
-          render json: unadded_teams
-        end
-      end
-    end
-
     private
 
     def load_parent

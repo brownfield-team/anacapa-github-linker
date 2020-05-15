@@ -4,7 +4,6 @@ import * as PropTypes from 'prop-types';
 class ProjectTeamForm extends Component {
     constructor(props) {
         super(props);
-        const projectTeam = this.props.projectTeam ?? new ProjectTeam(this.props.course_id)
         this.state = {orgTeamOptions: [], projectTeam: this.props.projectTeam}
     }
 
@@ -23,7 +22,9 @@ class ProjectTeamForm extends Component {
 }
 
 ProjectTeamForm.propTypes = {
-    projectTeam: PropTypes.object.isRequired
+    editable: PropTypes.bool.isRequired,
+    projectTeam: PropTypes.object.isRequired,
+    saveProjectTeam: PropTypes.func
 };
 
 export default ProjectTeamForm;
