@@ -9,7 +9,7 @@ import '../TeamsDashboard.css';
 class TeamsDashboard extends Component {
     constructor(props) {
         super(props);
-        const teamsService = new TeamsService(this.props.course_id);
+        const teamsService = new TeamsService(this.props.match.params.courseId);
         this.state = {addTeamDialogOpen: false, teams: [], teamsService: teamsService};
     }
 
@@ -44,9 +44,5 @@ class TeamsDashboard extends Component {
         );
     }
 }
-
-TeamsDashboard.propTypes = {
-    course_id: PropTypes.number.isRequired
-};
 
 export default TeamsDashboard;
