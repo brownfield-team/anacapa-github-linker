@@ -1,4 +1,4 @@
-const courseRoute = (courseId) => `/courses/${courseId}`;
+const courseRoute = (courseId) => `/api/courses/${courseId}`;
 const courseProjectTeamsRoute = (courseId) => `${courseRoute(courseId)}/project_teams`
 const courseOrgTeamsRoute = (courseId) => `${courseRoute(courseId)}/org_teams`
 

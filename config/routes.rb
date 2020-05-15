@@ -8,6 +8,14 @@ Rails.application.routes.draw do
     get 'sign_out', :to => 'devise/sessions#destroy', :as => :signout
   end
 
+  namespace :api, :defaults => { :format => 'json' } do
+    resources :courses do
+      scope module: :courses do
+        resources :project_teams
+      end
+    end
+  end
+
   # courses routes
   # post 'courses/:course_id/join' => 'courses#join', :as => :join_course
   # post 'courses/:course_id/leave' => 'courses#leave', :as => :leave_course
@@ -33,7 +41,7 @@ Rails.application.routes.draw do
           get :unadded
         end
       end
-      resources :project_teams
+      get "project_teams(/*all)", to: "project_teams#index"
       resource :github_webhooks, :only => [:create], :defaults => {:format => :json} do
 
       end

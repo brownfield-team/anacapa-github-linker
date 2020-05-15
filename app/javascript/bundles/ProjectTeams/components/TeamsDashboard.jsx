@@ -35,10 +35,11 @@ class TeamsDashboard extends Component {
     render() {
         return (
             <Fragment>
-                <AddTeamDialog open={this.state.addTeamDialogOpen} toggleOpen={this.toggleAddTeamDialog}/>
+                <AddTeamDialog open={this.state.addTeamDialogOpen} toggleOpen={this.toggleAddTeamDialog}
+                               teamsService={this.state.teamsService}/>
                 <Button variant="primary" onClick={() => this.toggleAddTeamDialog}>Add Team</Button>
-                <br />
-                <TeamsTable teams={this.state.teams} />
+                <br/>
+                <TeamsTable teams={this.state.teams}/>
             </Fragment>
         );
     }

@@ -3,6 +3,8 @@ import * as PropTypes from 'prop-types';
 import ProjectTeamForm from "./ProjectTeamForm";
 
 class NewProjectTeam extends Component {
+
+
     render() {
         const projectTeam = new ProjectTeam(this.props.course_id)
         return (
