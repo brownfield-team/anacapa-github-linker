@@ -4,7 +4,7 @@ import ProjectTeamForm from "./ProjectTeamForm";
 
 class EditProjectTeam extends Component {
     render() {
-        const projectTeam = new ProjectTeam(this.props.course_id); // TODO: Replace
+        const projectTeam = new ProjectTeamModel(this.props.course_id); // TODO: Replace
         return (
             <Fragment>
                 <ProjectTeamForm projectTeam={projectTeam} />

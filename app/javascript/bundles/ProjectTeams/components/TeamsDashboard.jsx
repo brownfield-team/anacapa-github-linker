@@ -9,8 +9,7 @@ import '../TeamsDashboard.css';
 class TeamsDashboard extends Component {
     constructor(props) {
         super(props);
-        const teamsService = new TeamsService(this.props.match.params.courseId);
-        this.state = {addTeamDialogOpen: false, teams: [], teamsService: teamsService};
+        this.state = {teams: []};
     }
 
 
@@ -19,7 +18,7 @@ class TeamsDashboard extends Component {
     }
 
     updateTeams = () => {
-        this.state.teamsService.getProjectTeams().then(teamsResponse => {
+        TeamsService.getProjectTeams(this.props.match.params.courseId).then(teamsResponse => {
             this.setState({teams: teamsResponse});
         });
     };
@@ -28,18 +27,16 @@ class TeamsDashboard extends Component {
 
     };
 
-    toggleAddTeamDialog = () => {
-        this.setState({addTeamDialogOpen: !this.state.addTeamDialogOpen})
+    onNewTeamClick = () => {
+        this.props.history.push(`${this.props.match.path}/new`);
     };
 
     render() {
         return (
             <Fragment>
-                <AddTeamDialog open={this.state.addTeamDialogOpen} toggleOpen={this.toggleAddTeamDialog}
-                               teamsService={this.state.teamsService}/>
-                <Button variant="primary" onClick={() => this.toggleAddTeamDialog}>Add Team</Button>
+                <Button variant="primary" onClick={() => this.onNewTeamClick()}>Add Team</Button>
                 <br/>
-                <TeamsTable teams={this.state.teams}/>
+                <TeamsTable teams={this.state.teams} {...this.props}/>
             </Fragment>
         );
     }

@@ -1,17 +1,30 @@
 import axios from '../../../helpers/axios-rails';
-import {projectTeamsRoute, unaddedTeamsRoute} from "./teams-service-routes";
+import {projectTeamsRoute, orgTeamsRoute, projectTeamRoute} from "./teams-service-routes";
 
 class TeamsService {
-    constructor(courseId) {
-        this.courseId = courseId;
+
+    static async getProjectTeams(courseId) {
+        return axios.get(projectTeamsRoute(courseId)).then(response => response.data);
     }
 
-    async getProjectTeams() {
-        return axios.get(projectTeamsRoute(this.courseId)).then(response => response.data);
+    static async getProjectTeam(courseId, projectTeamId) {
+        return axios.get(projectTeamRoute(courseId, projectTeamId)).then(response => response.data);
     }
 
-    async getUnaddedTeams() {
-        return axios.get(unaddedTeamsRoute(this.courseId)).then(response => response.data);
+    static async createProjectTeam(courseId, projectTeam) {
+        return axios.post(projectTeamsRoute(courseId)).then(response => response.data);
+    }
+
+    static async updateProjectTeam(courseId, projectTeamId, projectTeam) {
+        return axios.put(projectTeamRoute(courseId, projectTeamId)).then(response => response.data);
+    }
+
+    static async deleteProjectTeam(courseId, projectTeamId) {
+        return axios.delete(projectTeamRoute(courseId, projectTeamId)).then(response => response.data);
+    }
+
+    static async getOrgTeams(courseId) {
+        return axios.get(orgTeamsRoute(courseId)).then(response => response.data);
     }
 }
 

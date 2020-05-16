@@ -1,4 +1,4 @@
-class ProjectTeam {
+class ProjectTeamModel {
     constructor(course_id) {
         this.name = "";
         this.meeting_time = "";
@@ -11,3 +11,5 @@ class ProjectTeam {
         this.milestones_url = "";
     }
 }
+
+export default ProjectTeamModel;
