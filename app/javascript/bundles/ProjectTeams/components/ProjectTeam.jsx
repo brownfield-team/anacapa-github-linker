@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import {Route, Switch} from 'react-router-dom';
 import * as PropTypes from 'prop-types';
-import ProjectTeamForm from "./ProjectTeamForm";
+import ProjectTeamForm from "./Forms/ProjectTeamForm";
 import TeamsService from "../services/teams-service";
 import ShowProjectTeam from "./ShowProjectTeam";
 
@@ -41,7 +41,7 @@ class ProjectTeam extends Component {
                     <Route exact path={matchPath}
                            render={(props) => <ShowProjectTeam {...props} projectTeam={this.state.projectTeam}/>}/>
                     <Route path={`${matchPath}/edit`}
-                           render={() => <ProjectTeamForm projectTeam={this.state.projectTeam}
+                           render={(props) => <ProjectTeamForm projectTeam={this.state.projectTeam}
                                                           editable={true} {...props}/>}/>
                 </Switch>}
             </Fragment>

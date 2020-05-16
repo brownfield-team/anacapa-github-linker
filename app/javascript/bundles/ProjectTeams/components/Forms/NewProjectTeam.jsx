@@ -1,16 +1,19 @@
 import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import ProjectTeamForm from "./ProjectTeamForm";
-import ProjectTeamModel from "../models/ProjectTeamModel"
+import ProjectTeamModel from "../../models/ProjectTeamModel"
 
 class NewProjectTeam extends Component {
 
+    createProjectTeam = (projectTeam) => {
+
+    };
 
     render() {
-        const projectTeam = new ProjectTeamModel(this.props.match.params.courseId)
+        const projectTeam = new ProjectTeamModel(parseInt(this.props.match.params.courseId));
         return (
             <Fragment>
-                <ProjectTeamForm projectTeam={projectTeam}  editable={true} {...this.props} />
+                <ProjectTeamForm projectTeam={projectTeam} saveProjectTeam={this.createProjectTeam} editable={true} {...this.props} />
             </Fragment>
         );
     }

@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
-import ProjectTeamForm from "./ProjectTeamForm";
+import ProjectTeamForm from "./Forms/ProjectTeamForm";
 
 class ShowProjectTeam extends Component {
     render() {

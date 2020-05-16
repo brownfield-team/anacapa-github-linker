@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import TeamsTable from "./TeamsTable";
 import {Button} from "react-bootstrap";
-import AddTeamDialog from "./AddTeamDialog";
 import TeamsService from "../services/teams-service";
 import '../TeamsDashboard.css';
 
@@ -28,7 +27,7 @@ class TeamsDashboard extends Component {
     };
 
     onNewTeamClick = () => {
-        this.props.history.push(`${this.props.match.path}/new`);
+        this.props.history.push(`${this.props.match.url}/new`);
     };
 
     render() {
