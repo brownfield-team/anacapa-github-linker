@@ -12,7 +12,7 @@ class TeamsService {
     }
 
     static async createProjectTeam(courseId, projectTeam) {
-        return axios.post(projectTeamsRoute(courseId)).then(response => response.data);
+        return axios.post(projectTeamsRoute(courseId), projectTeam).then(response => response.data);
     }
 
     static async updateProjectTeam(courseId, projectTeamId, projectTeam) {

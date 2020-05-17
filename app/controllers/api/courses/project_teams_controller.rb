@@ -13,7 +13,7 @@ module Api::Courses
     end
 
     def create
-      respond_with ProjectTeam.create(project_team_params)
+      respond_with :api, @course, ProjectTeam.create(project_team_params)
     end
 
     def destroy
@@ -23,13 +23,13 @@ module Api::Courses
     def update
       project_team = ProjectTeam.find(params[:id])
       project_team.update_attributes(project_team_params)
-      respond_with project_team
+      respond_with project_team, json: project_team
     end
 
     private
 
     def project_team_params
-      params.require(:project_team).permit(:id, :name, :qa_url, :production_url, :team_chat_url, :meeting_time,
+      params.require(:project_team).permit(:name, :qa_url, :production_url, :team_chat_url, :meeting_time,
                                            :course_id, :github_repo_id, :org_team_id, :repo_url, :project,
                                            :milestones_url, :project_board_url)
     end
