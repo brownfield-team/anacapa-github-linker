@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import {BrowserRouter, Route, Switch, Redirect} from "react-router-dom";
-import TeamsDashboard from "./TeamsDashboard";
+import TeamsDashboard from "./Dashboard/TeamsDashboard";
 import NewProjectTeam from "./Forms/NewProjectTeam";
 import ProjectTeam from "./ProjectTeam";
 

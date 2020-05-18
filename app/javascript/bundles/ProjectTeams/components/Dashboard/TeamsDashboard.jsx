@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import TeamsTable from "./TeamsTable";
 import {Button} from "react-bootstrap";
-import TeamsService from "../services/teams-service";
+import TeamsService from "../../services/teams-service";
 
 class TeamsDashboard extends Component {
     constructor(props) {
