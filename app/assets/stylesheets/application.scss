@@ -25,8 +25,9 @@
   padding-right: 25px;
 }
 
-.tooltip-inner {
-  min-width: 300px; /* the minimum width */
+.tooltip > .tooltip-inner {
+  min-width: 150px; /* the minimum width */
+  max-width: 300px;
 }
 
 .job_name {

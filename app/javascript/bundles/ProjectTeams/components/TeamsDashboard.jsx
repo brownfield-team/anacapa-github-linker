@@ -3,7 +3,6 @@ import * as PropTypes from 'prop-types';
 import TeamsTable from "./TeamsTable";
 import {Button} from "react-bootstrap";
 import TeamsService from "../services/teams-service";
-import '../TeamsDashboard.css';
 
 class TeamsDashboard extends Component {
     constructor(props) {
@@ -22,10 +21,6 @@ class TeamsDashboard extends Component {
         });
     };
 
-    createProjectTeam = () => {
-
-    };
-
     onNewTeamClick = () => {
         this.props.history.push(`${this.props.match.url}/new`);
     };
@@ -33,7 +28,7 @@ class TeamsDashboard extends Component {
     render() {
         return (
             <Fragment>
-                <Button variant="primary" onClick={() => this.onNewTeamClick()}>Add Team</Button>
+                <Button style={{float: 'right'}} bsStyle="primary" onClick={() => this.onNewTeamClick()}>Add Team</Button>
                 <br/>
                 <TeamsTable teams={this.state.teams} {...this.props}/>
             </Fragment>

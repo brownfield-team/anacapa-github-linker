@@ -10,10 +10,10 @@ class TeamsTable extends Component {
                 <Table striped hover>
                     <thead>
                     <tr>
-                        <th className="col-sm-3 px-0">Team Name</th>
+                        <th>Team Name</th>
                         <th>Meeting Time</th>
                         <th>Project</th>
-                        <th>Members</th>
+                        <th className="col-sm-3 px-0">Members</th>
                         <th>GitHub Repo</th>
                         <th>Milestones</th>
                         <th>Project Board</th>

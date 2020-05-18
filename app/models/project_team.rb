@@ -8,7 +8,7 @@ class ProjectTeam < ApplicationRecord
         :student_team_memberships => {
             :include => {
                 :roster_student => {
-                    :methods => :full_name
+                    :methods => [:full_name, :username]
                 }
             }
         }

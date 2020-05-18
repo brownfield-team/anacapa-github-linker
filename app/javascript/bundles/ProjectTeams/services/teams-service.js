@@ -16,7 +16,7 @@ class TeamsService {
     }
 
     static async updateProjectTeam(courseId, projectTeamId, projectTeam) {
-        return axios.put(projectTeamRoute(courseId, projectTeamId)).then(response => response.data);
+        return axios.put(projectTeamRoute(courseId, projectTeamId), projectTeam).then(response => response.data);
     }
 
     static async deleteProjectTeam(courseId, projectTeamId) {

@@ -6,7 +6,7 @@ class ShowProjectTeam extends Component {
     render() {
         return (
             <Fragment>
-                <ProjectTeamForm editable={false} {...this.props} />
+                {/*<ProjectTeamForm editable={false} {...this.props} />*/}
             </Fragment>
         );
     }
