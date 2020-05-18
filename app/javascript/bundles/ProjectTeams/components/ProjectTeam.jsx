@@ -17,21 +17,29 @@ class ProjectTeam extends Component {
         this.updateProjectTeam();
     }
 
+    courseId = () => {
+        return this.props.match.params.courseId;
+    }
+
     updateProjectTeam = () => {
-        const params = this.props.match.params;
-        TeamsService.getProjectTeam(params.courseId, params.projectTeamId).then(teamResponse => {
+        TeamsService.getProjectTeam(this.courseId(), this.props.match.params.projectTeamId).then(teamResponse => {
             this.setState({projectTeam: teamResponse});
         });
     }
 
     saveProjectTeam = (projectTeam) => {
-        TeamsService.updateProjectTeam(this.props.match.params.courseId, projectTeam.id, projectTeam).then(teamResponse => {
+        TeamsService.updateProjectTeam(this.courseId(), projectTeam.id, projectTeam).then(teamResponse => {
             this.setState({projectTeam: teamResponse}, () => {
                 this.props.history.push(this.props.match.url);
             });
         });
     };
 
+    deleteProjectTeam = () => {
+        TeamsService.deleteProjectTeam(this.courseId(), this.state.projectTeam.id).then(response => {
+            this.props.history.push('./')
+        });
+    };
 
     render() {
         const matchPath = this.props.match.path;
@@ -39,7 +47,8 @@ class ProjectTeam extends Component {
             <Fragment>
                 {this.state.projectTeam && <Switch>
                     <Route exact path={matchPath}
-                           render={(props) => <ShowProjectTeam {...props} projectTeam={this.state.projectTeam}/>}/>
+                           render={(props) => <ShowProjectTeam {...props} projectTeam={this.state.projectTeam}
+                                                               deleteProjectTeam={this.deleteProjectTeam}/>}/>
                     <Route path={`${matchPath}/edit`}
                            render={(props) => <ProjectTeamForm projectTeam={this.state.projectTeam}
                                                                saveProjectTeam={this.saveProjectTeam}

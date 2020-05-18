@@ -5,6 +5,12 @@ import {Col, Row, Grid, ControlLabel, FormControl, FormGroup, Button} from "reac
 import ShowProjectTeamField from "./ShowProjectTeamField";
 
 class ShowProjectTeam extends Component {
+    confirmDeleteTeam = () => {
+        if (window.confirm('Are you sure you want to delete this project team?')) {
+            this.props.deleteProjectTeam();
+        }
+    };
+
     render() {
         const t = this.props.projectTeam;
         return (
@@ -26,13 +32,16 @@ class ShowProjectTeam extends Component {
                                           url={t.production_url}/>
                 </Grid>
                 <br />
-                <Button bsStyle="primary" onClick={() => this.props.history.push(this.props.match.url + '/edit')}>Edit Team</Button>
+                <Button bsSize="small" bsStyle="primary" onClick={() => this.props.history.push(this.props.match.url + '/edit')}>Edit Team</Button>
+                &nbsp;
+                <Button bsSize="small" bsStyle="danger" onClick={() => this.confirmDeleteTeam()}>Delete Team</Button>
             </Fragment>
         );
     }
 }
 
 ShowProjectTeam.propTypes = {
+    deleteProjectTeam: PropTypes.func.isRequired,
     projectTeam: PropTypes.object.isRequired
 };
 
