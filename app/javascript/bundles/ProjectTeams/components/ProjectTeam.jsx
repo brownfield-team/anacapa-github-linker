@@ -1,9 +1,10 @@
 import React, {Component, Fragment} from 'react';
-import {Route, Switch} from 'react-router-dom';
+import {Redirect, Route, Switch} from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 import TeamsService from "../services/teams-service";
 import ShowProjectTeam from "./ShowProjectTeam";
 import ProjectTeamForm from "./Forms/ProjectTeamForm";
+import {rootPath} from "./ProjectTeamsRouter";
 
 class ProjectTeam extends Component {
 
@@ -45,7 +46,8 @@ class ProjectTeam extends Component {
         const matchPath = this.props.match.path;
         return (
             <Fragment>
-                {this.state.projectTeam && <Switch>
+                {this.state.projectTeam &&
+                <Switch>
                     <Route exact path={matchPath}
                            render={(props) => <ShowProjectTeam {...props} projectTeam={this.state.projectTeam}
                                                                deleteProjectTeam={this.deleteProjectTeam}/>}/>

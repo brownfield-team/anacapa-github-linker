@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
-import {BrowserRouter, Route, Switch} from "react-router-dom";
+import {BrowserRouter, Route, Switch, Redirect} from "react-router-dom";
 import TeamsDashboard from "./TeamsDashboard";
 import NewProjectTeam from "./Forms/NewProjectTeam";
 import ProjectTeam from "./ProjectTeam";
@@ -11,6 +11,9 @@ class ProjectTeamsRouter extends Component {
         return (
             <Fragment>
                 <Switch>
+                    {/* TODO: Find the proper way to handle trailing slashes so React Router doesn't throw a fit.
+                     This is a hack. */}
+                    <Redirect exact strict from={rootPath + '/'} to={rootPath}/>
                     <Route exact path={rootPath} component={TeamsDashboard}/>
                     <Route exact path={newProjectTeamPath} component={NewProjectTeam}/>
                     <Route path={projectTeamPath} component={ProjectTeam}/>

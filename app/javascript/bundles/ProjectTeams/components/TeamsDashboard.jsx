@@ -22,7 +22,8 @@ class TeamsDashboard extends Component {
     };
 
     onNewTeamClick = () => {
-        this.props.history.push(`${this.props.match.url}/new`);
+        const mUrl = this.props.match.url;
+        this.props.history.push(mUrl + '/new');
     };
 
     render() {
