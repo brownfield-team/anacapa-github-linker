@@ -42,7 +42,7 @@ Rails.application.routes.draw do
           get :unadded
         end
       end
-      get "project_teams(/*all)", to: "project_teams#index"
+      get "project_teams(/*all)", to: "project_teams#index", as: :project_teams
       resource :github_webhooks, :only => [:create], :defaults => {:format => :json} do
 
       end
