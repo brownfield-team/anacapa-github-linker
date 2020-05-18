@@ -16,6 +16,7 @@ class ShowProjectTeam extends Component {
         const t = this.props.projectTeam;
         return (
             <Fragment>
+                <Button bsStyle="link" onClick={() => this.props.history.push('.')}>{"< Dashboard"}</Button>
                 <Panel>
                     <Panel.Heading>Info</Panel.Heading>
                     <Panel.Body>

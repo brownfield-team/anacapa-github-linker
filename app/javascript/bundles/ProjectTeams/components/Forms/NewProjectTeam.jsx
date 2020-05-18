@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types';
 import ProjectTeamForm from "./ProjectTeamForm";
 import ProjectTeamModel from "../../models/ProjectTeamModel"
 import TeamsService from "../../services/teams-service";
+import {Button} from "react-bootstrap";
 
 class NewProjectTeam extends Component {
 
@@ -17,6 +18,7 @@ class NewProjectTeam extends Component {
         const projectTeam = new ProjectTeamModel(parseInt(this.props.match.params.courseId));
         return (
             <Fragment>
+                <Button bsStyle="link" onClick={() => this.props.history.push('.')}>{"< Dashboard"}</Button>
                 <ProjectTeamForm projectTeam={projectTeam} saveProjectTeam={this.createProjectTeam}
                                  editable={true} {...this.props} />
             </Fragment>
