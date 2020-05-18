@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import {Label, OverlayTrigger, Tooltip} from "react-bootstrap";
-import {studentRoute} from "../services/teams-service-routes";
+import {studentUiRoute} from "../services/teams-service-routes";
 
 class TeamMembersList extends Component {
     renderMemberTooltip(member) {
@@ -16,7 +16,7 @@ class TeamMembersList extends Component {
 
     renderMember(member) {
         const student = member.roster_student;
-        const studentLink = studentRoute(student.course_id, student.id);
+        const studentLink = studentUiRoute(student.course_id, student.id);
         return (
             <Fragment key={member.id}>
                 <OverlayTrigger placement="top" overlay={this.renderMemberTooltip(member)}

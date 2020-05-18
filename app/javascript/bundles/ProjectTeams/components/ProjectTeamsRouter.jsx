@@ -13,7 +13,7 @@ class ProjectTeamsRouter extends Component {
                 <Switch>
                     <Route exact path={rootPath} component={TeamsDashboard}/>
                     <Route exact path={newProjectTeamPath} component={NewProjectTeam}/>
-                    <Route exact path={projectTeamPath} component={ProjectTeam}/>
+                    <Route path={projectTeamPath} component={ProjectTeam}/>
                 </Switch>
             </Fragment>
         );

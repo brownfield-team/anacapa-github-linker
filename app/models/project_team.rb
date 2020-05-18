@@ -11,7 +11,8 @@ class ProjectTeam < ApplicationRecord
                     :methods => [:full_name, :username]
                 }
             }
-        }
+        },
+        :org_team => {}
     })
   end
 end

@@ -1,9 +1,9 @@
 import React, {Component, Fragment} from 'react';
 import {Route, Switch} from 'react-router-dom';
 import * as PropTypes from 'prop-types';
-import ProjectTeamForm from "./Forms/ProjectTeamForm";
 import TeamsService from "../services/teams-service";
 import ShowProjectTeam from "./ShowProjectTeam";
+import ProjectTeamForm from "./Forms/ProjectTeamForm";
 
 class ProjectTeam extends Component {
 
@@ -25,9 +25,9 @@ class ProjectTeam extends Component {
     }
 
     saveProjectTeam = (projectTeam) => {
-        TeamsService.updateProjectTeam(projectTeam.id, projectTeam).then(teamResponse => {
+        TeamsService.updateProjectTeam(this.props.match.params.courseId, projectTeam.id, projectTeam).then(teamResponse => {
             this.setState({projectTeam: teamResponse}, () => {
-                this.props.history.push(this.props.match.path);
+                this.props.history.push(this.props.match.url);
             });
         });
     };
@@ -42,7 +42,8 @@ class ProjectTeam extends Component {
                            render={(props) => <ShowProjectTeam {...props} projectTeam={this.state.projectTeam}/>}/>
                     <Route path={`${matchPath}/edit`}
                            render={(props) => <ProjectTeamForm projectTeam={this.state.projectTeam}
-                                                          editable={true} {...props}/>}/>
+                                                               saveProjectTeam={this.saveProjectTeam}
+                                                               editable={true} {...props}/>}/>
                 </Switch>}
             </Fragment>
         );

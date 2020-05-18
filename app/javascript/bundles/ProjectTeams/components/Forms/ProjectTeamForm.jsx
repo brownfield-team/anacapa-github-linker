@@ -29,12 +29,12 @@ class ProjectTeamForm extends Component {
     };
 
     render() {
-        const t = this.props.projectTeam;
+        const t = this.state.projectTeam;
         return (
             <Fragment>
                 <Form horizontal>
 
-                    <ProjectTeamFormField name={'Team Name'} property={'name'} value={this.state.projectTeam.name}
+                    <ProjectTeamFormField name={'Team Name'} property={'name'} value={t.name}
                                           placeholder={'Name'}
                                           onProjectTeamEdited={this.onProjectTeamEdited}/>
 
@@ -45,7 +45,7 @@ class ProjectTeamForm extends Component {
                         <Col sm={10}>
                             <FormControl
                                 componentClass="select"
-                                value={this.state.projectTeam.org_team_id}
+                                value={t.org_team_id}
                                 onChange={(event) => {
                                     this.onProjectTeamEdited('org_team_id', parseInt(event.target.value))
                                 }}>
@@ -58,40 +58,40 @@ class ProjectTeamForm extends Component {
                     </FormGroup>
 
                     <ProjectTeamFormField name={'Meeting Time'} property={'meeting_time'}
-                                          value={this.state.projectTeam.meeting_time}
+                                          value={t.meeting_time}
                                           onProjectTeamEdited={this.onProjectTeamEdited}/>
 
-                    <ProjectTeamFormField name={'Project'} property={'project'} value={this.state.projectTeam.project}
+                    <ProjectTeamFormField name={'Project'} property={'project'} value={t.project}
                                           onProjectTeamEdited={this.onProjectTeamEdited}/>
 
                     <ProjectTeamFormField name={'Milestones URL'} property={'milestones_url'}
-                                          value={this.state.projectTeam.milestones_url}
+                                          value={t.milestones_url}
                                           onProjectTeamEdited={this.onProjectTeamEdited}/>
 
                     <ProjectTeamFormField name={'Repo URL'} property={'repo_url'}
-                                          value={this.state.projectTeam.repo_url}
+                                          value={t.repo_url}
                                           onProjectTeamEdited={this.onProjectTeamEdited}/>
 
                     <ProjectTeamFormField name={'Project Board URL'} property={'project_board_url'}
-                                          value={this.state.projectTeam.project_board_url}
+                                          value={t.project_board_url}
                                           onProjectTeamEdited={this.onProjectTeamEdited}/>
 
                     <ProjectTeamFormField name={'Team Chat URL'} property={'team_chat_url'}
-                                          value={this.state.projectTeam.team_chat_url}
+                                          value={t.team_chat_url}
                                           onProjectTeamEdited={this.onProjectTeamEdited}/>
 
-                    <ProjectTeamFormField name={'QA URL'} property={'qa_url'} value={this.state.projectTeam.qa_url}
+                    <ProjectTeamFormField name={'QA URL'} property={'qa_url'} value={t.qa_url}
                                           onProjectTeamEdited={this.onProjectTeamEdited}/>
 
                     <ProjectTeamFormField name={'Production URL'} property={'production_url'}
-                                          value={this.state.projectTeam.production_url}
+                                          value={t.production_url}
                                           onProjectTeamEdited={this.onProjectTeamEdited}/>
                     <FormGroup>
                         <Col smOffset={2} sm={10}>
                             <Button
                                 bsStyle="primary"
-                                onClick={() => this.props.saveProjectTeam(this.state.projectTeam)}>
-                                {this.state.projectTeam.id === 0 ?
+                                onClick={() => this.props.saveProjectTeam(t)}>
+                                {t.id === 0 ?
                                     'Create Team' :
                                     'Save Team'}
                             </Button>

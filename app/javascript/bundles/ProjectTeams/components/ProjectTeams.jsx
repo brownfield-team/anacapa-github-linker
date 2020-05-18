@@ -2,11 +2,6 @@ import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import ProjectTeamsRouter from "./ProjectTeamsRouter";
-import TeamsDashboard from "./TeamsDashboard";
-import NewProjectTeam from "./Forms/NewProjectTeam";
-import ProjectTeam from "./ProjectTeam";
-import EditProjectTeam from "./Forms/EditProjectTeam";
-import TeamsService from "../services/teams-service";
 import axios from "../../../helpers/axios-rails";
 import ReactOnRails from "react-on-rails";
 
