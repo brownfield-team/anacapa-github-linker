@@ -1,11 +1,11 @@
 require 'Octokit_Wrapper'
 
 module Courses
-  class TeamsController < ApplicationController
+  class OrgTeamsController < ApplicationController
     before_action :load_parent
     load_and_authorize_resource :course
 
-    def show
+    def index
       @teams = @parent.org_teams
     end
 
@@ -19,11 +19,11 @@ module Courses
       permission_level = params[:permission]
       visibility = params[:visibility]
       unless repo_name_pattern.include?("{team}")
-        redirect_to course_teams_path(@course), alert: "Your naming pattern must include {team} in it."
+        redirect_to create_teams_course_org_teams_path(@course), alert: "Your naming pattern must include {team} in it."
       end
-      options = { :team_pattern => team_name_pattern, :repo_pattern => repo_name_pattern, :permission_level => permission_level, :visibility => visibility }
+      options = {:team_pattern => team_name_pattern, :repo_pattern => repo_name_pattern, :permission_level => permission_level, :visibility => visibility}
       CreateTeamReposJob.perform_async(@parent.id, options)
-      redirect_to course_teams_path(@course), notice: "Repository creation successfully queued."
+      redirect_to course_org_teams_path(@course), notice: "Repository creation successfully queued."
     end
 
     def create_teams
@@ -43,13 +43,14 @@ module Courses
         team_hash[team_name] ||= []
         team_hash[team_name] << row[0].strip
       end
-      CreateGithubTeamsJob.perform_async(@course.id, { :teams => team_hash })
+      CreateGithubTeamsJob.perform_async(@course.id, {:teams => team_hash})
       redirect_to course_teams_path(@course), notice: "Team creation successfully queued."
     end
 
     private
-      def load_parent
-        @parent = Course.find(params[:course_id])
-      end
+
+    def load_parent
+      @parent = Course.find(params[:course_id])
+    end
   end
 end
