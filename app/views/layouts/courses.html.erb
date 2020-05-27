@@ -5,7 +5,8 @@
                         props: {current_path: request.env['PATH_INFO'], roster_path: course_path(@course),
                                 project_teams_path: course_project_teams_path(@course), org_teams_path: course_org_teams_path(@course),
                                 repos_path: course_repos_path(@course), slack_path: course_slack_path(@course),
-                                jobs_path: course_jobs_path(@course), edit_path: edit_course_path(@course)
+                                jobs_path: course_jobs_path(@course), edit_path: edit_course_path(@course),
+                                can_edit: can?(:update, @course)
                         },
                         prerender: true) %>
     <br/>

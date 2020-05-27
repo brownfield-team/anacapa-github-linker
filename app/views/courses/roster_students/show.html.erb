@@ -1,4 +1,7 @@
-<h2><%= @roster_student.full_name %></h2>
+<!--<h2><%#= @roster_student.full_name %></h2>-->
+<%= link_to '< Back', course_path(@parent), :class => "btn btn-outline-secondary", :style => "padding-left:0;" %> |
+<%= link_to 'Edit', edit_course_roster_student_path(@parent, @roster_student), :class => "btn btn-outline-secondary
+text-left" %>
 <dl class="dl-horizontal">
   <dt>Student ID</dt>
   <dd> <%= @roster_student.perm %></dd>
@@ -50,8 +53,8 @@
   <% end %>
 
   <% unless @roster_student.org_teams.empty? %>
-  <p>
-    <strong>Teams</strong>
+    <p>
+      <strong>Teams</strong>
     <table class="table">
       <thead>
       <tr>
@@ -66,43 +69,40 @@
         </tr>
       <% end %>
     </table>
-  </p>
+    </p>
   <% end %>
 
   <p class="repo-list-table">
     <% org_repos = find_org_repos %>
     <% unless org_repos.empty? %>
-    <strong>Repositories</strong>
-    <table class="table">
-      <thead>
-      <tr>
-        <th>Repository (Student Name)</th>
-        <th>GitHub ID</th>
-        <th>Visibility (Permission Level)</th>
-      </tr>
-      </thead>
-      <% org_repos.each do |repo| %>
+      <strong>Repositories</strong>
+      <table class="table">
+        <thead>
         <tr>
-          <td><a href=<%= repo.url %>><%= repo.name %></td>
-          <td></td>
-          <td><a href=<%= repo.url + "/settings" %>><%= repo.visibility %></td>
+          <th>Repository (Student Name)</th>
+          <th>GitHub ID</th>
+          <th>Visibility (Permission Level)</th>
         </tr>
-        <% repo.find_contributors.each do |contributor| %>
-          <tr class="leftMargin">
-            <td><%= link_to "#{contributor["first_name"]} #{contributor["last_name"]}",
-                            course_roster_student_path(@parent, contributor["id"]) %></td>
-            <td><a href="https://github.com/<%= contributor["username"] %>"><%= contributor["username"] %></td>
-            <td><a href="<%= repo.url %>/settings/access"><%= contributor["permission_level"] %></td>
+        </thead>
+        <% org_repos.each do |repo| %>
+          <tr>
+            <td><a href=<%= repo.url %>><%= repo.name %></td>
+            <td></td>
+            <td><a href=<%= repo.url + "/settings" %>><%= repo.visibility %></td>
           </tr>
+          <% repo.find_contributors.each do |contributor| %>
+            <tr class="leftMargin">
+              <td><%= link_to "#{contributor["first_name"]} #{contributor["last_name"]}",
+                              course_roster_student_path(@parent, contributor["id"]) %></td>
+              <td><a href="https://github.com/<%= contributor["username"] %>"><%= contributor["username"] %></td>
+              <td><a href="<%= repo.url %>/settings/access"><%= contributor["permission_level"] %></td>
+            </tr>
+          <% end %>
         <% end %>
-      <% end %>
-    </table>
+      </table>
     <% end %>
-  </p>
+    </p>
 
 <% else %>
-  <p class="no-repo-list-table"> </p>
+  <p class="no-repo-list-table"></p>
 <% end %>
-
-<%= link_to 'Edit', edit_course_roster_student_path(@parent, @roster_student), :class => "btn btn-outline-secondary" %> |  
-<%= link_to 'Back', course_path(@parent), :class => "btn btn-outline-secondary" %>

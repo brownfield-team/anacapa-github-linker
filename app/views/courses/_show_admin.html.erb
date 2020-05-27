@@ -34,35 +34,14 @@
 
       <% end %>
 
-      <%= link_to "View Jobs", course_jobs_path(@course), method: :get, class: "btn btn-default",
-                  style: "display:inline-block; float: right; margin-left: 10px;" %>
-
-      <div class="btn-group" style="display: inline-block; float: right; margin-left: 10px;">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Manage Students <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <% if can? :create, RosterStudent %>
-            <li> <%= link_to 'New Student', new_course_roster_student_path(@course) %> </li>
-          <% end %>
-          <li role="separator" class="divider"></li>
-          <li> <%= link_to "Download CSV Roster", course_roster_students_path(@course, :format => "csv"), method: :get %> </li>
-        </ul>
-      </div>
-
-      <%= link_to "Teams", course_project_teams_path(@course), method: :get, class: "btn btn-default",
-                  style: "display:inline-block; float: right; margin-left: 10px;" %>
-
-      <%= link_to "Repositories", course_repos_path(@course), method: :get, class: "btn btn-default",
-                  style: "display:inline-block; float: right; margin-left: 10px;" %>
-
-      <%= link_to "Slack", course_slack_path(@course), method: :get, class: "btn btn-default",
-                  style: "display:inline-block; float: right; margin-left: 10px;" %>
-
-
-      <% if can? :update, @course %>
-        <%= link_to 'Edit', edit_course_path(@course), class: 'btn' %>
+      <% if can? :create, RosterStudent %>
+        <%= link_to "New Student", course_roster_student_path(@course), method: :get, class: "btn btn-default",
+                    style: "display:inline-block; float: right; margin-left: 10px;" %>
       <% end %>
+
+      <%= link_to "Download CSV Roster", course_roster_students_path(@course, :format => "csv"), method: :get, class:
+          "btn btn-default",
+                  style: "display:inline-block; float: right; margin-left: 10px;" %>
 
     </div>
 
@@ -98,7 +77,6 @@
         <th data-sortable="true" data-field="OrgMembership" data-filter-control="select">Org Status</th>
         <th data-sortable="true" data-field="Teams" data-filter-control="input">Teams</th>
         <th></th>
-        <th></th>
       </tr>
       </thead>
 
@@ -106,7 +84,7 @@
       <% @course.roster_students.each do |student| %>
         <tr>
           <td><%= student.perm %></td>
-          <td><%= student.full_name %></td>
+          <td><%= link_to student.full_name, course_roster_student_path(@course, student) %></td>
           <td><%= student.email %></td>
           <td><%= student.enrolled ? "True" : "False" %></td>
           <td><%= student.section %></td>
@@ -133,7 +111,6 @@
               <%= link_to(team.name, team.url) + (", " unless index == student.org_teams.size - 1) %>
             <% end %>
           </td>
-          <td><%= link_to 'Show', course_roster_student_path(@course, student) %></td>
           <% if can? :destroy, student %>
             <td><%= link_to 'Remove', course_roster_student_path(@course, student), method: :delete, data: {confirm: 'Are you sure?'} %></td>
           <% end %>
