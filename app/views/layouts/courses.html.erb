@@ -1,6 +1,7 @@
 <% content_for :main_content do %>
-  <h1> <%= link_to @course.name, course_path(@course) %> </h1>
-  <hr>
+  <% if @course.present? %>
+    <h1> <%= link_to @course.name, course_path(@course) %> </h1>
+  <% end %>
   <%= yield %>
 <% end %>
 <%= render template: "layouts/application" %>
