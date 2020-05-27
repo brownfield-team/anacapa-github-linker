@@ -5,6 +5,7 @@ require 'Octokit_Wrapper'
 
 module Courses
   class RosterStudentsController < ApplicationController
+    layout 'courses'
     before_action :load_parent
     before_action :set_roster_student, only: [:show, :edit, :update, :destroy]
 

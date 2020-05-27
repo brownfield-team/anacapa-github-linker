@@ -3,7 +3,7 @@ require 'Octokit_Wrapper'
 class CoursesController < ApplicationController
   before_action :set_course, only: [:show, :edit, :update, :destroy]
   load_and_authorize_resource
-
+  layout 'courses', except: :index
 
   # GET /courses
   # GET /courses.json

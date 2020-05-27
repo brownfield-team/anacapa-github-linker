@@ -1,18 +1,20 @@
 module Courses
   class SlackController < ApplicationController
+    layout 'courses'
+    load_and_authorize_resource :course
+
     def show
-      @parent = Course.find(params[:course_id])
-      @workspace = @parent.slack_workspace
+      @slack_workspace = @course.slack_workspace
     end
 
     def destroy
-      @parent = Course.find(params[:course_id])
-      if @parent.slack_workspace.present?
-        @parent.slack_workspace.destroy
-        @parent.save
-        redirect_to course_slack_path(@parent), notice: "Workspace successfully removed from course."
+      @course = Course.find(params[:course_id])
+      if @course.slack_workspace.present?
+        @course.slack_workspace.destroy
+        @course.save
+        redirect_to course_slack_path(@course), notice: "Workspace successfully removed from course."
       else
-        redirect_to course_slack_path(@parent), alert: "Workspace to delete could not be found."
+        redirect_to course_slack_path(@course), alert: "Workspace to delete could not be found."
       end
     end
   end

@@ -4,6 +4,7 @@ module Courses
   class OrgTeamsController < ApplicationController
     before_action :load_parent
     load_and_authorize_resource :course
+    layout 'courses'
 
     def index
       @teams = @parent.org_teams
