@@ -1,15 +1,9 @@
-<h1> <%= link_to @course.name, course_path(@course) %>
-  <div class="btn-group" style="display: inline-block; float: right; margin-left: 10px;">
-    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      Manage Teams <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-      <li> <%= link_to 'Create Teams from CSV', create_teams_course_org_teams_path%></li>
-      <li> <%= link_to 'Create Team Repositories', create_repos_course_org_teams_path%> </li>
-    </ul>
-  </div>
-</h1>
-<p></p>
+<h1> <%= link_to @course.name, course_path(@course) %> </h1>
+<div class="btn-group" style="display: inline-block; float: right; margin-left: 10px;">
+  <%= link_to "Project Teams", course_project_teams_path(@course), method: :get, class: "btn btn-default",
+              style: "display:inline-block; float: right; margin-left: 10px;" %>
+</div>
+<br /> <br />
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <% collapsed = "in" # slightly messy way to make only the first panel expanded on page load while allowing more than one to be expanded at a time %>
   <% @teams.each do |team| %>
@@ -46,7 +40,7 @@
                     <td>
                       <div id="<%= student.roster_student.full_name %>" class="hidden-sort-div"></div>
                       <%= link_to student.roster_student.full_name, course_roster_student_path(@course, student.roster_student) %>
-                      </td>
+                    </td>
                     <td><%= link_to student.roster_student.user.username, "https://github.com/#{student.roster_student.user.username}" %></td>
                     <td>
                       <div id="<%= student.role %>" class="hidden-sort-div"></div>
