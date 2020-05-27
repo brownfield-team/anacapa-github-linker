@@ -5,7 +5,7 @@ import {Form, FormControl, FormGroup, ControlLabel} from "react-bootstrap";
 class UsersSearch extends Component {
     render() {
         return (
-            <Form horizontal>
+            <Form>
                 <FormGroup>
                     <ControlLabel>User Type</ControlLabel>
                     <FormControl

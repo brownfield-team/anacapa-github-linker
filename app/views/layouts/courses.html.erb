@@ -1,5 +1,5 @@
 <% content_for :main_content do %>
-  <% if @course.present? %>
+  <% if @course.present? && @course.id.present? %>
     <h1> <%= link_to @course.name, course_path(@course) %> </h1>
     <%= react_component("CourseNavBar",
                         props: {current_path: request.env['PATH_INFO'], roster_path: course_path(@course),

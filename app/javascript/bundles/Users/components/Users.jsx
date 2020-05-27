@@ -99,7 +99,6 @@ class Users extends Component {
                     onSearchChanged={this.onSearchChanged}
                     onTypeChanged={this.onTypeChanged}
                 />
-                <br />
                 <UsersTable
                     users={this.state.users}
                     page={this.state.page}
