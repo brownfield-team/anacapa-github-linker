@@ -30,7 +30,6 @@ class TeamsDashboard extends Component {
         return (
             <Fragment>
                 <Button style={{float: 'right'}} bsStyle="primary" onClick={() => this.onNewTeamClick()}>Add Team</Button>
-                <Button style={{float: 'right', marginRight: 10}} bsStyle="default" href='org_teams'>All Teams</Button>
                 <br/>
                 <TeamsTable teams={this.state.teams} {...this.props}/>
             </Fragment>
