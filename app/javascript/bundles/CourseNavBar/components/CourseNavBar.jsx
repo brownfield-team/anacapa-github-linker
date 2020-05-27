@@ -3,11 +3,11 @@ import * as PropTypes from 'prop-types';
 import {Row, Col, MenuItem, Tab, Nav, NavItem, NavDropdown, Button} from "react-bootstrap";
 
 class CourseNavBar extends Component {
-    currentActiveTab = () => {
+    currentActiveTab = (currentPath) => {
         // Captures path after the course index.
         // E.g. for path '/courses/1/project_teams/new', this captures 'project_teams'.
         const pathMatchRegex = new RegExp('\/courses\/[0-9]*/([^/]*)', 'i');
-        const coursePathMatches = pathMatchRegex.exec(this.props.current_path);
+        const coursePathMatches = pathMatchRegex.exec(currentPath);
         if (coursePathMatches == null || coursePathMatches.length <= 1) {
             return 'roster_students';
         }
@@ -15,7 +15,7 @@ class CourseNavBar extends Component {
     }
 
     render() {
-        const activeTabKey = this.currentActiveTab();
+        const activeTabKey = this.currentActiveTab(this.props.current_path);
         return (
             <Fragment>
                 <Nav bsStyle="tabs" activeKey={activeTabKey}>
