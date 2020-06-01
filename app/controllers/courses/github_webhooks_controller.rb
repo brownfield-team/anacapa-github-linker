@@ -149,7 +149,7 @@ module Courses
         puts commit
         unless commit[:distinct] then next end
         commit = GithubRepoCommit.new
-        commit.files_changed = commit[:added].union(commit[:removed], commit[:modified]).size
+        commit.files_changed = [].union(commit[:added], commit[:removed], commit[:modified]).size
         commit.message = commit[:message]
         commit.hash = commit[:id]
         commit.url = commit[:url]
