@@ -141,6 +141,10 @@ module Courses
       end
     end
 
+    def github_push(payload)
+
+    end
+
     private
     def webhook_secret(payload)
       ENV['GITHUB_WEBHOOK_SECRET']

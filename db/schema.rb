@@ -10,7 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20200603092619) do
+=======
+ActiveRecord::Schema.define(version: 20200601064436) do
+>>>>>>> 1bdc15b... Added commits table and started hook logic
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
