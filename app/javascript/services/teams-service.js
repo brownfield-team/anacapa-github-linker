@@ -1,8 +1,7 @@
 import axios from '../helpers/axios-rails';
-import {projectTeamsRoute, orgTeamsRoute, projectTeamRoute} from "./teams-service-routes";
+import {projectTeamsRoute, orgTeamsRoute, projectTeamRoute} from "./service-routes";
 
 class TeamsService {
-
     static async getProjectTeams(courseId) {
         return axios.get(projectTeamsRoute(courseId)).then(response => response.data);
     }

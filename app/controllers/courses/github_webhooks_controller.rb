@@ -143,7 +143,7 @@ module Courses
 
     def github_push(payload)
       repo = GithubRepo.find_by_repo_id(payload[:repository][:id])
-      branch = /refs\/heads\/(.*)/.match(payload[:ref])
+      branch = /refs\/heads\/(.*)/.match(payload[:ref])[1]
       student = @course.student_for_uid(payload[:sender][:id])
       payload[:commits].each do |commit|
         puts commit
