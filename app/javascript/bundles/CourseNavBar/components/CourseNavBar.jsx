@@ -6,10 +6,13 @@ class CourseNavBar extends Component {
     currentActiveTab = (currentPath) => {
         // Captures path after the course index.
         // E.g. for path '/courses/1/project_teams/new', this captures 'project_teams'.
-        const pathMatchRegex = new RegExp('\/courses\/[0-9]*/([^/]*)', 'i');
+        const pathMatchRegex = new RegExp('\/courses\/[0-9]*/([^/]*)\/([^/]*)', 'i');
         const coursePathMatches = pathMatchRegex.exec(currentPath);
         if (coursePathMatches == null || coursePathMatches.length <= 1) {
             return 'roster_students';
+        }
+        if (coursePathMatches[1] === 'org_teams' && coursePathMatches[2] != null) {
+            return coursePathMatches[2];
         }
         return coursePathMatches[1];
     }
@@ -24,7 +27,7 @@ class CourseNavBar extends Component {
                         <MenuItem eventKey="project_teams" href={this.props.project_teams_path}>Project Teams</MenuItem>
                         <MenuItem eventKey="org_teams" href={this.props.org_teams_path}>GitHub Teams</MenuItem>
                         <MenuItem eventKey="create_teams" href={this.props.create_teams_path}>Create Teams From CSV</MenuItem>
-                        <MenuItem eventKey="create_team_repos" href={this.props.create_team_repos_path}>Create Team Repos</MenuItem>
+                        <MenuItem eventKey="create_repos" href={this.props.create_team_repos_path}>Create Team Repos</MenuItem>
                     </NavDropdown>
                     <NavItem eventKey="repos" href={this.props.repos_path}>Repositories</NavItem>
                     <NavItem eventKey="slack" href={this.props.slack_path}>Slack</NavItem>
