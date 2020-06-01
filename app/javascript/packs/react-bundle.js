@@ -1,8 +1,8 @@
 import ReactOnRails from 'react-on-rails';
 
-import Users from '../bundles/Users/components/Users';
-import ProjectTeams from "../bundles/ProjectTeams/components/ProjectTeams";
-import CourseNavBar from "../bundles/CourseNavBar/components/CourseNavBar";
+import Users from '../components/Users/Users';
+import ProjectTeams from "../components/ProjectTeams/ProjectTeams";
+import CourseNavBar from "../components/CourseNavBar/CourseNavBar";
 
 ReactOnRails.register({
   Users,

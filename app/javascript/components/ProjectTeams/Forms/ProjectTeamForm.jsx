@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
-import TeamsService from "../../services/teams-service";
+import TeamsService from "../../../services/teams-service";
 import {Form, Col, Button, FormGroup, FormControl, ControlLabel} from "react-bootstrap";
 import update from "immutability-helper";
 import ProjectTeamFormField from "./ProjectTeamFormField";

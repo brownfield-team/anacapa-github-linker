@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import {Label, OverlayTrigger, Tooltip} from "react-bootstrap";
-import {studentUiRoute} from "../../services/teams-service-routes";
+import {studentUiRoute} from "../../../services/teams-service-routes";
 
 class TeamMembersList extends Component {
     renderMemberTooltip(member) {

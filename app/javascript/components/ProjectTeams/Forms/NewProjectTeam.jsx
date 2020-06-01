@@ -1,8 +1,8 @@
 import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import ProjectTeamForm from "./ProjectTeamForm";
-import ProjectTeamModel from "../../models/ProjectTeamModel"
-import TeamsService from "../../services/teams-service";
+import ProjectTeamModel from "../../../models/ProjectTeamModel"
+import TeamsService from "../../../services/teams-service";
 import {Button} from "react-bootstrap";
 
 class NewProjectTeam extends Component {

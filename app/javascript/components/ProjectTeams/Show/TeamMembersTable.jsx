@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import {Table, Panel, Button} from "react-bootstrap";
-import {studentUiRoute} from "../../services/teams-service-routes";
+import {studentUiRoute} from "../../../services/teams-service-routes";
 
 class TeamMembersTable extends Component {
 

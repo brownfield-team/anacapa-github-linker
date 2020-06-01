@@ -1,4 +1,4 @@
-import axios from '../../../helpers/axios-rails';
+import axios from '../helpers/axios-rails';
 import {projectTeamsRoute, orgTeamsRoute, projectTeamRoute} from "./teams-service-routes";
 
 class TeamsService {

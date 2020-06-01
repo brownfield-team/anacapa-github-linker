@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import ProjectTeamsRouter from "./ProjectTeamsRouter";
-import axios from "../../../helpers/axios-rails";
+import axios from "../../helpers/axios-rails";
 import ReactOnRails from "react-on-rails";
 
 class ProjectTeams extends Component {
