@@ -99,6 +99,7 @@ class Users extends Component {
                     onSearchChanged={this.onSearchChanged}
                     onTypeChanged={this.onTypeChanged}
                 />
+                <p>To change a user's role, click on their role in the table, modify the dropdown that is revealed, and hit enter or click away.</p>
                 <UsersTable
                     users={this.state.users}
                     page={this.state.page}

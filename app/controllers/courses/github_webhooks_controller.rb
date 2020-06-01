@@ -146,6 +146,7 @@ module Courses
       branch = /refs\/heads\/(.*)/.match(payload[:ref])
       student = @course.student_for_uid(payload[:sender][:id])
       payload[:commits].each do |commit|
+        puts commit
         unless commit[:distinct] then next end
         commit = GithubRepoCommit.new
         commit.files_changed = commit[:added].union(commit[:removed], commit[:modified]).size

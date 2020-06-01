@@ -60,8 +60,7 @@ class Course < ApplicationRecord
           :content_type => 'json',
           :secret => ENV['GITHUB_WEBHOOK_SECRET']
         }, {
-          :events => ['repository', 'member', 'team', 'membership', 'organization', 'issues', 'pull_request',
-                      'project_column'],
+          :events => %w[repository member team membership organization issues pull_request project_column],
           :active => true
       })
       OrgWebhook.create(hook_id: response.id, hook_url: response.url, course: self)
