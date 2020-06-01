@@ -1,5 +1,3 @@
-<h1> <%= link_to @course.name, course_path(@course) %> </h1>
-
 <p>On this page, you can upload a CSV to automatically generate GitHub teams with members in them. The CSV should include
 two columns: GitHub ID first, and the team to assign that GitHub user two in the second column. For example:</p>
 
@@ -15,7 +13,7 @@ two columns: GitHub ID first, and the team to assign that GitHub user two in the
 <p><b>NOTE:</b> GitHub usernames are case sensitive. This is a limitation of the GitHub API.</p>
 <div class="panel panel-default">
   <div class="panel-body">
-<%= form_tag generate_teams_course_teams_path, method: :post, multipart: true, class: "form-inline" do %>
+<%= form_tag generate_teams_course_org_teams_path, method: :post, multipart: true, class: "form-inline" do %>
   <%= file_field_tag :file %>
   <%= label_tag "Ignore first row" %>
   <%= check_box_tag :ignore_first_row%>
