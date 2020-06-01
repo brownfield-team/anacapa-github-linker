@@ -151,7 +151,7 @@ module Courses
         commit = GithubRepoCommit.new
         commit.files_changed = [].union(commit[:added] || [], commit[:removed] || [], commit[:modified] || []).size
         commit.message = commit[:message]
-        commit.hash = commit[:id]
+        commit.commit_hash = commit[:id]
         commit.url = commit[:url]
         commit.commit_timestamp = commit[:url]
         commit.github_repo = repo
