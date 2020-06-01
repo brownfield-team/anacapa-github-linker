@@ -146,14 +146,13 @@ module Courses
       branch = /refs\/heads\/(.*)/.match(payload[:ref])[1]
       student = @course.student_for_uid(payload[:sender][:id])
       payload[:commits].each do |commit|
-        puts commit
         unless commit[:distinct] then next end
         commit = GithubRepoCommit.new
-        commit.files_changed = [].union(commit[:added] || [], commit[:removed] || [], commit[:modified] || []).size
-        commit.message = commit[:message]
-        commit.commit_hash = commit[:id]
-        commit.url = commit[:url]
-        commit.commit_timestamp = commit[:url]
+        commit.files_changed = [].union(commit['added'] || [], commit['removed'] || [], commit['modified'] || []).size
+        commit.message = commit['message']
+        commit.commit_hash = commit['id']
+        commit.url = commit['url']
+        commit.commit_timestamp = commit['timestamp']
         commit.github_repo = repo
         commit.branch = branch
         commit.roster_student = student
