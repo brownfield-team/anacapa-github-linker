@@ -142,7 +142,22 @@ module Courses
     end
 
     def github_push(payload)
-
+      repo = GithubRepo.find_by_repo_id(payload[:repository][:id])
+      branch = /refs\/heads\/(.*)/.match(payload[:ref])
+      student = @course.student_for_uid(payload[:sender][:id])
+      payload[:commits].each do |commit|
+        unless commit[:distinct] then next end
+        commit = GithubRepoCommit.new
+        commit.files_changed = commit[:added].union(commit[:removed], commit[:modified]).size
+        commit.message = commit[:message]
+        commit.hash = commit[:id]
+        commit.url = commit[:url]
+        commit.commit_timestamp = commit[:url]
+        commit.github_repo = repo
+        commit.branch = branch
+        commit.roster_student = student
+        commit.save
+      end
     end
 
     private

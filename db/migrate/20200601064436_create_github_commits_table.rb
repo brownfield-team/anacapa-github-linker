@@ -4,8 +4,9 @@ class CreateGithubCommitsTable < ActiveRecord::Migration[5.1]
       t.belongs_to :github_repo, foreign_key: true
       t.belongs_to :roster_student, foreign_key: true
       t.string :message
-      t.string :hash
+      t.string :commit_hash
       t.string :url
+      t.string :branch
       t.integer :files_changed
       t.datetime :commit_timestamp
       t.timestamps
