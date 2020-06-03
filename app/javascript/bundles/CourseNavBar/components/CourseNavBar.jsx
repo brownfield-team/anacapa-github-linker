@@ -6,13 +6,14 @@ class CourseNavBar extends Component {
     currentActiveTab = (currentPath) => {
         // Captures path after the course index.
         // E.g. for path '/courses/1/project_teams/new', this captures 'project_teams'.
-        const pathMatchRegex = new RegExp('\/courses\/[0-9]*/([^/]*)\/([^/]*)', 'i');
+        const pathMatchRegex = new RegExp('\/courses\/[0-9]*/([^/]*)', 'i');
+        const secondaryPathMatch = new RegExp('\/courses\/[0-9]*/([^/]*)\/([^/]*)', 'i');
         const coursePathMatches = pathMatchRegex.exec(currentPath);
         if (coursePathMatches == null || coursePathMatches.length <= 1) {
             return 'roster_students';
         }
-        if (coursePathMatches[1] === 'org_teams' && coursePathMatches[2] != null) {
-            return coursePathMatches[2];
+        if (coursePathMatches[1] === 'org_teams' && secondaryPathMatch[2] != null) {
+            return secondaryPathMatch[2];
         }
         return coursePathMatches[1];
     }
