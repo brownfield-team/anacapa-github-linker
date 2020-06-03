@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200603092526) do
+ActiveRecord::Schema.define(version: 20200603092619) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,6 +71,18 @@ ActiveRecord::Schema.define(version: 20200603092526) do
     t.string "team_id"
     t.string "slug"
     t.index ["course_id"], name: "index_org_teams_on_course_id"
+  end
+
+  create_table "org_webhook_events", force: :cascade do |t|
+    t.datetime "date_triggered"
+    t.string "event_type"
+    t.string "payload"
+    t.bigint "course_id"
+    t.bigint "roster_student_id"
+    t.bigint "github_repo_id"
+    t.index ["course_id"], name: "index_org_webhook_events_on_course_id"
+    t.index ["github_repo_id"], name: "index_org_webhook_events_on_github_repo_id"
+    t.index ["roster_student_id"], name: "index_org_webhook_events_on_roster_student_id"
   end
 
   create_table "org_webhooks", force: :cascade do |t|
@@ -218,6 +230,9 @@ ActiveRecord::Schema.define(version: 20200603092526) do
   add_foreign_key "github_repo_commits", "github_repos"
   add_foreign_key "github_repo_commits", "roster_students"
   add_foreign_key "github_repos", "courses"
+  add_foreign_key "org_webhook_events", "courses"
+  add_foreign_key "org_webhook_events", "github_repos"
+  add_foreign_key "org_webhook_events", "roster_students"
   add_foreign_key "org_webhooks", "courses"
   add_foreign_key "project_teams", "github_repos"
   add_foreign_key "project_teams", "org_teams"

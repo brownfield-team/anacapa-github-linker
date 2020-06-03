@@ -30,6 +30,7 @@ class CourseNavBar extends Component {
                         <MenuItem eventKey="create_repos" href={this.props.create_team_repos_path}>Create Team Repos</MenuItem>
                     </NavDropdown>
                     <NavItem eventKey="repos" href={this.props.repos_path}>Repositories</NavItem>
+                    <NavItem eventKey="events" href={this.props.events_path}>Events</NavItem>
                     <NavItem eventKey="slack" href={this.props.slack_path}>Slack</NavItem>
                     <NavItem eventKey="jobs" href={this.props.jobs_path}>Jobs</NavItem>
                     <NavItem eventKey="edit" href={this.props.edit_path} disabled={!this.props.can_edit}>Edit Course</NavItem>
@@ -45,6 +46,7 @@ CourseNavBar.propTypes = {
     project_teams_path: PropTypes.string.isRequired,
     org_teams_path: PropTypes.string.isRequired,
     repos_path: PropTypes.string.isRequired,
+    events_path: PropTypes.string.isRequired,
     slack_path: PropTypes.string.isRequired,
     jobs_path: PropTypes.string.isRequired,
     edit_path: PropTypes.string.isRequired,
