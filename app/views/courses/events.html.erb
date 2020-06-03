@@ -1,8 +1,10 @@
 <% require 'json' %>
 
-<table class="bootstrap-table" data-toggle="table" data-search="true"
-       data-pagination="true"
-       data-show-pagination-switch="true" data-filter-control="true">
+<%= link_to "Download Events CSV", course_events_path(@course, :format => "csv"), method: :get, class: "btn btn-default",
+            style: "display:inline-block; float: right; margin-left: 10px;" %>
+<br /> <br />
+<table class="bootstrap-table" data-toggle="table"
+       data-pagination="true" data-filter-control="true">
   <thead>
   <tr>
     <th data-sortable="true" data-field="type" data-filter-control="select">Event Type</th>
@@ -15,7 +17,7 @@
   <% @course.org_webhook_events.each do |event| %>
     <tr>
       <td>
-        <span class="job_name" data-toggle="tooltip" title="<%= JSON.pretty_generate(JSON.parse(event.payload)) %>">
+        <span class="job_name" data-toggle="tooltip" title="<%= event.payload %>">
           <%= event.event_type %></span>
       </td>
       <% if event.roster_student.present? %>
