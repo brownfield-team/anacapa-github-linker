@@ -3,6 +3,7 @@ class RosterStudent < ApplicationRecord
   belongs_to :user, optional: true
   has_many :student_team_memberships, dependent: :destroy
   has_many :org_teams, through: :student_team_memberships
+  has_many :org_webhook_events
   has_one :slack_user, dependent: :destroy
   validates :perm, presence: true, uniqueness: {scope: :course, message: "only unique perms in a class"}
   validates :email, presence: true, uniqueness: {scope: :course, message: "only unique emails in a class", case_sensitive: false }

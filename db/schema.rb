@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200511064706) do
+ActiveRecord::Schema.define(version: 20200603092526) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,21 @@ ActiveRecord::Schema.define(version: 20200511064706) do
     t.datetime "updated_at", null: false
     t.boolean "hidden"
     t.boolean "github_webhooks_enabled"
+  end
+
+  create_table "github_repo_commits", force: :cascade do |t|
+    t.bigint "github_repo_id"
+    t.bigint "roster_student_id"
+    t.string "message"
+    t.string "commit_hash"
+    t.string "url"
+    t.string "branch"
+    t.integer "files_changed"
+    t.datetime "commit_timestamp"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["github_repo_id"], name: "index_github_repo_commits_on_github_repo_id"
+    t.index ["roster_student_id"], name: "index_github_repo_commits_on_roster_student_id"
   end
 
   create_table "github_repos", force: :cascade do |t|
@@ -200,6 +215,8 @@ ActiveRecord::Schema.define(version: 20200511064706) do
   end
 
   add_foreign_key "completed_jobs", "courses"
+  add_foreign_key "github_repo_commits", "github_repos"
+  add_foreign_key "github_repo_commits", "roster_students"
   add_foreign_key "github_repos", "courses"
   add_foreign_key "org_webhooks", "courses"
   add_foreign_key "project_teams", "github_repos"

@@ -4,6 +4,18 @@ module Courses
     load_resource :course
     skip_before_action :verify_authenticity_token
     skip_before_action :authenticate_user!
+    before_action :record_webhook_event, only: :create
+
+    def record_webhook_event
+      event_record = @course.org_webhook_events.new
+      event_record.event_type = request.headers['X-GitHub-Event']
+      event_record.payload = json_body.to_json
+      event_record.roster_student = @course.student_for_uid(json_body[:sender][:id])
+      if json_body[:repository].present?
+        event_record.github_repo = GithubRepo.find_by_repo_id(json_body[:repository][:id])
+      end
+      event_record.save
+    end
 
     def github_organization(payload)
       case payload[:action]

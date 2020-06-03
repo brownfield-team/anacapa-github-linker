@@ -4,6 +4,7 @@ class GithubRepo < ApplicationRecord
   has_many :users, through: :repo_contributors
   has_many :repo_team_contributors, dependent: :destroy
   has_many :org_teams, through: :repo_team_contributors
+  has_many :org_webhook_events
 
   # Note: most (if not all) of the GitHub-related objects store a unique identifier for that object assigned by GitHub.
   # These are, by our convention, something like #repo_id, #hook_id, #team_id, etc.

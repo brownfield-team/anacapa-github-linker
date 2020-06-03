@@ -12,6 +12,7 @@ class Course < ApplicationRecord
   has_many :org_teams, dependent: :destroy
   has_one :slack_workspace, dependent: :destroy
   has_one :org_webhook, dependent: :destroy
+  has_many :org_webhook_events, dependent: :destroy
   has_many :project_teams
 
   before_save :update_org_webhook, if: :will_save_change_to_github_webhooks_enabled?
@@ -30,7 +31,6 @@ class Course < ApplicationRecord
   end
 
   def student_for_uid(uid)
-    # Because this is a pure SQL query rather than a bunch of Ruby array operations, it is several times faster than previous approaches.
     RosterStudent.where(course_id: self.id).includes(:user).references(:user).merge(User.where(uid: uid.to_s)).first
   end
 
