@@ -1,3 +1,5 @@
+<% require 'json' %>
+
 <table class="bootstrap-table" data-toggle="table" data-search="true"
        data-pagination="true"
        data-show-pagination-switch="true" data-filter-control="true">
@@ -12,7 +14,10 @@
   <tbody>
   <% @course.org_webhook_events.each do |event| %>
     <tr>
-      <td><%= event.event_type %></td>
+      <td>
+        <span class="job_name" data-toggle="tooltip" title="<%= JSON.pretty_generate(JSON.parse(event.payload)) %>">
+          <%= event.event_type %></span>
+      </td>
       <% if event.roster_student.present? %>
         <td><%= link_to event.roster_student.full_name, course_roster_student_path(@course, event.roster_student) %></td>
       <% else %>
