@@ -21,60 +21,11 @@ module Courses
     end
 
     def github_organization(payload)
-      case payload[:action]
-      when "member_invited"
-        student = @course.student_for_uid(payload[:invitation][:id])
-        return if student.nil?
-        student.org_membership_type = "Invited"
-        student.save
-      when "member_added"
-        student = @course.student_for_uid(payload[:membership][:user][:id])
-        return if student.nil?
-        student.is_org_member = true
-        student.org_membership_type = payload[:membership][:role].capitalize
-        student.save
-      when "member_removed"
-        student = @course.student_for_uid(payload[:membership][:user][:id])
-        return if student.nil?
-        student.is_org_member = false
-        student.org_membership_type = nil
-        student.save
-      when "renamed"
-        @course.course_organization = payload[:organization][:login]
-        @course.save
-      else
-        return
-      end
+      OrganizationHook.process_hook(@course, payload)
     end
 
     def github_repository(payload)
-      repo_info = payload[:repository]
-      existing_repo = GithubRepo.where(course: @course, repo_id: repo_info[:id]).first
-      case payload[:action]
-      when "created"
-        existing_repo.try(:destroy)
-        repo_visibility = repo_info[:private] ? "private" : "public"
-        GithubRepo.create(course: @course, name: repo_info[:name], full_name: repo_info[:full_name], url: repo_info[:html_url], repo_id: repo_info[:id], visibility: repo_visibility)
-      when "deleted"
-        existing_repo.try(:destroy)
-      when "edited"
-        # Nothing to do here for now
-      when "renamed"
-        return if existing_repo.nil?
-        existing_repo.name = payload[:repository][:name]
-        existing_repo.full_name = payload[:repository][:full_name]
-        existing_repo.save
-      when "publicized"
-        return if existing_repo.nil?
-        existing_repo.visibility = "public"
-        existing_repo.save
-      when "privatized"
-        return if existing_repo.nil?
-        existing_repo.visibility = "private"
-        existing_repo.save
-      else
-        return
-      end
+      RepositoryHook.process_hook(@course, payload)
     end
 
     def github_member(payload)
@@ -145,22 +96,7 @@ module Courses
     end
 
     def github_push(payload)
-      repo = GithubRepo.find_by_repo_id(payload[:repository][:id])
-      branch = /refs\/heads\/(.*)/.match(payload[:ref])[1]
-      student = @course.student_for_uid(payload[:sender][:id])
-      payload[:commits].each do |payload_commit|
-        unless payload_commit[:distinct] then next end
-        commit = RepoCommitEvent.new
-        commit.files_changed = payload_commit[:added].union(payload_commit[:removed], payload_commit[:modified]).size
-        commit.message = payload_commit[:message]
-        commit.commit_hash = payload_commit[:id]
-        commit.url = payload_commit[:url]
-        commit.commit_timestamp = payload_commit[:timestamp]
-        commit.github_repo = repo
-        commit.branch = branch
-        commit.roster_student = student
-        commit.save
-      end
+      PushHook.process_hook(@course, payload)
     end
 
     private
