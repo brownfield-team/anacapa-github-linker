@@ -6,6 +6,9 @@ module Courses
     skip_before_action :authenticate_user!
     before_action :record_webhook_event, only: :create
 
+    # TODO: MAKE SURE THIS IS REMOVED BEFORE IT IS MERGED. THIS IS FOR TESTING ONLY.
+    skip_before_action :authenticate_github_request!
+
     def record_webhook_event
       event_record = @course.org_webhook_events.new
       event_record.event_type = request.headers['X-GitHub-Event']
@@ -145,14 +148,15 @@ module Courses
       repo = GithubRepo.find_by_repo_id(payload[:repository][:id])
       branch = /refs\/heads\/(.*)/.match(payload[:ref])[1]
       student = @course.student_for_uid(payload[:sender][:id])
-      payload[:commits].each do |commit|
-        unless commit[:distinct] then next end
+      payload[:commits].each do |payload_commit|
+        binding.pry
+        unless payload_commit[:distinct] then next end
         commit = GithubRepoCommit.new
-        commit.files_changed = [].union(commit['added'] || [], commit['removed'] || [], commit['modified'] || []).size
-        commit.message = commit['message']
-        commit.commit_hash = commit['id']
-        commit.url = commit['url']
-        commit.commit_timestamp = commit['timestamp']
+        commit.files_changed = payload_commit[:added].union(payload_commit[:removed], payload_commit[:modified]).size
+        commit.message = payload_commit[:message]
+        commit.commit_hash = payload_commit[:id]
+        commit.url = payload_commit[:url]
+        commit.commit_timestamp = payload_commit[:timestamp]
         commit.github_repo = repo
         commit.branch = branch
         commit.roster_student = student
