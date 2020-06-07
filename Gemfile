@@ -109,3 +109,5 @@ gem 'webpacker', '~> 4'
 gem 'mini_racer', platforms: :ruby
 
 gem 'pg_search'
+
+gem 'wdm', '>= 0.1.0' if Gem.win_platform?

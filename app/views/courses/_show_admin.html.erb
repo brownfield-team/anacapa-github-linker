@@ -35,7 +35,7 @@
       <% end %>
 
       <% if can? :create, RosterStudent %>
-        <%= link_to "New Student", course_roster_student_path(@course), method: :get, class: "btn btn-default",
+        <%= link_to "New Student", new_course_roster_student_path(@course), method: :get, class: "btn btn-default",
                     style: "display:inline-block; float: right; margin-left: 10px;" %>
       <% end %>
 
