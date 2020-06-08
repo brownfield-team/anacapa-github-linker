@@ -48,6 +48,10 @@ module Courses
       PullRequestHook.process_hook(@course, payload)
     end
 
+    def github_issues(payload)
+      IssuesHook.process_hook(@course, payload)
+    end
+
     private
     def webhook_secret(payload)
       ENV['GITHUB_WEBHOOK_SECRET']
