@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  github_repo: one
+  roster_student: one
+  url: MyString
+  pr_id: MyString
+  action_type: MyString
+
+two:
+  github_repo: two
+  roster_student: two
+  url: MyString
+  pr_id: MyString
+  action_type: MyString

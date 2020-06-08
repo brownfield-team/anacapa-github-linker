@@ -44,6 +44,10 @@ module Courses
       PushHook.process_hook(@course, payload)
     end
 
+    def github_pull_request(payload)
+      PullRequestHook.process_hook(@course, payload)
+    end
+
     private
     def webhook_secret(payload)
       ENV['GITHUB_WEBHOOK_SECRET']

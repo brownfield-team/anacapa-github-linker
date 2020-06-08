@@ -60,7 +60,8 @@ class Course < ApplicationRecord
           :content_type => 'json',
           :secret => ENV['GITHUB_WEBHOOK_SECRET']
         }, {
-          :events => %w[repository member team membership organization issues pull_request project_column],
+          :events => %w[repository member team membership organization issues pull_request project_column
+                        issue_comment pull_request_review_comment],
           :active => true
       })
       OrgWebhook.create(hook_id: response.id, hook_url: response.url, course: self)
@@ -135,7 +136,6 @@ class Course < ApplicationRecord
       row["student_id"] = spreadsheet_row[id_index]
       row["email"] = spreadsheet_row[email_index]
       row["section"] = spreadsheet_row[section_index] unless section_index.nil?
-
 
       if first_name_index
         row["first_name"] = spreadsheet_row[first_name_index]

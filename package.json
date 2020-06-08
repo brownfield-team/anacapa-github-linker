@@ -16,7 +16,8 @@
     "react-bootstrap-table2-paginator": "^2.1.2",
     "react-dom": "^16.13.1",
     "react-on-rails": "11.3.0",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "recharts": "^1.8.5"
   },
   "devDependencies": {
     "webpack-dev-server": "^3.10.3"
