@@ -57,7 +57,7 @@ class SummaryView extends Component {
                         </ResponsiveContainer>
                         <br/>
                         <Grid>
-                            <Row style={{paddingLeft: 50}}>
+                            <Row style={{paddingLeft: 55}}>
                                 <Col style={{paddingLeft: 10, paddingRight:10}} md={2}>
                                     <Panel>
                                         <Panel.Heading>

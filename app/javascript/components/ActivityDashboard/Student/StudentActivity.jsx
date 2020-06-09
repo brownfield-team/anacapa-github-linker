@@ -6,7 +6,7 @@ import {Table} from "react-bootstrap";
 import SummaryView from "../SummaryView";
 import ActivityTable from "../ActivityTable";
 import moment from "moment";
-import {Button} from "rsuite";
+import {DateRangePicker} from "rsuite";
 
 
 class StudentActivity extends Component {
@@ -36,10 +36,15 @@ class StudentActivity extends Component {
         this.setState({activityStream: activityStream});
     }
 
+    onDateRangeChanged = (value) => {
+        this.setState({startDate: value[0], endDate: value[1]});
+    }
+
     render() {
         return (
             <Fragment>
-                {/*<DateRangePicker />*/}
+                <DateRangePicker value={[this.state.startDate, this.state.endDate]} onChange={(value => this.onDateRangeChanged(value))} />
+                <br /> <br />
                 <SummaryView activityStream={this.state.activityStream} startDate={this.state.startDate} endDate={this.state.endDate}/>
                 <ActivityTable activityStream={this.state.activityStream}/>
             </Fragment>
