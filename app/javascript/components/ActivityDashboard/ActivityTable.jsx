@@ -17,9 +17,11 @@ class ActivityTable extends Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {this.props.commits.map(c =>
+                    {this.props.commits && this.props.commits.map(c =>
                         <Fragment>
-
+                            <tr>
+                                <th>c.</th>
+                            </tr>
                         </Fragment>
                     )}
                     </tbody>

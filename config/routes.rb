@@ -36,6 +36,7 @@ Rails.application.routes.draw do
         collection do
           post :import
         end
+        get :activity
       end
       resources :org_teams do
         collection do

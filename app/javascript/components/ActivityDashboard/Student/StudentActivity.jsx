@@ -3,6 +3,8 @@ import * as PropTypes from 'prop-types';
 import StudentsService from "../../../services/students-service";
 import {studentUiRoute} from "../../../services/service-routes";
 import {Table} from "react-bootstrap";
+import SummaryView from "../SummaryView";
+import ActivityTable from "../ActivityTable";
 
 class StudentActivity extends Component {
     constructor(props) {
@@ -23,7 +25,8 @@ class StudentActivity extends Component {
     render() {
         return (
             <Fragment>
-
+                <SummaryView commits={this.state.commits} />
+                <ActivityTable commits={this.state.commits} />
             </Fragment>
         );
     }
