@@ -5,18 +5,6 @@ import {Panel, Grid} from "react-bootstrap";
 import DataPairField from "../ProjectTeams/Show/DataPairField";
 
 class ActivityTable extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {activityStream: []};
-    }
-
-
-    componentDidMount() {
-        // In the future, this will concatenate multiple arrays of activity streams.
-        const activityStream = this.props.commits ?? [];
-        this.setState({activityStream: activityStream});
-    }
-
 
     columns = [
         {
@@ -66,9 +54,11 @@ class ActivityTable extends Component {
         return (
             <Fragment>
                 <Panel>
-                    <Panel.Heading>Activity Stream</Panel.Heading>
+                    <Panel.Heading>
+                        <Panel.Title>Activity Stream</Panel.Title>
+                    </Panel.Heading>
                     <Panel.Body>
-                        <BootstrapTable columns={this.columns} data={this.props.commits} keyField={'id'}
+                        <BootstrapTable columns={this.columns} data={this.props.activityStream} keyField={'id'}
                                         expandRow={this.expandRow} striped hover/>
                     </Panel.Body>
                 </Panel>
@@ -78,7 +68,7 @@ class ActivityTable extends Component {
 }
 
 ActivityTable.propTypes = {
-    commits: PropTypes.array.isRequired
+    activityStream: PropTypes.array.isRequired
 };
 
 export default ActivityTable;

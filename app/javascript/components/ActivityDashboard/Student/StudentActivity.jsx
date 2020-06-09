@@ -9,7 +9,10 @@ import ActivityTable from "../ActivityTable";
 class StudentActivity extends Component {
     constructor(props) {
         super(props);
-        this.state = {commits: []}
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - 30);
+        const endDate = new Date();
+        this.state = {commits: [], activityStream: [], startDate: startDate, endDate: endDate};
     }
 
     componentDidMount() {
@@ -18,15 +21,23 @@ class StudentActivity extends Component {
 
     updateStudentCommits = () => {
         StudentsService.getCommits(this.props.course_id, this.props.roster_student_id).then(commitsResponse => {
-            this.setState({commits: commitsResponse});
+            this.setState({commits: commitsResponse}, () => {
+                this.refreshActivityStream();
+            });
         });
+    }
+
+    refreshActivityStream = () => {
+        // In the future, this will concatenate multiple arrays of activity streams.
+        const activityStream = this.state.commits;
+        this.setState({activityStream: activityStream});
     }
 
     render() {
         return (
             <Fragment>
-                <SummaryView commits={this.state.commits} />
-                <ActivityTable commits={this.state.commits} />
+                <SummaryView activityStream={this.state.activityStream} startDate={this.state.startDate} endDate={this.state.endDate}/>
+                <ActivityTable activityStream={this.state.activityStream}/>
             </Fragment>
         );
     }
