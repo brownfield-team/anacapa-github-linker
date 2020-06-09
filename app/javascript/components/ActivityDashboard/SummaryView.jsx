@@ -3,7 +3,8 @@ import * as PropTypes from 'prop-types';
 import {Panel} from "react-bootstrap";
 import * as _ from 'underscore';
 import * as moment from 'moment';
-import {Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis} from "recharts";
+import {Bar, BarChart, Brush, CartesianGrid, Legend, Tooltip, XAxis, YAxis} from "recharts";
+import {forEach} from "underscore";
 
 class SummaryView extends Component {
     constructor(props) {
@@ -17,7 +18,7 @@ class SummaryView extends Component {
 
     getDaysArray = (start, end) => {
         for (var arr = [], dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
-            arr.push({day: new Date(dt)});
+            arr.push({day: moment(new Date(dt)).format('M/DD')});
         }
         return arr;
     };
@@ -28,15 +29,16 @@ class SummaryView extends Component {
             return moment(act.updated_at).startOf('day').format('M/DD');
         });
         const activitySummaryByDay = this.getDaysArray(this.props.startDate, this.props.endDate);
-
-        Object.keys(activityByDay).map(function (day) {
-            const daySummary = {
+        activitySummaryByDay.forEach(daySummary => {
+            const dayActivity = activityByDay[daySummary.day];
+            if (dayActivity != null) {
                 // As with other things, this will include other types of events in the future.
-                day: day,
-                commits: activityByDay[day].filter(act => act.event_type === 'Commit').length,
-                fakeEvents: 2
-            };
-            activitySummaryByDay.push(daySummary);
+                daySummary.commits = dayActivity.filter(act => act.event_type === 'Commit').length;
+            }
+            else {
+                daySummary.commits = 0;
+            }
+            daySummary.fakeEvents = Math.floor(Math.random() * (5 - 1) + 1); // Temporary, for display purposes
         });
         console.log(activitySummaryByDay);
         return (
@@ -52,9 +54,10 @@ class SummaryView extends Component {
                             <XAxis dataKey="day"/>
                             <YAxis/>
                             <Tooltip/>
-                            <Legend/>
-                            <Bar dataKey="commits" stackId="a" fill="#8884d8"/>
-                            <Bar dataKey="fakeEvents" stackId="a" fill="#82ca9d"/>
+                            <Legend verticalAlign="top"/>
+                            <Bar name="Commits" dataKey="commits" stackId="a" fill="#8884d8"/>
+                            <Bar name="Fake Events" dataKey="fakeEvents" stackId="a" fill="#82ca9d"/>
+                            <Brush dataKey="name" height={30} stroke="#8884d8" />
                         </BarChart>
                     </Panel.Body>
                 </Panel>
