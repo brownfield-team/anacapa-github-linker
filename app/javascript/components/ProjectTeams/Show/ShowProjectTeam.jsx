@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import ProjectTeamForm from "../Forms/ProjectTeamForm";
 import {Grid, Button, Panel} from "react-bootstrap";
-import ShowProjectTeamField from "./ShowProjectTeamField";
+import DataPairField from "./DataPairField";
 import TeamMembersTable from "./TeamMembersTable";
 
 class ShowProjectTeam extends Component {
@@ -21,21 +21,21 @@ class ShowProjectTeam extends Component {
                     <Panel.Heading>Info</Panel.Heading>
                     <Panel.Body>
                         <Grid componentClass="px-0">
-                            <ShowProjectTeamField fieldName={'Team Name'} fieldValue={t.name}/>
-                            <ShowProjectTeamField fieldName={'GitHub Team'} fieldValue={t.org_team.name}
-                                                  url={t.org_team.url}/>
-                            <ShowProjectTeamField fieldName={'Meeting Time'} fieldValue={t.meeting_time}/>
-                            <ShowProjectTeamField fieldName={'Project'} fieldValue={t.project}/>
-                            <ShowProjectTeamField fieldName={'Milestones URL'} fieldValue={t.milestones_url}
-                                                  url={t.milestones_url}/>
-                            <ShowProjectTeamField fieldName={'Repo URL'} fieldValue={t.repo_url} url={t.repo_url}/>
-                            <ShowProjectTeamField fieldName={'Project Board URL'} fieldValue={t.project_board_url}
-                                                  url={t.project_board_url}/>
-                            <ShowProjectTeamField fieldName={'Team Chat URL'} fieldValue={t.team_chat_url}
-                                                  url={t.team_chat_url}/>
-                            <ShowProjectTeamField fieldName={'QA URL'} fieldValue={t.qa_url} url={t.qa_url}/>
-                            <ShowProjectTeamField fieldName={'Production URL'} fieldValue={t.production_url}
-                                                  url={t.production_url}/>
+                            <DataPairField fieldName={'Team Name'} fieldValue={t.name}/>
+                            <DataPairField fieldName={'GitHub Team'} fieldValue={t.org_team.name}
+                                           url={t.org_team.url}/>
+                            <DataPairField fieldName={'Meeting Time'} fieldValue={t.meeting_time}/>
+                            <DataPairField fieldName={'Project'} fieldValue={t.project}/>
+                            <DataPairField fieldName={'Milestones URL'} fieldValue={t.milestones_url}
+                                           url={t.milestones_url}/>
+                            <DataPairField fieldName={'Repo URL'} fieldValue={t.repo_url} url={t.repo_url}/>
+                            <DataPairField fieldName={'Project Board URL'} fieldValue={t.project_board_url}
+                                           url={t.project_board_url}/>
+                            <DataPairField fieldName={'Team Chat URL'} fieldValue={t.team_chat_url}
+                                           url={t.team_chat_url}/>
+                            <DataPairField fieldName={'QA URL'} fieldValue={t.qa_url} url={t.qa_url}/>
+                            <DataPairField fieldName={'Production URL'} fieldValue={t.production_url}
+                                           url={t.production_url}/>
                         </Grid>
                     </Panel.Body>
                 </Panel>

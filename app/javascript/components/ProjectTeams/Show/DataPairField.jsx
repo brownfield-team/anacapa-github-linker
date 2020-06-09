@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import {Col, ControlLabel, Grid, Row} from "react-bootstrap";
 
-class ShowProjectTeamField extends Component {
+class DataPairField extends Component {
     render() {
         const fieldValue = this.props.url ? <a href={this.props.url}>{this.props.fieldValue}</a> : <span>{this.props.fieldValue}</span>;
         return (
@@ -20,10 +20,10 @@ class ShowProjectTeamField extends Component {
     }
 }
 
-ShowProjectTeamField.propTypes = {
+DataPairField.propTypes = {
     fieldName: PropTypes.string.isRequired,
     fieldValue: PropTypes.string.isRequired,
     url: PropTypes.string
 };
 
-export default ShowProjectTeamField;
+export default DataPairField;

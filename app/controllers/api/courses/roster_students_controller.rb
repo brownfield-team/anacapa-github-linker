@@ -13,8 +13,15 @@ module Api::Courses
     end
 
     def commits
-      binding.pry
-      respond_with @roster_student.repo_commit_events
+      paginate json: @roster_student.repo_commit_events
+    end
+
+    def issues
+      paginate json: @roster_student.repo_issue_events
+    end
+
+    def pull_requests
+      paginate json: @roster_student.repo_pull_request_events
     end
 
     private
