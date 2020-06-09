@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
+import ToolkitProvider, {Search} from 'react-bootstrap-table2-toolkit';
 import * as PropTypes from 'prop-types';
 import {Panel, Grid} from "react-bootstrap";
 import DataPairField from "../ProjectTeams/Show/DataPairField";
@@ -28,9 +29,10 @@ class ActivityTable extends Component {
         renderer: row => (
             <Fragment>
                 <Grid componentClass="px-0">
+                    <DataPairField fieldName={'Commit Message'} fieldValue={row.message}/>
                     <DataPairField fieldName={'Branch'} fieldValue={row.branch}/>
                     <DataPairField fieldName={'Files Changed'} fieldValue={row.files_changed.toString()}/>
-                    <DataPairField fieldName={'Commit Hash'} fieldValue={row.commit_hash}/>
+                    <DataPairField fieldName={'Commit Hash'} url={row.url} fieldValue={row.commit_hash}/>
                     <DataPairField fieldName={'Commit Timestamp'} fieldValue={row.commit_timestamp}/>
                 </Grid>
             </Fragment>
@@ -59,7 +61,28 @@ class ActivityTable extends Component {
                     </Panel.Heading>
                     <Panel.Body>
                         <BootstrapTable columns={this.columns} data={this.props.activityStream} keyField={'id'}
-                                        expandRow={this.expandRow} striped hover/>
+                                        expandRow={this.expandRow} striped hover />
+                        {/*<ToolkitProvider*/}
+                        {/*    keyField="id"*/}
+                        {/*    data={this.props.activityStream}*/}
+                        {/*    columns={this.columns}*/}
+                        {/*    search*/}
+
+                        {/*>*/}
+                        {/*    {*/}
+                        {/*        props => (*/}
+                        {/*            <Fragment>*/}
+                        {/*                <h3>Input something at below input field:</h3>*/}
+                        {/*                <Search {...props.searchProps} />*/}
+                        {/*                <hr/>*/}
+                        {/*                <BootstrapTable*/}
+                        {/*                    {...props.baseProps} striped*/}
+                        {/*                    hover expandRow={this.expandRow}*/}
+                        {/*                />*/}
+                        {/*            </Fragment>*/}
+                        {/*        )*/}
+                        {/*    }*/}
+                        {/*</ToolkitProvider>*/}
                     </Panel.Body>
                 </Panel>
             </Fragment>

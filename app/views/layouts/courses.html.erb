@@ -10,7 +10,7 @@
                                 create_teams_path: create_teams_course_org_teams_path(@course), events_path: course_events_path(@course),
                                 can_edit: can?(:update, @course)
                         },
-                        prerender: true) %>
+                        prerender: false) %>
     <br/>
   <% end %>
   <%= yield %>

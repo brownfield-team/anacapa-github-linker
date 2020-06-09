@@ -5,6 +5,9 @@ import {studentUiRoute} from "../../../services/service-routes";
 import {Table} from "react-bootstrap";
 import SummaryView from "../SummaryView";
 import ActivityTable from "../ActivityTable";
+import moment from "moment";
+import {Button} from "rsuite";
+
 
 class StudentActivity extends Component {
     constructor(props) {
@@ -36,6 +39,7 @@ class StudentActivity extends Component {
     render() {
         return (
             <Fragment>
+                {/*<DateRangePicker />*/}
                 <SummaryView activityStream={this.state.activityStream} startDate={this.state.startDate} endDate={this.state.endDate}/>
                 <ActivityTable activityStream={this.state.activityStream}/>
             </Fragment>
