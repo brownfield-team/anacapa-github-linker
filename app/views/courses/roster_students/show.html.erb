@@ -1,7 +1,11 @@
 <!--<h2><%#= @roster_student.full_name %></h2>-->
 <%= link_to '< Back', course_path(@parent), :class => "btn btn-outline-secondary", :style => "padding-left:0;" %> |
 <%= link_to 'Edit', edit_course_roster_student_path(@parent, @roster_student), :class => "btn btn-outline-secondary
+text-left" %> |
+<%= link_to 'Activity', course_roster_student_activity_path(@parent, @roster_student), :class => "btn
+btn-outline-secondary
 text-left" %>
+
 <dl class="dl-horizontal">
   <dt>Student ID</dt>
   <dd> <%= @roster_student.perm %></dd>

@@ -59,6 +59,7 @@ class SummaryView extends Component {
                         <br/>
                         <Grid>
                             <Row style={{paddingLeft: 55}}>
+                                {/* TODO: Refactor these into a composable summary count component */}
                                 <Col style={{paddingLeft: 10, paddingRight:10}} md={2}>
                                     <Panel>
                                         <Panel.Heading>

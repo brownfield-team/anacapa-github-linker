@@ -1,4 +1,9 @@
 h1 {
     font-size: 38px;
-    line-height: 60px
+    line-height: 60px;
+}
+
+h2 {
+    font-size: 30px;
+    line-height: 40px;
 }
