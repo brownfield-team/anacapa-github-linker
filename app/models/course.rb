@@ -61,7 +61,7 @@ class Course < ApplicationRecord
           :secret => ENV['GITHUB_WEBHOOK_SECRET']
         }, {
           :events => %w[repository member team membership organization issues pull_request project_column
-                        issue_comment pull_request_review_comment],
+                        issue_comment pull_request_review_comment push],
           :active => true
       })
       OrgWebhook.create(hook_id: response.id, hook_url: response.url, course: self)
