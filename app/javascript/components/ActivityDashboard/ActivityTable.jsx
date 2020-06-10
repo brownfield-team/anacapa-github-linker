@@ -4,6 +4,7 @@ import ToolkitProvider, {Search} from 'react-bootstrap-table2-toolkit';
 import * as PropTypes from 'prop-types';
 import {Panel, Grid} from "react-bootstrap";
 import DataPairField from "../ProjectTeams/Show/DataPairField";
+import paginationFactory from 'react-bootstrap-table2-paginator';
 
 class ActivityTable extends Component {
 
@@ -61,28 +62,7 @@ class ActivityTable extends Component {
                     </Panel.Heading>
                     <Panel.Body>
                         <BootstrapTable columns={this.columns} data={this.props.activityStream} keyField={'id'}
-                                        expandRow={this.expandRow} striped hover />
-                        {/*<ToolkitProvider*/}
-                        {/*    keyField="id"*/}
-                        {/*    data={this.props.activityStream}*/}
-                        {/*    columns={this.columns}*/}
-                        {/*    search*/}
-
-                        {/*>*/}
-                        {/*    {*/}
-                        {/*        props => (*/}
-                        {/*            <Fragment>*/}
-                        {/*                <h3>Input something at below input field:</h3>*/}
-                        {/*                <Search {...props.searchProps} />*/}
-                        {/*                <hr/>*/}
-                        {/*                <BootstrapTable*/}
-                        {/*                    {...props.baseProps} striped*/}
-                        {/*                    hover expandRow={this.expandRow}*/}
-                        {/*                />*/}
-                        {/*            </Fragment>*/}
-                        {/*        )*/}
-                        {/*    }*/}
-                        {/*</ToolkitProvider>*/}
+                                        expandRow={this.expandRow} striped hover pagination={paginationFactory()} />
                     </Panel.Body>
                 </Panel>
             </Fragment>

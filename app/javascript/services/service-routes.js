@@ -9,6 +9,6 @@ export const orgTeamsRoute = (courseId) => `${courseOrgTeamsRoute(courseId)}`;
 
 export const studentsRoute = (courseId) => `${courseStudentsRoute(courseId)}`
 export const studentRoute = (courseId, rosterStudentId) => `${courseStudentsRoute(courseId)}/${rosterStudentId}`
-export const studentCommitsRoute = (courseId, rosterStudentId) => `${studentRoute(courseId, rosterStudentId)}/commits`
+export const studentActivityRoute = (courseId, rosterStudentId) => `${studentRoute(courseId, rosterStudentId)}/activity`
 
 export const studentUiRoute = (courseId, studentId) => `/courses/${courseId}/roster_students/${studentId}`

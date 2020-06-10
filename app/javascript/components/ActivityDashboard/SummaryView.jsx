@@ -22,7 +22,7 @@ class SummaryView extends Component {
     render() {
         const numCommits = this.props.activityStream.filter(act => act.event_type === 'Commit').length;
         const activityByDay = _.groupBy(this.props.activityStream, function (act) {
-            return moment(act.updated_at).startOf('day').format('M/DD');
+            return moment(act.created_at).startOf('day').format('M/DD');
         });
         const activitySummaryByDay = this.getDaysArray(this.props.startDate, this.props.endDate);
         activitySummaryByDay.forEach(daySummary => {

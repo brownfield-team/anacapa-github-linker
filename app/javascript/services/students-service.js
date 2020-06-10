@@ -1,9 +1,10 @@
 import axios from '../helpers/axios-rails'
-import {studentCommitsRoute} from "./service-routes";
+import {studentActivityRoute} from "./service-routes";
 
 class StudentsService {
-    static async getCommits(courseId, rosterStudentId) {
-        return axios.get(studentCommitsRoute(courseId, rosterStudentId)).then(response => response.data);
+    static async getActivity(courseId, rosterStudentId, startDate, endDate) {
+        const dateParams = {start_date: startDate, end_date: endDate};
+        return axios.get(studentActivityRoute(courseId, rosterStudentId), {params: dateParams}).then(response => response.data);
     }
 }
 

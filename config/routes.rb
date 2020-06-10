@@ -14,7 +14,10 @@ Rails.application.routes.draw do
         resources :project_teams
         resources :org_teams
         resources :roster_students do
+          get :activity
           get :commits
+          get :issues
+          get :pull_requests
         end
       end
     end

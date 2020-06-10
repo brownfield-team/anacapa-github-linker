@@ -1,12 +1,10 @@
 import React, {Component, Fragment} from 'react';
 import * as PropTypes from 'prop-types';
 import StudentsService from "../../../services/students-service";
-import {studentUiRoute} from "../../../services/service-routes";
-import {Table} from "react-bootstrap";
 import SummaryView from "../SummaryView";
 import ActivityTable from "../ActivityTable";
-import moment from "moment";
 import {DateRangePicker} from "rsuite";
+import * as dateFns from "date-fns";
 
 
 class StudentActivity extends Component {
@@ -19,33 +17,44 @@ class StudentActivity extends Component {
     }
 
     componentDidMount() {
-        this.updateStudentCommits();
+        this.updateStudentActivity();
     }
 
-    updateStudentCommits = () => {
-        StudentsService.getCommits(this.props.course_id, this.props.roster_student_id).then(commitsResponse => {
-            this.setState({commits: commitsResponse}, () => {
-                this.refreshActivityStream();
+    updateStudentActivity = () => {
+        StudentsService.getActivity(this.props.course_id, this.props.roster_student_id, this.state.startDate, this.state.endDate)
+            .then(activityResponse => {
+                this.setState({activityStream: activityResponse});
             });
-        });
-    }
+    };
 
-    refreshActivityStream = () => {
-        // In the future, this will concatenate multiple arrays of activity streams.
-        const activityStream = this.state.commits;
-        this.setState({activityStream: activityStream});
-    }
+    dateRanges = [
+        {
+            label: 'Last 7 days',
+            value: [dateFns.subDays(new Date(), 2), new Date()]
+        },
+        {
+            label: 'Last 7 days',
+            value: [dateFns.subDays(new Date(), 6), new Date()]
+        }, {
+            label: 'Last 30 days',
+            value: [dateFns.subDays(new Date(), 29), new Date()]
+        }];
 
     onDateRangeChanged = (value) => {
-        this.setState({startDate: value[0], endDate: value[1]});
+        this.setState({startDate: value[0], endDate: value[1]}, () => {
+            this.updateStudentActivity();
+        });
     }
 
     render() {
         return (
             <Fragment>
-                <DateRangePicker value={[this.state.startDate, this.state.endDate]} onChange={(value => this.onDateRangeChanged(value))} />
-                <br /> <br />
-                <SummaryView activityStream={this.state.activityStream} startDate={this.state.startDate} endDate={this.state.endDate}/>
+                <DateRangePicker value={[this.state.startDate, this.state.endDate]}
+                                 onChange={(value => this.onDateRangeChanged(value))}
+                                 ranges={this.dateRanges}/>
+                <br/> <br/>
+                <SummaryView activityStream={this.state.activityStream} startDate={this.state.startDate}
+                             endDate={this.state.endDate}/>
                 <ActivityTable activityStream={this.state.activityStream}/>
             </Fragment>
         );
