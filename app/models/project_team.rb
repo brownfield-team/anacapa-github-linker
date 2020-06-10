@@ -3,8 +3,8 @@ class ProjectTeam < ApplicationRecord
   belongs_to :org_team
   has_many :student_team_memberships, through: :org_team
 
-  def as_json(options = nil)
-    super(:include => {
+  def as_json(options = {})
+    super(options.merge(:include => {
         :student_team_memberships => {
             :include => {
                 :roster_student => {
@@ -13,6 +13,6 @@ class ProjectTeam < ApplicationRecord
             }
         },
         :org_team => {}
-    })
+    }))
   end
 end

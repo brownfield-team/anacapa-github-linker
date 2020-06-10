@@ -111,6 +111,17 @@ class CoursesController < ApplicationController
     authorize! :teams, @course
   end
 
+  def events
+    @course = Course.find(params[:course_id])
+    authorize! :events, @course
+    respond_to do |format|
+      format.html
+      format.csv {
+        send_data @course.org_webhook_events.to_csv, filename: "#{@course.name}-events.csv"
+      }
+    end
+  end
+
   def run_course_job
     job_name = params[:job_name]
     job = course_job_list.find { |job| job.job_short_name == job_name }

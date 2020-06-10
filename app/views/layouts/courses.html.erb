@@ -7,10 +7,10 @@
                                 repos_path: course_repos_path(@course), slack_path: course_slack_path(@course),
                                 jobs_path: course_jobs_path(@course), edit_path: edit_course_path(@course),
                                 create_team_repos_path: create_repos_course_org_teams_path(@course),
-                                create_teams_path: create_teams_course_org_teams_path(@course),
+                                create_teams_path: create_teams_course_org_teams_path(@course), events_path: course_events_path(@course),
                                 can_edit: can?(:update, @course)
                         },
-                        prerender: true) %>
+                        prerender: false) %>
     <br/>
   <% end %>
   <%= yield %>

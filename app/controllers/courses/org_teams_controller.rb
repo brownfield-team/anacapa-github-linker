@@ -45,7 +45,7 @@ module Courses
         team_hash[team_name] << row[0].strip
       end
       CreateGithubTeamsJob.perform_async(@course.id, {:teams => team_hash})
-      redirect_to course_teams_path(@course), notice: "Team creation successfully queued."
+      redirect_to course_org_teams_path(@course), notice: "Team creation successfully queued."
     end
 
     private

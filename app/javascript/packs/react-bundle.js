@@ -1,11 +1,14 @@
 import ReactOnRails from 'react-on-rails';
 
-import Users from '../bundles/Users/components/Users';
-import ProjectTeams from "../bundles/ProjectTeams/components/ProjectTeams";
-import CourseNavBar from "../bundles/CourseNavBar/components/CourseNavBar";
+import Users from '../components/Users/Users';
+import ProjectTeams from "../components/ProjectTeams/ProjectTeams";
+import CourseNavBar from "../components/CourseNavBar/CourseNavBar";
+import StudentActivity from "../components/ActivityDashboard/Student/StudentActivity";
+import "../styles.css"
 
 ReactOnRails.register({
   Users,
   ProjectTeams,
-  CourseNavBar
+  CourseNavBar,
+  StudentActivity
 });

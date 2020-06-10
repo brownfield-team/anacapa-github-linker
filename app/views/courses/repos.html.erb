@@ -35,7 +35,7 @@
         <% end %>
         <% repo.find_team_contributors.each do |contributor| %>
           <tr class="leftMargin">
-            <td><%= link_to contributor["name"], course_teams_path(@course) %></td>
+            <td><%= link_to contributor["name"], course_org_teams_path(@course) %></td>
             <td><a href="<%= contributor["url"]%>"><%= contributor["slug"] %></td>
             <% access_url = "#{contributor["url"]}/repositories?query=#{contributor["slug"]}" %>
             <td><a href="<%= access_url %><%= contributor["permission_level"] %>"> <%= contributor["slug"] %></a></td>

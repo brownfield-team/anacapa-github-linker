@@ -1,0 +1,36 @@
+<% require 'json' %>
+
+<%= link_to "Download Events CSV", course_events_path(@course, :format => "csv"), method: :get, class: "btn btn-default",
+            style: "display:inline-block; float: right; margin-left: 10px;" %>
+<br /> <br />
+<table class="bootstrap-table" data-toggle="table"
+       data-pagination="true" data-filter-control="true">
+  <thead>
+  <tr>
+    <th data-sortable="true" data-field="type" data-filter-control="select">Event Type</th>
+    <th data-sortable="true" data-field="student" data-filter-control="input">Student</th>
+    <th data-sortable="true" data-field="repo" data-filter-control="input">Repo</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @course.org_webhook_events.each do |event| %>
+    <tr>
+      <td>
+        <span class="job_name" data-toggle="tooltip" title="<%= event.payload %>">
+          <%= event.event_type %></span>
+      </td>
+      <% if event.roster_student.present? %>
+        <td><%= link_to event.roster_student.full_name, course_roster_student_path(@course, event.roster_student) %></td>
+      <% else %>
+        <td></td>
+      <% end %>
+      <% if event.github_repo.present? %>
+        <td><%= link_to event.github_repo.name, event.github_repo.url %></td>
+      <% else %>
+        <td></td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

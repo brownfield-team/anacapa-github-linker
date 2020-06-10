@@ -6,16 +6,17 @@
     <meta name="description" content="<%= content_for?(:description) ? yield(:description) : 'Course Github Org Tool' %>">
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => 'reload' %>
-    <%= javascript_pack_tag 'react-bundle' %>
     <%= csrf_meta_tags %>
   </head>
   <body class="<%= params[:controller].gsub('/', '-') %>-controller">
+    <%= javascript_pack_tag 'react-bundle' %>
+    <%= stylesheet_pack_tag 'react-bundle.css' %>
     <header>
       <%= render 'layouts/navigation' %>
     </header>
     <main role="main">
       <%= render 'layouts/messages' %>
-      <div class="container"> 
+      <div class="container">
         <%# begin the container where the body content goes %>
         <%= yield :main_content %>
       </div>

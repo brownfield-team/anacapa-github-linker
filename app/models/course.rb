@@ -12,6 +12,7 @@ class Course < ApplicationRecord
   has_many :org_teams, dependent: :destroy
   has_one :slack_workspace, dependent: :destroy
   has_one :org_webhook, dependent: :destroy
+  has_many :org_webhook_events, dependent: :destroy
   has_many :project_teams
 
   before_save :update_org_webhook, if: :will_save_change_to_github_webhooks_enabled?
@@ -30,7 +31,6 @@ class Course < ApplicationRecord
   end
 
   def student_for_uid(uid)
-    # Because this is a pure SQL query rather than a bunch of Ruby array operations, it is several times faster than previous approaches.
     RosterStudent.where(course_id: self.id).includes(:user).references(:user).merge(User.where(uid: uid.to_s)).first
   end
 
@@ -60,7 +60,8 @@ class Course < ApplicationRecord
           :content_type => 'json',
           :secret => ENV['GITHUB_WEBHOOK_SECRET']
         }, {
-          :events => ['repository', 'member', 'team', 'membership', 'organization'],
+          :events => %w[repository member team membership organization issues pull_request project_column
+                        issue_comment pull_request_review_comment push],
           :active => true
       })
       OrgWebhook.create(hook_id: response.id, hook_url: response.url, course: self)
@@ -135,7 +136,6 @@ class Course < ApplicationRecord
       row["student_id"] = spreadsheet_row[id_index]
       row["email"] = spreadsheet_row[email_index]
       row["section"] = spreadsheet_row[section_index] unless section_index.nil?
-
 
       if first_name_index
         row["first_name"] = spreadsheet_row[first_name_index]

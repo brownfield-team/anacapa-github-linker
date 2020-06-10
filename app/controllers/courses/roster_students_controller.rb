@@ -87,6 +87,10 @@ module Courses
       end
     end
 
+    def activity
+      @roster_student = RosterStudent.find(params[:roster_student_id])
+    end
+
     def find_org_repos
       @roster_student.user.github_repos.where(course_id: @roster_student.course_id)
     end

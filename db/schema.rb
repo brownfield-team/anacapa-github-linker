@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200511064706) do
+ActiveRecord::Schema.define(version: 20200608064256) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,6 +58,18 @@ ActiveRecord::Schema.define(version: 20200511064706) do
     t.index ["course_id"], name: "index_org_teams_on_course_id"
   end
 
+  create_table "org_webhook_events", force: :cascade do |t|
+    t.datetime "date_triggered"
+    t.string "event_type"
+    t.string "payload"
+    t.bigint "course_id"
+    t.bigint "roster_student_id"
+    t.bigint "github_repo_id"
+    t.index ["course_id"], name: "index_org_webhook_events_on_course_id"
+    t.index ["github_repo_id"], name: "index_org_webhook_events_on_github_repo_id"
+    t.index ["roster_student_id"], name: "index_org_webhook_events_on_roster_student_id"
+  end
+
   create_table "org_webhooks", force: :cascade do |t|
     t.integer "hook_id"
     t.bigint "course_id"
@@ -88,12 +100,51 @@ ActiveRecord::Schema.define(version: 20200511064706) do
     t.index ["org_team_id"], name: "index_project_teams_on_org_team_id"
   end
 
+  create_table "repo_commit_events", force: :cascade do |t|
+    t.bigint "github_repo_id"
+    t.bigint "roster_student_id"
+    t.string "message"
+    t.string "commit_hash"
+    t.string "url"
+    t.string "branch"
+    t.integer "files_changed"
+    t.datetime "commit_timestamp"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["github_repo_id"], name: "index_repo_commit_events_on_github_repo_id"
+    t.index ["roster_student_id"], name: "index_repo_commit_events_on_roster_student_id"
+  end
+
   create_table "repo_contributors", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "github_repo_id"
     t.string "permission_level"
     t.index ["github_repo_id"], name: "index_repo_contributors_on_github_repo_id"
     t.index ["user_id"], name: "index_repo_contributors_on_user_id"
+  end
+
+  create_table "repo_issue_events", force: :cascade do |t|
+    t.bigint "roster_student_id"
+    t.bigint "github_repo_id"
+    t.string "issue_id"
+    t.string "url"
+    t.string "action_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["github_repo_id"], name: "index_repo_issue_events_on_github_repo_id"
+    t.index ["roster_student_id"], name: "index_repo_issue_events_on_roster_student_id"
+  end
+
+  create_table "repo_pull_request_events", force: :cascade do |t|
+    t.bigint "github_repo_id"
+    t.bigint "roster_student_id"
+    t.string "url"
+    t.string "pr_id"
+    t.string "action_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["github_repo_id"], name: "index_repo_pull_request_events_on_github_repo_id"
+    t.index ["roster_student_id"], name: "index_repo_pull_request_events_on_roster_student_id"
   end
 
   create_table "repo_team_contributors", force: :cascade do |t|
@@ -201,9 +252,18 @@ ActiveRecord::Schema.define(version: 20200511064706) do
 
   add_foreign_key "completed_jobs", "courses"
   add_foreign_key "github_repos", "courses"
+  add_foreign_key "org_webhook_events", "courses"
+  add_foreign_key "org_webhook_events", "github_repos"
+  add_foreign_key "org_webhook_events", "roster_students"
   add_foreign_key "org_webhooks", "courses"
   add_foreign_key "project_teams", "github_repos"
   add_foreign_key "project_teams", "org_teams"
+  add_foreign_key "repo_commit_events", "github_repos"
+  add_foreign_key "repo_commit_events", "roster_students"
+  add_foreign_key "repo_issue_events", "github_repos"
+  add_foreign_key "repo_issue_events", "roster_students"
+  add_foreign_key "repo_pull_request_events", "github_repos"
+  add_foreign_key "repo_pull_request_events", "roster_students"
   add_foreign_key "roster_students", "courses"
   add_foreign_key "roster_students", "users"
   add_foreign_key "slack_users", "slack_workspaces"

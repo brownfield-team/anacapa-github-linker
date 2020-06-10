@@ -13,6 +13,12 @@ Rails.application.routes.draw do
       scope module: :courses do
         resources :project_teams
         resources :org_teams
+        resources :roster_students do
+          get :activity
+          get :commits
+          get :issues
+          get :pull_requests
+        end
       end
     end
   end
@@ -25,6 +31,7 @@ Rails.application.routes.draw do
     get :jobs
     get :repos
     get :search_repos
+    get :events
     post :run_course_job
     post :update_ta
     scope module: :courses do
@@ -32,6 +39,7 @@ Rails.application.routes.draw do
         collection do
           post :import
         end
+        get :activity
       end
       resources :org_teams do
         collection do
