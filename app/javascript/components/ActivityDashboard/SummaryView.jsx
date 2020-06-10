@@ -34,7 +34,7 @@ class SummaryView extends Component {
             } else {
                 daySummary.commits = 0;
             }
-            daySummary.fakeEvents = Math.floor(Math.random() * (5 - 1) + 1); // Temporary, for display purposes
+            // daySummary.fakeEvents = Math.floor(Math.random() * (5 - 1) + 1); // Temporary, for display purposes
         });
         return (
             <Fragment>
@@ -52,7 +52,7 @@ class SummaryView extends Component {
                                 <Tooltip/>
                                 <Legend verticalAlign="top"/>
                                 <Bar name="Commits" dataKey="commits" stackId="a" fill="#0e9aa7"/>
-                                <Bar name="Fake Events" dataKey="fakeEvents" stackId="a" fill="#fe8a71"/>
+                                {/*<Bar name="Fake Events" dataKey="fakeEvents" stackId="a" fill="#fe8a71"/>*/}
                                 <Brush dataKey="name" height={30} stroke="#3da4ab"/>
                             </BarChart>
                         </ResponsiveContainer>
