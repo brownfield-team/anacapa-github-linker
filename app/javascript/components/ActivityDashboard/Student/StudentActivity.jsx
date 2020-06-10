@@ -3,9 +3,8 @@ import * as PropTypes from 'prop-types';
 import StudentsService from "../../../services/students-service";
 import SummaryView from "../SummaryView";
 import ActivityTable from "../ActivityTable";
-import {DateRangePicker} from "rsuite";
-import * as dateFns from "date-fns";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 class StudentActivity extends Component {
     constructor(props) {
@@ -27,31 +26,40 @@ class StudentActivity extends Component {
             });
     };
 
-    dateRanges = [
-        {
-            label: 'Last 3 days',
-            value: [dateFns.subDays(new Date(), 2), new Date()]
-        },
-        {
-            label: 'Last 7 days',
-            value: [dateFns.subDays(new Date(), 6), new Date()]
-        }, {
-            label: 'Last 30 days',
-            value: [dateFns.subDays(new Date(), 29), new Date()]
-        }];
+    onDateRangeChanged = (date, isStart) => {
+        if (isStart) {
+            this.setState({startDate: date}, () => {
+                this.updateStudentActivity();
+            });
+        }
+        else {
+            this.setState({endDate: date}, () => {
+                this.updateStudentActivity();
+            });
+        }
 
-    onDateRangeChanged = (value) => {
-        this.setState({startDate: value[0], endDate: value[1]}, () => {
-            this.updateStudentActivity();
-        });
     }
 
     render() {
         return (
             <Fragment>
-                <DateRangePicker value={[this.state.startDate, this.state.endDate]}
-                                 onChange={(value => this.onDateRangeChanged(value))}
-                                 ranges={this.dateRanges}/>
+                <DatePicker
+                    selected={this.state.startDate}
+                    onChange={date => this.onDateRangeChanged(date, true)}
+                    selectsStart
+                    startDate={this.state.startDate}
+                    endDate={this.state.endDate}
+                />
+                &nbsp;to&nbsp;
+                <DatePicker
+                    style={{marginLeft: 10}}
+                    selected={this.state.endDate}
+                    onChange={date => this.onDateRangeChanged(date, false)}
+                    selectsEnd
+                    startDate={this.state.startDate}
+                    endDate={this.state.endDate}
+                    minDate={this.state.startDate}
+                />
                 <br/> <br/>
                 <SummaryView activityStream={this.state.activityStream} startDate={this.state.startDate}
                              endDate={this.state.endDate}/>

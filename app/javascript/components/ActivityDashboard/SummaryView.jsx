@@ -58,7 +58,7 @@ class SummaryView extends Component {
                         </ResponsiveContainer>
                         <br/>
                         <Grid>
-                            <Row style={{paddingLeft: 55}}>
+                            <Row style={{paddingLeft: 69}}>
                                 {/* TODO: Refactor these into a composable summary count component */}
                                 <Col style={{paddingLeft: 10, paddingRight:10}} md={2}>
                                     <Panel>
