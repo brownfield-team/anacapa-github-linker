@@ -1,3 +1,4 @@
+<h2><%= link_to @roster_student.full_name, course_roster_student_path(@course, @roster_student) %></h2>
 <%= react_component("StudentActivity", prerender: false, props: {
     course_id: params[:course_id].to_i, roster_student_id: params[:roster_student_id].to_i
 }) %>

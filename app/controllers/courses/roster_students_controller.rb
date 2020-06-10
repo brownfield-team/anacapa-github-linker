@@ -88,7 +88,7 @@ module Courses
     end
 
     def activity
-
+      @roster_student = RosterStudent.find(params[:roster_student_id])
     end
 
     def find_org_repos
