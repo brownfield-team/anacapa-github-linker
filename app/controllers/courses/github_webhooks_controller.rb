@@ -6,9 +6,6 @@ module Courses
     skip_before_action :authenticate_user!
     before_action :record_webhook_event, only: :create
 
-    # TODO: MAKE SURE THIS IS REMOVED BEFORE IT IS MERGED. THIS IS FOR TESTING ONLY.
-    skip_before_action :authenticate_github_request!
-
     def record_webhook_event
       event_record = @course.org_webhook_events.new
       event_record.event_type = request.headers['X-GitHub-Event']
