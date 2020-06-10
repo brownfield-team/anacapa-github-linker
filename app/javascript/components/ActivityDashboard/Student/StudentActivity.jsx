@@ -29,7 +29,7 @@ class StudentActivity extends Component {
 
     dateRanges = [
         {
-            label: 'Last 7 days',
+            label: 'Last 3 days',
             value: [dateFns.subDays(new Date(), 2), new Date()]
         },
         {
