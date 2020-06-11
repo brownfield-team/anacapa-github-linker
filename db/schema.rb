@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200608064256) do
+ActiveRecord::Schema.define(version: 20200611201649) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(version: 20200608064256) do
     t.string "full_name"
     t.string "visibility"
     t.index ["course_id"], name: "index_github_repos_on_course_id"
+    t.index ["repo_id"], name: "index_github_repos_on_repo_id"
   end
 
   create_table "org_teams", force: :cascade do |t|
@@ -56,6 +57,7 @@ ActiveRecord::Schema.define(version: 20200608064256) do
     t.string "team_id"
     t.string "slug"
     t.index ["course_id"], name: "index_org_teams_on_course_id"
+    t.index ["team_id"], name: "index_org_teams_on_team_id"
   end
 
   create_table "org_webhook_events", force: :cascade do |t|
@@ -111,6 +113,7 @@ ActiveRecord::Schema.define(version: 20200608064256) do
     t.datetime "commit_timestamp"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["commit_hash"], name: "index_repo_commit_events_on_commit_hash"
     t.index ["github_repo_id"], name: "index_repo_commit_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_commit_events_on_roster_student_id"
   end
@@ -132,6 +135,7 @@ ActiveRecord::Schema.define(version: 20200608064256) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["github_repo_id"], name: "index_repo_issue_events_on_github_repo_id"
+    t.index ["issue_id"], name: "index_repo_issue_events_on_issue_id"
     t.index ["roster_student_id"], name: "index_repo_issue_events_on_roster_student_id"
   end
 
@@ -144,6 +148,7 @@ ActiveRecord::Schema.define(version: 20200608064256) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["github_repo_id"], name: "index_repo_pull_request_events_on_github_repo_id"
+    t.index ["pr_id"], name: "index_repo_pull_request_events_on_pr_id"
     t.index ["roster_student_id"], name: "index_repo_pull_request_events_on_roster_student_id"
   end
 
@@ -240,6 +245,7 @@ ActiveRecord::Schema.define(version: 20200608064256) do
     t.string "last_sign_in_ip"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["uid"], name: "index_users_on_uid"
   end
 
   create_table "users_roles", id: false, force: :cascade do |t|
