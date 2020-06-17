@@ -30,4 +30,14 @@ class RosterStudent < ApplicationRecord
     return nil if team_str.empty?
     team_str.delete_suffix("/")
   end
+
+  def activity_stream(start_date, end_date)
+    # This can be significantly optimized if it ever needs to be by converting it entirely into a single SQL query.
+    # Just not worth the effort right now.
+    activity = []
+    activity += self.repo_commit_events
+    activity += self.repo_issue_events
+    activity += self.repo_pull_request_events
+    activity.select { |a| a.created_at > start_date && a.created_at < end_date }.sort_by(&:created_at)
+  end
 end

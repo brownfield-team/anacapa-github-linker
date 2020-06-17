@@ -5,6 +5,7 @@ import * as _ from 'underscore';
 import * as moment from 'moment';
 import {Bar, BarChart, Brush, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 import {forEach} from "underscore";
+import SummaryCount from "./SummaryCount";
 
 class SummaryView extends Component {
     constructor(props) {
@@ -59,27 +60,8 @@ class SummaryView extends Component {
                         <br/>
                         <Grid>
                             <Row style={{paddingLeft: 69}}>
-                                {/* TODO: Refactor these into a composable summary count component */}
-                                <Col style={{paddingLeft: 10, paddingRight:10}} md={2}>
-                                    <Panel>
-                                        <Panel.Heading>
-                                            <Panel.Title>Total</Panel.Title>
-                                        </Panel.Heading>
-                                        <Panel.Body>
-                                            <h3>{numEvents}</h3>
-                                        </Panel.Body>
-                                    </Panel>
-                                </Col>
-                                <Col style={{paddingLeft: 10, paddingRight:10}} md={2}>
-                                    <Panel>
-                                        <Panel.Heading>
-                                            <Panel.Title>Commits</Panel.Title>
-                                        </Panel.Heading>
-                                        <Panel.Body>
-                                            <h3>{numCommits}</h3>
-                                        </Panel.Body>
-                                    </Panel>
-                                </Col>
+                                <SummaryCount name={"Total"} count={numEvents}/>
+                                <SummaryCount name={"Commits"} count={numCommits}/>
                             </Row>
                         </Grid>
                     </Panel.Body>
