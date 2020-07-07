@@ -12,7 +12,7 @@ OMNIAUTH_PROVIDER_KEY=<your omniauth provider key>
 OMNIAUTH_PROVIDER_SECRET=<your omniauth provider secret>
 
 # Provide a github user, and an access token for that github user
-# The scopes should be user:email,admin:org
+# The scopes should be user:email,admin:org,admin:org_hook
 
 MACHINE_USER_NAME=<your machine user's name>
 MACHINE_USER_KEY=<your machine user's key>
@@ -23,6 +23,7 @@ GITHUB_WEBHOOK_SECRET=
 DEVISE_SECRET_KEY=<a random alphanumeric string used by devise to salt its sessions>
 
 # All of these values are found on the OAuth page of the Slack app.
+# This page of documentation may help: https://api.slack.com/tutorials/slack-apps-and-postman
 SLACK_CLIENT_ID=
 SLACK_CLIENT_SECRET=
 SLACK_SIGNING_SECRET=
