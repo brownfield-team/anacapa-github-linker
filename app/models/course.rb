@@ -166,10 +166,14 @@ class Course < ApplicationRecord
   # export roster students to a CSV file
   def export_students_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w[student_id email first_name last_name enrolled section github_username org_status teams]
+      csv << %w[student_id email first_name last_name enrolled section github_username slack_uid slack_username slack_display_name org_status teams]
 
       roster_students.each do |user|
         org_member_status = user.org_membership_type || user.is_org_member
+
+        slack_uid = user.slack_user.nil? ? nil : user.slack_user.uid
+        slack_username = user.slack_user.nil? ? nil : user.slack_user.username
+        slack_display_name = user.slack_user.nil? ? nil : user.slack_user.display_name
 
         csv << [
           user.perm,
@@ -179,6 +183,9 @@ class Course < ApplicationRecord
           user.enrolled,
           user.section,
           user.username,
+          slack_uid,
+          slack_username, 
+          slack_display_name,
           org_member_status,
           user.teams_string
         ]
