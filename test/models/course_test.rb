@@ -52,7 +52,7 @@ class CourseTest < ActiveSupport::TestCase
   test "download to csv" do
     csv = @course.export_students_to_csv
 
-    expected_csv = "student_id,email,first_name,last_name,enrolled,section,github_username,org_status,teams\n12345678,wes@email.com,Wes,P,true,,,,\n21345678,tim@email.com,Tim,H,true,,,,\n"
+    expected_csv = "student_id,email,first_name,last_name,enrolled,section,github_username,slack_uid,slack_username,slack_display_name,org_status,teams\n12345678,wes@email.com,Wes,P,true,,,,,,,\n21345678,tim@email.com,Tim,H,true,,,,,,,\n"
     assert_equal csv, expected_csv
   end
 
