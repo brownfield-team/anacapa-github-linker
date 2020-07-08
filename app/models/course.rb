@@ -123,6 +123,7 @@ class Course < ApplicationRecord
     last_name_index = header_map.index("last_name")
     full_name_index = header_map.index("full_name")
     section_index = header_map.index("section")
+    github_username_index = header_map.index("github_username")
 
     unenroll_all_students
 
@@ -131,7 +132,7 @@ class Course < ApplicationRecord
 
       spreadsheet_row = spreadsheet.row(i)
 
-      row = {} # build dynaimically based on choices
+      row = {} # build dynamically based on choices
 
       row["student_id"] = spreadsheet_row[id_index]
       row["email"] = spreadsheet_row[email_index]
@@ -149,8 +150,15 @@ class Course < ApplicationRecord
       next if row.values.all?(&:nil?) # skip empty rows
 
       # check if there is an existing student in the course or create a new one
-      student = roster_students.find_by(perm: row["student_id"]) ||
-      roster_students.new
+      student = roster_students.find_by(perm: row["student_id"]) || roster_students.new
+
+      if github_username_index
+        github_username = spreadsheet_row[github_username_index]
+        if github_username
+          user = User.where(username: github_username).first || create_user(github_username,row["email"])
+          student.user = user unless user.nil?
+        end
+      end
 
       student.enrolled = true
       # We're changing the outward references to student id, but not renaming the perm column for now
@@ -161,6 +169,19 @@ class Course < ApplicationRecord
       student.section = row["section"] unless section_index.nil?
       student.save
     end
+  end
+
+  def create_user(github_username, email)
+    github_user = github_user_lookup(github_username)
+    return nil unless github_user 
+    User.create(
+          provider: ENV['OMNIAUTH_STRATEGY'],
+          uid: github_user.data.user.databaseId,
+          email: email,
+          name: github_user.data.user.name,
+          username: github_user.data.user.login,
+          password: Devise.friendly_token[0,20],
+    )
   end
 
   # export roster students to a CSV file
@@ -193,5 +214,25 @@ class Course < ApplicationRecord
     end
   end
 
+  def github_user_lookup(github_username) 
+    response = github_machine_user.post '/graphql', 
+               { query: github_user_graphql_query(github_username) }.to_json
+    if !response.respond_to?(:data) || response.respond_to?(:errors)
+      return nil
+    end   
+    response       
+  end
+
+  def github_user_graphql_query(github_username)
+    <<-GRAPHQL
+    query { 
+      user (login: "#{github_username}") { 
+        login
+        name
+        databaseId
+      }
+    }
+    GRAPHQL
+  end
   
 end
