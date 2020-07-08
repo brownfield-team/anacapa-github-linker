@@ -1,158 +1,145 @@
-<p>You are
-  <% if current_user.has_role? :admin %>
-    an administrator
-  <% elsif current_user.has_role? :ta, @course %>
-    a TA
-  <% elsif current_user.has_role? :instructor, @course %>
-    an instructor
-  <% end %>
-  of this course
-</p>
-<p>This course belongs to the github organization:
+<p>GitHub org:
   <% course_org_link = "https://github.com/orgs/#{@course.course_organization}" %>
   <%= link_to @course.course_organization, course_org_link %>.
-  See <%= link_to "Membership and Pending Invitations", "#{course_org_link}/people" %>.
+  See <%= link_to "Membership/Pending Invitations", "#{course_org_link}/people" %>.
+  Your role in this course:
+  <% if current_user.has_role? :admin %>
+    admin. 
+  <% elsif current_user.has_role? :ta, @course %>
+    TA. 
+  <% elsif current_user.has_role? :instructor, @course %>
+    instructor. 
+  <% end %>
 </p>
-
 <%#= link_to "View Course Roster (#{@course.roster_students.length} enrolled)", course_roster_students_path(@course), class: "btn", role: "button" %>
-
 <div class="panel panel-default">
   <div class="panel-heading">
-    <div class="panel-title">Course Roster</div>
+    <div class="btn-group pull-right">
+      <%= link_to "Download Roster (CSV)", course_roster_students_path(@course, :format => "csv"), method: :get, class: "btn btn-default" %>
+      <%= link_to "Download Roster (JSON)", course_roster_students_path(@course, :format => "json"), method: :get, class: "btn btn-default" %>
+      <% if can? :create, RosterStudent %>
+        <%= link_to "New Student", new_course_roster_student_path(@course), method: :get, class: "btn btn-default" %>
+      <% end %>
+    </div>
+    <h4>Course Roster</h4>
   </div>
   <div class="panel-body">
-    <p>Upload a new roster:</p>
-
-    <div style="margin-bottom: 20px">
-
+   
+    <div>
+      Upload Roster (CSV):
       <%= form_tag import_course_roster_students_path(@course), multipart: true, class: "form-inline", style: "display:inline-block;", id: "roster-upload-form" do %>
-
         <%= file_field_tag :file, class: "form-control" %>
-
         <input type="text" style="display: none;" id="csv-header-map-hidden-field" name="csv_header_map">
         <input type="checkbox" style="display: none;" checked="false" id="csv-header-toggle-hidden-field" name="csv_header_toggle">
-
       <% end %>
-
-      <% if can? :create, RosterStudent %>
-        <%= link_to "New Student", new_course_roster_student_path(@course), method: :get, class: "btn btn-default",
-                    style: "display:inline-block; float: right; margin-left: 10px;" %>
-      <% end %>
-
-      <%= link_to "Download CSV Roster", course_roster_students_path(@course, :format => "csv"), method: :get, class:
-          "btn btn-default",
-                  style: "display:inline-block; float: right; margin-left: 10px;" %>
-
     </div>
-
     <!--    <h4>TAs:-->
     <%# ta_count = 0 %>
     <%# @course.roster_students.each do |student| %>
-    <%# if student.user.present? and student.user.has_role? :ta, @course %>
-    <%#= ", " unless ta_count == 0 %>
-    <%#= "#{student.first_name} #{student.last_name}" %>
-    <%# ta_count += 1 %>
-    <%# end %>
-    <%# end %>
-    <%# if ta_count == 0 %>
-    <!--        None-->
-    <%# end %>
-    <!--    </h4>-->
-
-    <table class="bootstrap-table" data-toggle="table" data-search="true" data-show-export="true"
+      <%# if student.user.present? and student.user.has_role? :ta, @course %>
+      <%#= ", " unless ta_count == 0 %>
+      <%#= "#{student.first_name} #{student.last_name}" %>
+      <%# ta_count += 1 %>
+      <%# end %>
+      <%# end %>
+      <%# if ta_count == 0 %>
+      <!--        None-->
+      <%# end %>
+      <!--    </h4>-->
+      <table class="bootstrap-table" data-toggle="table" data-search="true" data-show-export="true"
            data-pagination="true" data-show-columns="true" data-show-columns-toggle-all="true"
            data-show-pagination-switch="true" data-filter-control="true">
-      <thead>
-      <tr>
-        <th data-sortable="true" data-field="StudentID" data-filter-control="input">Student ID</th>
-        <th data-sortable="true" data-field="Name" data-filter-control="input">Name</th>
-        <th data-sortable="true" data-field="Email" data-filter-control="input">Email</th>
-        <th data-sortable="true" data-field="Enrolled" data-filter-control="select">Enrolled</th>
-        <th data-sortable="true" data-field="Section" data-filter-control="select">Section</th>
-        <th data-sortable="true" data-field="TA" data-filter-control="select">TA</th>
-        <% if @course.slack_workspace.present? %>
-          <th data-sortable="true" data-field="Slack" data-filter-control="input">Slack</th>
-        <% end %>
-        <th data-sortable="true" data-field="GithubId" data-filter-control="input">Github ID</th>
-        <th data-sortable="true" data-field="OrgMembership" data-filter-control="select">Org Status</th>
-        <th data-sortable="true" data-field="Teams" data-filter-control="input">Teams</th>
-        <th></th>
-      </tr>
-      </thead>
-
-      <tbody class="students-list">
-      <% @course.roster_students.each do |student| %>
-        <tr>
-          <td><%= student.perm %></td>
-          <td><%= link_to student.full_name, course_roster_student_path(@course, student) %></td>
-          <td><%= student.email %></td>
-          <td><%= student.enrolled ? "True" : "False" %></td>
-          <td><%= student.section %></td>
-          <td><%= !student.user.nil? && student.user.has_role?(:ta, @course) ? "True" : "False" %></td>
-          <% if @course.slack_workspace.present? %>
-            <% slack_user = student.slack_user %>
-            <% if slack_user.present? %>
-              <td>
-                <div id="<%= slack_user.display_name %>" class="hidden-sort-div"></div>
-                <%= link_to slack_user.display_name, slack_user.slack_url %>
-              </td>
-            <% else %>
-              <td></td>
+        <thead>
+          <tr>
+            <th data-sortable="true" data-field="StudentID" data-filter-control="input">Student ID</th>
+            <th data-sortable="true" data-field="Name" data-filter-control="input">Name</th>
+            <th data-sortable="true" data-field="Email" data-filter-control="input">Email</th>
+            <th data-sortable="true" data-field="Enrolled" data-filter-control="select">Enrolled</th>
+            <th data-sortable="true" data-field="Section" data-filter-control="select">Section</th>
+            <th data-sortable="true" data-field="TA" data-filter-control="select">TA</th>
+            <% if @course.slack_workspace.present? %>
+              <th data-sortable="true" data-field="Slack" data-filter-control="input">Slack</th>
             <% end %>
-          <% end %>
-          <% if !student.user.nil? %>
-            <td><a href="https://github.com/<%= student.username %>"><%= student.username %></td>
-          <% else %>
-            <td></td>
-          <% end %>
-          <td><%= student.org_membership_type.present? ? student.org_membership_type : "Non-member" %></td>
-          <td>
-            <% student.org_teams.each.with_index do |team, index| %>
-              <%= link_to(team.name, team.url) + (", " unless index == student.org_teams.size - 1) %>
+            <th data-sortable="true" data-field="GithubId" data-filter-control="input">Github ID</th>
+            <th data-sortable="true" data-field="OrgMembership" data-filter-control="select">Org Status</th>
+            <th data-sortable="true" data-field="Teams" data-filter-control="input">Teams</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody class="students-list">
+          <% @course.roster_students.each do |student| %>
+            <tr>
+              <td><%= student.perm %></td>
+              <td><%= link_to student.full_name, course_roster_student_path(@course, student) %></td>
+              <td><%= student.email %></td>
+              <td><%= student.enrolled ? "True" : "False" %></td>
+              <td><%= student.section %></td>
+              <td><%= !student.user.nil? && student.user.has_role?(:ta, @course) ? "True" : "False" %></td>
+              <% if @course.slack_workspace.present? %>
+                <% slack_user = student.slack_user %>
+                <% if slack_user.present? %>
+                  <td>
+                    <div id="<%= slack_user.display_name %>" class="hidden-sort-div"></div>
+                    <%= link_to slack_user.display_name, slack_user.slack_url %>
+                  </td>
+                <% else %>
+                  <td></td>
+                <% end %>
+              <% end %>
+              <% if !student.user.nil? %>
+                <td><a href="https://github.com/<%= student.username %>"><%= student.username %></td>
+                <% else %>
+                  <td></td>
+                <% end %>
+                <td><%= student.org_membership_type.present? ? student.org_membership_type : "Non-member" %></td>
+                <td>
+                  <% student.org_teams.each.with_index do |team, index| %>
+                    <%= link_to(team.name, team.url) + (", " unless index == student.org_teams.size - 1) %>
+                  <% end %>
+                </td>
+                <% if can? :destroy, student %>
+                  <td><%= link_to 'Remove', course_roster_student_path(@course, student), method: :delete, data: {confirm: 'Are you sure?'} %></td>
+                <% end %>
+              </tr>
             <% end %>
-          </td>
-          <% if can? :destroy, student %>
-            <td><%= link_to 'Remove', course_roster_student_path(@course, student), method: :delete, data: {confirm: 'Are you sure?'} %></td>
-          <% end %>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-
-  </div>
-</div>
-
-<!-- upload modal -->
-<!-- prep the data on the client side first -->
-<div class="modal fade " id="upload-modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Match Fields to Columns</h4>
-      </div>
-      <div class="modal-body" style="overflow: auto; white-space: nowrap;">
-        <p>
-          <input type="checkbox" id="first-row-is-header" onchange="headerToggle(this)" checked> First row is a
-          header
-        </p>
-        <table class="table first-row-disabled">
-          <thead>
-          <!-- dyn populated by JS file for this controller -->
-          </thead>
-          <tbody>
           </tbody>
         </table>
-        <p id="rows-not-shown"></p>
       </div>
-      <div class="modal-footer">
-        <h4 id="csv-upload-error" class="hidden" style="width: 100%;text-align: center;float: left;margin-bottom: -20px;">
-          <span class="label label-lg label-danger">ERROR: Please select { {First Name, Last Name } | Full Name, Perm, Email} </span>
-        </h4>
-        <button type="button" class="btn btn-default" data-dismiss="modal" onClick="window.location.reload()">Close</button>
-        <button type="button" class="btn btn-primary" onclick="uploadSubmit();">Upload</button>
+    </div>
+    <!-- upload modal -->
+    <!-- prep the data on the client side first -->
+    <div class="modal fade " id="upload-modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Match Fields to Columns</h4>
+          </div>
+          <div class="modal-body" style="overflow: auto; white-space: nowrap;">
+            <p>
+              <input type="checkbox" id="first-row-is-header" onchange="headerToggle(this)" checked> First row is a
+              header
+            </p>
+            <table class="table first-row-disabled">
+              <thead>
+                <!-- dyn populated by JS file for this controller -->
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+            <p id="rows-not-shown"></p>
+          </div>
+          <div class="modal-footer">
+            <h4 id="csv-upload-error" class="hidden" style="width: 100%;text-align: center;float: left;margin-bottom: -20px;">
+              <span class="label label-lg label-danger">ERROR: Please select { {First Name, Last Name } | Full Name, Perm, Email} </span>
+            </h4>
+            <button type="button" class="btn btn-default" data-dismiss="modal" onClick="window.location.reload()">Close</button>
+            <button type="button" class="btn btn-primary" onclick="uploadSubmit();">Upload</button>
+          </div>
+        </div>
+        <!-- /.modal-content -->
       </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
