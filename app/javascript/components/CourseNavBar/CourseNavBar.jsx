@@ -24,7 +24,7 @@ class CourseNavBar extends Component {
             <Fragment>
                 <Nav bsStyle="tabs" activeKey={activeTabKey}>
                     <NavItem eventKey="roster_students" href={this.props.roster_path}>Students</NavItem>
-                    <NavDropdown title="Teams">
+                    <NavDropdown title="Teams" id="teamsDropdown">
                         <MenuItem eventKey="project_teams" href={this.props.project_teams_path}>Project Teams</MenuItem>
                         <MenuItem eventKey="org_teams" href={this.props.org_teams_path}>GitHub Teams</MenuItem>
                         <MenuItem eventKey="create_teams" href={this.props.create_teams_path}>Create Teams From CSV</MenuItem>
