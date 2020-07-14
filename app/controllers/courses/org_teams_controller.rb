@@ -10,6 +10,10 @@ module Courses
       @teams = @parent.org_teams
     end
 
+    def show
+      @teams = @parent.org_teams
+    end
+
     def create_repos
 
     end
