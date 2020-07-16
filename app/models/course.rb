@@ -9,7 +9,7 @@ class Course < ApplicationRecord
   validate :check_course_org_exists
   has_many :roster_students, dependent: :destroy
   has_many :completed_jobs, dependent: :destroy
-  has_many :github_repos, dependent: :destroy
+  has_many :github_repos, dependent: :destroy, class_name: '::GithubRepo'
   has_many :org_teams, dependent: :destroy
   has_one :slack_workspace, dependent: :destroy
   has_one :org_webhook, dependent: :destroy
@@ -104,7 +104,7 @@ class Course < ApplicationRecord
         errors.add(:base, "You must add #{ENV["MACHINE_USER_NAME"]} to your organization before you can proceed.")
       end
     else
-      errors.add(:base, "You must create a github organization with the name of your class and add #{ENV["MACHINE_USER_NAME"]} as an owner of that organization.")
+      errors.add(:base, "You must create a github organization with the name of your clas_names'and add #{ENV["MACHINE_USER_NAME"]} as an owner of that organization.")
     end
   end
 

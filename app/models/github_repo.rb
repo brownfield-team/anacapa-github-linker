@@ -1,5 +1,5 @@
 class GithubRepo < ApplicationRecord
-  belongs_to :course
+  belongs_to :course, optional: true
   has_many :repo_contributors
   has_many :users, through: :repo_contributors
   has_many :repo_team_contributors, dependent: :destroy

@@ -11,8 +11,11 @@ Rails.application.routes.draw do
   namespace :api, :defaults => { :format => 'json' } do
     resources :courses do
       scope module: :courses do
-        resources :project_teams
+        resources :project_teams do
+          get :project_repo_commits
+        end
         resources :org_teams
+        resources :github_repos
         resources :roster_students do
           get :activity
           get :commits
@@ -40,6 +43,9 @@ Rails.application.routes.draw do
           post :import
         end
         get :activity
+      end
+      resources :github_repos do
+        
       end
       resources :org_teams do
         collection do

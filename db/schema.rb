@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200608064256) do
+ActiveRecord::Schema.define(version: 20200716005934) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,6 +44,8 @@ ActiveRecord::Schema.define(version: 20200608064256) do
     t.integer "repo_id"
     t.string "full_name"
     t.string "visibility"
+    t.bigint "completed_jobs_id"
+    t.index ["completed_jobs_id"], name: "index_github_repos_on_completed_jobs_id"
     t.index ["course_id"], name: "index_github_repos_on_course_id"
   end
 
