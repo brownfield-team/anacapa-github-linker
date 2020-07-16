@@ -7,10 +7,10 @@ module Courses
   class GithubReposController < ApplicationController
     layout 'courses'
     before_action :load_parent
-    #before_action :set_github_repo, only: [:show]
+    before_action :set_github_repo, only: [:show]
 
     load_and_authorize_resource :course
-    #load_and_authorize_resource :github_repo, through: :course
+    load_and_authorize_resource :github_repo, through: :course
 
     def index
       @github_repos = @parent.github_repos.all
