@@ -17,13 +17,12 @@ module Courses
     end
 
     def show
-      # @github_repo = @parent.github_repos.find(params[:id])
     end
 
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_github_repo
-        # @github_repo = GithubRepos.find(params[:id])
+        @github_repo = GithubRepo.find(params[:id])
       end
 
       def machine_user

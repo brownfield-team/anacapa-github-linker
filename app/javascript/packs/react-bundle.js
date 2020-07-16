@@ -5,6 +5,8 @@ import ProjectTeams from "../components/ProjectTeams/ProjectTeams";
 import CourseNavBar from "../components/CourseNavBar/CourseNavBar";
 import StudentActivity from "../components/ActivityDashboard/Student/StudentActivity";
 import CourseGithubReposIndex from "../components/Course/GithubRepos/CourseGithubReposIndex";
+import CourseGithubRepo from "../components/Course/GithubRepos/CourseGithubRepo";
+
 
 import "../styles.css"
 
@@ -13,5 +15,6 @@ ReactOnRails.register({
   ProjectTeams,
   CourseNavBar,
   StudentActivity,
-  CourseGithubReposIndex
+  CourseGithubReposIndex,
+  CourseGithubRepo
 });
