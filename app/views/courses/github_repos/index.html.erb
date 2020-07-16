@@ -1,13 +1,8 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <div class="panel-title">Github Repos for <%= @parent.name %> </div>
-  </div>
-
-  <%= react_component("CourseGithubReposIndex",
+<%= react_component("CourseGithubReposIndex",
                         props: {current_path: request.env['PATH_INFO'], 
                                 can_edit: can?(:update, @course),
                                 course_id: params[:course_id].to_i,
+                                course: @parent
                         },
-                        prerender: false) %>
-</div>
-
+                        prerender: false) 
+%>

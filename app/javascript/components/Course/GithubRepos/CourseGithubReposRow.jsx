@@ -6,7 +6,7 @@ class CourseGithubReposRow extends Component {
         const r = this.props.repo; // Save some characters
         return (
             <tr key={r.id}>
-                <td><a href={`github_repos/${r.id}`}>{r.name}</a></td>
+                <td><a href={`/courses/${this.props.course_id}/github_repos/${r.id}`}>{r.name}</a></td>
                 <td><a href={r.url}>on Github</a></td>
                 <td>{r.visibility}</td>
             </tr>
