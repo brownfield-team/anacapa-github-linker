@@ -1,5 +1,5 @@
 class AddGithubRepoToCompletedJob < ActiveRecord::Migration[5.1]
   def change
-    add_reference :github_repos, :completed_jobs, index: true
+    add_reference :completed_jobs, :github_repos,  index: true
   end
 end
