@@ -123,8 +123,9 @@ class CoursesController < ApplicationController
   end
 
   def run_course_job
+    @course = Course.find(params[:course_id])
     job_name = params[:job_name]
-    job = course_job_list.find { |job| job.job_short_name == job_name }
+    job = @course.course_job_list.find { |job| job.job_short_name == job_name }
     # This is a hack. It should be replaced as soon as possible, hopefully after authorization in the app is redone.
     if job.permission_level == "admin" && !user.has_role?("admin")
       redirect_to course_jobs_path, alert: "You do not have permission to run this job. Ask an admin to run it for you."
@@ -133,16 +134,7 @@ class CoursesController < ApplicationController
     redirect_to course_jobs_path, notice: "Job successfully queued."
   end
 
-  # List of course jobs to make available to run
-  def course_job_list
-    @course = Course.find(params[:course_id])
-    jobs = [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, PurgeCourseReposJob]
-    if @course.slack_workspace.present?
-      jobs << AssociateSlackUsersJob
-    end
-    jobs
-  end
-  helper_method :course_job_list
+  
 
   def repos
     @course = Course.find(params[:course_id])

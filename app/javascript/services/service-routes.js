@@ -12,3 +12,4 @@ export const studentRoute = (courseId, rosterStudentId) => `${courseStudentsRout
 export const studentActivityRoute = (courseId, rosterStudentId) => `${studentRoute(courseId, rosterStudentId)}/activity`
 
 export const studentUiRoute = (courseId, studentId) => `/courses/${courseId}/roster_students/${studentId}`
+

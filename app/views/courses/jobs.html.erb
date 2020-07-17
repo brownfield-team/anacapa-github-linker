@@ -1,9 +1,14 @@
+<%= react_component("JobLauncher", prerender: false, props: {
+    jobs_list: @course.course_job_info_list,
+    run_url_prefix: "/courses/#{@course.id}/run_course_job"
+}) %>
+
+
 <div class="panel panel-default">
   <div class="panel-heading">
     <div class="panel-title">Jobs</div>
   </div>
   <div class="panel-body">
-
     <table class="table">
       <thead>
       <tr>
@@ -13,7 +18,7 @@
       </tr>
       </thead>
       <tbody>
-      <% course_job_list.each do |job| %>
+      <% @course.course_job_list.each do |job| %>
         <tr>
           <td><span class="job_name" data-toggle="tooltip" title = "<%= job.job_description %>"><%= job.job_name %></span></td>
           <td><%= job.last_run %></td>

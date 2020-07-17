@@ -227,4 +227,27 @@ class Course < ApplicationRecord
       student.save
     end
   end
+
+  # List of course jobs to make available to run
+  def course_job_list
+    jobs = [::TestJob, ::StudentsOrgMembershipCheckJob, ::UpdateGithubReposJob, ::RefreshGithubTeamsJob, ::PurgeCourseReposJob]
+    if slack_workspace.present?
+      jobs << AssociateSlackUsersJob
+    end
+    jobs
+  end
+
+  # List of course jobs to make available to run
+  def course_job_info_list
+    jobs = course_job_list
+    jobs_info = jobs.map{ |j| 
+      j.instance_values.merge({ 
+        "last_run" => j.itself.last_run,
+        "job_description" => j.itself.job_description
+        }
+      )  
+    }
+    jobs_info
+  end
+
 end
