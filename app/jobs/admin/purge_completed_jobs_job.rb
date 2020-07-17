@@ -5,7 +5,7 @@ class PurgeCompletedJobsJob < AdminJob
   @confirmation_dialog = "Are you sure you want to delete all records of completed jobs?"
   @job_description = "Deletes all completed job records from the database."
 
-  def attempt_job
+  def attempt_job(options)
     jobs_deleted = CompletedJob.destroy_all
     "#{pluralize jobs_deleted.size, "job"} deleted."
   end
