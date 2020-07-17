@@ -32,6 +32,12 @@
   </div>
 </div>
 
+<%= react_component("JobLauncher", prerender: false, props: {
+    jobs_list: admin_job_info_list,
+    run_url_prefix: "/admin/run_admin_job"
+}) %>
+
+
 <div class="panel panel-default">
   <div class="panel-heading">
     <div class="panel-title">Jobs</div>
@@ -49,10 +55,10 @@
       <tbody>
       <% admin_job_list.each do |job| %>
         <tr>
-          <td><span class="job_name" data-toggle="tooltip" title = "<%= job["job_description"] %>"><%= job.job_name %></span></td>
+          <td><span class="job_name" data-toggle="tooltip" title = "<%= job.job_description %>"><%= job.job_name %></span></td>
           <td><%= job.last_run %></td>
-          <td><%= link_to 'Run Job', run_admin_job_admin_path(job_name: job["job_short_name"]),
-                          method: :post, data: { confirm: job["confirmation_dialog"] } %></td>
+          <td><%= link_to 'Run Job', run_admin_job_admin_path(job_name: job.job_short_name),
+                          method: :post, data: { confirm: job.confirmation_dialog } %></td>
         </tr>
       <% end %>
       </tbody>
