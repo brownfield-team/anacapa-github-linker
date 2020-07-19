@@ -5,7 +5,7 @@ class PurgeUnusedUsersJob < AdminJob
   @confirmation_dialog = "Are you sure you want to delete all non-admin/instructor users not enrolled in a course?"
   @job_description = "Removes all users who are not instructors/admins that are not enrolled in any existing course."
 
-  def attempt_job
+  def attempt_job(_options)
     num_removed = 0
     users = User.all
     users.each do |user|
