@@ -1,59 +1,11 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <div class="panel-title">Jobs</div>
-  </div>
-  <div class="panel-body">
+<%= react_component("JobLauncher", prerender: false, props: {
+    jobs_list: course_job_info_list,
+    run_url_prefix: "/courses/#{@course.id}/run_course_job"
+}) 
+%>
+<%= react_component("JobLog", prerender: false, props: {
+    completed_jobs_list: CompletedJob.last_ten_jobs(@course.id)
+}) 
+%>
 
-    <table class="table">
-      <thead>
-      <tr>
-        <th>Job Name</th>
-        <th>Last Run</th>
-        <th colspan="1"></th>
-      </tr>
-      </thead>
-      <tbody>
-      <% course_job_list.each do |job| %>
-        <tr>
-          <td><span class="job_name" data-toggle="tooltip" title = "<%= job.job_description %>"><%= job.job_name %></span></td>
-          <td><%= job.last_run %></td>
-          <td><%= link_to 'Run Job', course_run_course_job_path(@course, job_name: job.job_short_name),
-                          method: :post %></td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
 
-  </div>
-</div>
-
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <div class="panel-title">Job Log</div>
-  </div>
-  <div class="panel-body">
-
-    <table data-toggle="table">
-      <thead>
-      <tr>
-        <th data-sortable="true">Job Name</th>
-        <th data-sortable="true">Date Run</th>
-        <th>Time Elapsed</th>
-        <th>Summary</th>
-      </tr>
-      </thead>
-      <tbody>
-      <!--   Display last 10 completed jobs   -->
-      <% CompletedJob.last_ten_jobs(@course.id).each do |completed_job| %>
-        <tr>
-          <td><%= completed_job.job_name %></td>
-          <td><%= completed_job.created_at %></td>
-          <td><%= completed_job.time_elapsed %></td>
-          <td><%= completed_job.summary %></td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-
-  </div>
-</div>

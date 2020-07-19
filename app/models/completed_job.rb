@@ -13,7 +13,14 @@ class CompletedJob < ApplicationRecord
   end
 
   def self.last_ten_jobs(course_id)
-    CompletedJob.where(course_id: course_id).reverse_order.limit(10)
+    records = CompletedJob.where(course_id: course_id).reverse_order.limit(10)
+    completed_jobs_info = records.map { |cj|
+      cj.attributes.merge({
+        "run_at" => cj.created_at.to_formatted_s(:rfc822),
+        "time_elapsed" => cj.time_elapsed,
+      })
+    }  
+    completed_jobs_info
   end
 
 end

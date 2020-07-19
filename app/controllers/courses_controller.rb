@@ -144,6 +144,20 @@ class CoursesController < ApplicationController
   end
   helper_method :course_job_list
 
+  # List of course jobs to make available to run
+  def course_job_info_list
+    jobs = course_job_list
+    jobs_info = jobs.map{ |j| 
+      j.instance_values.merge({ 
+        "last_run" => j.itself.last_run,
+        "job_description" => j.itself.job_description
+        }
+      )  
+    }
+    jobs_info
+  end
+  helper_method :course_job_info_list
+
   def repos
     @course = Course.find(params[:course_id])
     @repos = GithubRepo.where(course_id: params[:course_id]).where("name ~* ?", params[:search]).order(:name)
