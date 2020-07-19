@@ -1,10 +1,11 @@
-require 'Octokit_Wrapper'
+require "Octokit_Wrapper"
+require "json"
 
 class Course < ApplicationRecord
   # validates :name,  presence: true,
   #                   length: { minimum: 3 }
-  validates :name, presence: true, length: {minimum: 3}, uniqueness: true
-  validates :course_organization, presence: true, length: {minimum: 3}, uniqueness: true
+  validates :name, presence: true, length: { minimum: 3 }, uniqueness: true
+  validates :course_organization, presence: true, length: { minimum: 3 }, uniqueness: true
   validate :check_course_org_exists
   has_many :roster_students, dependent: :destroy
   has_many :completed_jobs, dependent: :destroy
@@ -35,12 +36,12 @@ class Course < ApplicationRecord
   end
 
   def accept_invite_to_course_org
-    github_machine_user.update_organization_membership(course_organization, {state: "active"})
+    github_machine_user.update_organization_membership(course_organization, { state: "active" })
   end
 
   def invite_user_to_course_org(user)
     unless github_machine_user.organization_member?(course_organization, user.username)
-      github_machine_user.update_organization_membership(course_organization, {user: "#{user.username}", role: "member"})
+      github_machine_user.update_organization_membership(course_organization, { user: "#{user.username}", role: "member" })
     end
   end
 
@@ -56,19 +57,19 @@ class Course < ApplicationRecord
     # Register course webhook
     begin
       response = github_machine_user.create_org_hook(course_organization, {
-          :url => Rails.application.routes.url_helpers.course_github_webhooks_url(self),
-          :content_type => 'json',
-          :secret => ENV['GITHUB_WEBHOOK_SECRET']
-        }, {
-          :events => %w[repository member team membership organization issues pull_request project_column
-                        issue_comment pull_request_review_comment push],
-          :active => true
+        :url => Rails.application.routes.url_helpers.course_github_webhooks_url(self),
+        :content_type => "json",
+        :secret => ENV["GITHUB_WEBHOOK_SECRET"],
+      }, {
+        :events => %w[repository member team membership organization issues pull_request project_column
+                      issue_comment pull_request_review_comment push],
+        :active => true,
       })
       OrgWebhook.create(hook_id: response.id, hook_url: response.url, course: self)
     rescue Octokit::Error => e
       self.github_webhooks_enabled = false
       error = "Failed to add webhook to course organization."
-      if ENV['DEBUG_VERBOSE'] && ENV['DEBUG_VERBOSE'] == 1
+      if ENV["DEBUG_VERBOSE"] && ENV["DEBUG_VERBOSE"] == 1
         error += e.to_s
       end
       puts e
@@ -83,7 +84,7 @@ class Course < ApplicationRecord
       org_webhook.destroy
     rescue Octokit::Error => e
       error = "Failed to remove webhook from course organization."
-      if ENV['DEBUG_VERBOSE'] && ENV['DEBUG_VERBOSE'] == 1
+      if ENV["DEBUG_VERBOSE"] && ENV["DEBUG_VERBOSE"] == 1
         error += e.to_s
       end
       puts e
@@ -97,18 +98,18 @@ class Course < ApplicationRecord
       begin
         membership = github_machine_user.organization_membership(course_organization)
         unless membership.role == "admin"
-          errors.add(:base, "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed.")
+          errors.add(:base, "You must add #{ENV["MACHINE_USER_NAME"]} to your organization before you can proceed.")
         end
       rescue Octokit::NotFound
-        errors.add(:base, "You must add #{ENV['MACHINE_USER_NAME']} to your organization before you can proceed.")
+        errors.add(:base, "You must add #{ENV["MACHINE_USER_NAME"]} to your organization before you can proceed.")
       end
     else
-      errors.add(:base, "You must create a github organization with the name of your class and add #{ENV['MACHINE_USER_NAME']} as an owner of that organization.")
+      errors.add(:base, "You must create a github organization with the name of your class and add #{ENV["MACHINE_USER_NAME"]} as an owner of that organization.")
     end
   end
 
   def users
-    return (self.roster_students.map {|student| student.user }).compact
+    return (self.roster_students.map { |student| student.user }).compact
   end
 
   # import roster students from a roster file provided by gradescope
@@ -128,8 +129,7 @@ class Course < ApplicationRecord
     unenroll_all_students
 
     # start at row 1 if header row exists (via checkbox)
-    ((header_row_exists ? 2 : 1 )..spreadsheet.last_row).each do |i|
-
+    ((header_row_exists ? 2 : 1)..spreadsheet.last_row).each do |i|
       spreadsheet_row = spreadsheet.row(i)
 
       row = {} # build dynamically based on choices
@@ -187,10 +187,14 @@ class Course < ApplicationRecord
   # export roster students to a CSV file
   def export_students_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w[student_id email first_name last_name enrolled section github_username org_status teams]
+      csv << %w[student_id email first_name last_name enrolled section github_username slack_uid slack_username slack_display_name org_status teams]
 
       roster_students.each do |user|
         org_member_status = user.org_membership_type || user.is_org_member
+
+        slack_uid = user.slack_user.nil? ? nil : user.slack_user.uid
+        slack_username = user.slack_user.nil? ? nil : user.slack_user.username
+        slack_display_name = user.slack_user.nil? ? nil : user.slack_user.display_name
 
         csv << [
           user.perm,
@@ -200,11 +204,42 @@ class Course < ApplicationRecord
           user.enrolled,
           user.section,
           user.username,
+          slack_uid,
+          slack_username,
+          slack_display_name,
           org_member_status,
-          user.teams_string
+          user.teams_string,
         ]
       end
     end
+  end
+
+  # export roster students to a CSV file
+  def export_students_to_json
+    result = []
+    roster_students.each do |user|
+      org_member_status = user.org_membership_type || user.is_org_member
+
+      slack_uid = user.slack_user.nil? ? nil : user.slack_user.uid
+      slack_username = user.slack_user.nil? ? nil : user.slack_user.username
+      slack_display_name = user.slack_user.nil? ? nil : user.slack_user.display_name
+
+      result << {
+        "perm" => user.perm,
+        "email" => user.email,
+        "first_name" => user.first_name,
+        "last_name" => user.last_name,
+        "enrolled" => user.enrolled,
+        "section" => user.section,
+        "username" => user.username,
+        "slack_uid" => slack_uid,
+        "slack_username" => slack_username,
+        "slack_display_name" => slack_display_name,
+        "org_member_status" => org_member_status,
+        "teams" => user.teams_string,
+      }
+    end
+    result.to_json
   end
 
   def unenroll_all_students

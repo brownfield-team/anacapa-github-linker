@@ -30,7 +30,9 @@ class CourseNavBar extends Component {
                         <MenuItem eventKey="create_teams" href={this.props.create_teams_path}>Create Teams From CSV</MenuItem>
                         <MenuItem eventKey="create_repos" href={this.props.create_team_repos_path}>Create Team Repos</MenuItem>
                     </NavDropdown>
-                    <NavItem eventKey="repos" href={this.props.repos_path}>Repositories</NavItem>
+                    <NavDropdown title="Repos">
+                        <MenuItem eventKey="repos" href={this.props.repos_path}>Repo Search</MenuItem>
+                    </NavDropdown>
                     <NavItem eventKey="events" href={this.props.events_path}>Events</NavItem>
                     <NavItem eventKey="slack" href={this.props.slack_path}>Slack</NavItem>
                     <NavItem eventKey="jobs" href={this.props.jobs_path}>Jobs</NavItem>
