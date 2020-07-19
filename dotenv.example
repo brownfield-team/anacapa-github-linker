@@ -24,6 +24,7 @@ DEVISE_SECRET_KEY=<a random alphanumeric string used by devise to salt its sessi
 
 # All of these values are found on the OAuth page of the Slack app.
 # This page of documentation may help: https://api.slack.com/tutorials/slack-apps-and-postman
+# Also see: https://github.com/project-anacapa/anacapa-github-linker/wiki/Setting-up-Slack-app-integration-with-linker
 SLACK_CLIENT_ID=
 SLACK_CLIENT_SECRET=
 SLACK_SIGNING_SECRET=
