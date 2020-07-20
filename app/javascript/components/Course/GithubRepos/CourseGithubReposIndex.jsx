@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import * as PropTypes from 'prop-types';
 import { Table } from "react-bootstrap";
 import CourseGithubReposTable from "./CourseGithubReposTable";
+import CourseGithubReposControls from "./CourseGithubReposControls";
+
 import axios from "../../../helpers/axios-rails";
 import ReposService from "../../../services/repos-service";
 
@@ -34,6 +36,10 @@ class CourseGithubReposIndex extends Component {
     render() {
         return (
             <Fragment>
+                <CourseGithubReposControls 
+                onSearchChanged={ ()=>{} }
+                onVisibilityChanged={ ()=>{}}
+                />
                 <CourseGithubReposTable repos={this.state.repos} {...this.props} />
             </Fragment>
         );

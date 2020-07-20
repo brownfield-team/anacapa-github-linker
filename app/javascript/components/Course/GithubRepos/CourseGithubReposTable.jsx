@@ -7,7 +7,7 @@ class CourseGithubReposTable extends Component {
     render() {
         return (
             <Fragment>
-                <div class="panel panel-default">
+                <div className="panel panel-default">
                     <Table striped hover>
                         <thead>
                             <tr>
