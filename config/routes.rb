@@ -42,7 +42,9 @@ Rails.application.routes.draw do
         end
         get :activity
       end
-      resources :github_repos
+      resources :github_repos do
+        post :run_job
+      end
       resources :org_teams do
         collection do
           get :create_repos

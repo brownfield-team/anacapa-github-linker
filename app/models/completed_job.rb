@@ -12,8 +12,8 @@ class CompletedJob < ApplicationRecord
     distance_of_time_in_words(created_at, updated_at, include_seconds: true)
   end
 
-  def self.last_ten_jobs(course_id)
-    records = CompletedJob.where(course_id: course_id).reverse_order.limit(10)
+  def self.last_ten_jobs(course_id, github_repo_id)
+    records = CompletedJob.where(course_id: course_id, github_repo_id: github_repo_id).reverse_order.limit(10)
     completed_jobs_info = records.map { |cj|
       cj.attributes.merge({
         "run_at" => cj.created_at.to_formatted_s(:rfc822),

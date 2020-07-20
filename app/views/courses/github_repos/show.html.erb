@@ -8,4 +8,12 @@
                         prerender: false) 
 %>
 
-
+<%= react_component("JobLauncher", prerender: false, props: {
+    jobs_list: course_github_repo_job_info_list,
+    run_url_prefix: "/courses/#{@course.id}/github_repos/#{@github_repo.id}/run_job"
+}) 
+%>
+<%= react_component("JobLog", prerender: false, props: {
+    completed_jobs_list: CompletedJob.last_ten_jobs(@course.id, @github_repo.id)
+}) 
+%>
