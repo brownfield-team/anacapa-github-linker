@@ -4,7 +4,7 @@
 }) 
 %>
 <%= react_component("JobLog", prerender: false, props: {
-    completed_jobs_list: CompletedJob.last_ten_jobs(@course.id)
+    completed_jobs_list: CompletedJob.last_ten_jobs(@course.id, nil)
 }) 
 %>
 
