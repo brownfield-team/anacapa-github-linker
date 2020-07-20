@@ -25,7 +25,7 @@ class CourseGithubReposIndex extends Component {
         if (searchValue === this.props.search) {
             return;
         }
-        this.setState({search: searchValue}, () => {
+        this.setState({page: 1, search: searchValue}, () => {
             this.updateRepos();
         });
     }
@@ -34,7 +34,8 @@ class CourseGithubReposIndex extends Component {
         if (visibilityValue === this.props.visibility) {
             return;
         }
-        this.setState({visibility: visibilityValue}, () => {
+
+        this.setState({page: 1, visibility: visibilityValue}, () => {
            this.updateRepos();
         });
     }
@@ -106,7 +107,7 @@ class CourseGithubReposIndex extends Component {
 CourseGithubReposIndex.propTypes = {
     search: PropTypes.string,
     type: PropTypes.string,
-    course_id : PropTypes.string.isRequired
+    course_id : PropTypes.number.isRequired
 };
 
 export default CourseGithubReposIndex;
