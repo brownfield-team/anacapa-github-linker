@@ -1,3 +1,4 @@
+# coding: utf-8
 require "Octokit_Wrapper"
 require "json"
 
@@ -270,4 +271,6 @@ class Course < ApplicationRecord
     GRAPHQL
   end
   
+
 end
+
