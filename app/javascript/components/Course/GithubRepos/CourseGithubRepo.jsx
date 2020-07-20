@@ -10,29 +10,29 @@ class CourseGithubRepo extends Component {
 
     constructor(props) {
         super(props);
-        const csrfToken = ReactOnRails.authenticityToken();
-        axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
-        axios.defaults.params = {}
-        axios.defaults.params['authenticity_token'] = csrfToken;
-
     }
 
     componentDidMount() {
         console.log("CourseGithubReposIndex componentDidMount called");
     }
 
-
     render() {
         return (
             <Fragment>
-                <CourseGithubReposTable repos={[this.props.repo]} {...this.props} />
+                <CourseGithubReposTable
+                    repos={[this.props.repo]}
+                    page={1}
+                    pageSize={1}
+                    totalSize={1}
+                    {...this.props}
+                />
             </Fragment>
         );
     }
 }
 
 CourseGithubRepo.propTypes = {
-
+    repo : PropTypes.object.isRequired
 };
 
 export default CourseGithubRepo;
