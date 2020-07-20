@@ -5,7 +5,16 @@ module Api::Courses
     load_and_authorize_resource
 
     def index
-      respond_with @course.github_repos
+        @github_repos = @course.github_repos.all
+        search_query = params[:search]
+        visibility_query = params[:visibility]
+        unless search_query.nil? || search_query.empty?
+          @github_repos = @github_repos.where("name LIKE ?", "%#{search_query}%")
+        end
+        unless visibility_query.nil? || visibility_query.empty?
+          @github_repos = @github_repos.where(visibility: visibility_query)
+        end
+        paginate json: @github_repos
     end
 
     def show
