@@ -148,6 +148,9 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         else
           after_clause = ""  
         end
+        # Although the published limit on Graphql queries is 100,
+        # in practice, we've found that it sometimes fails.
+        # 50 seems to be safer round number.
         <<-GRAPHQL
         query { 
             repository(name: "#{repo_name}", owner: "#{org_name}") {
@@ -155,7 +158,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
                 target {
                   ... on Commit {
                     id
-                    history(first: 100 #{after_clause}) {
+                    history(first: 50 #{after_clause}) {
                       pageInfo {
                         startCursor
                         hasNextPage
