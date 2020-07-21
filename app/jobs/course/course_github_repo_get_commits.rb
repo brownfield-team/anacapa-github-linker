@@ -4,7 +4,8 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     @job_name = "Get Commits for this Repo"
     @job_short_name = "course_github_repo_get_commits"
     @job_description = "Get commits for this repo"
-    
+    @github_repo_full_name
+
     def result_hash(total, new_count, updated_count) 
       { 
         "total_commits" => total,
@@ -22,6 +23,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     end
 
     def attempt_job(options)
+      @github_repo_full_name = "#{@course.course_organization}/#{@github_repo.name}"      
       final_results = result_hash(0,0,0)
       more_pages = true
       end_cursor = ""
@@ -31,11 +33,11 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
           more_pages = query_results[:data][:repository][:ref][:target][:history][:pageInfo][:hasNextPage]
           end_cursor = query_results[:data][:repository][:ref][:target][:history][:pageInfo][:endCursor]
           commits = query_results[:data][:repository][:ref][:target][:history][:edges]
-          results = store_commits_in_database(commits)
-          final_results = combine_results(final_results,results)
         rescue
-          return "Unexpected result returned from graphql query: #{sawyerResourceToJson(results)}"
+          return "Unexpected result returned from graphql query: #{sawyerResourceToString(query_results)}"
         end
+        results = store_commits_in_database(commits)
+        final_results = combine_results(final_results,results)
       end
 
       "Job Complete; Retrieved #{final_results["total_commits"]} commits for Course #{@course.name} for Repo #{@github_repo.name}. Stored #{final_results["total_new_commits"]} new commits, Updated #{final_results["total_updated_commits"]} existing commits in database."
@@ -66,9 +68,12 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         commit.commit_timestamp =  c[:node][:author][:date]
         commit.github_repo = @github_repo
         commit.branch = "master"
+        commit.committed_via_web = c[:node][:committedViaWeb]
       rescue
         return 0
       end
+      commit.filenames_changed = filenames_changed(commit.commit_hash)
+      
       begin  # "try" block
         uid = c[:node][:author][:user][:databaseId]
         commit.roster_student = lookup_roster_student_by_github_uid(uid)
@@ -84,6 +89,19 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       end
     end
 
+    # Regrettably, the v4 graphql api doesn't yet support
+    # getting the filenames changed.  
+    # See: https://github.community/t/get-a-repositorys-commits-along-with-changed-patches-and-the-url-to-changed-files-using-graphql-v4/13585
+    def filenames_changed(commit_sha)
+      begin
+        github_commit_object_api_v3 = github_machine_user.commit(@github_repo_full_name,commit_sha)
+        result = github_commit_object_api_v3[:files].map{ |t| t[:filename]}.to_s
+      rescue
+        result = ""
+      end
+      result
+    end
+
     def update_one_commit(commit, c)
       begin
         commit.files_changed = c[:node][:changedFiles]
@@ -93,9 +111,13 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         commit.commit_timestamp =  c[:node][:author][:date]
         commit.github_repo = @github_repo
         commit.branch = "master"
+        commit.committed_via_web = c[:node][:committedViaWeb]
       rescue
         return 0
       end
+
+      commit.filenames_changed = filenames_changed(commit.commit_hash)
+
       begin  # "try" block
         uid = c[:node][:author][:user][:databaseId]
         commit.roster_student = lookup_roster_student_by_github_uid(uid)
@@ -113,12 +135,6 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
 
     def lookup_roster_student_by_github_uid(uid)
       @course.student_for_uid(uid)
-    end
-
-    def create_commit_record(commit)
-      RepoCommitEvent.new(
-
-      )
     end
 
     def perform_graphql_query(repo_name, org_name, after="")
@@ -147,6 +163,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
                       }
                       edges {
                         node {
+                          committedViaWeb
                           changedFiles
                           messageHeadline
                           oid
@@ -170,10 +187,10 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
             }
           }
         GRAPHQL
-      end
+    end
 
-      def sawyerResourceToJson(sawyer_resource)
-        sawyer_resource.map(&:to_h).to_json
-      end
+    def sawyerResourceToJson(sawyer_resource)
+      sawyer_resource.map(&:to_h).to_json
+    end
 end
   
