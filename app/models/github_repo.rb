@@ -36,4 +36,43 @@ class GithubRepo < ApplicationRecord
     SQL
     ActiveRecord::Base.connection.exec_query(query)
   end
+
+  def export_commits_to_csv
+    CSV.generate(headers: true) do |csv|
+      csv << %w[
+        github_repo_name
+        github_repo_url
+        roster_student_id
+        roster_student_name
+        roster_student_github_id
+        message
+        commit_hash
+        url
+        branch
+        files_changed
+        commit_timestamp
+        filenames_changed
+        committed_via_web
+      ]
+
+      repo_commit_events.each do |c|
+        csv << [
+          name,
+          url,
+          c.roster_student_id,
+          c.roster_student&.full_name,
+          c.roster_student&.user_id,
+          c.message,
+          c.commit_hash,
+          c.url,
+          c.branch,
+          c.files_changed,
+          c.commit_timestamp,
+          c.filenames_changed,
+          c.committed_via_web
+        ]
+      end
+    end
+  end
+
 end
