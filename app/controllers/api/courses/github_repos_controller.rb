@@ -6,6 +6,7 @@ module Api::Courses
 
     def index
         @github_repos = @course.github_repos.all
+        
         search_query = params[:search]
         visibility_query = params[:visibility]
         unless search_query.nil? || search_query.empty?
@@ -14,11 +15,22 @@ module Api::Courses
         unless visibility_query.nil? || visibility_query.empty?
           @github_repos = @github_repos.where(visibility: visibility_query)
         end
-        paginate json: @github_repos
+
+        github_repos_array = @github_repos.to_a
+        github_repos_hash_array = github_repos_array.map{ |repo| repo_to_hash(repo) }
+        paginate json: github_repos_hash_array
     end
 
     def show
-      respond_with @github_repo
+      respond_with repo_to_hash(@github_repo)
+    end
+
+    private
+    def repo_to_hash(repo)
+      {
+        repo: repo,
+        commit_count: GithubRepo.find(repo.id).repo_commit_events.count
+      }
     end
   end
 end
