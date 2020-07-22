@@ -15,25 +15,29 @@ class CourseGithubReposTable extends Component {
 
     columns =
         [{
-            dataField: 'name',
+            dataField: 'repo.name',
             text: 'Name',
             editable: false,
             formatter: (cell, row, rowIndex, extraData) => this.renderRepoShowPageUrl(cell, row, rowIndex, {"course_id": this.props.course_id})
         }, {
-            dataField: 'url',
+            dataField: 'repo.url',
             text: 'on Github',
             editable: false,
             formatter: (cell) => this.renderRepoGithubUrl(cell)
         }, {
-            dataField: 'visibility',
+            dataField: 'repo.visibility',
             text: 'Visibility',
+            editable: false
+        }, {
+            dataField: 'commit_count',
+            text: 'Commit Count',
             editable: false
         }];
 
     renderRepoShowPageUrl = (cell, row, rowIndex, extraData) => {
         console.log("renderRepoShowPageUrl");
         console.log("row="+JSON.stringify(row));
-        const url = `/courses/${extraData.course_id}/github_repos/${row.id}`;
+        const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}`;
         return (
             <a href={url}>{cell}</a>
         );
