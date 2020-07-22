@@ -32,6 +32,10 @@ class CourseGithubReposTable extends Component {
             dataField: 'commit_count',
             text: 'Commit Count',
             editable: false
+        },{
+            dataField: 'issue_count',
+            text: 'Issue Count',
+            editable: false
         }];
 
     renderRepoShowPageUrl = (cell, row, rowIndex, extraData) => {
