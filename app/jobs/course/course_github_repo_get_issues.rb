@@ -125,6 +125,12 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         # Although the published limit on Graphql queries is 100,
         # in practice, we've found that it sometimes fails.
         # 50 seems to be safer round number.
+
+        # TODO: Add closed and closedAt to database
+        # TODO: Get body, and parse for checkboxes, complete and incomplete
+        # TODO: Add number of assignees, and try to tie assignees back to 
+        #   roster students if possible.
+
         <<-GRAPHQL
         {
             repository(name: "#{repo_name}", owner: "#{org_name}") {
@@ -135,6 +141,21 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
                   endCursor
                 }
                 nodes {
+                    assignees(first: 50) {
+                    pageInfo {
+                      startCursor
+                      hasNextPage
+                      endCursor
+                    }
+                    totalCount
+                    nodes {
+                      id
+                      login
+                      name
+                    }
+                  }
+                  closed
+                  closedAt
                   url
                   number
                   title
