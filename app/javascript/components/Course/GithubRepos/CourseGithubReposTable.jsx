@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Table } from "react-bootstrap";
 import BootstrapTable from 'react-bootstrap-table-next';
-import CourseGithubReposRow from "./CourseGithubReposRow";
 import PropTypes from 'prop-types';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
