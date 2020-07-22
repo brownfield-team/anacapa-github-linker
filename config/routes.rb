@@ -43,6 +43,7 @@ Rails.application.routes.draw do
         get :activity
       end
       resources :github_repos do
+        resources :repo_commit_events
         post :run_job
       end
       resources :org_teams do
