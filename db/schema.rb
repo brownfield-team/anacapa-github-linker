@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200721005709) do
+ActiveRecord::Schema.define(version: 20200723200658) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,6 +117,15 @@ ActiveRecord::Schema.define(version: 20200721005709) do
     t.datetime "updated_at", null: false
     t.string "filenames_changed"
     t.boolean "committed_via_web"
+    t.string "title"
+    t.string "body"
+    t.boolean "closed"
+    t.datetime "closed_at"
+    t.integer "assignee_count"
+    t.integer "project_card_count"
+    t.string "project_card_column_names"
+    t.string "project_card_column_project_names"
+    t.string "project_card_column_project_urls"
     t.index ["github_repo_id"], name: "index_repo_commit_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_commit_events_on_roster_student_id"
   end
