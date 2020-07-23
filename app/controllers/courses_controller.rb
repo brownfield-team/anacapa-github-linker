@@ -169,6 +169,20 @@ class CoursesController < ApplicationController
     redirect_to course_repos_path(@course, search: params[:search])
   end
 
+  def commits
+    @course = Course.find(params[:course_id])
+    respond_to do |format|
+      format.csv { send_data @course.export_commits_to_csv, filename: "#{@course.course_organization}-commits-#{Date.today}.csv" }
+    end
+  end
+
+  def issues
+    @course = Course.find(params[:course_id])
+    respond_to do |format|
+      format.csv { send_data @course.export_issues_to_csv, filename: "#{@course.course_organization}-issues-#{Date.today}.csv" }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course

@@ -10,8 +10,8 @@
                                 create_teams_path: create_teams_course_org_teams_path(@course), events_path: course_events_path(@course),
                                 can_edit: can?(:update, @course),
                                 github_repos_path: course_github_repos_path(@course),
-                                download_commits_path: '#',
-                                download_issues_path: '#',
+                                download_commits_path: course_commits_path(@course, :format => "csv"),
+                                download_issues_path: course_issues_path(@course, :format => "csv"),
                         },
                         prerender: false) %>
     <br/>

@@ -33,6 +33,8 @@ Rails.application.routes.draw do
     get :repos
     get :search_repos
     get :events
+    get :commits
+    get :issues
     post :run_course_job
     post :update_ta
     scope module: :courses do
