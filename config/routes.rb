@@ -44,6 +44,7 @@ Rails.application.routes.draw do
       end
       resources :github_repos do
         resources :repo_commit_events
+        resources :repo_issue_events
         post :run_job
       end
       resources :org_teams do
