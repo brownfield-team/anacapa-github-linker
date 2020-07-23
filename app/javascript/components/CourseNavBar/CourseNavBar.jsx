@@ -38,6 +38,10 @@ class CourseNavBar extends Component {
                     <NavItem eventKey="events" href={this.props.events_path}>Events</NavItem>
                     <NavItem eventKey="slack" href={this.props.slack_path}>Slack</NavItem>
                     <NavItem eventKey="jobs" href={this.props.jobs_path}>Jobs</NavItem>
+                    <NavDropdown title="Downloads">
+                        <NavItem eventKey="download-commits" href={this.props.download_commits_path}>Download Commits</NavItem>
+                        <NavItem eventKey="download-issues" href={this.props.download_issues_path}>Download Issues</NavItem>
+                    </NavDropdown>
                     <NavItem eventKey="edit" href={this.props.edit_path} disabled={!this.props.can_edit}>Edit Course</NavItem>
                 </Nav>
             </Fragment>
@@ -59,6 +63,8 @@ CourseNavBar.propTypes = {
     edit_path: PropTypes.string.isRequired,
     create_team_repos_path: PropTypes.string.isRequired,
     create_teams_path: PropTypes.string.isRequired,
+    download_commits_path: PropTypes.string.isRequired,
+    download_issues_path: PropTypes.string.isRequired,
     can_edit: PropTypes.bool.isRequired
 };
 
