@@ -64,6 +64,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         issue.url =  i[:url]
         issue.github_repo = @github_repo
       rescue
+        puts "***ERROR*** store_one_issue_in_database issue #{i} @github_repo #{@github_repo}"
         return 0
       end
       
@@ -78,6 +79,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         issue.save!
         return 1
       rescue
+        puts "***ERROR*** on issue.save! store_one_issue_in_database issue #{i} @github_repo #{@github_repo}"
         return 0
       end
     end
@@ -88,6 +90,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         issue.url =  i[:url]
         issue.github_repo = @github_repo
       rescue
+        puts "***ERROR*** update_one_issue issue #{i} @github_repo #{@github_repo}"
         return 0
       end
 
@@ -103,6 +106,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         issue.save!
         return 1
       rescue
+        puts "***ERROR*** on issue.save! update_one_issue issue #{i} @github_repo #{@github_repo}"
         return 0
       end
     end

@@ -36,7 +36,7 @@ class GithubRepo < ApplicationRecord
     ActiveRecord::Base.connection.exec_query(query)
   end
 
-  def commit_csv_export_headers
+  def self.commit_csv_export_headers
     %w[
       github_repo_name
       github_repo_url
@@ -54,10 +54,11 @@ class GithubRepo < ApplicationRecord
     ]
   end
 
-  def commit_csv_export_fields(c)
+  # self.method so it can be reused in course.rb
+  def self.commit_csv_export_fields(repo,c)
     [
-      name,
-      url,
+      repo.name,
+      repo.url,
       c.roster_student_id,
       c.roster_student&.full_name,
       c.roster_student&.user_id,
@@ -72,7 +73,8 @@ class GithubRepo < ApplicationRecord
     ]
   end
 
-  def issue_csv_export_headers
+  # self.method so it can be reused in course.rb
+  def self.issue_csv_export_headers
     %w[
       github_repo_name
       github_repo_url
@@ -83,10 +85,11 @@ class GithubRepo < ApplicationRecord
     ]
   end
 
-  def issue_csv_export_fields(i)
+
+  def self.issue_csv_export_fields(repo,i)
     [
-      name,
-      url,
+      repo.name,
+      repo.url,
       i.roster_student_id,
       i.roster_student&.full_name,
       i.roster_student&.user_id,
@@ -96,18 +99,18 @@ class GithubRepo < ApplicationRecord
 
   def export_commits_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << commit_csv_export_headers
+      csv << GithubRepo.commit_csv_export_headers
       repo_commit_events.each do |c|
-        csv << commit_csv_export_fields(c)
+        csv << GithubRepo.commit_csv_export_fields(self,c)
       end
     end
   end
 
   def export_issues_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << issue_csv_export_headers
+      csv << GithubRepo.issue_csv_export_headers
       repo_issue_events.each do |c|
-        csv << issue_csv_export_fields(c)
+        csv << GithubRepo.issue_csv_export_fields(self,c)
       end
     end
   end

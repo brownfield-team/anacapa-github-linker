@@ -191,37 +191,93 @@ class Course < ApplicationRecord
     )
   end
 
-  # export roster students to a CSV file
-  def export_students_to_csv
+  def commit_csv_export_headers
+    GithubRepo.commit_csv_export_headers
+  end
+
+  def commit_csv_export_fields(repo,c)
+    GithubRepo.commit_csv_export_fields(repo,c)
+  end
+
+  def export_commits_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w[student_id email first_name last_name enrolled section github_username slack_uid slack_username slack_display_name org_status teams]
-
-      roster_students.each do |user|
-        org_member_status = user.org_membership_type || user.is_org_member
-
-        slack_uid = user.slack_user.nil? ? nil : user.slack_user.uid
-        slack_username = user.slack_user.nil? ? nil : user.slack_user.username
-        slack_display_name = user.slack_user.nil? ? nil : user.slack_user.display_name
-
-        csv << [
-          user.perm,
-          user.email,
-          user.first_name,
-          user.last_name,
-          user.enrolled,
-          user.section,
-          user.username,
-          slack_uid,
-          slack_username,
-          slack_display_name,
-          org_member_status,
-          user.teams_string,
-        ]
+      csv << commit_csv_export_headers
+      github_repos.each do |repo|
+        repo.repo_commit_events.each do |c|
+          csv << commit_csv_export_fields(repo,c)
+        end
       end
     end
   end
 
-  # export roster students to a CSV file
+  def issue_csv_export_headers
+    GithubRepo.issue_csv_export_headers
+  end
+
+  def issue_csv_export_fields(repo,c)
+    GithubRepo.issue_csv_export_fields(repo,c)
+  end
+
+  def export_issues_to_csv
+    CSV.generate(headers: true) do |csv|
+      csv << issue_csv_export_headers
+      github_repos.each do |repo|
+        repo.repo_issue_events.each do |c|
+          csv << issue_csv_export_fields(repo,c)
+        end
+      end
+    end
+  end
+  
+  def student_csv_export_headers
+    %w[
+      student_id 
+      email 
+      first_name 
+      last_name 
+      enrolled 
+      section 
+      github_username 
+      slack_uid 
+      slack_username 
+      slack_display_name 
+      org_status teams
+    ]
+  end
+
+
+  def student_csv_export_fields(user)
+    org_member_status = user.org_membership_type || user.is_org_member
+
+    slack_uid = user.slack_user.nil? ? nil : user.slack_user.uid
+    slack_username = user.slack_user.nil? ? nil : user.slack_user.username
+    slack_display_name = user.slack_user.nil? ? nil : user.slack_user.display_name
+
+    [
+      user.perm,
+      user.email,
+      user.first_name,
+      user.last_name,
+      user.enrolled,
+      user.section,
+      user.username,
+      slack_uid,
+      slack_username,
+      slack_display_name,
+      org_member_status,
+      user.teams_string,
+    ]
+  end
+
+  def export_students_to_csv
+    CSV.generate(headers: true) do |csv|
+      csv << student_csv_export_headers
+      roster_students.each do |user|
+        csv << student_csv_export_fields(user)
+      end
+    end
+  end
+
   def export_students_to_json
     result = []
     roster_students.each do |user|
