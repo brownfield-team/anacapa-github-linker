@@ -90,6 +90,9 @@ class GithubRepo < ApplicationRecord
       project_column_names
       project_names
       project_urls
+      checklist_items,
+      checked,
+      unchecked,
       roster_student_id
       roster_student_name
       roster_student_github_id
@@ -113,6 +116,9 @@ class GithubRepo < ApplicationRecord
       i.project_card_column_names,
       i.project_card_column_project_names,
       i.project_card_column_project_urls,
+      self.checklist_item_count(i.body),
+      self.checklist_item_checked_count(i.body),
+      self.checklist_item_unchecked_count(i.body),
       i.roster_student_id,
       i.roster_student&.full_name,
       i.roster_student&.user_id,
@@ -136,4 +142,20 @@ class GithubRepo < ApplicationRecord
       end
     end
   end
+
+  def self.checklist_item_count(body) 
+    # both checked and unchecked
+    body.scan(/\r\n- \[[ x]\]/).count
+  end
+
+  def self.checklist_item_checked_count(body) 
+    # both checked and unchecked
+    body.scan(/\r\n- \[x\]/).count
+  end
+
+  def self.checklist_item_unchecked_count(body) 
+    # both checked and unchecked
+    body.scan(/\r\n- \[ \]/).count
+  end
+  
 end
