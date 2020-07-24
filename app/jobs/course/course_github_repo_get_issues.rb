@@ -58,13 +58,18 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
     end
 
     def store_one_issue_in_database(i)
-    
       issue = RepoIssueEvent.new
+      result = update_one_issue(issue,i)
+    end
+
+    def update_one_issue(issue, i)
+      
       begin
         issue.url =  i[:url]
         issue.github_repo = @github_repo
+        issue.title = i[:title]
       rescue
-        puts "***ERROR*** store_one_issue_in_database issue #{i} @github_repo #{@github_repo}"
+        puts "***ERROR*** update_issue_fields issue #{i} @github_repo #{@github_repo}"
         return 0
       end
       
@@ -75,38 +80,12 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         username = ""
         issue.roster_student = nil
       end 
+
       begin
         issue.save!
         return 1
       rescue
-        puts "***ERROR*** on issue.save! store_one_issue_in_database issue #{i} @github_repo #{@github_repo}"
-        return 0
-      end
-    end
-
-   
-    def update_one_issue(issue, i)
-      begin
-        issue.url =  i[:url]
-        issue.github_repo = @github_repo
-      rescue
-        puts "***ERROR*** update_one_issue issue #{i} @github_repo #{@github_repo}"
-        return 0
-      end
-
-
-      begin  # "try" block
-        username = i[:author][:login]
-        issue.roster_student = lookup_roster_student_by_github_username(username)
-      rescue # optionally: `rescue Exception => ex`
-        username = ""
-        issue.roster_student = nil
-      end 
-      begin
-        issue.save!
-        return 1
-      rescue
-        puts "***ERROR*** on issue.save! update_one_issue issue #{i} @github_repo #{@github_repo}"
+        puts "***ERROR*** on issue.save! issue #{i} @github_repo #{@github_repo}"
         return 0
       end
     end
@@ -117,7 +96,8 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
 
     def perform_graphql_query(repo_name, org_name, after="")
       graphql_query_string = graphql_query(repo_name, org_name, after)
-      github_machine_user.post '/graphql', { query: graphql_query_string }.to_json
+      options = { query: graphql_query_string }.to_json
+      github_machine_user.post '/graphql', options
     end
 
     def graphql_query(repo_name, org_name, after)
@@ -137,52 +117,68 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
 
         <<-GRAPHQL
         {
-            repository(name: "#{repo_name}", owner: "#{org_name}") {
-              issues(first: 50 #{after_clause}) {
-                pageInfo {
-                  startCursor
-                  hasNextPage
-                  endCursor
-                }
-                nodes {
-                    assignees(first: 50) {
-                    pageInfo {
-                      startCursor
-                      hasNextPage
-                      endCursor
-                    }
-                    totalCount
-                    nodes {
-                      id
-                      login
+          repository(name: "#{repo_name}", owner: "#{org_name}") {
+            issues(first: 50 #{after_clause}) {
+              pageInfo {
+                startCursor
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                projectCards(first: 50) {
+                  totalCount
+                  nodes {
+                    column {
                       name
+                      project {
+                        name
+                        url
+                        number
+                      }
                     }
                   }
-                  closed
-                  closedAt
-                  url
-                  number
-                  title
-                  body
-                  author {
-                    login
-                  }
-                  databaseId
-                  milestone {
-                    id
-                  }
-                  state
                 }
+                assignees(first: 50) {
+                  pageInfo {
+                    startCursor
+                    hasNextPage
+                    endCursor
+                  }
+                  totalCount
+                  nodes {
+                    id
+                    login
+                    name
+                  }
+                }
+                closed
+                closedAt
+                url
+                number
+                title
+                body
+                author {
+                  login
+                }
+                databaseId
+                milestone {
+                  id
+                }
+                state
               }
             }
           }
-          
-            
+        }
         GRAPHQL
     end
 
-    def sawyerResourceToJson(sawyer_resource)
-      sawyer_resource.map(&:to_h).to_json
+    def sawyerResourceToString(sawyer_resource)
+      begin
+        result = sawyer_resource.map(&:to_h).to_json
+      rescue
+        result = sawyer_resource.to_s 
+      end
+      result
     end
 end
   
