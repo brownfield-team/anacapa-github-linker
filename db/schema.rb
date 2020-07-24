@@ -143,6 +143,8 @@ ActiveRecord::Schema.define(version: 20200723200658) do
     t.boolean "closed"
     t.datetime "closed_at"
     t.integer "assignee_count"
+    t.string "assignee_logins"
+    t.string "assignee_names"
     t.integer "project_card_count"
     t.string "project_card_column_names"
     t.string "project_card_column_project_names"

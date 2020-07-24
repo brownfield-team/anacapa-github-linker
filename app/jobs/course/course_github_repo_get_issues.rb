@@ -86,6 +86,26 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
       end
     end
 
+    def assignee_names(x)
+      begin
+        x[:assignees][:nodes].map{ |node|
+          node[:name]
+        }
+      rescue
+        nil
+      end
+    end
+
+    def assignee_logins(x)
+      begin
+        x[:assignees][:nodes].map{ |node|
+          node[:login]
+        }
+      rescue
+        nil
+      end
+    end
+
     def update_one_issue(issue, i)
       begin
         issue.url =  i[:url]
@@ -95,6 +115,9 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         issue.state = i[:state]
         issue.closed = i[:closed]
         issue.closed_at = i[:closedAt]
+        issue.assignee_count = i[:assignees][:totalCount]
+        issue.assignee_names = assignee_names(i)
+        issue.assignee_logins = assignee_logins(i)
         issue.project_card_count = i[:projectCards][:totalCount]
         issue.project_card_column_names=i[:projectCards][:nodes].map{|x| column_name(x)}
         issue.project_card_column_project_names=i[:projectCards][:nodes].map{|x| column_project_name(x)}
