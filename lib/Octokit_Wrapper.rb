@@ -31,8 +31,6 @@ module Octokit_Wrapper
       client = Octokit::Client.new :access_token => token
       client.auto_paginate = true
 
-      client.ensure_api_media_type
-
       client
     end
   end
