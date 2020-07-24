@@ -139,6 +139,7 @@ ActiveRecord::Schema.define(version: 20200723200658) do
     t.datetime "updated_at", null: false
     t.string "title"
     t.string "body"
+    t.string "state"
     t.boolean "closed"
     t.datetime "closed_at"
     t.integer "assignee_count"

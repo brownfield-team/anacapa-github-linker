@@ -2,6 +2,7 @@ class AddSeveralFieldsToRepoIssueEvents < ActiveRecord::Migration[5.1]
   def change
     add_column :repo_issue_events, :title, :string
     add_column :repo_issue_events, :body, :string
+    add_column :repo_issue_events, :state, :string
     add_column :repo_issue_events, :closed, :boolean
     add_column :repo_issue_events, :closed_at, :datetime
     add_column :repo_issue_events, :assignee_count, :integer
