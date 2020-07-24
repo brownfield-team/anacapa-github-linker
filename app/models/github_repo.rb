@@ -80,6 +80,16 @@ class GithubRepo < ApplicationRecord
       github_repo_url
       url
       title
+      state
+      closed
+      closed_at
+      assignee_count
+      assignee_logins
+      assignee_names
+      project_card_count
+      project_column_names
+      project_names
+      project_urls
       roster_student_id
       roster_student_name
       roster_student_github_id
@@ -93,6 +103,16 @@ class GithubRepo < ApplicationRecord
       repo.url,
       i.url,
       i.title,
+      i.state,
+      i.closed,
+      i.closed_at,
+      i.assignee_count,
+      i.assignee_logins,
+      i.assignee_names,
+      i.project_card_count,
+      i.project_card_column_names,
+      i.project_card_column_project_names,
+      i.project_card_column_project_urls,
       i.roster_student_id,
       i.roster_student&.full_name,
       i.roster_student&.user_id,
