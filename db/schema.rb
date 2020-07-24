@@ -134,15 +134,6 @@ ActiveRecord::Schema.define(version: 2021_04_19_160808) do
     t.datetime "updated_at", null: false
     t.string "filenames_changed"
     t.boolean "committed_via_web"
-    t.string "title"
-    t.string "body"
-    t.boolean "closed"
-    t.datetime "closed_at"
-    t.integer "assignee_count"
-    t.integer "project_card_count"
-    t.string "project_card_column_names"
-    t.string "project_card_column_project_names"
-    t.string "project_card_column_project_urls"
     t.index ["github_repo_id"], name: "index_repo_commit_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_commit_events_on_roster_student_id"
   end
@@ -163,6 +154,15 @@ ActiveRecord::Schema.define(version: 2021_04_19_160808) do
     t.string "action_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "title"
+    t.string "body"
+    t.boolean "closed"
+    t.datetime "closed_at"
+    t.integer "assignee_count"
+    t.integer "project_card_count"
+    t.string "project_card_column_names"
+    t.string "project_card_column_project_names"
+    t.string "project_card_column_project_urls"
     t.index ["github_repo_id"], name: "index_repo_issue_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_issue_events_on_roster_student_id"
   end

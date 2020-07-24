@@ -41,7 +41,7 @@ module Courses
     def course_github_repo_job_list
       # @course = Course.find(params[:course_id])
       # @github_repo = GithubRepo.find(params[:id])
-      jobs = [CourseGithubRepoTestJob, CourseGithubRepoGetCommits, CourseGithubRepoGetIssues]
+      jobs = [CourseGithubRepoTestJob, CourseGithubRepoGetCommits, CourseGithubRepoGetIssues, CourseGithubRepoGetSDLCEvents]
       jobs
     end
     helper_method :course_github_repo_job_list

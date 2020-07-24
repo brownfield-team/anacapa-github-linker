@@ -78,10 +78,11 @@ class GithubRepo < ApplicationRecord
     %w[
       github_repo_name
       github_repo_url
+      url
+      title
       roster_student_id
       roster_student_name
       roster_student_github_id
-      url
     ]
   end
 
@@ -90,10 +91,11 @@ class GithubRepo < ApplicationRecord
     [
       repo.name,
       repo.url,
+      i.url,
+      i.title,
       i.roster_student_id,
       i.roster_student&.full_name,
       i.roster_student&.user_id,
-      i.url,
     ]
   end
 
