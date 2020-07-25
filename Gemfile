@@ -44,7 +44,7 @@ gem 'omniauth'
 gem 'omniauth-github'
 gem 'omniauth-gitlab'
 gem 'font-awesome-rails'
-gem 'octokit', '~> 4.0'
+gem 'octokit', '~> 4.18'
 
 # testing api calls
 gem 'webmock'
