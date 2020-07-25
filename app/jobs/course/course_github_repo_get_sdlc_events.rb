@@ -100,7 +100,7 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
       graphql_query_string = graphql_query(repo_name, org_name, after)
       options = {
           :query => graphql_query_string, 
-          :accept => "application/vnd.github.starfox-preview+json"
+          :accept => Octokit::Preview::PREVIEW_TYPES[:project_card_events]
       }.to_json
       github_machine_user.post('/graphql', options)
     end
