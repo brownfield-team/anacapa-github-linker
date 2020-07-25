@@ -145,17 +145,20 @@ class GithubRepo < ApplicationRecord
 
   def self.checklist_item_count(body) 
     # both checked and unchecked
-    body.scan(/\r\n- \[[ x]\]/).count
+    return 0 if body.nil?
+    body.scan(/\r\n[ ]*- \[[ x]\]/).count
   end
 
   def self.checklist_item_checked_count(body) 
+    return 0 if body.nil?
     # both checked and unchecked
-    body.scan(/\r\n- \[x\]/).count
+    body.scan(/\r\n[ ]*- \[x\]/).count
   end
 
   def self.checklist_item_unchecked_count(body) 
+    return 0 if body.nil?
     # both checked and unchecked
-    body.scan(/\r\n- \[ \]/).count
+    body.scan(/\r\n[ ]*- \[ \]/).count
   end
   
 end
