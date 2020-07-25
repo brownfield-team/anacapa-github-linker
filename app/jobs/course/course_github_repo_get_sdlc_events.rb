@@ -97,12 +97,16 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
     end
 
     def perform_graphql_query(repo_name, org_name, after="")
-      graphql_query_string = graphql_query(repo_name, org_name, after)
-      options = {
+      graphql_query_string = graphql_query(repo_name, org_name, after).gsub("\n","")
+      data = {
           :query => graphql_query_string, 
-          :accept => Octokit::Preview::PREVIEW_TYPES[:project_card_events]
       }.to_json
-      github_machine_user.post('/graphql', options)
+      options = {
+        :headers => {
+        :accept => Octokit::Preview::PREVIEW_TYPES[:project_card_events]
+        }
+      }
+      github_machine_user.send :request, :post, '/graphql', data,options
     end
 
     def graphql_query(repo_name, org_name, after)
@@ -124,7 +128,7 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
         #     issues(first: 50 #{after_clause}) {
 
         <<-GRAPHQL
-        {
+        query {
             repository(owner: "ucsb-cs48-s20", name: "project-s0-t1-budget") {
               issues(last: 100) {
                 pageInfo {
