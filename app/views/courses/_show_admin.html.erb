@@ -52,7 +52,8 @@
         <thead>
           <tr>
             <th data-sortable="true" data-field="StudentID" data-filter-control="input">Student ID</th>
-            <th data-sortable="true" data-field="Name" data-filter-control="input">Name</th>
+            <th data-sortable="true" data-field="First Name" data-filter-control="input">First Name</th>
+            <th data-sortable="true" data-field="Last Name" data-filter-control="input">Last Name</th>
             <th data-sortable="true" data-field="Email" data-filter-control="input">Email</th>
             <th data-sortable="true" data-field="Enrolled" data-filter-control="select">Enrolled</th>
             <th data-sortable="true" data-field="Section" data-filter-control="select">Section</th>
@@ -69,8 +70,9 @@
         <tbody class="students-list">
           <% @course.roster_students.each do |student| %>
             <tr>
-              <td><%= student.perm %></td>
-              <td><%= link_to student.full_name, course_roster_student_path(@course, student) %></td>
+              <td><%= link_to student.perm,  course_roster_student_path(@course, student) %></td>
+              <td><%= link_to student.first_name,  course_roster_student_path(@course, student) %></td>
+              <td><%= link_to student.last_name,  course_roster_student_path(@course, student) %></td>
               <td><%= student.email %></td>
               <td><%= student.enrolled ? "True" : "False" %></td>
               <td><%= student.section %></td>

@@ -317,6 +317,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
+    zlib (1.0.0)
 
 PLATFORMS
   ruby
@@ -368,6 +369,7 @@ DEPENDENCIES
   web-console (>= 3.3.0)
   webmock
   webpacker (~> 4)
+  zlib
 
 RUBY VERSION
    ruby 2.6.5p114

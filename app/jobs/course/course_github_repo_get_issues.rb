@@ -22,6 +22,10 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
       }
     end
 
+    def all_good?(result_hash)
+      result_hash["total_issues"]==result_hash["total_new_issues"] + result_hash["total_updated_issues"]
+    end
+
     def attempt_job(options)
       @github_repo_full_name = "#{@course.course_organization}/#{@github_repo.name}"      
       final_results = result_hash(0,0,0)
@@ -40,7 +44,9 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         final_results = combine_results(final_results,results)
       end
 
-      "Job Complete; Retrieved #{final_results["total_issues"]} issues for Course #{@course.name} for Repo #{@github_repo.name}. Stored #{final_results["total_new_issues"]} new issues, Updated #{final_results["total_updated_issues"]} existing issues in database."
+      job_outcome = all_good?(final_results) ? "Successfully" : " with errors; CHECK LOG; note that total issues retrieved does NOT MATCH number stored and/or updated"
+
+      "Job Completed #{job_outcome}.  Retrieved #{final_results["total_issues"]} issues for Course #{@course.name} for Repo #{@github_repo.name}. Stored #{final_results["total_new_issues"]} new issues, Updated #{final_results["total_updated_issues"]} existing issues in database."
     end  
 
     def store_issues_in_database(issues)
@@ -89,7 +95,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
     def assignee_names(x)
       begin
         x[:assignees][:nodes].map{ |node|
-          node[:name]
+          node[:name] || ""
         }
       rescue
         nil
@@ -99,7 +105,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
     def assignee_logins(x)
       begin
         x[:assignees][:nodes].map{ |node|
-          node[:login]
+          node[:login] || ""
         }
       rescue
         nil
@@ -109,27 +115,31 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
     def update_one_issue(issue, i)
       begin
         issue.url =  i[:url]
+        issue.issue_id = i[:id]
         issue.github_repo = @github_repo
         issue.title = i[:title]
         issue.body = i[:body]
         issue.state = i[:state]
         issue.closed = i[:closed]
         issue.closed_at = i[:closedAt]
+        issue.issue_created_at = i[:createdAt]
         issue.assignee_count = i[:assignees][:totalCount]
         issue.assignee_names = assignee_names(i)
         issue.assignee_logins = assignee_logins(i)
         issue.project_card_count = i[:projectCards][:totalCount]
-        issue.project_card_column_names=i[:projectCards][:nodes].map{|x| column_name(x)}
-        issue.project_card_column_project_names=i[:projectCards][:nodes].map{|x| column_project_name(x)}
-        issue.project_card_column_project_urls=i[:projectCards][:nodes].map{|x| column_project_url(x)}
+        issue.project_card_column_names=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_name(x)})
+        issue.project_card_column_project_names=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_project_name(x)})
+        issue.project_card_column_project_urls=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_project_url(x)})
       rescue
+        raise
         puts "***ERROR*** update_issue_fields issue #{sawyer_resource_to_s(i)} @github_repo #{@github_repo}"
         return 0
       end
       
       begin  # "try" block
         username = i[:author][:login]
-        issue.roster_student = lookup_roster_student_by_github_uid(uid)
+        issue.author_login = username
+        issue.roster_student = lookup_roster_student_by_github_username(username)
       rescue # optionally: `rescue Exception => ex`
         username = ""
         issue.roster_student = nil
@@ -146,6 +156,12 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
 
     def lookup_roster_student_by_github_username(username)
         @course.student_for_github_username(username)
+    end
+
+    def array_or_singleton_to_s(a)
+      return nil if a.nil? or a.length==0
+      return a.first.to_s if a.length==1
+      a.sort.to_s
     end
 
     def perform_graphql_query(repo_name, org_name, after="")
@@ -205,8 +221,10 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
                     name
                   }
                 }
+                id
                 closed
                 closedAt
+                createdAt
                 url
                 number
                 title

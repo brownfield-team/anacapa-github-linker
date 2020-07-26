@@ -71,7 +71,7 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
     #     issue.github_repo = @github_repo
     #     issue.title = i[:title]
     #   rescue
-    #     puts "***ERROR*** update_issue_fields issue #{i} @github_repo #{@github_repo}"
+    #     puts "***ERROR*** update_sdlc_fields issue #{i} @github_repo #{@github_repo}"
     #     return 0
     #   end
       
@@ -87,7 +87,7 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
     #     issue.save!
     #     return 1
     #   rescue
-    #     puts "***ERROR*** on issue.save! issue #{i} @github_repo #{@github_repo}"
+    #     puts "***ERROR*** on issue.save! sdlc #{i} @github_repo #{@github_repo}"
     #     return 0
     #   end
     end

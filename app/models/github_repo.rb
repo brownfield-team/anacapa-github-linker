@@ -1,3 +1,4 @@
+require 'zlib'
 class GithubRepo < ApplicationRecord
   belongs_to :course
   has_many :repo_contributors
@@ -61,7 +62,7 @@ class GithubRepo < ApplicationRecord
       repo.url,
       c.roster_student_id,
       c.roster_student&.full_name,
-      c.roster_student&.user_id,
+      c.roster_student&.user&.username,
       c.message,
       c.commit_hash,
       c.url,
@@ -76,42 +77,95 @@ class GithubRepo < ApplicationRecord
   # self.method so it can be reused in course.rb
   def self.issue_csv_export_headers
     %w[
+      include
+      random
+      teams
+      state
+      done
+      url
       github_repo_name
       github_repo_url
-      url
       title
-      state
+      created_at
       closed
       closed_at
+      author_login
+      author_name
+      author_teams
       assignee_count
       assignee_logins
       assignee_names
+      assignee_teams
       project_card_count
       project_column_names
       project_names
       project_urls
-      checklist_items,
-      checked,
-      unchecked,
-      roster_student_id
-      roster_student_name
-      roster_student_github_id
+      checklist_items
+      checked
+      unchecked
+      
     ]
   end
 
+  def self.in_done_column(i)
+    i.project_card_column_names&.upcase&.include?("DONE")
+  end
+
+  def self.meets_inclusion_criteria?(repo,i)
+    return false if i.closed and not in_done_column(i)
+    # TODO: return false if repo is private and author did not give informed consent
+    # TODO: possibly also return false if issue author is not a roster student?
+    true
+  end 
+
+  def self.assignee_list_to_array(assignees)
+    begin
+      return [] if assignees.nil? or assignees=="[]" or assignees==""
+      cleaned = assignees.gsub("\"","").gsub("[","").gsub("]","").gsub(" ","")
+      puts("\n##### cleaned: #{cleaned} \n")
+      cleaned.split(",")
+    end
+  end
 
   def self.issue_csv_export_fields(repo,i)
+    author_teams_array = i.roster_student&.org_teams&.map{ |team| team.name }
+    author_teams = self.array_or_singleton_to_s(author_teams_array)
+
+    assignee_teams_array = []
+    puts("\n##### i.assignee_logins: #{i.assignee_logins} \n")
+
+    assignees = assignee_list_to_array(i.assignee_logins)
+    puts("\n##### assignees: #{assignees} \n")
+    assignees.map{ |login|
+      student = repo.course.student_for_github_username(login)
+      student_teams_array = student&.org_teams&.map{ |team| team.name }
+      assignee_teams_array |= student_teams_array unless student_teams_array.nil?
+    }
+    assignee_teams = self.array_or_singleton_to_s(assignee_teams_array)
+    puts("\n\n##### assignee_teams: #{assignee_teams} \n\n")
+
+    meets_inclusion_criteria = 
+
     [
+      meets_inclusion_criteria?(repo,i),
+      issue_hash(i), 
+      author_teams || assignee_teams,  
+      i.state,       
+      self.in_done_column(i),
+      i.url,
       repo.name,
       repo.url,
-      i.url,
       i.title,
-      i.state,
+      i.issue_created_at,
       i.closed,
       i.closed_at,
+      i.author_login,
+      i.roster_student&.full_name,
+      author_teams,
       i.assignee_count,
       i.assignee_logins,
       i.assignee_names,
+      assignee_teams,
       i.project_card_count,
       i.project_card_column_names,
       i.project_card_column_project_names,
@@ -119,9 +173,6 @@ class GithubRepo < ApplicationRecord
       self.checklist_item_count(i.body),
       self.checklist_item_checked_count(i.body),
       self.checklist_item_unchecked_count(i.body),
-      i.roster_student_id,
-      i.roster_student&.full_name,
-      i.roster_student&.user_id,
     ]
   end
 
@@ -160,5 +211,15 @@ class GithubRepo < ApplicationRecord
     # both checked and unchecked
     body.scan(/\r\n[ ]*- \[ \]/).count
   end
+
+  def self.array_or_singleton_to_s(a)
+    return nil if a.nil? or a.length==0
+    return a.first.to_s if a.length==1
+    a.sort.to_s
+  end
   
+  def self.issue_hash(i)
+    basis = "#{i.url} #{i.issue_created_at} #{i.title} #{i.body}"
+    Zlib.crc32 basis
+  end
 end
