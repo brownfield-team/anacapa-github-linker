@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200726045223) do
+ActiveRecord::Schema.define(version: 20200726203928) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,21 @@ ActiveRecord::Schema.define(version: 20200726045223) do
     t.string "full_name"
     t.string "visibility"
     t.index ["course_id"], name: "index_github_repos_on_course_id"
+  end
+
+  create_table "informed_consents", force: :cascade do |t|
+    t.string "perm"
+    t.string "name"
+    t.string "email"
+    t.bigint "course_id"
+    t.bigint "roster_student_id"
+    t.boolean "student_consents"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_informed_consents_on_course_id"
+    t.index ["email", "course_id"], name: "index_informed_consents_on_email_and_course_id", unique: true
+    t.index ["perm", "course_id"], name: "index_informed_consents_on_perm_and_course_id", unique: true
+    t.index ["roster_student_id", "course_id"], name: "index_informed_consents_on_roster_student_id_and_course_id", unique: true
   end
 
   create_table "org_teams", force: :cascade do |t|
