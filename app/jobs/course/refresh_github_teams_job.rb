@@ -37,6 +37,19 @@ class RefreshGithubTeamsJob < CourseJob
           team_membership_record.save
         end
       end
+
+      team_invitees = get_team_invitees(@course.course_organization, team_to_update)
+      team_invitees.each do |invitee|
+        student_for_member = students_with_users.select { |rs| rs.user.uid == invitee.databaseId.to_s }.first
+        if student_for_member.present?
+          team_membership_record = StudentTeamMembership.find_by(roster_student_id: student_for_member.id, org_team_id: team_to_update.id)
+          if team_membership_record.nil?
+            team_membership_record = StudentTeamMembership.new(roster_student_id: student_for_member.id, org_team_id: team_to_update.id)
+          end
+          team_membership_record.role = "invitee"
+          team_membership_record.save
+        end
+      end
     end
     results
   end
@@ -74,28 +87,81 @@ class RefreshGithubTeamsJob < CourseJob
   def get_team_members(course_org, team_record, cursor = "")
     response = github_machine_user.post '/graphql', { query: team_membership_graphql_query(course_org, team_record.slug, cursor) }.to_json
     member_list = member_list_from_team_response(response)
-    if member_list.count < 100
+    pageInfo = response.data.organization.team.members.pageInfo
+    if !pageInfo.hasNextPage
       return member_list
     end
-    member_list + get_team_members(course_org, team_record, member_list.last.cursor)
+    member_list + get_team_members(course_org, team_record, pageInfo.endCursor)
   end
 
   def member_list_from_team_response(team_response)
     team_response.data.organization.team.members.edges
   end
 
-  def team_membership_graphql_query(course_org, team_slug, member_cursor = "")
+  def team_membership_graphql_query(course_org, team_slug, member_cursor = "", invitees_cursor="")
     member_after_arg = member_cursor != "" ? ", after: \"#{member_cursor}\"" : ""
     <<-GRAPHQL
     query {
       organization(login:"#{course_org}") {
         team(slug:"#{team_slug}") {
-          members(first: 100#{member_after_arg}) {
+          members(first: 50 #{member_after_arg}) {
+            pageInfo {
+              hasNextPage
+              startCursor
+              endCursor
+            }
             edges {
               role
               node {
                 databaseId
-    } } } } } }
+              } 
+            } 
+          }
+        } 
+      } 
+    }
+    GRAPHQL
+  end
+
+  def get_team_invitees(course_org, team_record, cursor = "")
+    response = github_machine_user.post '/graphql', { query: team_invitations_graphql_query(course_org, team_record.slug, cursor) }.to_json
+    invitee_list = invitee_list_from_team_response(response)
+    pageInfo = response.data.organization.team.invitations.pageInfo
+    if !pageInfo.hasNextPage
+      return invitee_list
+    end
+    invitee_list + get_team_invitees(course_org, team_record, pageInfo.endCursor)
+  end
+
+  def invitee_list_from_team_response(team_response)
+    team_response.data.organization.team.invitations.nodes
+  end
+
+  def team_invitations_graphql_query(course_org, team_slug, invitee_cursor="")
+    invitees_after_arg = invitee_cursor != "" ? ", after: \"#{invitee_cursor}\"" : ""
+
+    <<-GRAPHQL
+    query {
+      organization(login:"#{course_org}") {
+        team(slug:"#{team_slug}") {
+          invitations(first: 50  #{invitees_after_arg}) { 
+            pageInfo {
+              hasNextPage
+              startCursor
+              endCursor
+            }
+            totalCount
+            __typename
+            nodes {
+              invitee {
+                login 
+                databaseId
+              } 
+            }
+          }
+        } 
+      } 
+    }
     GRAPHQL
   end
 end

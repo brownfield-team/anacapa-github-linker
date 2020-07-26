@@ -166,6 +166,8 @@ ActiveRecord::Schema.define(version: 2021_04_19_160808) do
     t.string "project_card_column_names"
     t.string "project_card_column_project_names"
     t.string "project_card_column_project_urls"
+    t.datetime "issue_created_at"
+    t.string "author_login"
     t.index ["github_repo_id"], name: "index_repo_issue_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_issue_events_on_roster_student_id"
   end

@@ -127,3 +127,5 @@ end
 gem 'flipper'
 gem 'flipper-ui'
 gem 'flipper-active_record'
+
+gem 'zlib'
