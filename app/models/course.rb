@@ -9,6 +9,7 @@ class Course < ApplicationRecord
   validates :course_organization, presence: true, length: { minimum: 3 }, uniqueness: true
   validate :check_course_org_exists
   has_many :roster_students, dependent: :destroy
+  has_many :informed_consents, dependent: :destroy
   has_many :completed_jobs, dependent: :destroy
   has_many :github_repos, dependent: :destroy, class_name: '::GithubRepo'
   has_many :org_teams, dependent: :destroy
@@ -117,6 +118,7 @@ class Course < ApplicationRecord
     return (self.roster_students.map { |student| student.user }).compact
   end
 
+
   # import roster students from a roster file provided by gradescope
   def import_students(file, header_map, header_row_exists)
     ext = File.extname(file.original_filename)
@@ -187,6 +189,49 @@ class Course < ApplicationRecord
           username: github_user.data.user.login,
           password: Devise.friendly_token[0,20],
     )
+  end
+
+  def unenroll_all_students
+    self.roster_students.each do |student|
+      student.enrolled = false
+      student.save
+    end
+  end
+
+  def import_informed_consents(file, header_map, header_row_exists)
+    ext = File.extname(file.original_filename)
+    spreadsheet = Roo::Spreadsheet.open(file, extension: ext)
+
+    # get index for each param
+    id_index = header_map.index("student_id")
+    name_index = header_map.index("name")
+    student_consents_index = header_map.index("student_consents")
+
+    delete_all_existing_informed_consents
+
+    # start at row 1 if header row exists (via checkbox)
+    ((header_row_exists ? 2 : 1)..spreadsheet.last_row).each do |i|
+      spreadsheet_row = spreadsheet.row(i)
+
+      row = {} # build dynamically based on choices
+
+      row["student_id"] = spreadsheet_row[id_index]
+      row["name"] = spreadsheet_row[name_index]
+      row["student_consents"] = spreadsheet_row[student_consents_index] unless student_consents_index.nil?
+
+      next if row.values.all?(&:nil?) # skip empty rows
+
+      informed_consent = informed_consents.find_by(perm: row["student_id"]) || informed_consents.new
+
+      informed_consent.perm = row["student_id"]
+      informed_consent.name = row["name"]
+      informed_consent.student_consents = student_consents_index.nil? ? true : row["student_consents"]  
+      informed_consent.save
+    end
+  end
+
+  def delete_all_existing_informed_consents
+    self.informed_consents.map(&:destroy)
   end
 
   def commit_csv_export_headers
@@ -303,12 +348,6 @@ class Course < ApplicationRecord
     result.to_json
   end
 
-  def unenroll_all_students
-    self.roster_students.each do |student|
-      student.enrolled = false
-      student.save
-    end
-  end
 
   def github_user_lookup(github_username) 
     response = github_machine_user.post '/graphql', 

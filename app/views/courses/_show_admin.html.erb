@@ -12,7 +12,7 @@
   <% end %>
 </p>
 <%#= link_to "View Course Roster (#{@course.roster_students.length} enrolled)", course_roster_students_path(@course), class: "btn", role: "button" %>
-<div class="panel panel-default">
+<div id="course-admin-panel" class="panel panel-default">
   <div class="panel-heading">
     <div class="btn-group pull-right">
       <%= link_to "Download Roster (CSV)", course_roster_students_path(@course, :format => "csv"), method: :get, class: "btn btn-default" %>
@@ -137,7 +137,7 @@
               <span class="label label-lg label-danger">ERROR: Please select { {First Name, Last Name } | Full Name, Perm, Email} </span>
             </h4>
             <button type="button" class="btn btn-default" data-dismiss="modal" onClick="window.location.reload()">Close</button>
-            <button type="button" class="btn btn-primary" onclick="uploadSubmit();">Upload</button>
+            <button type="button" class="btn btn-primary" onclick="uploadSubmitRosterStudents();">Upload</button>
           </div>
         </div>
         <!-- /.modal-content -->
