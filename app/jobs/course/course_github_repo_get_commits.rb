@@ -112,6 +112,9 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         commit.github_repo = @github_repo
         commit.branch = "master"
         commit.committed_via_web = c[:node][:committedViaWeb]
+        commit.author_login = c.node&.author&.user&.login
+        commit.author_name = c.node&.author&.name
+        commit.author_email = c.node&.author&.email
       rescue
         return 0
       end

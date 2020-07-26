@@ -39,38 +39,76 @@ class GithubRepo < ApplicationRecord
 
   def self.commit_csv_export_headers
     %w[
+      include
+      commit_hash
+      teams
+      doc_only
+      url
+      message
       github_repo_name
       github_repo_url
       roster_student_id
       roster_student_name
       roster_student_github_id
-      message
-      commit_hash
-      url
       branch
       files_changed
       commit_timestamp
       filenames_changed
       committed_via_web
+      author_login
+      author_name
+      author_email
     ]
+  end
+
+  def self.doc_only_commit?(c)
+    begin
+      filenames = c.filenames_changed[1..-2].gsub("\"","").split(",")
+      filenames.map{ |filename| 
+        filename.end_with?(".md")
+      }.reduce(:|)
+    rescue
+      return false
+    end
+  end
+
+  def self.commit_meets_inclusion_criteria?(repo,c)
+    return false if doc_only_commit?(c)
+    # TODO: return false if repo is private and author did not give informed consent
+    # TODO: possibly also return false if issue author is not a roster student?
+    true
+  end 
+
+  def self.team_names(c) 
+    "TBD"
   end
 
   # self.method so it can be reused in course.rb
   def self.commit_csv_export_fields(repo,c)
+
+    author_teams_array = c.roster_student&.org_teams&.map{ |team| team.name }
+    author_teams = self.array_or_singleton_to_s(author_teams_array)
+
     [
+      commit_meets_inclusion_criteria?(repo,c),
+      c.commit_hash,
+      author_teams,
+      doc_only_commit?(c),
+      c.url,
+      c.message,
       repo.name,
       repo.url,
       c.roster_student_id,
       c.roster_student&.full_name,
       c.roster_student&.user&.username,
-      c.message,
-      c.commit_hash,
-      c.url,
       c.branch,
       c.files_changed,
       c.commit_timestamp,
       c.filenames_changed,
       c.committed_via_web,
+      c.author_login,
+      c.author_name,
+      c.author_email
     ]
   end
 
@@ -111,7 +149,7 @@ class GithubRepo < ApplicationRecord
     i.project_card_column_names&.upcase&.include?("DONE")
   end
 
-  def self.meets_inclusion_criteria?(repo,i)
+  def self.issue_meets_inclusion_criteria?(repo,i)
     return false if i.closed and not in_done_column(i)
     # TODO: return false if repo is private and author did not give informed consent
     # TODO: possibly also return false if issue author is not a roster student?
@@ -144,10 +182,9 @@ class GithubRepo < ApplicationRecord
     assignee_teams = self.array_or_singleton_to_s(assignee_teams_array)
     puts("\n\n##### assignee_teams: #{assignee_teams} \n\n")
 
-    meets_inclusion_criteria = 
 
     [
-      meets_inclusion_criteria?(repo,i),
+      issue_meets_inclusion_criteria?(repo,i),
       issue_hash(i), 
       author_teams || assignee_teams,  
       i.state,       
