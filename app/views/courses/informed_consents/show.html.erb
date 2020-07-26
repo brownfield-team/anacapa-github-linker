@@ -1,0 +1,25 @@
+<%= link_to '< Back', course_informed_consents_path(@parent), :class => "btn btn-outline-secondary", :style => "padding-left:0;" %> |
+<%= link_to 'Edit', course_informed_consent_path(@parent, @informed_consent), :class => "btn btn-outline-secondary
+text-left" %> |
+
+<dl class="dl-horizontal">
+  <dt>Student ID</dt>
+  <dd> <%= @informed_consent.perm %></dd>
+  <p></p>
+
+  <dt>Name</dt>
+  <dd><%= @informed_consent.name %></dd>
+  <p></p>
+
+  <dt>Email</dt>
+  <dd><%= link_to @informed_consent.email, "mailto:#{@informed_consent.email}" %></dd>
+  <p></p>
+
+  <dt>Enrolled</dt>
+  <dd><%= @informed_consent.student_consents ? "True" : "False" %></dd>
+  <p></p>
+
+</dl>
+
+
+

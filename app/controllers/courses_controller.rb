@@ -106,6 +106,11 @@ class CoursesController < ApplicationController
     authorize! :jobs, @course
   end
 
+  def informed_consents
+    @course = Course.find(params[:course_id])
+    authorize! :informed_consents, @course
+  end
+
   def teams
     @course = Course.find(params[:course_id])
     authorize! :teams, @course

@@ -71,14 +71,12 @@ ActiveRecord::Schema.define(version: 2021_04_19_160808) do
   create_table "informed_consents", force: :cascade do |t|
     t.string "perm"
     t.string "name"
-    t.string "email"
     t.bigint "course_id"
-    t.bigint "roster_student_id"
     t.boolean "student_consents"
+    t.bigint "roster_student_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["course_id"], name: "index_informed_consents_on_course_id"
-    t.index ["email", "course_id"], name: "index_informed_consents_on_email_and_course_id", unique: true
     t.index ["perm", "course_id"], name: "index_informed_consents_on_perm_and_course_id", unique: true
     t.index ["roster_student_id", "course_id"], name: "index_informed_consents_on_roster_student_id_and_course_id", unique: true
   end

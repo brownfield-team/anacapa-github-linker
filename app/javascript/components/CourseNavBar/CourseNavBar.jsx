@@ -38,6 +38,7 @@ class CourseNavBar extends Component {
                     <NavItem eventKey="events" href={this.props.events_path}>Events</NavItem>
                     <NavItem eventKey="slack" href={this.props.slack_path}>Slack</NavItem>
                     <NavItem eventKey="jobs" href={this.props.jobs_path}>Jobs</NavItem>
+                    <NavItem eventKey="informedConsent" href={this.props.consent_path}>Consent</NavItem>
                     <NavDropdown title="Downloads">
                         <NavItem eventKey="download-commits" href={this.props.download_commits_path}>Download Commits</NavItem>
                         <NavItem eventKey="download-issues" href={this.props.download_issues_path}>Download Issues</NavItem>
@@ -60,6 +61,7 @@ CourseNavBar.propTypes = {
     events_path: PropTypes.string.isRequired,
     slack_path: PropTypes.string.isRequired,
     jobs_path: PropTypes.string.isRequired,
+    consent_path: PropTypes.string.isRequired,
     edit_path: PropTypes.string.isRequired,
     create_team_repos_path: PropTypes.string.isRequired,
     create_teams_path: PropTypes.string.isRequired,

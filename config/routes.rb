@@ -60,6 +60,11 @@ Rails.application.routes.draw do
         end
         get :activity
       end
+      resources :informed_consents do
+        collection do
+          post :import
+        end
+      end
       resources :github_repos do
         resources :repo_commit_events
         resources :repo_issue_events
