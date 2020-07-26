@@ -39,8 +39,8 @@ class RefreshGithubTeamsJob < CourseJob
       end
 
       team_invitees = get_team_invitees(@course.course_organization, team_to_update)
-      team_invitees.each do |invitee|
-        student_for_member = students_with_users.select { |rs| rs.user.uid == invitee.databaseId.to_s }.first
+      team_invitees.each do |node|
+        student_for_member = students_with_users.select { |rs| rs.user.uid == node.invitee.databaseId.to_s }.first
         if student_for_member.present?
           team_membership_record = StudentTeamMembership.find_by(roster_student_id: student_for_member.id, org_team_id: team_to_update.id)
           if team_membership_record.nil?
