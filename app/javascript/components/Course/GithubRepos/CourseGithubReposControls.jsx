@@ -39,7 +39,6 @@ class CourseGithubReposControls extends Component {
                 <Col xs={9}>
                     <ControlLabel >Search</ControlLabel>
                     <FormControl    
-                        style={{backgroundColor:"cream"}}
                         type="text"
                         placeholder="Search repo names"
                         onChange={(event)=>{this.onSearchChanged(event.target.value)}}
