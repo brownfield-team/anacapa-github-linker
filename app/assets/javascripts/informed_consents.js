@@ -1,15 +1,16 @@
 $(document).ready(function () {
-    if ($(".courses-controller").length <= 0) {
+    if ($(".courses-informed_consents-controller").length <= 0) {
         return;
     }
-    console.log("ready fired in courses.js")
+    console.log("ready fired in informed_consent.js")
     document.addEventListener("change", function (e) {
-      courseRosterCSV(e) 
-     });
- });
+        informedConsentCSV(e)
+    });
+});
  
- function courseRosterCSV(e) {
-    console.log("courseRosterCSV");
+
+function informedConsentCSV(e) {
+    console.log("informedConsentCSV");
 
     // when file is uploaded, grab it
     var selectedFile = e.target.files[0];
@@ -32,13 +33,9 @@ $(document).ready(function () {
 
         var fields = [
             {value: 'select', name: '-- select --'}, 
-            {value: 'full_name', name: 'Full Name'},
-            {value: 'first_name', name: 'First Name'}, 
-            {value: 'last_name', name: 'Last Name'},
             {value: 'student_id', name: 'Student ID'}, 
-            {value: 'email', name: 'Email'}, 
-            {value: 'section', name: 'Section'},
-            {value: 'github_username', name: 'Github Username'},
+            {value: 'name', name: 'Name'},
+            {value: 'student_consents', name: 'Student Consents'}, 
         ];
 
         for (var i = 0; i < fields.length; i++) {
@@ -79,6 +76,10 @@ $(document).ready(function () {
         for (var k = 0; k < parsedFile[0].length; k++) {
             var cleanedCellValue = parsedFile[0][k].replace(/[^0-9a-z]/gi, '').toLowerCase();
             var dropdownIndex = cleanedDropdownValues.indexOf(cleanedCellValue);
+            console.log("cleanedCellValue="+cleanedCellValue);
+            if (cleanedCellValue=="id") {
+                dropdownIndex = cleanedDropdownValues.indexOf("studentid");
+            }
             if (dropdownIndex > -1) {
                 document.getElementById('dropdown-' + k).selectedIndex = dropdownIndex;
             }
@@ -89,51 +90,45 @@ $(document).ready(function () {
     reader.readAsText(selectedFile);
     // console.log(CSVToArray(reader.readAsText(selectedFile)));
 
+   
  }
+ 
+ 
+ function uploadSubmitInformedConsents() {
+ 
+    // validate
 
- 
- 
- 
- function uploadSubmitRosterStudents() {
- 
-     // validate
- 
-     // get array of selections
-     var headings = $("#upload-modal select").map(function(){return $(this).val();}).get();
-     console.log(headings);
- 
-     var full_split_name_error = headings.includes("full_name") && (headings.includes("first_name") || headings.includes("first_name"));
-     var missing_student_id = !headings.includes("student_id");
-     var missing_email = !headings.includes("email");
-     var any_missing = headings.includes("invalid");
-     var first_name_wo_last_name = headings.includes("first_name") && !headings.includes("last_name");
-     var last_name_wo_first_name = headings.includes("last_name") && !headings.includes("first_name");
- 
-     if (full_split_name_error || missing_student_id || missing_email || first_name_wo_last_name || last_name_wo_first_name || any_missing) {
-         if ($("#csv-upload-error").hasClass('hidden')) {
-             $("#csv-upload-error").removeClass( "hidden" );
-         } else {
-             $("#csv-upload-error").effect( "shake" );
-         }
-     } else {
-         $("#csv-upload-error").addClass( "hidden" );
-         // valid - g2g
- 
-         // pull data from our psuedo-form into the hidden elements before posting
-         // might be better to put this in a little json hash instead
-         $("#csv-header-map-hidden-field").val(headings.join(','));
-         if($("#first-row-is-header").is(':checked')){
-            $("#csv-header-toggle-hidden-field").val("true");
-         }
-         else{
-            $("#csv-header-toggle-hidden-field").val("false");
-         }
- 
- 
-         $("#roster-upload-form").submit();
-     }
- }
- 
+    // get array of selections
+    var headings = $("#upload-modal select").map(function(){return $(this).val();}).get();
+    console.log(headings);
+
+    var missing_student_id = !headings.includes("student_id");
+    var any_missing = headings.includes("invalid");
+
+    if ( missing_student_id || any_missing) {
+        if ($("#csv-upload-error").hasClass('hidden')) {
+            $("#csv-upload-error").removeClass( "hidden" );
+        } else {
+            $("#csv-upload-error").effect( "shake" );
+        }
+    } else {
+        $("#csv-upload-error").addClass( "hidden" );
+        // valid - g2g
+
+        // pull data from our psuedo-form into the hidden elements before posting
+        // might be better to put this in a little json hash instead
+        $("#csv-header-map-hidden-field").val(headings.join(','));
+        if($("#first-row-is-header").is(':checked')){
+           $("#csv-header-toggle-hidden-field").val("true");
+        }
+        else{
+           $("#csv-header-toggle-hidden-field").val("false");
+        }
+
+        $("#roster-upload-form").submit();
+    }
+}
+
  function headerToggle(caller) {
      var checked = $(caller).is(':checked');
      if (checked) {
