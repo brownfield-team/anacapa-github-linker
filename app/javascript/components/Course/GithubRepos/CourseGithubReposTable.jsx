@@ -46,8 +46,6 @@ class CourseGithubReposTable extends Component {
         }];
 
     renderRepoShowPageUrl = (cell, row, rowIndex, extraData) => {
-        console.log("renderRepoShowPageUrl");
-        console.log("row="+JSON.stringify(row));
         const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}`;
         return (
             <a href={url}>{cell}</a>
@@ -91,8 +89,6 @@ class CourseGithubReposTable extends Component {
     }
 
     render() {
-        console.log("CourseGithubReposTable render");
-        console.log("this.props.repos="+JSON.stringify(this.props.repos));
         return (
             <Fragment>
                 <BootstrapTable
