@@ -30,4 +30,12 @@ class RosterStudent < ApplicationRecord
     return nil if team_str.empty?
     team_str.delete_suffix("/")
   end
+
+  def consents_as_Y_or_N
+    informed_consent = course.informed_consents.where(roster_student_id: id).first
+    return nil if informed_consent.nil?
+    student_consents = informed_consent.student_consents
+    return nil if student_consents.nil?
+    student_consents ? "Y" : "N"
+  end
 end

@@ -28,6 +28,7 @@
           <th>Last name</th>
           <th>Email</th>
           <th>Github ID</th>
+          <th>IRB</th>
           <th colspan="3"></th>
         </tr>
       </thead>
@@ -44,6 +45,7 @@
             <% else %>
               <td></td>
             <% end %>
+            <td><%= @parent.informed_consents.where(perm: student.perm).first&.student_consents ? "t" : nil %></td>
             <td><%= link_to 'Show', course_roster_student_path(@parent, student) %></td>
             <td><%= link_to 'Edit', edit_course_roster_student_path(@parent, student) %></td>
             <td><%= link_to 'Remove', course_roster_student_path(@parent, student), method: :delete, data: { confirm: 'Are you sure?' } %></td>

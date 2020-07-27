@@ -64,6 +64,8 @@
             <th data-sortable="true" data-field="GithubId" data-filter-control="input">Github ID</th>
             <th data-sortable="true" data-field="OrgMembership" data-filter-control="select">Org Status</th>
             <th data-sortable="true" data-field="Teams" data-filter-control="input">Teams</th>
+            <th data-sortable="true" data-field="Consent" data-filter-control="input">Consent</th>
+
             <th></th>
           </tr>
         </thead>
@@ -99,6 +101,9 @@
                     <%= link_to(team.name, team.url) + (", " unless index == student.org_teams.size - 1) %>
                   <% end %>
                 </td>
+               <td>
+                 <%= student.consents_as_Y_or_N %>
+               </td>
                 <% if can? :destroy, student %>
                   <td><%= link_to 'Remove', course_roster_student_path(@course, student), method: :delete, data: {confirm: 'Are you sure?'} %></td>
                 <% end %>
