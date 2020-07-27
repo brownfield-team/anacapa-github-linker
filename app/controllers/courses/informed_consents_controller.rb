@@ -43,7 +43,7 @@ module Courses
    
     def create
       @informed_consent = @parent.informed_consents.new(informed_consent_params)
-      @informed_consent.roster_studnet = @parent.roster_students.where(perm: @informed_consent.perm).first
+      @informed_consent.roster_student = @parent.roster_students.where(perm: @informed_consent.perm).first
 
       respond_to do |format|
         if @informed_consent.save
@@ -58,10 +58,10 @@ module Courses
 
     
     def update
-      @informed_consent.roster_studnet = @parent.roster_students.where(perm: @informed_consent.perm).first
+      @informed_consent.roster_student = @parent.roster_students.where(perm: @informed_consent.perm).first
       respond_to do |format|
         if @informed_consent.update(informed_consent_params)
-          format.html { redirect_to course_informed_consents_path(@parent, @informed_consent), notice: 'Informed Consent record was successfully updated.' }
+          format.html { redirect_to course_informed_consent_path(@parent, @informed_consent), notice: 'Informed Consent record was successfully updated.' }
           format.json { render :show, status: :ok, location: @informed_consent }
         else
           format.html { render :edit }

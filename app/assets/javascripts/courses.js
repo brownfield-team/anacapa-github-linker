@@ -164,6 +164,10 @@ $(document).ready(function () {
         for (var k = 0; k < parsedFile[0].length; k++) {
             var cleanedCellValue = parsedFile[0][k].replace(/[^0-9a-z]/gi, '').toLowerCase();
             var dropdownIndex = cleanedDropdownValues.indexOf(cleanedCellValue);
+            console.log("cleanedCellValue="+cleanedCellValue);
+            if (cleanedCellValue=="id") {
+                dropdownIndex = cleanedDropdownValues.indexOf("studentid");
+            }
             if (dropdownIndex > -1) {
                 document.getElementById('dropdown-' + k).selectedIndex = dropdownIndex;
             }
@@ -330,7 +334,7 @@ $(document).ready(function () {
         else{
            $("#csv-header-toggle-hidden-field").val("false");
         }
-        
+
         $("#roster-upload-form").submit();
     }
 }

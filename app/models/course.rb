@@ -227,7 +227,10 @@ class Course < ApplicationRecord
 
       informed_consent.perm = row["student_id"]
       informed_consent.name = row["name"]
-      informed_consent.student_consents = student_consents_index.nil? ? true : row["student_consents"]  
+      informed_consent.student_consents = student_consents_index.nil? ? true : row["student_consents"] 
+      
+      informed_consent.roster_student = roster_students.where(perm: informed_consent.perm).first
+
       informed_consent.save
     end
   end

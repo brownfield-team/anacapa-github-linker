@@ -11,12 +11,12 @@ text-left" %> |
   <dd><%= @informed_consent.name %></dd>
   <p></p>
 
-  <dt>Email</dt>
-  <dd><%= link_to @informed_consent.email, "mailto:#{@informed_consent.email}" %></dd>
+  <dt>Student Consents</dt>
+  <dd><%= @informed_consent.student_consents ? "True" : "False" %></dd>
   <p></p>
 
-  <dt>Enrolled</dt>
-  <dd><%= @informed_consent.student_consents ? "True" : "False" %></dd>
+  <dt>Roster Student ID</dt>
+  <dd><%= @informed_consent.roster_student_id %></dd>
   <p></p>
 
 </dl>
