@@ -54,6 +54,8 @@ class GithubRepo < ApplicationRecord
       roster_student_github_id
       branch
       files_changed
+      additions
+      deletions
       commit_timestamp
       filenames_changed
       committed_via_web
@@ -106,7 +108,9 @@ class GithubRepo < ApplicationRecord
       c.roster_student&.full_name,
       c.roster_student&.user&.username,
       c.branch,
-      c.files_changed,
+      c.files_changed, 
+      c.additions,
+      c.deletions,
       c.commit_timestamp,
       c.filenames_changed,
       c.committed_via_web,

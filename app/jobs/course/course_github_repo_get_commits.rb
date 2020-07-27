@@ -105,6 +105,8 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     def update_one_commit(commit, c)
       begin
         commit.files_changed = c[:node][:changedFiles]
+        commit.additions = c[:node][:additions]
+        commit.deletions = c[:node][:deletions]
         commit.message = c[:node][:message]
         commit.commit_hash =  c[:node][:oid]
         commit.url =  c[:node][:url]
@@ -169,6 +171,8 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
                       }
                       edges {
                         node {
+                          additions
+                          deletions
                           committedViaWeb
                           changedFiles
                           messageHeadline
