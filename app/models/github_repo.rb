@@ -43,10 +43,12 @@ class GithubRepo < ApplicationRecord
       commit_hash
       teams
       doc_only
+      author_consents
       url
       message
       github_repo_name
       github_repo_url
+      github_repo_type
       roster_student_id
       roster_student_name
       roster_student_github_id
@@ -74,8 +76,8 @@ class GithubRepo < ApplicationRecord
 
   def self.commit_meets_inclusion_criteria?(repo,c)
     return false if doc_only_commit?(c)
-    # TODO: return false if repo is private and author did not give informed consent
-    # TODO: possibly also return false if issue author is not a roster student?
+    return false if c.roster_student.nil?
+    return false if repo.visibility=="private" && !c.roster_student.consents
     true
   end 
 
@@ -94,10 +96,12 @@ class GithubRepo < ApplicationRecord
       c.commit_hash,
       author_teams,
       doc_only_commit?(c),
+      c.roster_student&.consents,
       c.url,
       c.message,
       repo.name,
       repo.url,
+      repo.visibility,
       c.roster_student_id,
       c.roster_student&.full_name,
       c.roster_student&.user&.username,
@@ -118,11 +122,13 @@ class GithubRepo < ApplicationRecord
       include
       random
       teams
+      author_consents
       state
       done
       url
       github_repo_name
       github_repo_url
+      github_repo_visibility
       title
       created_at
       closed
@@ -141,7 +147,6 @@ class GithubRepo < ApplicationRecord
       checklist_items
       checked
       unchecked
-      
     ]
   end
 
@@ -151,8 +156,8 @@ class GithubRepo < ApplicationRecord
 
   def self.issue_meets_inclusion_criteria?(repo,i)
     return false if i.closed and not in_done_column(i)
-    # TODO: return false if repo is private and author did not give informed consent
-    # TODO: possibly also return false if issue author is not a roster student?
+    return false if i.roster_student.nil?
+    return false if repo.visibility=="private" && !i.roster_student.consents
     true
   end 
 
@@ -186,12 +191,14 @@ class GithubRepo < ApplicationRecord
     [
       issue_meets_inclusion_criteria?(repo,i),
       issue_hash(i), 
-      author_teams || assignee_teams,  
+      author_teams || assignee_teams,
+      i.roster_student.consents,  
       i.state,       
       self.in_done_column(i),
       i.url,
       repo.name,
       repo.url,
+      repo.visibility,
       i.title,
       i.issue_created_at,
       i.closed,
