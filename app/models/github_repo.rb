@@ -192,7 +192,7 @@ class GithubRepo < ApplicationRecord
       issue_meets_inclusion_criteria?(repo,i),
       issue_hash(i), 
       author_teams || assignee_teams,
-      i.roster_student.consents,  
+      i.roster_student&.consents,  
       i.state,       
       self.in_done_column(i),
       i.url,
