@@ -155,7 +155,7 @@ class GithubRepo < ApplicationRecord
   end
 
   def self.issue_meets_inclusion_criteria?(repo,i)
-    return false if i.closed and not in_done_column(i)
+    return false if !i.closed and not in_done_column(i)
     return false if i.roster_student.nil?
     return false if repo.visibility=="private" && !i.roster_student.consents
     true
