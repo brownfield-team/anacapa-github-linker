@@ -150,6 +150,8 @@ ActiveRecord::Schema.define(version: 2021_04_19_160808) do
     t.string "author_login"
     t.string "author_name"
     t.string "author_email"
+    t.integer "additions"
+    t.integer "deletions"
     t.index ["github_repo_id"], name: "index_repo_commit_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_commit_events_on_roster_student_id"
   end
