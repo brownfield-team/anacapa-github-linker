@@ -25,7 +25,6 @@ class CourseGithubReposProjectRepos extends Component {
     }
 
     updateRepos = () => {
-        console.log("updateRepos");
         const url = githubReposRoute(this.props.course_id);
         const params = { page: this.state.page, per_page: this.state.pageSize, is_project_repo:true};
         // Otherwise, calling setState fails because the scope for "this" is the success/error function.
