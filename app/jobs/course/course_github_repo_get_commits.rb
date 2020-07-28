@@ -22,6 +22,10 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       }
     end
 
+    def all_good?(result_hash)
+      result_hash["total_commits"]==(result_hash["total_new_commits"] + result_hash["total_updated_commits"])
+    end
+
     def attempt_job(options)
       @github_repo_full_name = "#{@course.course_organization}/#{@github_repo.name}"      
       final_results = result_hash(0,0,0)
@@ -34,13 +38,15 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
           end_cursor = query_results[:data][:repository][:ref][:target][:history][:pageInfo][:endCursor]
           commits = query_results[:data][:repository][:ref][:target][:history][:edges]
         rescue
-          return "Unexpected result returned from graphql query: #{sawyerResourceToString(query_results)}"
+          return "Unexpected result returned from graphql query: #{sawyer_resource_to_s(query_results)}"
         end
         results = store_commits_in_database(commits)
         final_results = combine_results(final_results,results)
       end
 
-      "Job Complete; Retrieved #{final_results["total_commits"]} commits for Course #{@course.name} for Repo #{@github_repo.name}. Stored #{final_results["total_new_commits"]} new commits, Updated #{final_results["total_updated_commits"]} existing commits in database."
+      job_outcome = all_good?(final_results) ? "Successfully" : " with errors; CHECK LOG; note that total commits retrieved does NOT MATCH number stored and/or updated"
+
+      "Job Completed #{job_outcome}. Retrieved #{final_results["total_commits"]} commits for Course #{@course.name} for Repo #{@github_repo.name}. Stored #{final_results["total_new_commits"]} new commits, Updated #{final_results["total_updated_commits"]} existing commits in database."
     end  
 
     def store_commits_in_database(commits)
@@ -60,35 +66,10 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     def store_one_commit_in_database(c)
     
       commit = RepoCommitEvent.new
-      begin
-        commit.files_changed = c[:node][:changedFiles]
-        commit.message = c[:node][:message]
-        commit.commit_hash =  c[:node][:oid]
-        commit.url =  c[:node][:url]
-        commit.commit_timestamp =  c[:node][:author][:date]
-        commit.github_repo = @github_repo
-        commit.branch = "master"
-        commit.committed_via_web = c[:node][:committedViaWeb]
-      rescue
-        return 0
-      end
-      commit.filenames_changed = filenames_changed(commit.commit_hash)
-      
-      begin  # "try" block
-        uid = c[:node][:author][:user][:databaseId]
-        commit.roster_student = lookup_roster_student_by_github_uid(uid)
-      rescue # optionally: `rescue Exception => ex`
-        uid = ""
-        commit.roster_student = nil
-      end 
-      begin
-        commit.save!
-        return 1
-      rescue
-        return 0
-      end
+      result = update_one_commit(commit,c)
     end
 
+     
     # Regrettably, the v4 graphql api doesn't yet support
     # getting the filenames changed.  
     # See: https://github.community/t/get-a-repositorys-commits-along-with-changed-patches-and-the-url-to-changed-files-using-graphql-v4/13585
@@ -118,6 +99,8 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         commit.author_name = c.node&.author&.name
         commit.author_email = c.node&.author&.email
       rescue
+        raise
+        puts "***ERROR*** update_commit_fields commit #{sawyer_resource_to_s(c)} @github_repo #{@github_repo}"
         return 0
       end
 
@@ -199,8 +182,13 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         GRAPHQL
     end
 
-    def sawyerResourceToJson(sawyer_resource)
-      sawyer_resource.map(&:to_h).to_json
+    def sawyer_resource_to_s(sawyer_resource)
+      begin
+        result = sawyer_resource.to_hash.to_s
+      rescue
+        result = sawyer_resource.to_s 
+      end
+      result
     end
 end
   

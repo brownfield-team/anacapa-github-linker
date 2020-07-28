@@ -141,7 +141,7 @@ class CoursesController < ApplicationController
   # List of course jobs to make available to run
   def course_job_list
     @course = Course.find(params[:course_id])
-    jobs = [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, PurgeCourseReposJob]
+    jobs = [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, RefreshProjectRepoCommitsJob, PurgeCourseReposJob]
     if @course.slack_workspace.present?
       jobs << AssociateSlackUsersJob
     end
@@ -194,6 +194,10 @@ class CoursesController < ApplicationController
 
   def legal_repo_name(str)
     str =~ /^[\w-]+$/
+  end
+
+  def project_repos
+    @course = Course.find(params[:course_id])
   end
 
   def commits

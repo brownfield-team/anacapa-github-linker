@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 2021_04_19_160808) do
     t.integer "repo_id"
     t.string "full_name"
     t.string "visibility"
+    t.boolean "is_project_repo"
     t.index ["course_id"], name: "index_github_repos_on_course_id"
   end
 
