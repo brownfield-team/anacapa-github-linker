@@ -82,7 +82,7 @@ class GithubRepo < ApplicationRecord
       [
         "Merge branch",
         "Merge pull request",
-        "Merged remote tracking branch"
+        "Merged remote-tracking branch"
       ].map{ |p| 
         c&.message&.start_with?(p)
       }.reduce(:|)
@@ -102,7 +102,7 @@ end
     return false if doc_only_commit?(c)
     return false if c.roster_student.nil?
     return false if repo.visibility=="private" && !c.roster_student.consents
-    return false if merge_commit?(c)
+    return false if alt_merge_commit?(c)
     true
   end 
 
