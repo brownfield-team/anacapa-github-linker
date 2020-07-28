@@ -62,6 +62,8 @@ class GithubRepo < ApplicationRecord
       author_login
       author_name
       author_email
+      merge_commit_a
+      merge_commit_b
     ]
   end
 
@@ -76,10 +78,31 @@ class GithubRepo < ApplicationRecord
     end
   end
 
+  def self.merge_commit?(c)
+      [
+        "Merge branch",
+        "Merge pull request",
+        "Merged remote tracking branch"
+      ].map{ |p| 
+        c&.message&.start_with?(p)
+      }.reduce(:|)
+  end
+
+  def self.alt_merge_commit?(c)
+    [
+      "merge ",
+      "merged ",
+      "merging "
+    ].map{ |p| 
+      c&.message&.downcase&.start_with?(p)
+    }.reduce(:|)
+end
+
   def self.commit_meets_inclusion_criteria?(repo,c)
     return false if doc_only_commit?(c)
     return false if c.roster_student.nil?
     return false if repo.visibility=="private" && !c.roster_student.consents
+    return false if merge_commit?(c)
     true
   end 
 
@@ -116,7 +139,9 @@ class GithubRepo < ApplicationRecord
       c.committed_via_web,
       c.author_login,
       c.author_name,
-      c.author_email
+      c.author_email,
+      merge_commit?(c),
+      alt_merge_commit?(c)
     ]
   end
 
