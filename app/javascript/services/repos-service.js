@@ -10,6 +10,10 @@ class ReposService {
         return axios.get(githubRepoRoute(courseId, githubRepoId)).then(response => response.data);
     }
 
+    static async updateGithubRepo(courseId, githubRepoId, githubRepo) {
+        return axios.put(githubRepoRoute(courseId, githubRepoId), githubRepo).then(response => response.data);
+    }
+
 }
 
 export default ReposService;

@@ -54,6 +54,7 @@ class BackgroundJob
     job_record = @job_record
     job_record.summary = summary
     job_record.save
+    summary
   end
 
   def perform(options = {})
@@ -75,11 +76,17 @@ class BackgroundJob
 
   def rescue_job(exception)
     # Update job log record and reraise exception
+
+    formatted_backtrace = JSON.pretty_generate(exception.backtrace)
+    verbose_summary = "Exception: <pre>#{exception.to_s}\n\n#{formatted_backtrace}</pre>"
+    concise_summary = "An Exception occurred; please see the logs for details"
+
     if ENV['DEBUG_VERBOSE'] && ENV['DEBUG_VERBOSE'].to_i >= 1
-      update_job_record_with_completion_summary(exception.to_s)
+      update_job_record_with_completion_summary(verbose_summary)
     else
-      update_job_record_with_completion_summary("An exception occurred. Please see the logs for more info.")
+      update_job_record_with_completion_summary(verbose_summary)
+      #update_job_record_with_completion_summary(concise_summary);
+      #raise exception
     end
-    raise exception
   end
 end

@@ -37,6 +37,7 @@ Rails.application.routes.draw do
     get :issues
     post :run_course_job
     post :update_ta
+    get :project_repos
     scope module: :courses do
       resources :roster_students do
         collection do

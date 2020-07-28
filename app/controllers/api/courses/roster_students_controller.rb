@@ -17,7 +17,6 @@ module Api::Courses
       # Just not worth the effort right now.
       start_date = Date.parse(params[:start_date]) || Date.today - 30
       end_date = Date.parse(params[:end_date]) || Date.today
-      # binding.pry
       activity = []
       activity += @roster_student.repo_commit_events
       activity += @roster_student.repo_issue_events
