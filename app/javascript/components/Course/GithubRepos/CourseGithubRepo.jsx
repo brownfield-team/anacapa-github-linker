@@ -12,8 +12,7 @@ class CourseGithubRepo extends Component {
     }
 
     componentDidMount() {
-        console.log("CourseGithubReposIndex componentDidMount called");
-        console.log("this.props.repo="+JSON.stringify(this.props.repo))
+       
     }
 
     courseId = () => {
@@ -26,13 +25,10 @@ class CourseGithubRepo extends Component {
         } else {
             this.state.github_repo.is_project_repo = true
         }
-        console.log("before saveGithubRepo this.state.github_repo="+JSON.stringify(this.state.github_repo));
         this.saveGithubRepo(this.state.github_repo);
-        console.log("after saveGithubRepo this.state.github_repo="+JSON.stringify(this.state.github_repo));
     };
 
     saveGithubRepo = (githubRepo) => {
-        console.log("saveGithubRepo this.state.github_repo="+JSON.stringify(this.state.github_repo));
         const update_hash = {"github_repo":{"is_project_repo": this.state.github_repo.is_project_repo}};
         ReposService.updateGithubRepo(this.courseId(), this.state.github_repo.id, update_hash).then(repoResponse => {
             this.setState({github_repo: repoResponse});

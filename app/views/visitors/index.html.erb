@@ -67,7 +67,6 @@
 
 function filter_list_by_keyword() {
   var keyword = $("#courses_search").val().toLowerCase();
-  console.log("search for: " + keyword);
   $("#course_list tr").each(function(element) {
     var text = $(this).text();
     if (text.toLowerCase().indexOf(keyword) === -1) {

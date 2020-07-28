@@ -76,7 +76,6 @@ function informedConsentCSV(e) {
         for (var k = 0; k < parsedFile[0].length; k++) {
             var cleanedCellValue = parsedFile[0][k].replace(/[^0-9a-z]/gi, '').toLowerCase();
             var dropdownIndex = cleanedDropdownValues.indexOf(cleanedCellValue);
-            console.log("cleanedCellValue="+cleanedCellValue);
             if (cleanedCellValue=="id") {
                 dropdownIndex = cleanedDropdownValues.indexOf("studentid");
             }
@@ -100,7 +99,6 @@ function informedConsentCSV(e) {
 
     // get array of selections
     var headings = $("#upload-modal select").map(function(){return $(this).val();}).get();
-    console.log(headings);
 
     var missing_student_id = !headings.includes("student_id");
     var any_missing = headings.includes("invalid");

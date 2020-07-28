@@ -43,9 +43,7 @@ class CourseGithubReposControls extends Component {
                         placeholder="Search repo names"
                         onChange={(event)=>{this.onSearchChanged(event.target.value)}}
                         onKeyPress={event => {
-                            console.log("KeyPress");
                             if (event.key === "Enter") {
-                              console.log("Enter");
                               this.doTheSearch();
                             }
                           }}

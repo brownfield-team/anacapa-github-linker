@@ -100,7 +100,6 @@ $(document).ready(function () {
  
      // get array of selections
      var headings = $("#upload-modal select").map(function(){return $(this).val();}).get();
-     console.log(headings);
  
      var full_split_name_error = headings.includes("full_name") && (headings.includes("first_name") || headings.includes("first_name"));
      var missing_student_id = !headings.includes("student_id");
