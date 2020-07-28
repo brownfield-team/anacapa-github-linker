@@ -23,6 +23,10 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
       }
     end
 
+    def all_good?(result_hash)
+      result_hash["total_sdlc_events"]==result_hash["total_new_sdlc_events"] + result_hash["total_updated_sdlc_events"]
+    end
+
     def attempt_job(options)
       @github_repo_full_name = "#{@course.course_organization}/#{@github_repo.name}"      
       final_results = result_hash(0,0,0)
@@ -35,7 +39,7 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
           end_cursor = query_results[:data][:repository][:issues][:pageInfo][:endCursor]
           sdlc_events = query_results[:data][:repository][:issues][:nodes]
         rescue
-          return "Unexpected result returned from graphql query: #{sawyerResourceToString(query_results)}"
+          return "Unexpected result returned from graphql query: <pre>#{sawyer_resource_to_s(query_results)}</pre>"
         end
         results = store_sdlc_events_in_database(sdlc_events)
         final_results = combine_results(final_results,results)
@@ -47,47 +51,47 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
     def store_sdlc_events_in_database(sdlc_events)
       total_new_sdlc_events = 0
       total_updated_sdlc_events = 0
-      sdlc_events.each{ |i|
-        puts("**** WE HAVE AN SDLC EVENT #{sawyerResourceToString(i)}")
-        # existing_issue = RepoSDLCEvent.where(url: i[:url]).first
-        # if existing_issue
-        #   total_updated_sdlc_events += update_one_issue(existing_issue, i)
+      sdlc_events.each{ |e|
+        puts("**** WE HAVE AN SDLC EVENT #{sawyer_resource_to_s(e)}")
+        # existing_sdlc_event = RepoSDLCEvent.where(url: i[:url]).first
+        # if existing_sdlc_event
+        #   total_updated_sdlc_events += update_one_sdlc_event(existing_sdlc_event, i)
         # else
-        #   total_new_sdlc_events += store_one_issue_in_database(i) 
+        #   total_new_sdlc_events += store_one_sdlc_event_in_database(i) 
         # end
       }
      result_hash(sdlc_events.length,total_new_sdlc_events,total_updated_sdlc_events)
     end
 
-    def store_one_issue_in_database(i)
-    #   issue = RepoIssueEvent.new
-    #   result = update_one_issue(issue,i)
+    def store_one_sdlc_event_in_database(e)
+    #   sdlc_event = RepoSDLCEvent.new
+    #   result = update_one_sdlc_event(sdlc_event,e)
     end
 
-    def update_one_issue(issue, i)
+    def update_one_sdlc_event(sdlc_event, e)
       
     #   begin
-    #     issue.url =  i[:url]
-    #     issue.github_repo = @github_repo
-    #     issue.title = i[:title]
+    #     sdlc_event.url =  e[:url]
+    #     sdlc_event.github_repo = @github_repo
+    #     sdlc_event.title = e[:title]
     #   rescue
-    #     puts "***ERROR*** update_sdlc_fields issue #{i} @github_repo #{@github_repo}"
+    #     puts "***ERROR*** update_sdlc_fields sdlc_event #{i} @github_repo #{@github_repo}"
     #     return 0
     #   end
       
     #   begin  # "try" block
-    #     username = i[:author][:login]
-    #     issue.roster_student = lookup_roster_student_by_github_uid(uid)
+    #     username = e[:author][:login]
+    #     sdlc_event.roster_student = lookup_roster_student_by_github_uid(uid)
     #   rescue # optionally: `rescue Exception => ex`
     #     username = ""
-    #     issue.roster_student = nil
+    #     sdlc_event.roster_student = nil
     #   end 
 
     #   begin
-    #     issue.save!
+    #     sdlc_event.save!
     #     return 1
     #   rescue
-    #     puts "***ERROR*** on issue.save! sdlc #{i} @github_repo #{@github_repo}"
+    #     puts "***ERROR*** on sdlc_event.save! sdlc #{sawyer_resource_to_s(e)} @github_repo #{@github_repo}"
     #     return 0
     #   end
     end
@@ -97,7 +101,7 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
     end
 
     def perform_graphql_query(repo_name, org_name, after="")
-      graphql_query_string = graphql_query(repo_name, org_name, after).gsub("\n","")
+      graphql_query_string = graphql_query_issue_events(repo_name, org_name, after).gsub("\n","")
       data = {
           :query => graphql_query_string, 
       }.to_json
@@ -109,28 +113,19 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
       github_machine_user.send :request, :post, '/graphql', data,options
     end
 
-    def graphql_query(repo_name, org_name, after)
+    def graphql_query_issue_events(repo_name, org_name, after)
         if after != ""
           after_clause=", after: \"#{after}\""
         else
           after_clause = ""  
         end
-        # Although the published limit on Graphql queries is 100,
-        # in practice, we've found that it sometimes fails.
-        # 50 seems to be safer round number.
-
-        # TODO: Add closed and closedAt to database
-        # TODO: Get body, and parse for checkboxes, complete and incomplete
-        # TODO: Add number of assignees, and try to tie assignees back to 
-        #   roster students if possible.
-
-        # repository(name: "#{repo_name}", owner: "#{org_name}") {
-        #     issues(first: 50 #{after_clause}) {
-
+       
+        # LIST OF EVENTS: https://docs.github.com/en/graphql/reference/unions#issuetimelineitems
+        
         <<-GRAPHQL
         query {
-            repository(owner: "ucsb-cs48-s20", name: "project-s0-t1-budget") {
-              issues(last: 100) {
+            repository(owner: "#{org_name}", name: "#{repo_name}") {
+              issues(first: 50 #{after_clause}) {
                 pageInfo {
                     startCursor
                     hasNextPage
@@ -138,26 +133,153 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
                 }
                 nodes {
                   number
-                  timelineItems(itemTypes: [ADDED_TO_PROJECT_EVENT, MOVED_COLUMNS_IN_PROJECT_EVENT], first: 100) {
+                  url
+                  title
+                  createdAt
+                  state
+                  author {
+                    login
+                    ... on User {
+                      databaseId
+                      email
+                      name
+                    }
+                  }
+                  userContentEdits(first: 50) {
+                    pageInfo {
+                      startCursor
+                      hasNextPage
+                      endCursor
+                    }
+                    nodes {
+                      createdAt
+                      deletedAt
+                      deletedBy {
+                        login
+                        ... on User {
+                          databaseId
+                          email
+                          name
+                        }
+                      }
+                      editedAt
+                      editor {
+                        login
+                        ... on User {
+                          databaseId
+                          email
+                          name
+                        }
+                      }
+                      updatedAt
+                      diff
+                    }
+                  }
+                  timelineItems(itemTypes: [ADDED_TO_PROJECT_EVENT, ASSIGNED_EVENT,  CLOSED_EVENT, MOVED_COLUMNS_IN_PROJECT_EVENT, REMOVED_FROM_PROJECT_EVENT, REOPENED_EVENT], first: 50) {
+                    pageInfo {
+                      startCursor
+                      hasNextPage
+                      endCursor
+                    }
                     nodes {
                       __typename
                       ... on AddedToProjectEvent {
                         id
                         actor {
                           login
+                          ... on User {
+                            databaseId
+                            email
+                            name
+                          }
                         }
-                        
+                        createdAt
                         project {
                             name
+                            url
                         }
-                       
+                        projectColumnName
+                      }
+                      ... on AssignedEvent {
+                        id
+                        createdAt
+                        actor {
+                          login
+                          ... on User {
+                            databaseId
+                            email
+                            name
+                          }
+                        }
+                        assignee {
+                          ... on User {
+                            login
+                            databaseId
+                            email
+                            name
+                          }
+                        }
+
+                      }
+                      ... on ClosedEvent {
+                        id
+                        actor {
+                          login
+                          ... on User {
+                            databaseId
+                            email
+                            name
+                          }
+                        }
+                        closer {
+                          __typename
+                          ... on Commit {
+                            url
+                            oid
+                            message
+                          }
+                          ... on PullRequest {
+                            title
+                            url
+                          }
+                        }
+                        createdAt
+                        url
                       }
                       ... on MovedColumnsInProjectEvent {
                         id
                         actor {
                           login
+                          ... on User {
+                            databaseId
+                            email
+                            name
+                          }
                         }
                         createdAt
+                        project {
+                          name
+                          url
+                        }
+                        previousProjectColumnName
+                        projectColumnName
+                      }
+                      ... on RemovedFromProjectEvent {
+                        id
+                        actor {
+                          login
+                          ... on User {
+                            databaseId
+                            email
+                            name
+                          }
+                        }
+                        createdAt
+                        project {
+                          name
+                          url
+                        }
+                        projectColumnName
                       }
                     }
                   }
@@ -168,9 +290,15 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
         GRAPHQL
     end
 
-    def sawyerResourceToString(sawyer_resource)
-      # result = sawyer_resource.map(&:to_h).to_json
-      sawyer_resource.to_json
+
+    
+    def sawyer_resource_to_s(sawyer_resource)
+      begin
+        result = JSON.pretty_generate(sawyer_resource.to_hash)
+      rescue
+        result = sawyer_resource.to_s 
+      end
+      result
     end
 
 end
