@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
   namespace :api, :defaults => { :format => 'json' } do
     resources :courses do
+      post :graphql
       scope module: :courses do
         resources :project_teams
         resources :org_teams

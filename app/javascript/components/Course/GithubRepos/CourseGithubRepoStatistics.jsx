@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import * as PropTypes from 'prop-types';
-import { Form, Checkbox, FormGroup } from "react-bootstrap";
-import CourseGithubReposTable from "./CourseGithubReposTable";
-import { getIssueTimeLineAndUserEdits } from "../../../graphql/graphql_github_issue_queries";
+import GetIssueTimeLineAndUserEdits from "../../../graphql/graphql_github_issue_queries";
 import { graphqlRoute } from "../../../services/service-routes";
+import JSONPretty from 'react-json-pretty';
+
 
 class CourseGithubRepoStatistics extends Component {
 
@@ -20,7 +20,8 @@ class CourseGithubRepoStatistics extends Component {
     updateIssues = () => {
         const url = graphqlRoute(this.courseId());
         const params = { 
-            graphql: getIssueTimeLineAndUserEdits(this.orgName(), this.repoName(), "") 
+            query: GetIssueTimeLineAndUserEdits.query(this.orgName(), this.repoName(), ""), 
+            accept: GetIssueTimeLineAndUserEdits.accept()
         };
         const self = this; // needed to call self.setState below inside error function
         Rails.ajax({
@@ -70,7 +71,7 @@ class CourseGithubRepoStatistics extends Component {
             display = (
                 <Fragment>
                     <p>status_code: {this.state.xhr_status}</p>
-                    <pre>{JSON.stringify(this.state.results)}</pre>
+                    <JSONPretty data={this.state.results}></JSONPretty>
                 </Fragment>
             )
         } else if (this.state.xhr_status != 0) {
