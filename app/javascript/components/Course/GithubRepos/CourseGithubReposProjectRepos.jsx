@@ -69,6 +69,7 @@ class CourseGithubReposProjectRepos extends Component {
                     pageSize={this.state.pageSize}
                     totalSize={this.state.totalSize}
                     paginationHandler={this.paginationHandler}
+                    course={this.props.course}
                     {...this.props}
                 />
             </div>
@@ -77,7 +78,8 @@ class CourseGithubReposProjectRepos extends Component {
 }
 
 CourseGithubReposProjectRepos.propTypes = {
-    course_id : PropTypes.number.isRequired
+    course_id : PropTypes.number.isRequired,
+    course: PropTypes.object.isRequired
 };
 
 export default CourseGithubReposProjectRepos;
