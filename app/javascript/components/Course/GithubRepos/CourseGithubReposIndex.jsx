@@ -88,6 +88,7 @@ class CourseGithubReposIndex extends Component {
                     pageSize={this.state.pageSize}
                     totalSize={this.state.totalSize}
                     paginationHandler={this.paginationHandler}
+                    course={this.props.course}
                     {...this.props}
                 />
             </div>
@@ -98,7 +99,8 @@ class CourseGithubReposIndex extends Component {
 CourseGithubReposIndex.propTypes = {
     search: PropTypes.string,
     type: PropTypes.string,
-    course_id : PropTypes.number.isRequired
+    course_id : PropTypes.number.isRequired,
+    course : PropTypes.object.isRequired
 };
 
 export default CourseGithubReposIndex;

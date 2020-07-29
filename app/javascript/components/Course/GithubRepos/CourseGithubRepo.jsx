@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import * as PropTypes from 'prop-types';
 import { Form, Checkbox, FormGroup } from "react-bootstrap";
 import CourseGithubReposTable from "./CourseGithubReposTable";
+import CourseGithubRepoStatistics from "./CourseGithubRepoStatistics";
+
 import ReposService from "../../../services/repos-service";
 
 
@@ -36,8 +38,6 @@ class CourseGithubRepo extends Component {
         });
     };
    
-
-
     render() {
         return (
             <Fragment>
@@ -46,6 +46,7 @@ class CourseGithubRepo extends Component {
                     page={1}
                     pageSize={1}
                     totalSize={1}
+                    course={this.props.course}
                     {...this.props}
                 />
                 <div className="panel panel-default">
@@ -66,13 +67,20 @@ class CourseGithubRepo extends Component {
                     </div>
                
                 </div>
+                <CourseGithubRepoStatistics
+                   repo={this.props.repo.repo}
+                   course={this.props.course}
+                   {...this.props}
+                >
+                </CourseGithubRepoStatistics>
             </Fragment>
         );
     }
 }
 
 CourseGithubRepo.propTypes = {
-    repo : PropTypes.object.isRequired
+    repo : PropTypes.object.isRequired,
+    course: PropTypes.object.isRequired
 };
 
 export default CourseGithubRepo;

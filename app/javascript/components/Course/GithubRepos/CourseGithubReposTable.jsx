@@ -122,7 +122,8 @@ CourseGithubReposTable.propTypes = {
     paginationHandler: PropTypes.func,
     page: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,
-    totalSize: PropTypes.number.isRequired
+    totalSize: PropTypes.number.isRequired,
+    course: PropTypes.object.isRequired
 };
 
 export default CourseGithubReposTable;
