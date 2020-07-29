@@ -22,11 +22,9 @@ ActiveRecord::Schema.define(version: 20200728000517) do
     t.bigint "course_id"
     t.string "summary"
     t.string "job_short_name"
-    t.bigint "github_repos_id"
     t.bigint "github_repo_id"
     t.index ["course_id"], name: "index_completed_jobs_on_course_id"
     t.index ["github_repo_id"], name: "index_completed_jobs_on_github_repo_id"
-    t.index ["github_repos_id"], name: "index_completed_jobs_on_github_repos_id"
   end
 
   create_table "courses", force: :cascade do |t|

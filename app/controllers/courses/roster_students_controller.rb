@@ -19,8 +19,8 @@ module Courses
 
       respond_to do |format|
         format.html
-        format.csv { send_data @parent.export_students_to_csv, filename: "students-#{Date.today}.csv" }
-        format.json { send_data @parent.export_students_to_json, filename: "students-#{Date.today}.json" }
+        format.csv { send_data @parent.export_students_to_csv, filename: "#{@parent.name}-students-#{Date.today}.csv" }
+        format.json { send_data @parent.export_students_to_json, filename: "#{@parent.name}-students-#{Date.today}.json" }
       end
     end
 

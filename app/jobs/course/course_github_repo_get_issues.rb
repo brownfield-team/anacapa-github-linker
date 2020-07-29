@@ -6,29 +6,29 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
     @job_description = "Get issues for this repo"
     @github_repo_full_name
 
-    def result_hash(total, new_count, updated_count) 
-      { 
-        "total_issues" => total,
-        "total_new_issues" => new_count,
-        "total_updated_issues" => updated_count
-      }
-    end
+    # defJobResult.newh(total, new_count, updated_count) 
+    #   { 
+    #     "total_issues" => total,
+    #     "total_new_issues" => new_count,
+    #     "total_updated_issues" => updated_count
+    #   }
+    # end
 
-    def combine_results(h1,h2) 
-      {
-        "total_issues" => h1["total_issues"] + h2["total_issues"],
-        "total_new_issues" => h1["total_new_issues"] + h2["total_new_issues"],
-        "total_updated_issues" => h1["total_updated_issues"] + h2["total_updated_issues"]
-      }
-    end
+    # def combine_results(h1,h2) 
+    #   {
+    #     "total_issues" => h1["total_issues"] + h2["total_issues"],
+    #     "total_new_issues" => h1["total_new_issues"] + h2["total_new_issues"],
+    #     "total_updated_issues" => h1["total_updated_issues"] + h2["total_updated_issues"]
+    #   }
+    # end
 
-    def all_good?(result_hash)
-      result_hash["total_issues"]==result_hash["total_new_issues"] + result_hash["total_updated_issues"]
-    end
+    # def all_good?JobResult.newh)
+    #  JobResult.newh["total_issues"]=JobResult.newh["total_new_issues"] +JobResult.newh["total_updated_issues"]
+    # end
 
     def attempt_job(options)
       @github_repo_full_name = "#{@course.course_organization}/#{@github_repo.name}"      
-      final_results = result_hash(0,0,0)
+      final_results = JobResult.new
       more_pages = true
       end_cursor = ""
       while more_pages
@@ -41,12 +41,9 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
           return "Unexpected result returned from graphql query: #{sawyer_resource_to_s(query_results)}"
         end
         results = store_issues_in_database(issues)
-        final_results = combine_results(final_results,results)
+        final_results = final_results + results
       end
-
-      job_outcome = all_good?(final_results) ? "Successfully" : " with errors; CHECK LOG; note that total issues retrieved does NOT MATCH number stored and/or updated"
-
-      "Job Completed #{job_outcome}.  Retrieved #{final_results["total_issues"]} issues for Course #{@course.name} for Repo #{@github_repo.name}. Stored #{final_results["total_new_issues"]} new issues, Updated #{final_results["total_updated_issues"]} existing issues in database."
+      "Issues retrieved for Course: #{@course.name} Repo: #{@github_repo.name} <br/>      #{final_results.report}"
     end  
 
     def store_issues_in_database(issues)
@@ -60,7 +57,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
           total_new_issues += store_one_issue_in_database(i) 
         end
       }
-     result_hash(issues.length,total_new_issues,total_updated_issues)
+    JobResult.new(issues.length,total_new_issues,total_updated_issues)
     end
 
     def store_one_issue_in_database(i)

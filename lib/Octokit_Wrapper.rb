@@ -26,7 +26,7 @@ module Octokit_Wrapper
     end
 
     def self.user_with(token)
-      #self.turn_on_octokit_debugging
+      self.turn_on_octokit_debugging
       
       client = Octokit::Client.new :access_token => token
       client.auto_paginate = true

@@ -7,7 +7,7 @@ class JobLogItem extends Component {
         const cj = this.props.completed_job; // Save some characters
 
         const cleanedSummary = sanitizeHtml(cj.summary, {
-          allowedTags: ['pre'],
+          allowedTags: ['pre','br'],
         });
 
         return(
