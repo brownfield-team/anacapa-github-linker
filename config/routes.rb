@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     resources :visitors
 
     resources :courses do
+      post :graphql
       scope module: :courses do
         resources :project_teams
         resources :org_teams

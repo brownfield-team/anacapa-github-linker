@@ -19,6 +19,7 @@
     "react-bootstrap-table2-toolkit": "^2.1.3",
     "react-datepicker": "^3.0.0",
     "react-dom": "^16.13.1",
+    "react-json-pretty": "^2.2.0",
     "react-on-rails": "11.3.0",
     "react-router-dom": "^5.2.0",
     "recharts": "^1.8.5",
