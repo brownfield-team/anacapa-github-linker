@@ -7,101 +7,132 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
     @job_description = "Get SDLC Events for this repo"
     @github_repo_full_name
 
-    def result_hash(total, new_count, updated_count) 
-      { 
-        "total_sdlc_events" => total,
-        "total_new_sdlc_events" => new_count,
-        "total_updated_sdlc_events" => updated_count
-      }
-    end
-
-    def combine_results(h1,h2) 
-      {
-        "total_sdlc_events" => h1["total_sdlc_events"] + h2["total_sdlc_events"],
-        "total_new_sdlc_events" => h1["total_new_sdlc_events"] + h2["total_new_sdlc_events"],
-        "total_updated_sdlc_events" => h1["total_updated_sdlc_events"] + h2["total_updated_sdlc_events"]
-      }
-    end
-
-    def all_good?(result_hash)
-      result_hash["total_sdlc_events"]==result_hash["total_new_sdlc_events"] + result_hash["total_updated_sdlc_events"]
-    end
-
     def attempt_job(options)
+      issue_outcome = retrieve_and_update_issue_sdlc_events
+      pr_outcome = retrieve_and_update_pr_sdlc_events
+      "SDLC Events for issues: #{issue_outcome} PRs: #{pr_outcome}"
+    end
+
+    def retrieve_and_update_issue_sdlc_events
       @github_repo_full_name = "#{@course.course_organization}/#{@github_repo.name}"      
-      final_results = result_hash(0,0,0)
+      final_results = JobResult.new(0,0,0)
       more_pages = true
       end_cursor = ""
       while more_pages
-        query_results = perform_graphql_query(@github_repo.name,@course.course_organization,end_cursor)
+        query_results = perform_issue_sdlc_events_graphql_query(@github_repo.name,@course.course_organization,end_cursor)        
         begin          
           more_pages = query_results[:data][:repository][:issues][:pageInfo][:hasNextPage]
           end_cursor = query_results[:data][:repository][:issues][:pageInfo][:endCursor]
           sdlc_events = query_results[:data][:repository][:issues][:nodes]
         rescue
-          return "Unexpected result returned from graphql query: <pre>#{sawyer_resource_to_s(query_results)}</pre>"
+          return "Unexpected result returned from issue sdlc graphql query: <pre>#{sawyer_resource_to_s(query_results)}</pre>"
         end
-        results = store_sdlc_events_in_database(sdlc_events)
-        final_results = combine_results(final_results,results)
+        results = store_issue_sdlc_events_in_database(sdlc_events)
+        final_results = final_results + results
+        puts("\n\n\nGetting issues SDLC Events...")
+        puts("#{final_results.to_s}")
+        puts("Getting issues SDLC Events...#{sawyer_resource_to_s(query_results)}\n\n\n")
       end
 
-      "Job Complete; Retrieved #{final_results["total_sdlc_events"]} sdlc_events for Course #{@course.name} for Repo #{@github_repo.name}. Stored #{final_results["total_new_sdlc_events"]} new sdlc_events, Updated #{final_results["total_updated_sdlc_events"]} existing sdlc_events in database."
+      "Issue SDLC Events retrieved for Course: #{@course.name} Repo: #{@github_repo.name}<br>        #{final_results.report}"
     end  
 
-    def store_sdlc_events_in_database(sdlc_events)
-      total_new_sdlc_events = 0
-      total_updated_sdlc_events = 0
+    def retrieve_and_update_pr_sdlc_events
+      @github_repo_full_name = "#{@course.course_organization}/#{@github_repo.name}"      
+      final_results = JobResult.new(0,0,0)
+      more_pages = true
+      end_cursor = ""
+      while more_pages
+        query_results = perform_pr_sdlc_events_graphql_query(@github_repo.name,@course.course_organization,end_cursor)        
+        begin          
+          pageInfo = query_results&.data&.repository&.pullRequests&.pageInfo
+          more_pages = pageInfo&.hasNextPage
+          end_cursor = pageInfo&.endCursor
+          sdlc_events = query_results&.data&.repository&.pullRequests&.nodes
+        rescue
+          return "Unexpected result returned from issue sdlc graphql query: <pre>#{sawyer_resource_to_s(query_results)}</pre>"
+        end
+        results = store_pr_sdlc_events_in_database(sdlc_events)
+        final_results = final_results + results
+        puts("\n\n\nGetting Pull Request SDLC Events...")
+        puts("#{final_results.to_s}")
+        puts("Getting Pull Request SDLC Events...#{sawyer_resource_to_s(query_results)}\n\n\n")
+      end
+
+      "Pull Request SDLC Events retrieved for Course: #{@course.name} Repo: #{@github_repo.name}<br>        #{final_results.report}"
+    end  
+
+    def store_issue_sdlc_events_in_database(sdlc_events)
+      created = 0
+      updated = 0
       sdlc_events.each{ |e|
-        puts("**** WE HAVE AN SDLC EVENT #{sawyer_resource_to_s(e)}")
+        puts("**** WE HAVE ISSUE SDLC EVENTS #{sawyer_resource_to_s(e)}")
         # existing_sdlc_event = RepoSDLCEvent.where(url: i[:url]).first
         # if existing_sdlc_event
-        #   total_updated_sdlc_events += update_one_sdlc_event(existing_sdlc_event, i)
+        #   updated += update_one_sdlc_event(existing_sdlc_event, i)
         # else
-        #   total_new_sdlc_events += store_one_sdlc_event_in_database(i) 
+        #   created += store_one_sdlc_event_in_database(i) 
         # end
       }
-     result_hash(sdlc_events.length,total_new_sdlc_events,total_updated_sdlc_events)
+     JobResult.new(sdlc_events.length,created,updated)
     end
 
-    def store_one_sdlc_event_in_database(e)
-    #   sdlc_event = RepoSDLCEvent.new
-    #   result = update_one_sdlc_event(sdlc_event,e)
+    def store_pr_sdlc_events_in_database(sdlc_events)
+      created = 0
+      updated = 0
+      sdlc_events.each{ |e|
+        puts("**** WE HAVE PR SDLC EVENTS #{sawyer_resource_to_s(e)}")
+        # existing_sdlc_event = RepoSDLCEvent.where(url: i[:url]).first
+        # if existing_sdlc_event
+        #   updated += update_one_sdlc_event(existing_sdlc_event, i)
+        # else
+        #   created += store_one_sdlc_event_in_database(i) 
+        # end
+      }
+     JobResult.new(sdlc_events.length,created,updated)
     end
 
-    def update_one_sdlc_event(sdlc_event, e)
-      
-    #   begin
-    #     sdlc_event.url =  e[:url]
-    #     sdlc_event.github_repo = @github_repo
-    #     sdlc_event.title = e[:title]
-    #   rescue
-    #     puts "***ERROR*** update_sdlc_fields sdlc_event #{i} @github_repo #{@github_repo}"
-    #     return 0
-    #   end
-      
-    #   begin  # "try" block
-    #     username = e[:author][:login]
-    #     sdlc_event.roster_student = lookup_roster_student_by_github_uid(uid)
-    #   rescue # optionally: `rescue Exception => ex`
-    #     username = ""
-    #     sdlc_event.roster_student = nil
-    #   end 
 
-    #   begin
-    #     sdlc_event.save!
-    #     return 1
-    #   rescue
-    #     puts "***ERROR*** on sdlc_event.save! sdlc #{sawyer_resource_to_s(e)} @github_repo #{@github_repo}"
-    #     return 0
-    #   end
+    def store_one_issue_sdlc_event_in_database(e)
+      # TODO: create new database object 
+      # issue_sdlc_event = RepoIssueSdlcEvent.new
+      # result = update_one_issue_sdlc_event(issue_sdlc_event,e)
+    end
+
+    def update_one_issue_sdlc_event(issue_sdlc_event, e)
+      # TODO update db object ssue_sdlc_event with data from e
+    end
+
+    def store_one_pr_sdlc_event_in_database(e)
+      # TODO: create new database object 
+      # pr_sdlc_event = RepoPrSdlcEvent.new
+      # result = update_one_pr_sdlc_event(pr_sdlc_event,e)
+    end
+
+    def update_one_pr_sdlc_event(pr_sdlc_event, e)
+      # TODO update db object pr_sdlc_event with data from e
     end
 
     def lookup_roster_student_by_github_username(username)
         @course.student_for_github_username(username)
     end
 
-    def perform_graphql_query(repo_name, org_name, after="")
+    def perform_issue_sdlc_events_graphql_query(repo_name, org_name, after="")
       graphql_query_string = graphql_query_issue_events(repo_name, org_name, after).gsub("\n","")
+      data = {
+          :query => graphql_query_string, 
+      }.to_json
+      options = {
+        :headers => {
+        :accept => Octokit::Preview::PREVIEW_TYPES[:project_card_events]
+        }
+      }
+      github_machine_user.send :request, :post, '/graphql', data,options
+    end
+
+    def perform_pr_sdlc_events_graphql_query(repo_name, org_name, after="")
+      # graphql_query_string = graphql_query_issue_events(repo_name, org_name, after).gsub("\n","")
+      graphql_query_string = graphql_query_pr_events(repo_name, org_name, after).gsub("\n","")
       data = {
           :query => graphql_query_string, 
       }.to_json
@@ -290,6 +321,62 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
         GRAPHQL
     end
 
+
+    def graphql_query_pr_events(repo_name, org_name, after)
+      if after != ""
+        after_clause=", after: \"#{after}\""
+      else
+        after_clause = ""  
+      end
+     
+      # Add timeline events from : https://docs.github.com/en/graphql/reference/unions#pullrequesttimelineitems
+      # Add other from here: https://docs.github.com/en/graphql/reference/objects#pullrequest
+      # Including possibly: ReviewRequest, Reviews, UserEdits, Comments, etc.
+      
+      <<-GRAPHQL
+      query {
+        repository(owner: "#{org_name}", name: "#{repo_name}") {
+          pullRequests(first: 50 #{after_clause}) {
+            pageInfo {
+                startCursor
+                hasNextPage
+                endCursor
+            }
+            totalCount
+            nodes {
+              number
+              title
+              body
+              changedFiles
+              closed
+              closedAt
+              createdAt
+              additions
+              deletions
+              merged
+              mergedAt
+              mergedBy {
+                login
+                ... on User {
+                  databaseId
+                  email
+                  name
+                }
+              }
+              author {
+                login
+                ... on User {
+                  databaseId
+                  email
+                  name
+                }
+              }
+            }
+          }
+        }
+      }                
+      GRAPHQL
+  end
 
     
     def sawyer_resource_to_s(sawyer_resource)

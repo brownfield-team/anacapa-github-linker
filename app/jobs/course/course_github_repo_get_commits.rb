@@ -6,29 +6,29 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     @job_description = "Get commits for this repo"
     @github_repo_full_name
 
-    def result_hash(total, new_count, updated_count) 
-      { 
-        "total_commits" => total,
-        "total_new_commits" => new_count,
-        "total_updated_commits" => updated_count
-      }
-    end
+    # def result_hash(total, new_count, updated_count) 
+    #   { 
+    #     "total_commits" => total,
+    #     "total_new_commits" => new_count,
+    #     "total_updated_commits" => updated_count
+    #   }
+    # end
 
-    def combine_results(h1,h2) 
-      {
-        "total_commits" => h1["total_commits"] + h2["total_commits"],
-        "total_new_commits" => h1["total_new_commits"] + h2["total_new_commits"],
-        "total_updated_commits" => h1["total_updated_commits"] + h2["total_updated_commits"]
-      }
-    end
+    # def combine_results(h1,h2) 
+    #   {
+    #     "total_commits" => h1["total_commits"] + h2["total_commits"],
+    #     "total_new_commits" => h1["total_new_commits"] + h2["total_new_commits"],
+    #     "total_updated_commits" => h1["total_updated_commits"] + h2["total_updated_commits"]
+    #   }
+    # end
 
-    def all_good?(result_hash)
-      result_hash["total_commits"]==(result_hash["total_new_commits"] + result_hash["total_updated_commits"])
-    end
+    # def all_good?(result_hash)
+    #   result_hash["total_commits"]==(result_hash["total_new_commits"] + result_hash["total_updated_commits"])
+    # end
 
     def attempt_job(options)
       @github_repo_full_name = "#{@course.course_organization}/#{@github_repo.name}"      
-      final_results = result_hash(0,0,0)
+      final_results = JobResult.new
       more_pages = true
       end_cursor = ""
       while more_pages
@@ -41,12 +41,9 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
           return "Unexpected result returned from graphql query: #{sawyer_resource_to_s(query_results)}"
         end
         results = store_commits_in_database(commits)
-        final_results = combine_results(final_results,results)
+        final_results = final_results + results
       end
-
-      job_outcome = all_good?(final_results) ? "Successfully" : " with errors; CHECK LOG; note that total commits retrieved does NOT MATCH number stored and/or updated"
-
-      "Job Completed #{job_outcome}. Retrieved #{final_results["total_commits"]} commits for Course #{@course.name} for Repo #{@github_repo.name}. Stored #{final_results["total_new_commits"]} new commits, Updated #{final_results["total_updated_commits"]} existing commits in database."
+      "Commits retrieved for Course: #{@course.name} Repo: #{@github_repo.name}<br />      #{final_results.report}"
     end  
 
     def store_commits_in_database(commits)
@@ -60,7 +57,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
           total_new_commits += store_one_commit_in_database(c) 
         end
       }
-     result_hash(commits.length,total_new_commits,total_updated_commits)
+     JobResult.new(commits.length,total_new_commits,total_updated_commits)
     end
 
     def store_one_commit_in_database(c)
