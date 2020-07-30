@@ -17,14 +17,14 @@ module Api
 
     def perform_graphql_query(graphql_query_string, accept)
       data = {
-          :query => graphql_query_string, 
+          :query => graphql_query_string
       }.to_json
       options = accept ?  {
           :headers => {
-          :accept => Octokit::Preview::PREVIEW_TYPES[:project_card_events]
+          :accept => accept
           }
         } : {}
-      github_machine_user.send :request, :post, '/graphql', data,options
+      github_machine_user.send :request, :post, '/graphql', data, options
     end
 
     def github_machine_user

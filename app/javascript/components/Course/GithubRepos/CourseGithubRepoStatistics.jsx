@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import * as PropTypes from 'prop-types';
-import GetIssueTimeLineAndUserEdits from "../../../graphql/graphql_github_issue_queries";
+import IssueUserEdits from "../../../graphql/IssueUserEdits";
+import IssueTimelineItems from "../../../graphql/IssueTimelineItems";
 import { graphqlRoute } from "../../../services/service-routes";
 import JSONPretty from 'react-json-pretty';
 
@@ -20,8 +21,8 @@ class CourseGithubRepoStatistics extends Component {
     updateIssues = () => {
         const url = graphqlRoute(this.courseId());
         const params = { 
-            query: GetIssueTimeLineAndUserEdits.query(this.orgName(), this.repoName(), ""), 
-            accept: GetIssueTimeLineAndUserEdits.accept()
+            query: IssueTimelineItems.query(this.orgName(), this.repoName(), ""), 
+            accept: IssueTimelineItems.accept()
         };
         const self = this; // needed to call self.setState below inside error function
         Rails.ajax({
