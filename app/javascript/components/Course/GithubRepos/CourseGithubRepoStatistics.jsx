@@ -1,16 +1,17 @@
 import React, { Component, Fragment } from 'react';
 import * as PropTypes from 'prop-types';
-import IssueUserEdits from "../../../graphql/IssueUserEdits";
 import IssueTimelineItems from "../../../graphql/IssueTimelineItems";
 import { graphqlRoute } from "../../../services/service-routes";
 import JSONPretty from 'react-json-pretty';
+import GraphqlQuery from "../../../services/graphql-query"
 
 
 class CourseGithubRepoStatistics extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { success: true, xhr_status: 0, data: {}, errors: {} };
+
+        this.state = { issueEdits : null, timelineItems: null};
         console.log(`constructor:, this.state=${JSON.stringify(this.state)}`);
     }
 
@@ -20,45 +21,16 @@ class CourseGithubRepoStatistics extends Component {
 
     updateIssues = () => {
         const url = graphqlRoute(this.courseId());
-        const params = { 
-            query: IssueTimelineItems.query(this.orgName(), this.repoName(), ""), 
-            accept: IssueTimelineItems.accept()
-        };
-        const self = this; // needed to call self.setState below inside error function
-        Rails.ajax({
-            url: url,
-            type: "post",
-            data: $.param(params),
-            beforeSend: function() {
-                return true;
-            },
-            success: function (data, status, xhr) {
-                // const totalRecords = parseInt(xhr.getResponseHeader("X-Total"));
-                // const page = parseInt(xhr.getResponseHeader("X-Page"));
-                // next line must be self.setState, not this.setState
-                // because this refers to success function in this context
-                console.log(`status=${status}`)
-                self.setState({ 
-                    success: true,
-                    xhr_status: xhr.status,
-                    data: data,  
-                    error: {} 
-                });
-            },
-            error: function (data, status, xhr) {
-                // must be self.setState not this.setState
-                self.setState({ 
-                    success: false,
-                    xhr_status: xhr.status,
-                    data: {}, 
-                    error: {
-                        status: status,
-                        data: data
-                    }
-                });
-            }
-        });
-        console.log(`this.state=${JSON.stringify(this.state)}`);
+        console.log(`url=${url}`);
+        const query = IssueTimelineItems.query(this.orgName(), this.repoName(), ""); 
+        const accept =  IssueTimelineItems.accept();
+       
+        const setTimelineItems = (o) => {this.setState({timelineItems: o});}
+        const timelineQueryObject = 
+            new GraphqlQuery(url,query,accept,setTimelineItems);
+
+
+        timelineQueryObject.post();
     }
 
     courseId = () => this.props.repo.repo.course_id;
@@ -95,21 +67,25 @@ class CourseGithubRepoStatistics extends Component {
     }
 
     render() {
+       console.log(`render called: this.state=${JSON.stringify(this.state)}`);
+
        let display = "";
-        if (this.state.success) {
-            let statistics = this.computeStats(this.state.data)
+        if (this.state.timelineItems && 
+            this.state.timelineItems.success) {
+            let statistics = this.computeStats(this.state.timelineItems.data)
             display = (
                 <Fragment>
-                    <p>status_code: {this.state.xhr_status}</p>
+                    <p>status_code: {this.state.timelineItems.status}</p>
                     <JSONPretty data={statistics}></JSONPretty>
-                    <JSONPretty data={this.state.data}></JSONPretty>
+                    <JSONPretty data={this.state.timelineItems.data}></JSONPretty>
                 </Fragment>
             )
-        } else if (this.state.xhr_status != 0) {
+        } else if (this.state.timelineItems && 
+                   this.state.timelineItems.status != 0) {
             display = (
                 <Fragment>
-                    <p>status_code: {this.state.xhr_status} status: {this.state.error.status} </p>
-                    <pre>{this.state.error.data}</pre>
+                    <p>status_code: {this.state.timelimeItems.status} status: {this.state.error.status} </p>
+                    <pre>{this.state.timelimeItems.error}</pre>
                 </Fragment>
             )
         }
