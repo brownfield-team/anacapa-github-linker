@@ -1,4 +1,8 @@
 import GithubGraphqlQuery from './GithubGraphqlQuery';
+import PageInfoFragments from './fragments/PageInfoFragments';
+import IssueFragments from './fragments/IssueFragments';
+import ActorFragments from './fragments/ActorFragments';
+import IssueUserContentEditFragments from './fragments/issues/IssueUserContentEditFragments';
 
 class IssueUserEdits extends GithubGraphqlQuery {
     
@@ -30,9 +34,10 @@ class IssueUserEdits extends GithubGraphqlQuery {
           }
         }
 
-        ${this.pageInfoFields()}
-
-        
+        ${PageInfoFragments.all()}
+        ${ActorFragments.all()}
+        ${IssueFragments.all()}
+        ${IssueUserContentEditFragments.all()}
 
         `); /* EndGraphQL */
     }

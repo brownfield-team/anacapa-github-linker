@@ -1,4 +1,8 @@
 import GithubGraphqlQuery from './GithubGraphqlQuery';
+import PageInfoFragments from './fragments/PageInfoFragments';
+import IssueFragments from './fragments/IssueFragments';
+import ActorFragments from './fragments/ActorFragments';
+import IssueTimelineItemsFragments from './fragments/issues/IssueTimelineItemsFragments';
 
 class IssueTimelineItems extends GithubGraphqlQuery {
 
@@ -28,14 +32,10 @@ class IssueTimelineItems extends GithubGraphqlQuery {
             }
         }         
 
-        ${this.pageInfoFields()}
-        ${this.issueFields()}
-        ${this.actorFields()}
-
-        ${this.addedToProjectEventFields()}
-        ${this.movedColumnsInProjectEventFields()}
-        ${this.issueTimelineItemsFields()}
-
+        ${PageInfoFragments.all()}
+        ${IssueFragments.all()}
+        ${ActorFragments.all()}
+        ${IssueTimelineItemsFragments.all()}
 
         `); /* EndGraphQL */
     }
