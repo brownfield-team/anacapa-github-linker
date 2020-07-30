@@ -10,7 +10,7 @@ class CourseGithubRepoStatistics extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { success: true, xhr_status: 0, results: {}, errors: {} };
+        this.state = { success: true, xhr_status: 0, data: {}, errors: {} };
         console.log(`constructor:, this.state=${JSON.stringify(this.state)}`);
     }
 
@@ -41,7 +41,7 @@ class CourseGithubRepoStatistics extends Component {
                 self.setState({ 
                     success: true,
                     xhr_status: xhr.status,
-                    results: data,  
+                    data: data,  
                     error: {} 
                 });
             },
@@ -50,7 +50,7 @@ class CourseGithubRepoStatistics extends Component {
                 self.setState({ 
                     success: false,
                     xhr_status: xhr.status,
-                    results: {}, 
+                    data: {}, 
                     error: {
                         status: status,
                         data: data
@@ -65,14 +65,44 @@ class CourseGithubRepoStatistics extends Component {
     orgName = () => this.props.course.course_organization;
     repoName = () => this.props.repo.repo.name;
 
+    computeStats = (data) => {
+      
+        let statistics = {};
+        let errors = {};
+
+        try {
+            let issues = data.data.repository.issues;
+            let issueNodes = issues.nodes;
+            let timelineItemsTotalCountVector =
+               issueNodes.map( (n) => n.timelineItems.totalCount);
+            let sum = (a,b)=>a+b;
+            let timelineItemsCount = 
+                timelineItemsTotalCountVector.reduce(sum, 0)
+            statistics["totalIssues"] = issues.totalCount;
+            statistics["timelineItemsCount"] = timelineItemsCount;
+        } catch(e) { 
+             errors = {
+                 name : e.name,
+                 message: e.message
+             };
+         }
+
+        return {
+            statistics: statistics,
+            errors: errors
+        };
+        return {}
+    }
 
     render() {
        let display = "";
         if (this.state.success) {
+            let statistics = this.computeStats(this.state.data)
             display = (
                 <Fragment>
                     <p>status_code: {this.state.xhr_status}</p>
-                    <JSONPretty data={this.state.results}></JSONPretty>
+                    <JSONPretty data={statistics}></JSONPretty>
+                    <JSONPretty data={this.state.data}></JSONPretty>
                 </Fragment>
             )
         } else if (this.state.xhr_status != 0) {
