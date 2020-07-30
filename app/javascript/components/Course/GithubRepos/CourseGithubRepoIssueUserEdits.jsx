@@ -5,6 +5,7 @@ import { graphqlRoute } from "../../../services/service-routes";
 import JSONPretty from 'react-json-pretty';
 import GraphqlQuery from "../../../services/graphql-query"
 import { Panel } from 'react-bootstrap';
+import vectorToCounts, {combineCounts} from '../../../utilities/vectorToCounts';
 
 export default class CourseGithubRepoIssueUserEdits extends Component {
 
@@ -49,7 +50,26 @@ export default class CourseGithubRepoIssueUserEdits extends Component {
             let userContentEditCount  = 
                 userEditTotalCountVector.reduce(sum, 0)
             
+            let issueAuthorsVector = 
+                issueNodes.map( (n) => n.author.login );
+                
+            let issueAuthorsCounts = vectorToCounts(issueAuthorsVector);
+
+            let issueEditorsVector =  issueNodes.map( (n) => 
+                    n.userContentEdits.nodes.map( (e) =>
+                        e.editor.login
+                    ) 
+                ).flat();
+            let issueEditorsCounts = vectorToCounts(issueEditorsVector);
+
             statistics["totalUserEdits"] = issues.totalCount;
+            statistics["issueAuthorsCounts"] = issueAuthorsCounts;
+            statistics["issueEditorsCounts"] = issueEditorsCounts;
+
+            statistics["activityCounts"] = combineCounts(issueAuthorsCounts,issueEditorsCounts);
+
+
+
         } catch(e) { 
              errors = {
                  name : e.name,
@@ -103,7 +123,7 @@ export default class CourseGithubRepoIssueUserEdits extends Component {
                         </Panel.Body>
                     </Panel.Collapse>
                 </Panel>
-                <Panel id="collapsible-panel-issue-useredit-debugging" defaultCollapsed>
+                <Panel id="collapsible-panel-issue-useredit-debugging" >
                     <Panel.Heading>
                         <Panel.Title toggle>
                             Issue User Edits Debugging

@@ -103,7 +103,7 @@ export default class CourseGithubRepoIssueTimeline extends Component {
                         </Panel.Body>
                     </Panel.Collapse>
                 </Panel>
-                <Panel id="collapsible-panel-issue-timeline-debugging" defaultCollapsed>
+                <Panel id="collapsible-panel-issue-timeline-debugging" >
                     <Panel.Heading>
                         <Panel.Title toggle>
                             Issue Timeline Item Debugging
