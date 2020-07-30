@@ -12,6 +12,7 @@ class IssueTimelineItems extends GithubGraphqlQuery {
             repository(owner: "${org_name}", name: "${repo_name}") {
                 issues(first: 50 ${after_clause}) {
                     pageInfo { ...pageInfoFields }
+                    totalCount
                     nodes {
                         ... issueFields
                         author { ... actorFields }
