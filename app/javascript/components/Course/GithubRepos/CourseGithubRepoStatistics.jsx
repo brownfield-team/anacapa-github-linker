@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import * as PropTypes from 'prop-types';
 import { Panel } from 'react-bootstrap';
 import CourseGithubRepoIssueTimeline from "./CourseGithubRepoIssueTimeline"
+import CourseGithubRepoIssueUserEdits from "./CourseGithubRepoIssueUserEdits"
+
 
 class CourseGithubRepoStatistics extends Component {
 
@@ -14,6 +16,7 @@ class CourseGithubRepoStatistics extends Component {
        
         return (
             <Fragment>
+              <CourseGithubRepoIssueUserEdits { ...this.props }/>
               <CourseGithubRepoIssueTimeline { ...this.props }/>
             </Fragment>
         );

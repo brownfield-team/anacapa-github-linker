@@ -1,18 +1,18 @@
 import React, { Component, Fragment } from 'react';
 import * as PropTypes from 'prop-types';
-import IssueTimelineItems from "../../../graphql/IssueTimelineItems";
+import IssueUserEdits from "../../../graphql/IssueUserEdits";
 import { graphqlRoute } from "../../../services/service-routes";
 import JSONPretty from 'react-json-pretty';
 import GraphqlQuery from "../../../services/graphql-query"
-import IssueUserEdits from '../../../graphql/IssueUserEdits';
 import { Panel } from 'react-bootstrap';
 
-export default class CourseGithubRepoIssueTimeline extends Component {
+export default class CourseGithubRepoIssueUserEdits extends Component {
 
     constructor(props) {
         super(props);
 
-        this.state = { timelineItems: null};
+        this.state = { issueEdits : null};
+        console.log(`constructor:, this.state=${JSON.stringify(this.state)}`);
     }
 
     componentDidMount() {
@@ -22,12 +22,12 @@ export default class CourseGithubRepoIssueTimeline extends Component {
     updateIssues = () => {
         const url = graphqlRoute(this.courseId());
 
-        const tlQuery = IssueTimelineItems.query(this.orgName(), this.repoName(), ""); 
-        const tlAccept =  IssueTimelineItems.accept();
+        const ieQuery = IssueUserEdits.query(this.orgName(), this.repoName(), ""); 
+        const ieAccept =  IssueUserEdits.accept();
        
-        const setTimelineItems = (o) => {this.setState({timelineItems: o});}
-        const timelineQueryObject = new GraphqlQuery(url,tlQuery,tlAccept,setTimelineItems);
-        timelineQueryObject.post();
+        const setIssueEdits = (o) => {this.setState({issueEdits: o});}
+        const issueEditsQueryObject = new GraphqlQuery(url,ieQuery,ieAccept,setIssueEdits);
+        issueEditsQueryObject.post();
     }
 
     courseId = () => this.props.repo.repo.course_id;
@@ -42,13 +42,14 @@ export default class CourseGithubRepoIssueTimeline extends Component {
         try {
             let issues = data.data.repository.issues;
             let issueNodes = issues.nodes;
-            let timelineItemsTotalCountVector =
-               issueNodes.map( (n) => n.timelineItems.totalCount);
+
+            let userEditTotalCountVector =
+                    issueNodes.map( (n) => n.userContentEdits.totalCount);
             let sum = (a,b)=>a+b;
-            let timelineItemsCount = 
-                timelineItemsTotalCountVector.reduce(sum, 0)
-            statistics["totalIssues"] = issues.totalCount;
-            statistics["timelineItemsCount"] = timelineItemsCount;
+            let userContentEditCount  = 
+                userEditTotalCountVector.reduce(sum, 0)
+            
+            statistics["totalUserEdits"] = issues.totalCount;
         } catch(e) { 
              errors = {
                  name : e.name,
@@ -64,37 +65,36 @@ export default class CourseGithubRepoIssueTimeline extends Component {
     }
 
     render() {
-
        let statsDisplay = "";
        let debugDisplay = "";
        
-        if (this.state.timelineItems && 
-            this.state.timelineItems.success) {
-            let statistics = this.computeStats(this.state.timelineItems.data)
+        if (this.state.issueEdits && 
+            this.state.issueEdits.success) {
+            let statistics = this.computeStats(this.state.issueEdits.data)
             statsDisplay = (
                 <JSONPretty data={statistics}></JSONPretty>
             )
             debugDisplay = (
                 <Fragment>
-                    <p>status_code: {this.state.timelineItems.status}</p>
-                    <JSONPretty data={this.state.timelineItems.data}></JSONPretty>
+                    <p>status_code: {this.state.issueEdits.status}</p>
+                    <JSONPretty data={this.state.issueEdits.data}></JSONPretty>
                 </Fragment>
             )
-        } else if (this.state.timelineItems && 
-                   this.state.timelineItems.status != 0) {
+        } else if (this.state.issueEdits && 
+                   this.state.issueEdits.status != 0) {
             debugDisplay = (
                 <Fragment>
-                    <p>status_code: {this.state.timelimeItems.status} status: {this.state.error.status} </p>
-                    <pre>{this.state.timelimeItems.error}</pre>
+                    <p>status_code: {this.state.issueEdits.status} status: {this.state.error.status} </p>
+                    <pre>{this.state.issueEdits.error}</pre>
                 </Fragment>
             )
         }
         return (
             <Fragment>
-                 <Panel id="collapsible-panel-issue-timeline-stats" defaultExpanded>
+                 <Panel id="collapsible-panel-issue-useredit-stats" defaultExpanded>
                     <Panel.Heading>
                         <Panel.Title toggle>
-                            Issue Timeline Item Statistics
+                            Issue User Edit Statistics
                         </Panel.Title>
                     </Panel.Heading>
                     <Panel.Collapse>
@@ -103,10 +103,10 @@ export default class CourseGithubRepoIssueTimeline extends Component {
                         </Panel.Body>
                     </Panel.Collapse>
                 </Panel>
-                <Panel id="collapsible-panel-issue-timeline-debugging" defaultCollapsed>
+                <Panel id="collapsible-panel-issue-useredit-debugging" defaultCollapsed>
                     <Panel.Heading>
                         <Panel.Title toggle>
-                            Issue Timeline Item Debugging
+                            Issue User Edits Debugging
                         </Panel.Title>
                     </Panel.Heading>
                     <Panel.Collapse>
@@ -120,7 +120,7 @@ export default class CourseGithubRepoIssueTimeline extends Component {
     }
 }
 
-CourseGithubRepoIssueTimeline.propTypes = {
+CourseGithubRepoIssueUserEdits.propTypes = {
     repo : PropTypes.object.isRequired,
     course: PropTypes.object.isRequired,
 };
