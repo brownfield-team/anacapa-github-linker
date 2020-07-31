@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import CourseGithubReposTable from "./CourseGithubReposTable";
-import CourseGithubReposControls from "./CourseGithubReposControls";
+import CourseGithubRepoProjectReposStatistics from "./CourseGithubRepoProjectReposStatistics";
 
 import axios from "../../../helpers/axios-rails";
 import { Alert, Form } from 'react-bootstrap';
@@ -60,19 +60,28 @@ class CourseGithubReposProjectRepos extends Component {
 
     render() {
         return (
-            <div>
-                <h1>Project Repos</h1>
-                { this.renderError() }
-                <CourseGithubReposTable
+            <Fragment>
+                <div>
+                    <h1>Project Repos</h1>
+                    { this.renderError() }
+                    <CourseGithubReposTable
+                        repos={this.state.repos}
+                        page={this.state.page}
+                        pageSize={this.state.pageSize}
+                        totalSize={this.state.totalSize}
+                        paginationHandler={this.paginationHandler}
+                        course={this.props.course}
+                        {...this.props}
+                    />
+                </div>
+                <CourseGithubRepoProjectReposStatistics 
                     repos={this.state.repos}
-                    page={this.state.page}
-                    pageSize={this.state.pageSize}
-                    totalSize={this.state.totalSize}
-                    paginationHandler={this.paginationHandler}
                     course={this.props.course}
                     {...this.props}
-                />
-            </div>
+                >
+                </CourseGithubRepoProjectReposStatistics>
+            </Fragment>
+
         );
     }
 }

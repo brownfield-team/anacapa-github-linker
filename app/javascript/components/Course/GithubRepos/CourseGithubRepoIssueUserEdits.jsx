@@ -11,9 +11,7 @@ export default class CourseGithubRepoIssueUserEdits extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = { issueEdits : null};
-        console.log(`constructor:, this.state=${JSON.stringify(this.state)}`);
     }
 
     componentDidMount() {

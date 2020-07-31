@@ -24,13 +24,13 @@ class CourseNavBar extends Component {
             <Fragment>
                 <Nav bsStyle="tabs" activeKey={activeTabKey}>
                     <NavItem eventKey="roster_students" href={this.props.roster_path}>Students</NavItem>
-                    <NavDropdown title="Teams">
+                    <NavDropdown id="nav-teams-dropdown" title="Teams">
                         <MenuItem eventKey="project_teams" href={this.props.project_teams_path}>Project Teams</MenuItem>
                         <MenuItem eventKey="org_teams" href={this.props.org_teams_path}>GitHub Teams</MenuItem>
                         <MenuItem eventKey="create_teams" href={this.props.create_teams_path}>Create Teams From CSV</MenuItem>
                         <MenuItem eventKey="create_repos" href={this.props.create_team_repos_path}>Create Team Repos</MenuItem>
                     </NavDropdown>
-                    <NavDropdown title="Repos">
+                    <NavDropdown  id="nav-repos-dropdown" title="Repos">
                         <MenuItem eventKey="github_repos" href={this.props.github_repos_path}>All Repos</MenuItem>
                         <MenuItem eventKey="project_repos" href={this.props.project_repos_path}>Project Repos</MenuItem>
                         <MenuItem eventKey="repos" href={this.props.repos_path}>Repo Search</MenuItem>
@@ -39,7 +39,7 @@ class CourseNavBar extends Component {
                     <NavItem eventKey="slack" href={this.props.slack_path}>Slack</NavItem>
                     <NavItem eventKey="jobs" href={this.props.jobs_path}>Jobs</NavItem>
                     <NavItem eventKey="informedConsent" href={this.props.consent_path}>Consent</NavItem>
-                    <NavDropdown title="Downloads">
+                    <NavDropdown  id="nav-downloads-dropdown" title="Downloads">
                         <NavItem eventKey="download-commits" href={this.props.download_commits_path}>Download Commits</NavItem>
                         <NavItem eventKey="download-issues" href={this.props.download_issues_path}>Download Issues</NavItem>
                     </NavDropdown>
