@@ -77,6 +77,8 @@ class CourseGithubReposProjectRepos extends Component {
                 <CourseGithubRepoProjectReposStatistics 
                     repos={this.state.repos}
                     course={this.props.course}
+                    databaseId_to_student={this.props.databaseId_to_student}
+                    databaseId_to_team={this.props.databaseId_to_team}
                     {...this.props}
                 >
                 </CourseGithubRepoProjectReposStatistics>
@@ -88,7 +90,9 @@ class CourseGithubReposProjectRepos extends Component {
 
 CourseGithubReposProjectRepos.propTypes = {
     course_id : PropTypes.number.isRequired,
-    course: PropTypes.object.isRequired
+    course: PropTypes.object.isRequired,
+    databaseId_to_student: PropTypes.object.isRequired,
+    databaseId_to_team: PropTypes.object.isRequired
 };
 
 export default CourseGithubReposProjectRepos;
