@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import { Table } from "react-bootstrap";
 import BootstrapTable from 'react-bootstrap-table-next';
 
 import PropTypes from 'prop-types';
@@ -34,6 +33,7 @@ class CourseGithubReposTable extends Component {
             text: 'Commit Count',
             editable: false
         },{
+            dataField: 'dummy1',
             text: 'Commit CSV',
             editable: false,
             formatter: (cell, row, rowIndex, extraData) => this.renderCommitCSVLink(cell, row, rowIndex, {"course_id": this.props.course_id})
@@ -42,6 +42,7 @@ class CourseGithubReposTable extends Component {
             text: 'Issue Count',
             editable: false
         },{
+            dataField: 'dummy2',
             text: 'Issue CSV',
             editable: false,
             formatter: (cell, row, rowIndex, extraData) => this.renderIssueCSVLink(cell, row, rowIndex, {"course_id": this.props.course_id})
@@ -102,7 +103,7 @@ class CourseGithubReposTable extends Component {
                 <BootstrapTable
                     columns={this.columns}
                     data={this.props.repos}
-                    keyField="id"
+                    keyField="repo.id"
                     remote={ { pagination: true, filter: false, sort: false } }
                     pagination={ 
                         this.props.paginationHandler ?
