@@ -70,7 +70,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
 
             let setIssueEdits = (o) => {
                 let new_repo_edit_stats = this.state.repo_edit_stats 
-                new_repo_edit_stats[repo.name] = o;
+                new_repo_edit_stats[this.repoName(repo)] = o;
                 this.setState({repo_edit_stats: new_repo_edit_stats});
                 // console.log(`post callback: this.state=${JSON.stringify(this.state)}`);
             }
