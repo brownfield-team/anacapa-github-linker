@@ -26,6 +26,8 @@ class CourseGithubRepoStatistics extends Component {
 CourseGithubRepoStatistics.propTypes = {
     repo : PropTypes.object.isRequired,
     course: PropTypes.object.isRequired,
+    databaseId_to_student: PropTypes.object.isRequired,
+    databaseId_to_team: PropTypes.object.isRequired
 };
 
 export default CourseGithubRepoStatistics;

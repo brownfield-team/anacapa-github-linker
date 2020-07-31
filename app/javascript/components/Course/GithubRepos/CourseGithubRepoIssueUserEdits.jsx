@@ -33,6 +33,21 @@ export default class CourseGithubRepoIssueUserEdits extends Component {
     orgName = () => this.props.course.course_organization;
     repoName = () => this.props.repo.repo.name;
 
+
+    convertDatabaseIdMapToLogin = (dbId2Value) => {
+        let result = {}
+        Object.keys(dbId2Value).forEach( (oldKey) => {
+            let newKey
+            try {
+              newKey = this.props.databaseId_to_student[oldKey].login
+            } catch (e) {
+               newKey = oldKey
+            }
+            result[newKey] = dbId2Value[oldKey]
+        });
+        return result;
+    }
+
     computeStats = (data) => {
       
         let statistics = {};
@@ -49,25 +64,54 @@ export default class CourseGithubRepoIssueUserEdits extends Component {
                 userEditTotalCountVector.reduce(sum, 0)
             
             let issueAuthorsVector = 
+                issueNodes.map( (n) => n.author.databaseId );
+
+            let issueAuthorsLoginsVector = 
                 issueNodes.map( (n) => n.author.login );
                 
-            let issueAuthorsCounts = vectorToCounts(issueAuthorsVector);
+            let issueAuthorsLoginsCounts = vectorToCounts(issueAuthorsLoginsVector);
 
             let issueEditorsVector =  issueNodes.map( (n) => 
                     n.userContentEdits.nodes.map( (e) =>
-                        e.editor.login
+                        e.editor.databaseId
                     ) 
                 ).flat();
-            let issueEditorsCounts = vectorToCounts(issueEditorsVector);
+
+            let issueEditorsLoginsVector =  issueNodes.map( (n) => 
+                n.userContentEdits.nodes.map( (e) =>
+                    e.editor.login
+                ) 
+            ).flat();    
+
+            let issueEditorsLoginsCounts = vectorToCounts(issueEditorsLoginsVector);
 
             statistics["totalUserEdits"] = issues.totalCount;
-            statistics["issueAuthorsCounts"] = issueAuthorsCounts;
-            statistics["issueEditorsCounts"] = issueEditorsCounts;
 
-            statistics["activityCounts"] = combineCounts(issueAuthorsCounts,issueEditorsCounts);
+            statistics["issueAuthorsLoginsCounts"] = issueAuthorsLoginsCounts;
 
+            statistics["issueEditorsLoginsCounts"] = issueEditorsLoginsCounts;
 
+            statistics["activityCounts"] = combineCounts(
+                statistics["issueAuthorsLoginsCounts"],
+                statistics["issueEditorsLoginsCounts"]
+            );
+        
+            let issueAuthorsTeamsVector = issueAuthorsVector.map(
+                (databaseId) => this.props.databaseId_to_team[databaseId]
+            );
+            let issueAuthorTeamsCounts = vectorToCounts(issueAuthorsTeamsVector);
 
+            let issueEditorsTeamsVector = issueEditorsVector.map(
+                (databaseId) => this.props.databaseId_to_team[databaseId]
+            );
+            let issueEditorsTeamsCounts = vectorToCounts(issueEditorsTeamsVector);
+
+            // statistics["issueAuthorsTeamsVector"] = issueAuthorsTeamsVector;
+            statistics["issueAuthorTeamsCounts"] = issueAuthorTeamsCounts;
+            statistics["issueEditorsTeamsCounts"] = issueEditorsTeamsCounts;
+            statistics["activityTeamsCounts"] = combineCounts(issueAuthorTeamsCounts,issueEditorsTeamsCounts);
+       
+                
         } catch(e) { 
              errors = {
                  name : e.name,
@@ -141,5 +185,7 @@ export default class CourseGithubRepoIssueUserEdits extends Component {
 CourseGithubRepoIssueUserEdits.propTypes = {
     repo : PropTypes.object.isRequired,
     course: PropTypes.object.isRequired,
+    databaseId_to_student: PropTypes.object.isRequired,
+    databaseId_to_team: PropTypes.object.isRequired
 };
 

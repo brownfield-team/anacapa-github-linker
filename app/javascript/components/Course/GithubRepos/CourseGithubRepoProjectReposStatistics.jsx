@@ -90,12 +90,19 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         const debugDisplay = (
             <Fragment>
                
+                <p><code>this.props.databaseId_to_team:</code></p>
+                <JSONPretty data={this.props.databaseId_to_team} />
+
+                <p><code>this.props.databaseId_to_student:</code></p>
+                <JSONPretty data={this.props.databaseId_to_student} />
+
                 <p><code>this.state.repos:</code></p>
                 <JSONPretty data={this.state.repos} />
             
                 <p><code>this.state.repo_edit_stats:</code></p>
                 <JSONPretty data={this.state.repo_edit_stats} />
 
+               
             </Fragment>
         );
         return (
@@ -131,6 +138,8 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
 
 CourseGithubReposProjectReposStatistics.propTypes = {
     course_id : PropTypes.number.isRequired,
-    course: PropTypes.object.isRequired
+    course: PropTypes.object.isRequired,
+    databaseId_to_student: PropTypes.object.isRequired,
+    databaseId_to_team: PropTypes.object.isRequired
 };
 

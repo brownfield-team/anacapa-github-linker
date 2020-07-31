@@ -2,7 +2,9 @@
                         props: {current_path: request.env['PATH_INFO'], 
                                 can_edit: can?(:update, @course),
                                 course_id: params[:course_id].to_i,
-                                course: @course
+                                course: @course,
+                                databaseId_to_team: uid2TeamMap(@course),
+                                databaseId_to_student: uid2StudentMap(@course)
                         },
                         prerender: false) 
 %>
