@@ -58,7 +58,10 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 repo_keys_to_null[repo_name] = null;
             }
         )
-        this.setState({ repo_edit_stats: { ...repo_keys_to_null }});
+        this.setState({ 
+            edit_query_results: { ...repo_keys_to_null },
+            edit_stats: { ...repo_keys_to_null },
+        });
         // console.log(`updateIssues this.props=${JSON.stringify(this.props)}`);
         // console.log(`updateIssues this.state=${JSON.stringify(this.state)}`);
 
@@ -69,9 +72,17 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
             let ieAccept =  IssueUserEdits.accept();
 
             let setIssueEdits = (o) => {
-                let new_repo_edit_stats = this.state.repo_edit_stats 
-                new_repo_edit_stats[this.repoName(repo)] = o;
-                this.setState({repo_edit_stats: new_repo_edit_stats});
+                let new_edit_query_results = this.state.edit_query_results 
+                new_edit_query_results[this.repoName(repo)] = o;
+
+                let new_edit_stats = this.state.edit_stats 
+                let new_stats = IssueUserEdits.computeStats(o.data,this.props.databaseId_to_team);
+                new_edit_stats[this.repoName(repo)] = new_stats;
+
+                this.setState({
+                    edit_query_results: new_edit_query_results,
+                    edit_stats: new_edit_stats
+                });
                 // console.log(`post callback: this.state=${JSON.stringify(this.state)}`);
             }
             let issueEditsQueryObject = new GraphqlQuery(url,ieQuery,ieAccept,setIssueEdits);
@@ -84,7 +95,8 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         // console.log(`render this.state=${JSON.stringify(this.state)}`);
         const statsDisplay = (
             <Fragment>
-                
+                <p><code>this.state.edit_stats:</code></p>
+                <JSONPretty data={this.state.edit_stats} />
             </Fragment>
         );
         const debugDisplay = (
@@ -99,8 +111,8 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 <p><code>this.state.repos:</code></p>
                 <JSONPretty data={this.state.repos} />
             
-                <p><code>this.state.repo_edit_stats:</code></p>
-                <JSONPretty data={this.state.repo_edit_stats} />
+                <p><code>this.state.edit_query_results:</code></p>
+                <JSONPretty data={this.state.edit_query_results} />
 
                
             </Fragment>
