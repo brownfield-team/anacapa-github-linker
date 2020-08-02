@@ -11,6 +11,7 @@ export default class CourseGithubRepoIssueUserEdits extends Component {
 
     constructor(props) {
         super(props);
+        GraphqlQuery.csrf_token_fix();
         this.state = { issueEdits : null};
     }
 
@@ -26,6 +27,7 @@ export default class CourseGithubRepoIssueUserEdits extends Component {
        
         const setIssueEdits = (o) => {this.setState({issueEdits: o});}
         const issueEditsQueryObject = new GraphqlQuery(url,ieQuery,ieAccept,setIssueEdits);
+        console.log(`issueEditsQueryObject = ${JSON.stringify(issueEditsQueryObject,null,2)}`)
         issueEditsQueryObject.post();
     }
 

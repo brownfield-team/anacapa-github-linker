@@ -5,17 +5,19 @@ module Api
     include Response
 
     def graphql
+      puts("graphql")
       @course = Course.find(params[:course_id])
       query = params[:query]
       accept = params[:accept]
       results = perform_graphql_query(query,accept)
       json_response(results.to_hash)
     end
-  
+    
     private
 
 
     def perform_graphql_query(graphql_query_string, accept)
+      puts("perform graphqlquery")
       data = {
           :query => graphql_query_string
       }.to_json
@@ -24,7 +26,9 @@ module Api
           :accept => accept
           }
         } : {}
-      github_machine_user.send :request, :post, '/graphql', data, options
+      result = github_machine_user.send :request, :post, '/graphql', data, options
+      puts("result=#{result.to_hash.to_s}")
+      result
     end
 
     def github_machine_user
