@@ -2,7 +2,6 @@ $(document).ready(function () {
     if ($(".courses-informed_consents-controller").length <= 0) {
         return;
     }
-    console.log("ready fired in informed_consent.js")
     document.addEventListener("change", function (e) {
         informedConsentCSV(e)
     });
@@ -10,7 +9,6 @@ $(document).ready(function () {
  
 
 function informedConsentCSV(e) {
-    console.log("informedConsentCSV");
 
     // when file is uploaded, grab it
     var selectedFile = e.target.files[0];

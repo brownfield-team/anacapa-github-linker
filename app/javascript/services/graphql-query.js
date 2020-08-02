@@ -3,13 +3,14 @@ import axios from "../helpers/axios-rails";
 import ReactOnRails from "react-on-rails";
 
 export default class GraphqlQuery {
-    constructor(url,query,accept,callback) {
+    constructor(url,query,accept,callback,metadata="") {
         
 
         this.query = query;
         this.url = url;
         this.accept = accept;  
         this.callback = callback; 
+        this.metadata = metadata;
 
         this.success = false;
         this.status = 0;
@@ -26,7 +27,6 @@ export default class GraphqlQuery {
     }
 
     async post() {
-        console.log(`graphqlquery.post, url = ${this.url}`)
         const params = { 
             query: this.query,
             accept: this.accept
@@ -35,7 +35,6 @@ export default class GraphqlQuery {
 
         return axios.post(self.url,params)
         .then(function (response) {
-            console.log(`axios.post then, response=${JSON.stringify(response)}`);
             self.success = true;
             self.data = response.data;
             self.status = response.status;
@@ -43,9 +42,9 @@ export default class GraphqlQuery {
             self.callback(self);
         })
         .catch(function (error) {
-            console.log(`axios.post catch, error=${JSON.stringify(error,null,2)}`);
             self.success = false;
             self.data = {};
+            self.error = error;
             if(error && error.response){
                 if(error.response.status){
                     self.status = error.response.status;
@@ -54,9 +53,6 @@ export default class GraphqlQuery {
                     self.status_message = error.response.statusText;
                 }
             }
-         
-            
-            
             self.callback(self);
         });
     }

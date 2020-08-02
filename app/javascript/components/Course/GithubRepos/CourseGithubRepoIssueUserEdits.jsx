@@ -27,7 +27,6 @@ export default class CourseGithubRepoIssueUserEdits extends Component {
        
         const setIssueEdits = (o) => {this.setState({issueEdits: o});}
         const issueEditsQueryObject = new GraphqlQuery(url,ieQuery,ieAccept,setIssueEdits);
-        console.log(`issueEditsQueryObject = ${JSON.stringify(issueEditsQueryObject,null,2)}`)
         issueEditsQueryObject.post();
     }
 

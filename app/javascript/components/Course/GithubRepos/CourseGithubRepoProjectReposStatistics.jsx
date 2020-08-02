@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Panel } from 'react-bootstrap'
 
-import vectorToCounts, {combineCounts} from '../../../utilities/vectorToCounts';
+import vectorToCounts, {combineCounts, vectorToObject, errorToObject} from '../../../utilities/vectorToCounts';
 import { graphqlRoute } from "../../../services/service-routes";
 import GraphqlQuery from "../../../services/graphql-query"
 import IssueUserEdits from "../../../graphql/IssueUserEdits"
@@ -14,16 +14,10 @@ import cloneDeep from "lodash.clonedeep"
 export default class CourseGithubReposProjectReposStatistics extends Component {
     constructor(props) {
         super(props);
-        // console.log(`constructor props=${JSON.stringify(props)}`);
         GraphqlQuery.csrf_token_fix();
-        this.state = {repos:null, issueEdits:null}
-        // console.log(`constructor this.state=${JSON.stringify(this.state)}`);
+        this.state = {repos:null, issueEdits:null }
     }
 
-
-    componentDidMount() {
-        // this.updateIssues();
-    }
 
     courseId = () => this.props.course.id;
     orgName = () => this.props.course.course_organization;
@@ -31,81 +25,72 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
 
 
     componentDidUpdate(prevProps,prevState) {
-        // console.log(`componentDidUpdate prevProps=${JSON.stringify(prevProps)}`);
-        // console.log(`componentDidUpdate prevState=${JSON.stringify(prevState)}`);
-
-        // console.log(`componentDidUpdate this.props=${JSON.stringify(this.props)}`);
-
         if (!isEqual(this.props.repos,this.state.repos)) {
             this.setState({repos: this.props.repos});
             this.updateIssues();
         }
-        // console.log(`componentDidUpdate this.state=${JSON.stringify(this.state)}`);
     }
 
     updateIssues = () => {
-        // console.log(`updateIssues this.props=${JSON.stringify(this.props)}`);
-
         const repos = this.props.repos;
 
         const repo_names = repos.map(
             (r) => r.repo.name
         )
-        // console.log(`updateIssues repo_names=${JSON.stringify(repo_names)}`);
 
-        let repo_keys_to_null = {}
-        repo_names.forEach(
-            (repo_name)=>{
-                repo_keys_to_null[repo_name] = null;
-            }
-        )
+        let repo_keys_to_null = vectorToObject(repo_names,()=>null);
+        let repo_keys_to_empty_array = vectorToObject(repo_names,()=>[]);
+
         this.setState({ 
             edit_query_results: { ...repo_keys_to_null },
             edit_stats: { ...repo_keys_to_null },
+            errors: { ... repo_keys_to_empty_array},
             edit_combined_count: {}
         });
-        // console.log(`updateIssues this.props=${JSON.stringify(this.props)}`);
-        // console.log(`updateIssues this.state=${JSON.stringify(this.state)}`);
-
+       
         const url = graphqlRoute(this.courseId());
 
-        repos.slice(0,1).forEach( (repo) => {
+        repos.forEach( (repo) => {
             let ieQuery = IssueUserEdits.query(this.orgName(), this.repoName(repo), ""); 
             let ieAccept =  IssueUserEdits.accept();
 
             let setIssueEdits = (o) => {
-                console.log(`o = ${JSON.stringify(o,null,2)}\n typeof o = ${typeof(o.success)}`)
-                if(o.success===true){
-                    
-                    console.log("inside success block")
-                    let new_edit_query_results = this.state.edit_query_results 
-                    new_edit_query_results[this.repoName(repo)] = cloneDeep(o);
-                    
-                    let new_edit_stats = cloneDeep(this.state.edit_stats)
-                    let new_stats = IssueUserEdits.computeStats(o.data,this.props.databaseId_to_team);
-                    console.log(`new stats= ${JSON.stringify(new_stats,null,2)}`)
-                    new_edit_stats[this.repoName(repo)] = new_stats;
-                    new_edit_combined_count = combineCounts(this.state.edit_combined_count,new_stats.activityTeamsCounts)
+                let new_edit_query_results = this.state.edit_query_results;
+                let new_edit_stats = this.state.edit_stats;
+                let new_edit_combined_count = this.state.edit_combined_count;
+                let new_errors = this.state.errors;
 
-                    // console.log(`this is from this.setstate, o.success= ${o.success}`)
-                    this.setState({ 
-                        edit_query_results: new_edit_query_results,
-                        edit_stats: new_edit_stats,
-                        edit_combined_count: new_edit_combined_count
-                    });
-                    // console.log(`post callback: this.state=${JSON.stringify(this.state)}`);
-                } 
+                if(o.success) {
+                    
+                    try {
+                        new_edit_query_results[this.repoName(repo)] = cloneDeep(o);
+                        let this_repos_stats = IssueUserEdits.computeStats(o.data, this.props.databaseId_to_team);
+                        new_edit_stats[this.repoName(repo)] = this_repos_stats;
+                        new_edit_combined_count = combineCounts(
+                            new_edit_combined_count,
+                            this_repos_stats.statistics.activityTeamsCounts
+                        )
+                    } catch (e) {
+                        new_errors[this.repoName(repo)].push(errorToObject(e))
+                    }
+                } else {
+                    new_errors[this.repoName(repo)].push(o.error)
+                }
+                    
+                this.setState({ 
+                    edit_query_results: new_edit_query_results,
+                    edit_stats: new_edit_stats,
+                    edit_combined_count: new_edit_combined_count,
+                    errors: new_errors,
+                });
             }
 
-            let issueEditsQueryObject = new GraphqlQuery(url,ieQuery,ieAccept,setIssueEdits);
-            // console.log(`issueEditsQueryObject = ${JSON.stringify(issueEditsQueryObject,null,2)}`)
+            let issueEditsQueryObject = new GraphqlQuery(url,ieQuery,ieAccept,setIssueEdits,{repo: repo.name});
             issueEditsQueryObject.post();
         });
     }
 
     render() {
-        // console.log(`render this.props=${JSON.stringify(this.props)}`);
-        // console.log(`render this.state=${JSON.stringify(this.state)}`);
         const statsDisplay = (
             <Fragment>
                 <p><code>this.state.edit_combined_count:</code></p>
@@ -116,7 +101,13 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         );
         const debugDisplay = (
             <Fragment>
-               
+            
+               <p><code>this.state.errors:</code></p>
+                <JSONPretty data={this.state.errors} />
+
+                <p><code>this.state.edit_query_results:</code></p>
+                <JSONPretty data={this.state.edit_query_results} />
+
                 <p><code>this.props.databaseId_to_team:</code></p>
                 <JSONPretty data={this.props.databaseId_to_team} />
 
@@ -125,10 +116,6 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
 
                 <p><code>this.state.repos:</code></p>
                 <JSONPretty data={this.state.repos} />
-            
-                <p><code>this.state.edit_query_results:</code></p>
-                <JSONPretty data={this.state.edit_query_results} />
-
                
             </Fragment>
         );
