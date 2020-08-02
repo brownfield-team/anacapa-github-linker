@@ -11,7 +11,7 @@ export default class CourseGithubRepoIssueTimeline extends Component {
 
     constructor(props) {
         super(props);
-
+        GraphqlQuery.csrf_token_fix();
         this.state = { timelineItems: null};
     }
 

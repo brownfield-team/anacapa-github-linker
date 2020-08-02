@@ -4,7 +4,7 @@ import ReactOnRails from "react-on-rails";
 
 export default class GraphqlQuery {
     constructor(url,query,accept,callback) {
-        this.csrf_token_fix();
+        
 
         this.query = query;
         this.url = url;
@@ -18,14 +18,15 @@ export default class GraphqlQuery {
         this.error = {}
     }
 
-    csrf_token_fix() {
+    static csrf_token_fix() {
         const csrfToken = ReactOnRails.authenticityToken();
         axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
         axios.defaults.params = {}
         axios.defaults.params['authenticity_token'] = csrfToken;
     }
 
-    async post(successFunc,failFunc) {
+    async post() {
+        console.log(`graphqlquery.post, url = ${this.url}`)
         const params = { 
             query: this.query,
             accept: this.accept
@@ -34,7 +35,7 @@ export default class GraphqlQuery {
 
         return axios.post(self.url,params)
         .then(function (response) {
-            // console.log(`axios.post then, response=${JSON.stringify(response)}`);
+            console.log(`axios.post then, response=${JSON.stringify(response)}`);
             self.success = true;
             self.data = response.data;
             self.status = response.status;
@@ -42,11 +43,20 @@ export default class GraphqlQuery {
             self.callback(self);
         })
         .catch(function (error) {
-            // console.log(`axios.post catch, error=${JSON.stringify(error)}`);
+            console.log(`axios.post catch, error=${JSON.stringify(error,null,2)}`);
             self.success = false;
             self.data = {};
-            self.status = error.response.status;
-            self.status_message = error.response.statusText;
+            if(error && error.response){
+                if(error.response.status){
+                    self.status = error.response.status;
+                }
+                if(error.response.statusText){
+                    self.status_message = error.response.statusText;
+                }
+            }
+         
+            
+            
             self.callback(self);
         });
     }

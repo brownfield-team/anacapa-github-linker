@@ -109,7 +109,7 @@ class IssueUserEdits extends GithubGraphqlQuery {
           statistics["issueAuthorTeamsCounts"] = issueAuthorTeamsCounts;
           statistics["issueEditorsTeamsCounts"] = issueEditorsTeamsCounts;
           statistics["activityTeamsCounts"] = combineCounts(issueAuthorTeamsCounts,issueEditorsTeamsCounts);
-     
+          
               
       } catch(e) { 
            errors = {
