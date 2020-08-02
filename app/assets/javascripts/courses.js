@@ -2,14 +2,12 @@ $(document).ready(function () {
     if ($(".courses-controller").length <= 0) {
         return;
     }
-    console.log("ready fired in courses.js")
     document.addEventListener("change", function (e) {
       courseRosterCSV(e) 
      });
  });
  
  function courseRosterCSV(e) {
-    console.log("courseRosterCSV");
 
     // when file is uploaded, grab it
     var selectedFile = e.target.files[0];
