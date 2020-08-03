@@ -4,7 +4,6 @@ import IssueTimelineItems from "../../../graphql/IssueTimelineItems";
 import { graphqlRoute } from "../../../services/service-routes";
 import JSONPretty from 'react-json-pretty';
 import GraphqlQuery from "../../../services/graphql-query"
-import IssueUserEdits from '../../../graphql/IssueUserEdits';
 import { Panel } from 'react-bootstrap';
 
 export default class CourseGithubRepoIssueTimeline extends Component {
@@ -34,34 +33,34 @@ export default class CourseGithubRepoIssueTimeline extends Component {
     orgName = () => this.props.course.course_organization;
     repoName = () => this.props.repo.repo.name;
 
-    computeStats = (data) => {
+    // computeStats = (data) => {
       
-        let statistics = {};
-        let errors = {};
+    //     let statistics = {};
+    //     let errors = {};
 
-        try {
-            let issues = data.data.repository.issues;
-            let issueNodes = issues.nodes;
-            let timelineItemsTotalCountVector =
-               issueNodes.map( (n) => n.timelineItems.totalCount);
-            let sum = (a,b)=>a+b;
-            let timelineItemsCount = 
-                timelineItemsTotalCountVector.reduce(sum, 0)
-            statistics["totalIssues"] = issues.totalCount;
-            statistics["timelineItemsCount"] = timelineItemsCount;
-        } catch(e) { 
-             errors = {
-                 name : e.name,
-                 message: e.message
-             };
-         }
+    //     try {
+    //         let issues = data.data.repository.issues;
+    //         let issueNodes = issues.nodes;
+    //         let timelineItemsTotalCountVector =
+    //            issueNodes.map( (n) => n.timelineItems.totalCount);
+    //         let sum = (a,b)=>a+b;
+    //         let timelineItemsCount = 
+    //             timelineItemsTotalCountVector.reduce(sum, 0)
+    //         statistics["totalIssues"] = issues.totalCount;
+    //         statistics["timelineItemsCount"] = timelineItemsCount;
+    //     } catch(e) { 
+    //          errors = {
+    //              name : e.name,
+    //              message: e.message
+    //          };
+    //      }
 
-        return {
-            statistics: statistics,
-            errors: errors
-        };
-        return {}
-    }
+    //     return {
+    //         statistics: statistics,
+    //         errors: errors
+    //     };
+    //     return {}
+    // }
 
     render() {
 
@@ -70,7 +69,7 @@ export default class CourseGithubRepoIssueTimeline extends Component {
        
         if (this.state.timelineItems && 
             this.state.timelineItems.success) {
-            let statistics = this.computeStats(this.state.timelineItems.data)
+            let statistics = IssueTimelineItems.computeStats(this.state.timelineItems.data)
             statsDisplay = (
                 <JSONPretty data={statistics}></JSONPretty>
             )
