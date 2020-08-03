@@ -3,7 +3,7 @@ import PageInfoFragments from './fragments/PageInfoFragments';
 import IssueFragments from './fragments/IssueFragments';
 import ActorFragments from './fragments/ActorFragments';
 import IssueTimelineItemsFragments from './fragments/issues/IssueTimelineItemsFragments';
-
+import vectorToCounts, {combineCounts} from '../utilities/vectorToCounts';
 class IssueTimelineItems extends GithubGraphqlQuery {
 
     static accept() { 
@@ -51,8 +51,25 @@ class IssueTimelineItems extends GithubGraphqlQuery {
             let sum = (a,b)=>a+b;
             let timelineItemsCount = 
                 timelineItemsTotalCountVector.reduce(sum, 0)
+
+
+            let issueTimelineItemsLoginsVector =  issueNodes.map( (n) => 
+                n.timelineItems.nodes.map( (timelineItem) =>{
+                    try{
+                        return(timelineItem.actor.login)
+                        
+                    }
+                    catch(e){
+                        return("NOT AVAILABLE")
+                    }
+                    
+                }) 
+            ).flat();    
+            let issueTimelineItemsActorsCounts = vectorToCounts(issueTimelineItemsLoginsVector);
             statistics["totalIssues"] = issues.totalCount;
             statistics["timelineItemsCount"] = timelineItemsCount;
+            statistics["issueTimelineItemsActorsCounts"] = issueTimelineItemsActorsCounts;
+
         } catch(e) { 
              errors = {
                  name : e.name,

@@ -33,34 +33,6 @@ export default class CourseGithubRepoIssueTimeline extends Component {
     orgName = () => this.props.course.course_organization;
     repoName = () => this.props.repo.repo.name;
 
-    // computeStats = (data) => {
-      
-    //     let statistics = {};
-    //     let errors = {};
-
-    //     try {
-    //         let issues = data.data.repository.issues;
-    //         let issueNodes = issues.nodes;
-    //         let timelineItemsTotalCountVector =
-    //            issueNodes.map( (n) => n.timelineItems.totalCount);
-    //         let sum = (a,b)=>a+b;
-    //         let timelineItemsCount = 
-    //             timelineItemsTotalCountVector.reduce(sum, 0)
-    //         statistics["totalIssues"] = issues.totalCount;
-    //         statistics["timelineItemsCount"] = timelineItemsCount;
-    //     } catch(e) { 
-    //          errors = {
-    //              name : e.name,
-    //              message: e.message
-    //          };
-    //      }
-
-    //     return {
-    //         statistics: statistics,
-    //         errors: errors
-    //     };
-    //     return {}
-    // }
 
     render() {
 
