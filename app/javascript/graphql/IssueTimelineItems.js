@@ -81,11 +81,11 @@ class IssueTimelineItems extends GithubGraphqlQuery {
             let issueTimelineItemsTeamsVector = issueTimelineItemsDatabaseIdsVector.map(
                 (databaseId) => databaseId_to_team[databaseId]
             ); 
-            let timelineCombinedCount = vectorToCounts(issueTimelineItemsTeamsVector);
+            let timelineItemsTeamsCount = vectorToCounts(issueTimelineItemsTeamsVector);
             let issueTimelineItemsActorsCounts = vectorToCounts(issueTimelineItemsLoginsVector);
             statistics["totalIssues"] = issues.totalCount;
             statistics["timelineItemsCount"] = timelineItemsCount;
-            statistics["timelineCombinedCount"] = timelineCombinedCount;
+            statistics["timelineItemsTeamsCount"] = timelineItemsTeamsCount
             statistics["issueTimelineItemsActorsCounts"] = issueTimelineItemsActorsCounts;
             
         } catch(e) { 
