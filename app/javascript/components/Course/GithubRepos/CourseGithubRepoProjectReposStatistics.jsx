@@ -11,6 +11,7 @@ import JSONPretty from 'react-json-pretty';
 
 import isEqual from 'lodash.isequal';
 import cloneDeep from "lodash.clonedeep"
+import JSONPrettyPanel from '../../Utilities/JsonPrettyPanel';
 
 export default class CourseGithubReposProjectReposStatistics extends Component {
     constructor(props) {
@@ -131,54 +132,76 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
     }
 
     render() {
-        const statsDisplay = (
+        const generalDebugging = (
             <Fragment>
-                
-                <p><code>this.state.edit_combined_count:</code></p>
-                <JSONPretty data={this.state.edit_combined_count} />
-                <p><code>this.state.timeline_combined_count:</code></p>
-                <JSONPretty data={this.state.timeline_combined_count} />
-                <p><code>this.state.edit_stats:</code></p>
-                <JSONPretty data={this.state.edit_stats} />
-                <p><code>this.state.timeline_stats:</code></p>
-                <JSONPretty data={this.state.timeline_stats} />
+                <JSONPrettyPanel
+                    expression={"this.state.errors"}
+                    value={this.state.errors}
+                />
+                <JSONPrettyPanel
+                    expression={"this.props.databaseId_to_team"}
+                    value={this.props.databaseId_to_team}
+                />
+                <JSONPrettyPanel
+                    expression={"this.props.databaseId_to_student"}
+                    value={this.props.databaseId_to_student}
+                />
+                 <JSONPrettyPanel
+                    expression={"this.state.repos"}
+                    value={this.state.repos}
+                />
             </Fragment>
         );
-        const debugDisplay = (
-            <Fragment>
-            
-               <p><code>this.state.errors:</code></p>
-                <JSONPretty data={this.state.errors} />
-
-                <p><code>this.state.edit_query_results:</code></p>
-                <JSONPretty data={this.state.edit_query_results} />
-
-                <p><code>this.props.databaseId_to_team:</code></p>
-                <JSONPretty data={this.props.databaseId_to_team} />
-
-                <p><code>this.props.databaseId_to_student:</code></p>
-                <JSONPretty data={this.props.databaseId_to_student} />
-
-                <p><code>this.state.repos:</code></p>
-                <JSONPretty data={this.state.repos} />
                
+        const issueUserEditsDebugging = (
+            <Fragment>
+                <JSONPrettyPanel
+                    expression={"this.state.edit_combined_count"}
+                    value={this.state.edit_combined_count}
+                />
+                <JSONPrettyPanel
+                    expression={"this.state.edit_stats"}
+                    value={this.state.edit_stats}
+                />
+                <JSONPrettyPanel
+                    expression={"this.state.edit_query_results"}
+                    value={this.state.edit_query_results}
+                /> 
             </Fragment>
         );
-        return (
+
+        const issueTimelineItemsDebugging = (
             <Fragment>
-                <Panel id="collapsible-panel-issue-useredit-stats" defaultExpanded>
+                <JSONPrettyPanel
+                    expression={"this.state.timeline_combined_count"}
+                    value={this.state.timeline_combined_count}
+                />
+                <JSONPrettyPanel
+                    expression={"this.state.timeline_stats"}
+                    value={this.state.timeline_stats}
+                />
+                 <JSONPrettyPanel
+                    expression={"this.state.timeline_query_result"}
+                    value={this.state.timeline_query_results}
+                />
+            </Fragment>
+        );
+
+        const debugging = (
+            <Fragment>
+            <Panel id="collapsible-panel-general-debugging" >
                     <Panel.Heading>
                         <Panel.Title toggle>
-                            Issue User Edit Statistics
+                            General Debugging
                         </Panel.Title>
                     </Panel.Heading>
                     <Panel.Collapse>
                         <Panel.Body>
-                            {statsDisplay}
+                            {generalDebugging}
                         </Panel.Body>
                     </Panel.Collapse>
                 </Panel>
-                <Panel id="collapsible-panel-issue-useredit-debugging" >
+                <Panel id="collapsible-panel-issue-useredit-stats">
                     <Panel.Heading>
                         <Panel.Title toggle>
                             Issue User Edits Debugging
@@ -186,7 +209,36 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                     </Panel.Heading>
                     <Panel.Collapse>
                         <Panel.Body>
-                            {debugDisplay}
+                            {issueUserEditsDebugging}
+                        </Panel.Body>
+                    </Panel.Collapse>
+                </Panel>
+                <Panel id="collapsible-panel-issue-timeline-debugging" >
+                    <Panel.Heading>
+                        <Panel.Title toggle>
+                            Issue Timeline Items Debugging
+                        </Panel.Title>
+                    </Panel.Heading>
+                    <Panel.Collapse>
+                        <Panel.Body>
+                            {issueTimelineItemsDebugging}
+                        </Panel.Body>
+                    </Panel.Collapse>
+                </Panel>
+            </Fragment>
+        )
+
+        return (
+            <Fragment>
+                <Panel id="collapsible-panel-debugging" >
+                    <Panel.Heading>
+                        <Panel.Title toggle>
+                            Debugging
+                        </Panel.Title>
+                    </Panel.Heading>
+                    <Panel.Collapse>
+                        <Panel.Body>
+                            {debugging}
                         </Panel.Body>
                     </Panel.Collapse>
                 </Panel>
