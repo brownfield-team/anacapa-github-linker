@@ -64,12 +64,30 @@ class IssueTimelineItems extends GithubGraphqlQuery {
                     }
                     
                 }) 
-            ).flat();    
+            ).flat();
+            let issueTimelineItemsDatabaseIdsVector =  issueNodes.map( (n) => 
+                n.timelineItems.nodes.map( (timelineItem) =>{
+                    try{
+                        return(timelineItem.actor.databaseId)
+                        
+                    }
+                    catch(e){
+                        return("NOT AVAILABLE")
+                    }
+                    
+                }) 
+            ).flat(); 
+
+            let issueTimelineItemsTeamsVector = issueTimelineItemsDatabaseIdsVector.map(
+                (databaseId) => databaseId_to_team[databaseId]
+            ); 
+            let timelineCombinedCount = vectorToCounts(issueTimelineItemsTeamsVector);
             let issueTimelineItemsActorsCounts = vectorToCounts(issueTimelineItemsLoginsVector);
             statistics["totalIssues"] = issues.totalCount;
             statistics["timelineItemsCount"] = timelineItemsCount;
+            statistics["timelineCombinedCount"] = timelineCombinedCount;
             statistics["issueTimelineItemsActorsCounts"] = issueTimelineItemsActorsCounts;
-
+            
         } catch(e) { 
              errors = {
                  name : e.name,
