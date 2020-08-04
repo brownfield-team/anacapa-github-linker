@@ -105,7 +105,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                         new_timeline_stats[this.repoName(repo)] = this_repos_stats;
                         new_timeline_combined_count = combineCounts(
                             new_timeline_combined_count,
-                            this_repos_stats.statistics.timelineItemsCount
+                            this_repos_stats.statistics.timelineItemsTeamsCount
                         )
                         console.log(`new_timeline_combined_count, ${JSON.stringify(new_timeline_combined_count,null,2)}`)
                         console.log(`this_repos_stats.statistics.timelineItemsCount, ${JSON.stringify(this_repos_stats.statistics.timelineItemsCount,null,2)}`)
