@@ -6,6 +6,7 @@ import vectorToCounts, {combineCounts, vectorToObject, errorToObject} from '../.
 import { graphqlRoute } from "../../../services/service-routes";
 import GraphqlQuery from "../../../services/graphql-query"
 import IssueUserEdits from "../../../graphql/IssueUserEdits"
+import IssueTimelineItems from "../../../graphql/IssueTimelineItems"
 import JSONPretty from 'react-json-pretty';
 
 import isEqual from 'lodash.isequal';
@@ -15,7 +16,10 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
     constructor(props) {
         super(props);
         GraphqlQuery.csrf_token_fix();
-        this.state = {repos:null, issueEdits:null }
+        this.state = {
+            repos:null, 
+            issueEdits:null,
+             }
     }
 
 
@@ -44,8 +48,11 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         this.setState({ 
             edit_query_results: { ...repo_keys_to_null },
             edit_stats: { ...repo_keys_to_null },
-            errors: { ... repo_keys_to_empty_array},
-            edit_combined_count: {}
+            edit_combined_count: {},
+            timeline_query_results: { ...repo_keys_to_null },
+            timeline_stats: { ...repo_keys_to_null },
+            timeline_combined_count: {},
+            errors: { ... repo_keys_to_empty_array}
         });
        
         const url = graphqlRoute(this.courseId());
@@ -53,7 +60,8 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         repos.forEach( (repo) => {
             let ieQuery = IssueUserEdits.query(this.orgName(), this.repoName(repo), ""); 
             let ieAccept =  IssueUserEdits.accept();
-
+            let tlQuery = IssueTimelineItems.query(this.orgName(), this.repoName(repo), ""); 
+            let tlAccept =  IssueTimelineItems.accept();
             let setIssueEdits = (o) => {
                 let new_edit_query_results = this.state.edit_query_results;
                 let new_edit_stats = this.state.edit_stats;
@@ -61,7 +69,6 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 let new_errors = this.state.errors;
 
                 if(o.success) {
-                    
                     try {
                         new_edit_query_results[this.repoName(repo)] = cloneDeep(o);
                         let this_repos_stats = IssueUserEdits.computeStats(o.data, this.props.databaseId_to_team);
@@ -85,18 +92,57 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 });
             }
 
+            let setIssueTimelineItems = (o) => {
+                let new_timeline_query_results = this.state.timeline_query_results;
+                let new_timeline_stats = this.state.timeline_stats;
+                let new_timeline_combined_count = this.state.timeline_combined_count;
+                let new_errors = this.state.errors;
+
+                if(o.success) {
+                    try {
+                        new_timeline_query_results[this.repoName(repo)] = cloneDeep(o);
+                        let this_repos_stats = IssueTimelineItems.computeStats(o.data, this.props.databaseId_to_team);
+                        new_timeline_stats[this.repoName(repo)] = this_repos_stats;
+                        new_timeline_combined_count = combineCounts(
+                            new_timeline_combined_count,
+                            this_repos_stats.statistics.timelineItemsCount
+                        )
+                        console.log(`new_timeline_combined_count, ${JSON.stringify(new_timeline_combined_count,null,2)}`)
+                        console.log(`this_repos_stats.statistics.timelineItemsCount, ${JSON.stringify(this_repos_stats.statistics.timelineItemsCount,null,2)}`)
+                    } catch (e) {
+                        new_errors[this.repoName(repo)].push(errorToObject(e))
+                    }
+                } else {
+                    new_errors[this.repoName(repo)].push(o.error)
+                }
+                    
+                this.setState({ 
+                    timeline_query_results: new_timeline_query_results,
+                    timeline_stats: new_timeline_stats,
+                    timeline_combined_count: new_timeline_combined_count,
+                    errors: new_errors,
+                });
+            }
+
             let issueEditsQueryObject = new GraphqlQuery(url,ieQuery,ieAccept,setIssueEdits,{repo: repo.name});
             issueEditsQueryObject.post();
+            let timelineItemsQueryObject = new GraphqlQuery(url,tlQuery,tlAccept,setIssueTimelineItems,{repo: repo.name});
+            timelineItemsQueryObject.post();
         });
     }
 
     render() {
         const statsDisplay = (
             <Fragment>
+                
                 <p><code>this.state.edit_combined_count:</code></p>
                 <JSONPretty data={this.state.edit_combined_count} />
+                <p><code>this.state.timeline_combined_count:</code></p>
+                <JSONPretty data={this.state.timeline_combined_count} />
                 <p><code>this.state.edit_stats:</code></p>
                 <JSONPretty data={this.state.edit_stats} />
+                <p><code>this.state.timeline_stats:</code></p>
+                <JSONPretty data={this.state.timeline_stats} />
             </Fragment>
         );
         const debugDisplay = (
