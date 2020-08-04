@@ -60,6 +60,7 @@ class IssueTimelineItems extends GithubGraphqlQuery {
                         
                     }
                     catch(e){
+                        console.log(`\nUNKNOWN EVENT TYPE= ${timelineItem.__typename}\n`)
                         return("NOT AVAILABLE")
                     }
                     
