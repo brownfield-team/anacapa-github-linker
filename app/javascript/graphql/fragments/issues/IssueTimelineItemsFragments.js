@@ -4,6 +4,8 @@ export default class IssueTimelineItemsFragments {
         return `
            ${this.issueTimelineItemsFields()}
            ${this.addedToProjectEventFields()}
+           ${this.assignedEventFields()}
+           ${this.closedEventFields()}
            ${this.movedColumnsInProjectEventFields()}
         `
     }
@@ -13,6 +15,8 @@ export default class IssueTimelineItemsFragments {
          fragment issueTimelineItemsFields on IssueTimelineItems {
            __typename
            ... on AddedToProjectEvent { ... addedToProjectEventFields }
+           ... on AssignedEvent {... assignedEventFields}
+           ... on ClosedEvent {... closedEventFields}
            ... on MovedColumnsInProjectEvent { ... movedColumnsInProjectEventFields }
          }
        `;
@@ -34,6 +38,36 @@ export default class IssueTimelineItemsFragments {
          }
        `
      }
+
+     static assignedEventFields() {
+      return `
+        fragment assignedEventFields on AssignedEvent {
+          id
+          actor {
+            ...actorFields
+          }
+          createdAt
+          assignee {
+            ... on Actor {
+              login
+            }
+          }
+        }
+      `
+    }
+
+     static closedEventFields() {
+      return `
+        fragment closedEventFields on ClosedEvent {
+          id
+          actor {
+            ...actorFields
+          }
+          createdAt
+        }
+      `
+    }
+  
    
     static movedColumnsInProjectEventFields() {
        return `
