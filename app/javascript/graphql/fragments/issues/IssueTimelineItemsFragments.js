@@ -16,6 +16,8 @@ export default class IssueTimelineItemsFragments {
            ${this.labeledEventFields()}
            ${this.milestonedEventFields()}
            ${this.movedColumnsInProjectEventFields()}
+           ${this.removedFromProjectEventFields()}
+           ${this.reopenedEventFields()}
            
         `
     }
@@ -37,7 +39,8 @@ export default class IssueTimelineItemsFragments {
            ... on LabeledEvent {... labeledEventFields }
            ... on MilestonedEvent {... milestonedEventFields}
            ... on MovedColumnsInProjectEvent { ... movedColumnsInProjectEventFields }
-          
+           ... on RemovedFromProjectEvent {... removedFromProjectEventFields}
+           ... on ReopenedEvent {... reopenedEventFields}
          }
        `;
      }
@@ -254,5 +257,34 @@ export default class IssueTimelineItemsFragments {
          }
        `
     }
+
+    static removedFromProjectEventFields() {
+      return `
+        fragment removedFromProjectEventFields on RemovedFromProjectEvent {
+          id
+          actor {
+            ...actorFields
+          }
+          createdAt
+          project {
+            name
+            url
+          }
+          projectColumnName
+        }
+      `
+   }
+
+   static reopenedEventFields() {
+    return `
+      fragment reopenedEventFields on ReopenedEvent {
+        id
+        actor {
+          ...actorFields
+        }
+        createdAt
+      }
+    `
+  }
 
 }
