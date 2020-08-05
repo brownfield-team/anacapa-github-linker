@@ -260,18 +260,22 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         dataField: 'name',
         text: 'Team Name',
         editable: false,
+        sort: true
     }, {
         dataField: 'issueEdits',
         text: 'Issue Edits',
         editable: false,
+        sort: true
     }, {
         dataField: 'timelineItems',
         text: 'Issue Timeline Items',
-        editable: false
+        editable: false,
+        sort: true
     }, {
         dataField: 'total',
         text: 'Total',
-        editable: false
+        editable: false,
+        sort: true
     }];
 
     student_stats_columns =
@@ -279,30 +283,37 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         dataField: 'databaseId',
         text: 'uid',
         editable: false,
+        sort: true
     }, {
         dataField: 'login',
         text: 'GitHub login',
         editable: false,
+        sort: true
     },{
         dataField: 'name',
         text: 'Name',
         editable: false,
+        sort: true
     },{
         dataField: 'team',
         text: 'Team',
         editable: false,
+        sort: true
     }, {
         dataField: 'issueEdits',
         text: 'Issue Edits',
-        editable: false
+        editable: false,
+        sort: true
     },{
         dataField: 'timelineItems',
         text: 'Issue Timeline Items',
-        editable: false
+        editable: false,
+        sort: true
     }, {
         dataField: 'total',
         text: 'Total',
-        editable: false
+        editable: false,
+        sort: true
     }];
 
     render() {
