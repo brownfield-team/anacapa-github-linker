@@ -1,8 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Panel } from 'react-bootstrap'
+import BootstrapTable from 'react-bootstrap-table-next';
 
-import vectorToCounts, {combineCounts, vectorToObject, errorToObject} from '../../../utilities/vectorToCounts';
+import vectorToCounts, {combineCounts, vectorToObject, errorToObject, objectToVector} from '../../../utilities/vectorToCounts';
 import { graphqlRoute } from "../../../services/service-routes";
 import GraphqlQuery from "../../../services/graphql-query"
 import IssueUserEdits from "../../../graphql/IssueUserEdits"
@@ -21,6 +22,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
             repos:null, 
             issueEdits:null,
             team_stats: {},
+            team_stats_vector: [],
             edit_combined_count: {},
             timeline_combined_count: {}
         }
@@ -32,6 +34,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
     repoName = (repo) => repo.repo.name;
 
 
+    
     componentDidUpdate(prevProps,prevState) {
         if (!isEqual(this.props.repos,this.state.repos)) {
             this.setState({repos: this.props.repos});
@@ -172,16 +175,45 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 team_stats[team]["total"] += this.state.timeline_combined_count[team]
             }
         );
+
+        const team_stats_vector = objectToVector(team_stats,"name");
+
         this.setState({ 
-            team_stats: team_stats
+            team_stats: team_stats,
+            team_stats_vector: team_stats_vector
         });
     }
+
+    stats_columns =
+    [{
+        dataField: 'name',
+        text: 'Team Name',
+        editable: false,
+    }, {
+        dataField: 'issueEdits',
+        text: 'Issue Edits',
+        editable: false,
+    }, {
+        dataField: 'timelineItems',
+        text: 'Issue Timeline Items',
+        editable: false
+    }, {
+        dataField: 'total',
+        text: 'Total',
+        editable: false
+    }];
+
+
     render() {
         const generalDebugging = (
             <Fragment>
                 <JSONPrettyPanel
                     expression={"this.state.team_stats"}
                     value={this.state.team_stats}
+                />
+                <JSONPrettyPanel
+                    expression={"this.state.team_stats_vector"}
+                    value={this.state.team_stats_vector}
                 />
                 <JSONPrettyPanel
                     expression={"this.state.overall_combined_count_by_team"}
@@ -289,23 +321,28 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
             </Fragment>
         )
 
-        const statistics = (
+        const team_statistics = (
             <Fragment>
-                <p>TBD</p>
+                <BootstrapTable
+                    columns={this.stats_columns}
+                    data={this.state.team_stats_vector}
+                    keyField="name"
+                    hidePageListOnlyOnePage={true}
+                />
             </Fragment>
         );
 
         return (
             <Fragment>
-                <Panel id="collapsible-panel-statistics defaultExpanded" >
+                <Panel id="collapsible-panel-statistics" defaultExpanded >
                     <Panel.Heading>
                         <Panel.Title toggle>
-                            Statistics
+                            Team Statistics
                         </Panel.Title>
                     </Panel.Heading>
                     <Panel.Collapse>
                         <Panel.Body>
-                            {statistics}
+                            {team_statistics}
                         </Panel.Body>
                     </Panel.Collapse>
                 </Panel>

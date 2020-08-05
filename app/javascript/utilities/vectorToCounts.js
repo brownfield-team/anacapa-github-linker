@@ -1,3 +1,5 @@
+import cloneDeep from "lodash.clonedeep"
+
 export default function vectorToCounts(vector) {
     let counts = {}
     vector.forEach(
@@ -32,11 +34,34 @@ export function combineCounts (counts1,counts2) {
 
 export function vectorToObject (vector, func) {
     let result = {}
-        vector.forEach(
-            (value)=>{
-                result[value] = func(value);
-            }
-        )
+    vector.forEach(
+        (value)=>{
+            result[value] = func(value);
+        }
+    )
+    return result
+}
+
+// Convert object to vector.
+// Example:
+// o = {
+//   "team1": {"a": 1, "b": 2 },
+//   "team2": {"a": 3, "b": 4 }
+// }
+// objectToVector(o,"name") returns
+// [ 
+//     {"name" : "team1", "a": 1, "b": 2 },
+//     {"name" : "team2", "a": 1, "b": 2 }  
+// ]
+export function objectToVector (object, keyFieldName) {
+    let result = [];
+    Object.keys(object).forEach(
+        (key) => {
+            let item = (object[key]);
+            item[keyFieldName] = key;
+            result.push(item)
+        }
+    );
     return result
 }
 
