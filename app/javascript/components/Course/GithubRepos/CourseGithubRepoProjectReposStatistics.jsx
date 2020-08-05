@@ -23,8 +23,13 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
             issueEdits:null,
             team_stats: {},
             team_stats_vector: [],
+            student_stats: {},
+            student_stats_vector: [],
             edit_combined_count: {},
-            timeline_combined_count: {}
+            edit_combined_count_by_student: {},
+            timeline_combined_count: {},
+            timeline_combined_count_by_student: {}
+
         }
     }
 
@@ -56,9 +61,11 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
             edit_query_results: { ...repo_keys_to_null },
             edit_stats: { ...repo_keys_to_null },
             edit_combined_count: {},
+            edit_combined_count_by_student: {},
             timeline_query_results: { ...repo_keys_to_null },
             timeline_stats: { ...repo_keys_to_null },
             timeline_combined_count: {},
+            timeline_combined_count_by_student: {},
             overall_combined_count_by_team: {},
             errors: { ... repo_keys_to_empty_array}
         });
@@ -74,6 +81,8 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 let new_edit_query_results = this.state.edit_query_results;
                 let new_edit_stats = this.state.edit_stats;
                 let new_edit_combined_count = this.state.edit_combined_count;
+                let new_edit_combined_count_by_student = this.state.edit_combined_count_by_student;
+
                 let new_overall_combined_count_by_team = 
                     this.state.overall_combined_count_by_team;
                 let new_errors = this.state.errors;
@@ -86,6 +95,10 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                         new_edit_combined_count = combineCounts(
                             new_edit_combined_count,
                             this_repos_stats.statistics.activityTeamsCounts
+                        );
+                        new_edit_combined_count_by_student = combineCounts(
+                            new_edit_combined_count_by_student,
+                            this_repos_stats.statistics.activityCounts
                         );
                         new_overall_combined_count_by_team = combineCounts(
                             new_overall_combined_count_by_team,
@@ -102,16 +115,20 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                     edit_query_results: new_edit_query_results,
                     edit_stats: new_edit_stats,
                     edit_combined_count: new_edit_combined_count,
+                    edit_combined_count_by_student: new_edit_combined_count_by_student,
                     overall_combined_count_by_team: new_overall_combined_count_by_team,
                     errors: new_errors,
                 });
-                this.computeOverallStats();
+                this.computeOverallTeamStats();
+                this.computeOverallStudentStats();
             }
 
             let setIssueTimelineItems = (o) => {
                 let new_timeline_query_results = this.state.timeline_query_results;
                 let new_timeline_stats = this.state.timeline_stats;
                 let new_timeline_combined_count = this.state.timeline_combined_count;
+                let new_timeline_combined_count_by_student = this.state.timeline_combined_count_by_student;
+
                 let new_overall_combined_count_by_team = 
                         this.state.overall_combined_count_by_team;
                 let new_errors = this.state.errors;
@@ -124,6 +141,10 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                         new_timeline_combined_count = combineCounts(
                             new_timeline_combined_count,
                             this_repos_stats.statistics.timelineItemsTeamsCount
+                        );
+                        new_timeline_combined_count_by_student = combineCounts(
+                            new_timeline_combined_count_by_student,
+                            this_repos_stats.statistics.timelineItemsCounts
                         );
                         new_overall_combined_count_by_team = combineCounts(
                             new_overall_combined_count_by_team,
@@ -140,10 +161,12 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                     timeline_query_results: new_timeline_query_results,
                     timeline_stats: new_timeline_stats,
                     timeline_combined_count: new_timeline_combined_count,
+                    timeline_combined_count_by_student: new_timeline_combined_count_by_student,
                     overall_combined_count_by_team: new_overall_combined_count_by_team,
                     errors: new_errors,
                 });
-                this.computeOverallStats();
+                this.computeOverallTeamStats();
+                this.computeOverallStudentStats();
             }
 
             let issueEditsQueryObject = new GraphqlQuery(url,ieQuery,ieAccept,setIssueEdits,{repo: repo.name});
@@ -153,10 +176,9 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         });
     }
 
-    computeOverallStats = () => {
+    computeOverallTeamStats = () => {
         const teamNamesVector = this.props.org_teams.map( (t)=> t.name);
         let team_stats = {}
-        console.log(`teamStats=${JSON.stringify(team_stats,null,2)}`)
         Object.keys(this.state.edit_combined_count).forEach( 
             (team) => {
                 if (! (team in team_stats)) {
@@ -184,7 +206,56 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         });
     }
 
-    stats_columns =
+   
+    computeOverallStudentStats = () => {
+        const databaseIds = Object.keys(this.props.databaseId_to_student)
+        let student_stats = {}
+        Object.keys(this.state.edit_combined_count_by_student).forEach( 
+            (databaseId) => {
+                if (! (databaseId in student_stats)) {
+                    student_stats[databaseId] = {issueEdits: 0, timelineItems: 0, total: 0}
+                }
+                student_stats[databaseId]["issueEdits"] += this.state.edit_combined_count_by_student[databaseId]
+                student_stats[databaseId]["total"] += this.state.edit_combined_count_by_student[databaseId]
+            }
+        );
+        Object.keys(this.state.timeline_combined_count_by_student).forEach( 
+            (databaseId) => {
+                if (! (databaseId in student_stats)) {
+                    student_stats[databaseId] = {issueEdits: 0, timelineItems: 0, total: 0}
+                }
+                student_stats[databaseId]["timelineItems"] += this.state.timeline_combined_count_by_student[databaseId]
+                student_stats[databaseId]["total"] += this.state.timeline_combined_count_by_student[databaseId]
+            }
+        );
+
+        Object.keys(student_stats).forEach(
+            (databaseId) => {
+                student_stats[databaseId]["team"]= (databaseId in this.props.databaseId_to_team) ?
+                    this.props.databaseId_to_team[databaseId] :
+                    "N/A";
+                if (databaseId in this.props.databaseId_to_student) {
+                    let student = this.props.databaseId_to_student[databaseId];
+                    student_stats[databaseId]["login"] = student.login;
+                    student_stats[databaseId]["name"] = student.name;
+
+                } else {
+                    student_stats[databaseId]["login"] = "N/A";
+                    student_stats[databaseId]["name"] = "N/A";
+                }
+            }
+        );
+
+        const student_stats_vector = objectToVector(student_stats,"databaseId");
+
+        this.setState({ 
+            student_stats: student_stats,
+            student_stats_vector: student_stats_vector
+        });
+    }
+
+
+    team_stats_columns =
     [{
         dataField: 'name',
         text: 'Team Name',
@@ -203,6 +274,36 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         editable: false
     }];
 
+    student_stats_columns =
+    [{
+        dataField: 'databaseId',
+        text: 'uid',
+        editable: false,
+    }, {
+        dataField: 'login',
+        text: 'GitHub login',
+        editable: false,
+    },{
+        dataField: 'name',
+        text: 'Name',
+        editable: false,
+    },{
+        dataField: 'team',
+        text: 'Team',
+        editable: false,
+    }, {
+        dataField: 'issueEdits',
+        text: 'Issue Edits',
+        editable: false
+    },{
+        dataField: 'timelineItems',
+        text: 'Issue Timeline Items',
+        editable: false
+    }, {
+        dataField: 'total',
+        text: 'Total',
+        editable: false
+    }];
 
     render() {
         const generalDebugging = (
@@ -214,6 +315,14 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 <JSONPrettyPanel
                     expression={"this.state.team_stats_vector"}
                     value={this.state.team_stats_vector}
+                />
+                 <JSONPrettyPanel
+                    expression={"this.state.student_stats"}
+                    value={this.state.student_stats}
+                />
+                <JSONPrettyPanel
+                    expression={"this.state.student_stats_vector"}
+                    value={this.state.student_stats_vector}
                 />
                 <JSONPrettyPanel
                     expression={"this.state.overall_combined_count_by_team"}
@@ -253,6 +362,10 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                     value={this.state.edit_combined_count}
                 />
                 <JSONPrettyPanel
+                    expression={"this.state.edit_combined_count_by_student"}
+                    value={this.state.edit_combined_count_by_student}
+                />
+                <JSONPrettyPanel
                     expression={"this.state.edit_stats"}
                     value={this.state.edit_stats}
                 />
@@ -268,6 +381,10 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 <JSONPrettyPanel
                     expression={"this.state.timeline_combined_count"}
                     value={this.state.timeline_combined_count}
+                />
+                <JSONPrettyPanel
+                    expression={"this.state.timeline_combined_count_by_student"}
+                    value={this.state.timeline_combined_count_by_student}
                 />
                 <JSONPrettyPanel
                     expression={"this.state.timeline_stats"}
@@ -324,7 +441,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         const team_statistics = (
             <Fragment>
                 <BootstrapTable
-                    columns={this.stats_columns}
+                    columns={this.team_stats_columns}
                     data={this.state.team_stats_vector}
                     keyField="name"
                     hidePageListOnlyOnePage={true}
@@ -332,9 +449,20 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
             </Fragment>
         );
 
+        const student_statistics = (
+            <Fragment>
+               <BootstrapTable
+                    columns={this.student_stats_columns}
+                    data={this.state.student_stats_vector}
+                    keyField="databaseId"
+                    hidePageListOnlyOnePage={true}
+                />
+            </Fragment>
+        );
+
         return (
             <Fragment>
-                <Panel id="collapsible-panel-statistics" defaultExpanded >
+                <Panel id="collapsible-panel-team-statistics" defaultExpanded >
                     <Panel.Heading>
                         <Panel.Title toggle>
                             Team Statistics
@@ -343,6 +471,18 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                     <Panel.Collapse>
                         <Panel.Body>
                             {team_statistics}
+                        </Panel.Body>
+                    </Panel.Collapse>
+                </Panel>
+                <Panel id="collapsible-panel-student-statistics">
+                    <Panel.Heading>
+                        <Panel.Title toggle>
+                            Student Statistics
+                        </Panel.Title>
+                    </Panel.Heading>
+                    <Panel.Collapse>
+                        <Panel.Body>
+                            {student_statistics}
                         </Panel.Body>
                     </Panel.Collapse>
                 </Panel>
