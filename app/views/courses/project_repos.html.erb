@@ -4,7 +4,8 @@
                                 course_id: params[:course_id].to_i,
                                 course: @course,
                                 databaseId_to_team: uid2TeamMap(@course),
-                                databaseId_to_student: uid2StudentMap(@course)
+                                databaseId_to_student: uid2StudentMap(@course),
+                                org_teams: @course.org_teams
                         },
                         prerender: false) 
 %>

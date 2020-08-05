@@ -31,6 +31,5 @@ export default class JSONPrettyPanel extends Component {
 
 JSONPrettyPanel.propTypes = {
     expression : PropTypes.string.isRequired,
-    value: PropTypes.object
 };
 
