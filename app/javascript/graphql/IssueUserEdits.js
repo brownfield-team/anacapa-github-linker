@@ -65,6 +65,8 @@ class IssueUserEdits extends GithubGraphqlQuery {
           let issueAuthorsVector = 
               issueNodes.map( (n) => n.author.databaseId );
 
+          let issueAuthorsCounts = vectorToCounts(issueAuthorsVector);
+
           let issueAuthorsLoginsVector = 
               issueNodes.map( (n) => n.author.login );
               
@@ -82,15 +84,22 @@ class IssueUserEdits extends GithubGraphqlQuery {
               ) 
           ).flat();    
 
+          let issueEditorsCounts = vectorToCounts(issueEditorsVector);
           let issueEditorsLoginsCounts = vectorToCounts(issueEditorsLoginsVector);
 
           statistics["totalUserEdits"] = issues.totalCount;
 
+          statistics["issueAuthorsCounts"] = issueAuthorsCounts;
           statistics["issueAuthorsLoginsCounts"] = issueAuthorsLoginsCounts;
 
+          statistics["issueEditorsCounts"] = issueEditorsCounts;
           statistics["issueEditorsLoginsCounts"] = issueEditorsLoginsCounts;
 
           statistics["activityCounts"] = combineCounts(
+            statistics["issueAuthorsCounts"],
+            statistics["issueEditorsCounts"]
+          );
+          statistics["activityLoginsCounts"] = combineCounts(
               statistics["issueAuthorsLoginsCounts"],
               statistics["issueEditorsLoginsCounts"]
           );
