@@ -20,7 +20,10 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         this.state = {
             repos:null, 
             issueEdits:null,
-             }
+            team_stats: {},
+            edit_combined_count: {},
+            timeline_combined_count: {}
+        }
     }
 
 
@@ -53,6 +56,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
             timeline_query_results: { ...repo_keys_to_null },
             timeline_stats: { ...repo_keys_to_null },
             timeline_combined_count: {},
+            overall_combined_count_by_team: {},
             errors: { ... repo_keys_to_empty_array}
         });
        
@@ -67,6 +71,8 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 let new_edit_query_results = this.state.edit_query_results;
                 let new_edit_stats = this.state.edit_stats;
                 let new_edit_combined_count = this.state.edit_combined_count;
+                let new_overall_combined_count_by_team = 
+                    this.state.overall_combined_count_by_team;
                 let new_errors = this.state.errors;
 
                 if(o.success) {
@@ -77,7 +83,11 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                         new_edit_combined_count = combineCounts(
                             new_edit_combined_count,
                             this_repos_stats.statistics.activityTeamsCounts
-                        )
+                        );
+                        new_overall_combined_count_by_team = combineCounts(
+                            new_overall_combined_count_by_team,
+                            this_repos_stats.statistics.timelineItemsTeamsCount
+                        );
                     } catch (e) {
                         new_errors[this.repoName(repo)].push(errorToObject(e))
                     }
@@ -89,14 +99,18 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                     edit_query_results: new_edit_query_results,
                     edit_stats: new_edit_stats,
                     edit_combined_count: new_edit_combined_count,
+                    overall_combined_count_by_team: new_overall_combined_count_by_team,
                     errors: new_errors,
                 });
+                this.computeOverallStats();
             }
 
             let setIssueTimelineItems = (o) => {
                 let new_timeline_query_results = this.state.timeline_query_results;
                 let new_timeline_stats = this.state.timeline_stats;
                 let new_timeline_combined_count = this.state.timeline_combined_count;
+                let new_overall_combined_count_by_team = 
+                        this.state.overall_combined_count_by_team;
                 let new_errors = this.state.errors;
 
                 if(o.success) {
@@ -107,8 +121,11 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                         new_timeline_combined_count = combineCounts(
                             new_timeline_combined_count,
                             this_repos_stats.statistics.timelineItemsTeamsCount
-                        )
-
+                        );
+                        new_overall_combined_count_by_team = combineCounts(
+                            new_overall_combined_count_by_team,
+                            this_repos_stats.statistics.timelineItemsTeamsCount
+                        );
                     } catch (e) {
                         new_errors[this.repoName(repo)].push(errorToObject(e))
                     }
@@ -120,8 +137,10 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                     timeline_query_results: new_timeline_query_results,
                     timeline_stats: new_timeline_stats,
                     timeline_combined_count: new_timeline_combined_count,
+                    overall_combined_count_by_team: new_overall_combined_count_by_team,
                     errors: new_errors,
                 });
+                this.computeOverallStats();
             }
 
             let issueEditsQueryObject = new GraphqlQuery(url,ieQuery,ieAccept,setIssueEdits,{repo: repo.name});
@@ -131,12 +150,54 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         });
     }
 
+    computeOverallStats = () => {
+        const teamNamesVector = this.props.org_teams.map( (t)=> t.name);
+        let team_stats = {}
+        console.log(`teamStats=${JSON.stringify(team_stats,null,2)}`)
+        Object.keys(this.state.edit_combined_count).forEach( 
+            (team) => {
+                if (! (team in team_stats)) {
+                    team_stats[team] = {issueEdits: 0, timelineItems: 0, total: 0}
+                }
+                team_stats[team]["issueEdits"] += this.state.edit_combined_count[team]
+                team_stats[team]["total"] += this.state.edit_combined_count[team]
+            }
+        );
+        Object.keys(this.state.timeline_combined_count).forEach( 
+            (team) => {
+                if (! (team in team_stats)) {
+                    team_stats[team] = {issueEdits: 0, timelineItems: 0, total: 0}
+                }
+                team_stats[team]["timelineItems"] += this.state.timeline_combined_count[team]
+                team_stats[team]["total"] += this.state.timeline_combined_count[team]
+            }
+        );
+        this.setState({ 
+            team_stats: team_stats
+        });
+    }
     render() {
         const generalDebugging = (
             <Fragment>
                 <JSONPrettyPanel
+                    expression={"this.state.team_stats"}
+                    value={this.state.team_stats}
+                />
+                <JSONPrettyPanel
+                    expression={"this.state.overall_combined_count_by_team"}
+                    value={this.state.overall_combined_count_by_team}
+                />
+                <JSONPrettyPanel
                     expression={"this.state.errors"}
                     value={this.state.errors}
+                />
+                <JSONPrettyPanel
+                    expression={"this.props.course"}
+                    value={this.props.course}
+                />
+                 <JSONPrettyPanel
+                    expression={"this.props.org_teams"}
+                    value={this.props.org_teams}
                 />
                 <JSONPrettyPanel
                     expression={"this.props.databaseId_to_team"}
@@ -228,8 +289,26 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
             </Fragment>
         )
 
+        const statistics = (
+            <Fragment>
+                <p>TBD</p>
+            </Fragment>
+        );
+
         return (
             <Fragment>
+                <Panel id="collapsible-panel-statistics defaultExpanded" >
+                    <Panel.Heading>
+                        <Panel.Title toggle>
+                            Statistics
+                        </Panel.Title>
+                    </Panel.Heading>
+                    <Panel.Collapse>
+                        <Panel.Body>
+                            {statistics}
+                        </Panel.Body>
+                    </Panel.Collapse>
+                </Panel>
                 <Panel id="collapsible-panel-debugging" >
                     <Panel.Heading>
                         <Panel.Title toggle>
@@ -251,6 +330,7 @@ CourseGithubReposProjectReposStatistics.propTypes = {
     course_id : PropTypes.number.isRequired,
     course: PropTypes.object.isRequired,
     databaseId_to_student: PropTypes.object.isRequired,
-    databaseId_to_team: PropTypes.object.isRequired
+    databaseId_to_team: PropTypes.object.isRequired,
+    org_teams: PropTypes.array.isRequired
 };
 
