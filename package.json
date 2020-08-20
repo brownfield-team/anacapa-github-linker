@@ -23,7 +23,8 @@
     "react-router-dom": "^5.2.0",
     "recharts": "^1.8.5",
     "sanitize-html": "^1.27.1",
-    "underscore": "^1.10.2"
+    "underscore": "^1.10.2",
+    "serialize-javascript": "^3.1.0"
   },
   "devDependencies": {
     "webpack-dev-server": "^3.10.3"
