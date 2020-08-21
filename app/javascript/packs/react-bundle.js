@@ -18,7 +18,7 @@ ReactOnRails.register({
   CourseNavBar,
   StudentActivity,
   CourseGithubReposIndex,
-  CourseGithubRepo
+  CourseGithubRepo,
   JobLauncher,
   JobLog
 });
