@@ -26,10 +26,11 @@ class BackgroundJob
   end
 
   def self.last_run
-    if CompletedJob.where(job_short_name: @job_short_name).last.nil?
+    the_last_run = CompletedJob.where(job_short_name: @job_short_name).last
+    if the_last_run.nil?
       return "N/A"
     end
-    CompletedJob.where(job_short_name: @job_short_name).last.created_at
+    the_last_run.created_at.to_formatted_s(:rfc822)
   end
 
   def self.permission_level
