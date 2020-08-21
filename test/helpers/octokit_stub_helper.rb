@@ -16,7 +16,7 @@ module OctokitStubHelper
   end
 
   def user_agent
-    'Octokit Ruby Gem 4.15.0'
+    'Octokit Ruby Gem 4.18.0'
   end
 
   def octokit_update_org
