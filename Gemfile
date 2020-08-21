@@ -8,7 +8,7 @@ end
 ruby '>= 2.6'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.4'
+gem 'rails', '~> 5.2.4'
 # Use Puma as the app server
 gem 'puma', '~> 3.12'
 # Use SCSS for stylesheets
@@ -111,3 +111,8 @@ gem 'mini_racer', platforms: :ruby
 gem 'pg_search'
 
 gem 'wdm', '>= 0.1.0' if Gem.win_platform?
+
+# To avoid security vulnerabilites flagged by GitHub
+# we specific specific versions of these dependencies 
+gem "rack", ">= 2.1.4" 
+gem "activesupport", ">= 5.2.4.3" 
