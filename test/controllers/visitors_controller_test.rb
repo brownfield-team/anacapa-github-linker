@@ -49,6 +49,7 @@ class VisitorsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:tim)
     sign_in @user
  
+    stub_course_organization("test-org-name")
     stub_course_organization("course-org-1")
     stub_course_organization("course-org-2")
     stub_course_organization("course-org-3")
@@ -71,7 +72,5 @@ class VisitorsControllerTest < ActionDispatch::IntegrationTest
     stub_organization_is_an_org(org)
     stub_updating_org_membership(org)
   end
-
-
 
 end
