@@ -33,6 +33,19 @@ class AdminController < ApplicationController
     end
     helper_method :admin_job_list
 
+    # List of jobs to make available to run
+    def admin_job_info_list
+      jobs = admin_job_list
+      jobs_info = jobs.map { |j|
+        j.instance_values.merge({
+            "last_run" => j.itself.last_run,
+            "job_description" => j.itself.job_description
+         })
+      }
+      jobs_info
+    end
+    helper_method :admin_job_info_list
+
     def run_admin_job
       job_name = params[:job_name]
       job = admin_job_list.find { |job| job.job_short_name == job_name }
