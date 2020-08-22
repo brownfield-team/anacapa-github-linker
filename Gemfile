@@ -117,3 +117,7 @@ gem 'zlib'
 # we specific specific versions of these dependencies 
 gem "rack", ">= 2.1.4" 
 gem "activesupport", ">= 5.2.4.3" 
+
+group :development, :test do
+  gem 'factory_bot_rails'
+end
