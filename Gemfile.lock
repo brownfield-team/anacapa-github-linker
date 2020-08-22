@@ -78,6 +78,8 @@ GEM
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.6)
+    cypress-on-rails (1.8.0)
+      rack
     devise (4.7.2)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -344,6 +346,7 @@ DEPENDENCIES
   cancancan (~> 2.0)
   capybara (~> 2.13)
   coffee-rails (~> 4.2)
+  cypress-on-rails (~> 1.0)
   devise
   dotenv-rails
   dotiw
