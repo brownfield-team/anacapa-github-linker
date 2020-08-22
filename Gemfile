@@ -68,7 +68,12 @@ group :development, :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 2.13'
   gem 'selenium-webdriver'
+end
+
+# Gemfile
+group :test do
   gem 'cypress-on-rails', '~> 1.0'
+  gem 'database_cleaner-active_record'
 end
 
 group :development do

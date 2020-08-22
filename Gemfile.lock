@@ -80,6 +80,10 @@ GEM
     crass (1.0.6)
     cypress-on-rails (1.8.0)
       rack
+    database_cleaner (1.8.5)
+    database_cleaner-active_record (1.8.0)
+      activerecord
+      database_cleaner (~> 1.8.0)
     devise (4.7.2)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -369,6 +373,7 @@ DEPENDENCIES
   capybara (~> 2.13)
   coffee-rails (~> 4.2)
   cypress-on-rails (~> 1.0)
+  database_cleaner-active_record
   devise
   dotenv-rails
   dotiw
