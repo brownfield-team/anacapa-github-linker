@@ -115,4 +115,9 @@ gem 'wdm', '>= 0.1.0' if Gem.win_platform?
 # To avoid security vulnerabilites flagged by GitHub
 # we specific specific versions of these dependencies 
 gem "rack", ">= 2.1.4" 
+
 gem "activesupport", ">= 5.2.4.3" 
+
+group :development, :test do
+  gem 'factory_bot_rails'
+end
