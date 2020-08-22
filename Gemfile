@@ -68,6 +68,7 @@ group :development, :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 2.13'
   gem 'selenium-webdriver'
+  gem 'cypress-rails'
 end
 
 group :development do
@@ -116,3 +117,4 @@ gem 'wdm', '>= 0.1.0' if Gem.win_platform?
 # we specific specific versions of these dependencies 
 gem "rack", ">= 2.1.4" 
 gem "activesupport", ">= 5.2.4.3" 
+

@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   end
 
   namespace :api, :defaults => { :format => 'json' } do
+    match 'testhooks/reset' => 'testhooks#reset', :via => :get
     resources :courses do
       scope module: :courses do
         resources :project_teams
