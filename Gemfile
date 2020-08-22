@@ -118,3 +118,7 @@ gem "rack", ">= 2.1.4"
 gem "activesupport", ">= 5.2.4.3" 
 
 gem 'rspec'
+
+group :development, :test do
+  gem 'rspec-rails', ">= 3.9.0"
+end
