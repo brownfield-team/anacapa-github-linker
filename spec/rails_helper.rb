@@ -61,4 +61,13 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # These lines are from https://medium.com/@yutafujii_59175/a-simple-login-test-with-rspec-devise-factorybot-in-rails-29aeb2ebc4ab
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
+  end
+
+  config.include Devise::Test::ControllerHelpers, :type => :controller
+
+  config.include Warden::Test::Helpers
 end
