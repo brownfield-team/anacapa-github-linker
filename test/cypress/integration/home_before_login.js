@@ -1,10 +1,4 @@
-describe("Home Page", () => {
-
-    describe("Before login", () => {
-
-        // before(() => {
-        // });
-
+describe("Home Page before login", () => {
         beforeEach(() => {
             cy.visit("/");
         });
@@ -17,7 +11,4 @@ describe("Home Page", () => {
             cy.get('a[href="/"]')
             .should('have.text', 'Home')
         });
-
-    }); // before login
-    
-  }); // Home Page
+  }); 
