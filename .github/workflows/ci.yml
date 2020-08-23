@@ -39,6 +39,13 @@ jobs:
           key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gem-
+      - name: Cache Cypress Installation
+        uses: actions/cache@preview
+        with:
+          path: /home/runner/.cache/Cypress/5.0.0/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('/home/runner/.cache/Cypress/5.0.0/Cypress') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
       - name: Build and run rails tests
         env:
           DATABASE_URL: postgres://postgres:@localhost:5432/test
