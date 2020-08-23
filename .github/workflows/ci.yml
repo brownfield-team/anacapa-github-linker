@@ -47,17 +47,17 @@ jobs:
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
           bundle exec rails test
-      - name: Cypress run
-        env:
-          DATABASE_URL: postgres://postgres:@localhost:5432/test
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          REDIS_URL: redis://localhost:6379/0
-          RAILS_ENV: test
-          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        with:
-          start: bin/rails server -e test -p 5017
-          # quote the url to be safe against YML parsing surprises
-          wait-on: 'http://localhost:5017'
-        run: |
-          yarn cypress open --project ./test
+    
+# - name: Cypress run
+#   env:
+#     DATABASE_URL: postgres://postgres:@localhost:5432/test
+#     PGUSER: postgres
+#     PGPASSWORD: postgres
+#     REDIS_URL: redis://localhost:6379/0
+#     RAILS_ENV: test
+#     RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+#   with:
+#     start: bin/rails server -e test -p 5017
+#     # quote the url to be safe against YML parsing surprises
+#     wait-on: 'http://localhost:5017'
+#   run: yarn cypress open --project ./test
