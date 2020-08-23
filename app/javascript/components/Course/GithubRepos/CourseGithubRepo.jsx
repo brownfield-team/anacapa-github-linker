@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types';
 import { Table } from "react-bootstrap";
 import CourseGithubReposTable from "./CourseGithubReposTable";
 
+
 class CourseGithubRepo extends Component {
 
     constructor(props) {
@@ -10,7 +11,7 @@ class CourseGithubRepo extends Component {
     }
 
     componentDidMount() {
-        console.log("CourseGithubReposIndex componentDidMount called");
+
     }
 
     render() {

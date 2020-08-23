@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Table } from "react-bootstrap";
 import BootstrapTable from 'react-bootstrap-table-next';
+
 import PropTypes from 'prop-types';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
@@ -49,6 +50,7 @@ class CourseGithubReposTable extends Component {
         console.log("renderRepoShowPageUrl");
         console.log("row="+JSON.stringify(row));
         const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}`;
+
         return (
             <a href={url}>{cell}</a>
         );

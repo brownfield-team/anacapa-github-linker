@@ -66,10 +66,6 @@ module Courses
         @github_repo = GithubRepo.find(params[:id])
       end
 
-      def machine_user
-        client = Octokit_Wrapper::Octokit_Wrapper.machine_user
-      end
-
       def load_parent
         @parent = Course.find(params[:course_id])
       end
