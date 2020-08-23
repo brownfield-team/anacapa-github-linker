@@ -96,3 +96,6 @@ jenkins.yml
 /yarn-error.log
 yarn-debug.log*
 .yarn-integrity
+
+test/cypress/videos
+test/cypress/screenshots
