@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       scope module: :courses do
         resources :project_teams
         resources :org_teams
+        resources :github_repos
         resources :roster_students do
           get :activity
           get :commits
@@ -45,6 +46,7 @@ Rails.application.routes.draw do
         end
         get :activity
       end
+      resources :github_repos
       resources :org_teams do
         collection do
           get :create_repos

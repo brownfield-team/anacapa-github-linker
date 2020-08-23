@@ -1,0 +1,11 @@
+<%= react_component("CourseGithubRepo",
+                        props: {current_path: request.env['PATH_INFO'], 
+                                can_edit: can?(:update, @course),
+                                course_id: params[:course_id].to_i,
+                                course: @parent,
+                                repo: @github_repo
+                        },
+                        prerender: false) 
+%>
+
+
