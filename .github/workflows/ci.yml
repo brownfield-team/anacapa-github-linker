@@ -55,19 +55,16 @@ jobs:
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
           bundle exec rails test
-      # - name: Cypress run
-      #   uses: cypress-io/github-action@v1
-      #   with:
-      #     build: |
-      #       yarn init
-      #       sudo chmod -R 777 /home/runner/work/anacapa-github-linker/anacapa-github-linker/node_modules
-      #     start: bin/rails server -e test -p 5017
-      #     wait-on: http://localhost:5017
-      #   env:
-      #     DATABASE_URL: postgres://postgres:@localhost:5432/test
-      #     PGUSER: postgres
-      #     PGPASSWORD: postgres
-      #     REDIS_URL: redis://localhost:6379/0
-      #     RAILS_ENV: test
-      #     RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        
+      - name: Cypress run
+        uses: cypress-io/github-action@v1
+        with:
+          install: false
+          start: bin/rails server -e test -p 5017
+          wait-on: http://localhost:5017
+        env:
+          DATABASE_URL: postgres://postgres:@localhost:5432/test
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          REDIS_URL: redis://localhost:6379/0
+          RAILS_ENV: test
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
