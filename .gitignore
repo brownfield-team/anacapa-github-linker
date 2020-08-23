@@ -10,6 +10,8 @@
 # http://github.com/RailsApps/rails-composer/issues
 #----------------------------------------------------------------------------
 
+test/cypress/videos/
+
 # bundler state
 /.bundle
 /vendor/bundle/
