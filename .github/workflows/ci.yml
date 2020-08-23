@@ -55,7 +55,6 @@ jobs:
           REDIS_URL: redis://localhost:6379/0
           RAILS_ENV: test
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        uses: cypress-io/github-action@v2
         with:
           start: bin/rails server -e test -p 5017
           # quote the url to be safe against YML parsing surprises
