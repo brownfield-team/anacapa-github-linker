@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200608064256) do
+ActiveRecord::Schema.define(version: 20200720031832) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,7 +22,9 @@ ActiveRecord::Schema.define(version: 20200608064256) do
     t.bigint "course_id"
     t.string "summary"
     t.string "job_short_name"
+    t.bigint "github_repo_id"
     t.index ["course_id"], name: "index_completed_jobs_on_course_id"
+    t.index ["github_repo_id"], name: "index_completed_jobs_on_github_repo_id"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -251,6 +253,7 @@ ActiveRecord::Schema.define(version: 20200608064256) do
   end
 
   add_foreign_key "completed_jobs", "courses"
+  add_foreign_key "completed_jobs", "github_repos"
   add_foreign_key "github_repos", "courses"
   add_foreign_key "org_webhook_events", "courses"
   add_foreign_key "org_webhook_events", "github_repos"

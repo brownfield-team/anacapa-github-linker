@@ -13,7 +13,7 @@ class CourseGithubRepo extends Component {
     }
 
     componentDidMount() {
-        console.log("CourseGithubReposIndex componentDidMount called");
+
     }
 
     render() {

@@ -17,7 +17,6 @@ class CourseGithubReposIndex extends Component {
     }
 
     componentDidMount() {
-        console.log("CourseGithubReposIndex componentDidMount called");
         this.updateRepos();
     }
 
@@ -47,9 +46,6 @@ class CourseGithubReposIndex extends Component {
     }
 
     updateRepos = () => {
-        console.log("CourseGithubReposIndex updateRepos called");
-        console.log("this.props=" + JSON.stringify(this.props));
-
         const url = githubReposRoute(this.props.course_id);
         const params = {search: this.state.search, visibility: this.state.visibility, page: this.state.page, per_page: this.state.pageSize};
         // Otherwise, calling setState fails because the scope for "this" is the success/error function.
