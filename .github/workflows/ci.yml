@@ -39,7 +39,14 @@ jobs:
           key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gem-
-      - name: Build and run tests
+      - name: Cache Cypress Installation
+        uses: actions/cache@preview
+        with:
+          path: /home/runner/.cache/Cypress/5.0.0/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('/home/runner/.cache/Cypress/5.0.0/Cypress') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
+      - name: Build and run rails tests
         env:
           DATABASE_URL: postgres://postgres:@localhost:5432/test
           PGUSER: postgres
@@ -49,8 +56,39 @@ jobs:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           sudo apt-get -yqq install libpq-dev
+          bundle config path vendor/bundle
           gem install bundler
           bundle install --jobs 4 --retry 3
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
           bundle exec rails test
+      - name: Fix watched files problem
+        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p 
+      - name: Cypress run
+        uses: cypress-io/github-action@v1
+        with:
+          install: false
+          build: npx cypress install
+          start: bundle exec rails server -e test -p 5017
+          wait-on: http://localhost:5017
+          command:  yarn cypress run --project ./test
+        env:
+          DATABASE_URL: postgres://postgres:@localhost:5432/test
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          REDIS_URL: redis://localhost:6379/0
+          RAILS_ENV: test
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+      - name: Store Cypress Screenshots on Failure
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: test/cypress/screenshots
+      # Test run video was always captured, so this action uses "always()" condition
+      - name: Store Cypress Videos
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: cypress-videos
+          path: test/cypress/videos
