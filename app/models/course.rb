@@ -36,6 +36,10 @@ class Course < ApplicationRecord
     RosterStudent.where(course_id: self.id).includes(:user).references(:user).merge(User.where(uid: uid.to_s)).first
   end
 
+  def student_for_github_username(username)
+    RosterStudent.where(course_id: self.id).includes(:user).references(:user).merge(User.where(username: username)).first
+  end
+
   def accept_invite_to_course_org
     github_machine_user.update_organization_membership(course_organization, { state: "active" })
   end

@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Table } from "react-bootstrap";
 import BootstrapTable from 'react-bootstrap-table-next';
-import CourseGithubReposRow from "./CourseGithubReposRow";
+
 import PropTypes from 'prop-types';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
@@ -15,25 +15,42 @@ class CourseGithubReposTable extends Component {
 
     columns =
         [{
-            dataField: 'name',
+            dataField: 'repo.name',
             text: 'Name',
             editable: false,
             formatter: (cell, row, rowIndex, extraData) => this.renderRepoShowPageUrl(cell, row, rowIndex, {"course_id": this.props.course_id})
         }, {
-            dataField: 'url',
+            dataField: 'repo.url',
             text: 'on Github',
             editable: false,
             formatter: (cell) => this.renderRepoGithubUrl(cell)
         }, {
-            dataField: 'visibility',
+            dataField: 'repo.visibility',
             text: 'Visibility',
             editable: false
+        }, {
+            dataField: 'commit_count',
+            text: 'Commit Count',
+            editable: false
+        },{
+            text: 'Commit CSV',
+            editable: false,
+            formatter: (cell, row, rowIndex, extraData) => this.renderCommitCSVLink(cell, row, rowIndex, {"course_id": this.props.course_id})
+        },{
+            dataField: 'issue_count',
+            text: 'Issue Count',
+            editable: false
+        },{
+            text: 'Issue CSV',
+            editable: false,
+            formatter: (cell, row, rowIndex, extraData) => this.renderIssueCSVLink(cell, row, rowIndex, {"course_id": this.props.course_id})
         }];
 
     renderRepoShowPageUrl = (cell, row, rowIndex, extraData) => {
         console.log("renderRepoShowPageUrl");
         console.log("row="+JSON.stringify(row));
-        const url = `/courses/${extraData.course_id}/github_repos/${row.id}`;
+        const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}`;
+
         return (
             <a href={url}>{cell}</a>
         );
@@ -42,6 +59,20 @@ class CourseGithubReposTable extends Component {
     renderRepoGithubUrl = (cell) => {
         return (
             <a href={cell}>on Github</a>
+        );
+    }
+
+    renderCommitCSVLink = (cell, row, rowIndex, extraData) => {
+        const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}/repo_commit_events.csv`;
+        return (
+                <a href={url}>CSV</a>
+        );
+    }
+
+    renderIssueCSVLink = (cell, row, rowIndex, extraData) => {
+        const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}/repo_issue_events.csv`;
+        return (
+                <a href={url}>CSV</a>
         );
     }
 

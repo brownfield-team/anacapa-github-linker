@@ -3,8 +3,6 @@ import * as PropTypes from 'prop-types';
 import { Table } from "react-bootstrap";
 import CourseGithubReposTable from "./CourseGithubReposTable";
 
-import axios from "../../../helpers/axios-rails";
-import ReposService from "../../../services/repos-service";
 
 class CourseGithubRepo extends Component {
 

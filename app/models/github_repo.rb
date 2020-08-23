@@ -5,6 +5,8 @@ class GithubRepo < ApplicationRecord
   has_many :repo_team_contributors, dependent: :destroy
   has_many :org_teams, through: :repo_team_contributors
   has_many :org_webhook_events
+  has_many :repo_commit_events
+  has_many :repo_issue_events
 
   # Note: most (if not all) of the GitHub-related objects store a unique identifier for that object assigned by GitHub.
   # These are, by our convention, something like #repo_id, #hook_id, #team_id, etc.
@@ -32,5 +34,81 @@ class GithubRepo < ApplicationRecord
       WHERE #{self.id} = rtc.github_repo_id
     SQL
     ActiveRecord::Base.connection.exec_query(query)
+  end
+
+  def commit_csv_export_headers
+    %w[
+      github_repo_name
+      github_repo_url
+      roster_student_id
+      roster_student_name
+      roster_student_github_id
+      message
+      commit_hash
+      url
+      branch
+      files_changed
+      commit_timestamp
+      filenames_changed
+      committed_via_web
+    ]
+  end
+
+  def commit_csv_export_fields(c)
+    [
+      name,
+      url,
+      c.roster_student_id,
+      c.roster_student&.full_name,
+      c.roster_student&.user_id,
+      c.message,
+      c.commit_hash,
+      c.url,
+      c.branch,
+      c.files_changed,
+      c.commit_timestamp,
+      c.filenames_changed,
+      c.committed_via_web,
+    ]
+  end
+
+  def issue_csv_export_headers
+    %w[
+      github_repo_name
+      github_repo_url
+      roster_student_id
+      roster_student_name
+      roster_student_github_id
+      url
+    ]
+  end
+
+  def issue_csv_export_fields(i)
+    [
+      name,
+      url,
+      i.roster_student_id,
+      i.roster_student&.full_name,
+      i.roster_student&.user_id,
+      i.url,
+    ]
+  end
+
+  def export_commits_to_csv
+    CSV.generate(headers: true) do |csv|
+      csv << commit_csv_export_headers
+      repo_commit_events.each do |c|
+        csv << commit_csv_export_fields(c)
+      end
+    end
+  end
+
+  def export_issues_to_csv
+    CSV.generate(headers: true) do |csv|
+      csv << issue_csv_export_headers
+      repo_issue_events.each do |c|
+        csv << issue_csv_export_fields(c)
+      end
+    end
   end
 end

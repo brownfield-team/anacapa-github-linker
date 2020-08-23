@@ -3,7 +3,7 @@
                                 can_edit: can?(:update, @course),
                                 course_id: params[:course_id].to_i,
                                 course: @parent,
-                                repo: @github_repo
+                                repo: @github_repo_plus_commit_count
                         },
                         prerender: false) 
 %>

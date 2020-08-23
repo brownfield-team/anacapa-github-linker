@@ -46,6 +46,7 @@ class CourseGithubReposIndex extends Component {
     }
 
     updateRepos = () => {
+
         const url = githubReposRoute(this.props.course_id);
         const params = {search: this.state.search, visibility: this.state.visibility, page: this.state.page, per_page: this.state.pageSize};
         // Otherwise, calling setState fails because the scope for "this" is the success/error function.
