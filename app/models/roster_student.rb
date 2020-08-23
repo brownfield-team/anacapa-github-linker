@@ -30,4 +30,9 @@ class RosterStudent < ApplicationRecord
     return nil if team_str.empty?
     team_str.delete_suffix("/")
   end
+
+  def is_ta?
+    !user.nil? && user.has_role?(:ta, course)
+  end
+
 end
