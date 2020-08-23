@@ -58,7 +58,9 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v1
         with:
-          build: yarn init
+          build: |
+            yarn init
+            sudo chmod -R 777 /home/runner/work/anacapa-github-linker/anacapa-github-linker/node_modules
           start: bin/rails server -e test -p 5017
           wait-on: http://localhost:5017
         env:
