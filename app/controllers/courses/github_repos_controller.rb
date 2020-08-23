@@ -13,7 +13,6 @@ module Courses
     load_and_authorize_resource :github_repo, through: :course
 
     def index
-      @github_repos = @parent.github_repos.all
     end
 
     def project_repos
