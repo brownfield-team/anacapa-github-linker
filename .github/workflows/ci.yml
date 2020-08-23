@@ -59,7 +59,7 @@ jobs:
         uses: cypress-io/github-action@v1
         with:
           install: false
-          start: bin/rails server -e test -p 5017
+          start: bundle exec rails server -e test -p 5017
           wait-on: http://localhost:5017
         env:
           DATABASE_URL: postgres://postgres:@localhost:5432/test
