@@ -55,6 +55,8 @@ jobs:
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
           bundle exec rails test
+      - name: Fix watched files problem
+        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p 
       - name: Cypress run
         uses: cypress-io/github-action@v1
         with:
@@ -62,7 +64,7 @@ jobs:
           build: npx cypress install
           start: bundle exec rails server -e test -p 5017
           wait-on: http://localhost:5017
-          command:  echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p ; yarn cypress open --project ./test
+          command:  yarn cypress run --project ./test
         env:
           DATABASE_URL: postgres://postgres:@localhost:5432/test
           PGUSER: postgres
