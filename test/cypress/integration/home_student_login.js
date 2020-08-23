@@ -9,7 +9,7 @@ describe("Home Page student login", () => {
     });
 
     beforeEach(() => { 
-        cy.request("/api/testhooks/login_admin");
+        cy.request("/api/testhooks/login_student");
         cy.visit("/");
     });
 
@@ -25,16 +25,6 @@ describe("Home Page student login", () => {
     it("has a Courses button", () => {
         cy.get('a[href="/courses"]')
         .should('contain.text', 'Courses')
-    });
-
-    it("has a Users button", () => {
-        cy.get('a[href="/users"]')
-        .should('contain.text', 'Users')
-    });
-
-    it("has an Admin button", () => {
-        cy.get('a[href="/admin/dashboard"]')
-        .should('contain.text', 'Admin')
     });
 
 }); // Home Page
