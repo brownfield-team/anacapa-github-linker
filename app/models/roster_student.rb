@@ -42,4 +42,9 @@ class RosterStudent < ApplicationRecord
     return nil if student_consents.nil?
     student_consents ? "Y" : "N"
   end
+  
+  def is_ta?
+    !user.nil? && user.has_role?(:ta, course)
+  end
+
 end

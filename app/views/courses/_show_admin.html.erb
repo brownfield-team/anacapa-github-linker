@@ -78,7 +78,7 @@
               <td><%= student.email %></td>
               <td><%= student.enrolled ? "True" : "False" %></td>
               <td><%= student.section %></td>
-              <td><%= !student.user.nil? && student.user.has_role?(:ta, @course) ? "True" : "False" %></td>
+              <td><%= student.is_ta? ? "True" : "False" %></td>
               <% if @course.slack_workspace.present? %>
                 <% slack_user = student.slack_user %>
                 <% if slack_user.present? %>
