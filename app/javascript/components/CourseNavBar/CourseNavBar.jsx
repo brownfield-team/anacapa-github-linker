@@ -1,6 +1,6 @@
-import React, {Component, Fragment} from 'react';
+import React, { Component, Fragment } from 'react';
 import * as PropTypes from 'prop-types';
-import {Row, Col, MenuItem, Tab, Nav, NavItem, NavDropdown, Button} from "react-bootstrap";
+import { Row, Col, MenuItem, Tab, Nav, NavItem, NavDropdown, Button } from "react-bootstrap";
 
 class CourseNavBar extends Component {
     currentActiveTab = (currentPath) => {
@@ -31,6 +31,7 @@ class CourseNavBar extends Component {
                         <MenuItem eventKey="create_repos" href={this.props.create_team_repos_path}>Create Team Repos</MenuItem>
                     </NavDropdown>
                     <NavDropdown title="Repos">
+                        <MenuItem eventKey="github_repos" href={this.props.github_repos_path}>All Repos</MenuItem>
                         <MenuItem eventKey="repos" href={this.props.repos_path}>Repo Search</MenuItem>
                     </NavDropdown>
                     <NavItem eventKey="events" href={this.props.events_path}>Events</NavItem>
@@ -49,6 +50,7 @@ CourseNavBar.propTypes = {
     project_teams_path: PropTypes.string.isRequired,
     org_teams_path: PropTypes.string.isRequired,
     repos_path: PropTypes.string.isRequired,
+    github_repos_path: PropTypes.string.isRequired,
     events_path: PropTypes.string.isRequired,
     slack_path: PropTypes.string.isRequired,
     jobs_path: PropTypes.string.isRequired,
