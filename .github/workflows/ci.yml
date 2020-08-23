@@ -32,6 +32,13 @@ jobs:
       - uses: borales/actions-yarn@v2.0.0
         with:
           cmd: install
+      - name: Cache gems
+        uses: actions/cache@preview
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gem-
       - name: Build and run rails tests
         env:
           DATABASE_URL: postgres://postgres:@localhost:5432/test
@@ -42,6 +49,7 @@ jobs:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           sudo apt-get -yqq install libpq-dev
+          bundle config path vendor/bundle
           gem install bundler
           bundle install --jobs 4 --retry 3
           bundle exec rails db:create RAILS_ENV=test
