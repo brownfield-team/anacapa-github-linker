@@ -27,6 +27,7 @@
     "serialize-javascript": "^3.1.0"
   },
   "devDependencies": {
+    "cypress": "^5.0.0",
     "webpack-dev-server": "^3.10.3"
   },
   "license": "MIT"
