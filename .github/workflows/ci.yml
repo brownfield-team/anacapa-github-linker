@@ -59,8 +59,10 @@ jobs:
         uses: cypress-io/github-action@v1
         with:
           install: false
+          build: npx cypress install
           start: bundle exec rails server -e test -p 5017
           wait-on: http://localhost:5017
+          command:  echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p ; yarn cypress open --project ./test
         env:
           DATABASE_URL: postgres://postgres:@localhost:5432/test
           PGUSER: postgres
