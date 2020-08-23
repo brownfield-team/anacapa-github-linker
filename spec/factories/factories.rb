@@ -3,10 +3,12 @@ FactoryBot.define do
         trait :student do
             name { 'Student' }
             username {'student'}
+            email {'student@example.org'}
         end
         trait :admin do
             name { 'Admin' }
             username {'admin'}
+            email {'admin@example.org'}
             after(:build) do |user,_|
                 user.add_role(:admin)
             end

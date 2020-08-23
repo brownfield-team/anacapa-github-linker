@@ -1,4 +1,4 @@
-describe("Home Page student login", () => {
+describe("Course as admin", () => {
 
     before(() => {
         // cy.appScenario("database_cleaner_start");
@@ -9,8 +9,8 @@ describe("Home Page student login", () => {
     });
 
     beforeEach(() => { 
-        cy.request("/api/testhooks/login_student");
-        cy.visit("/");
+        cy.request("/api/testhooks/login_admin");
+        cy.visit("/courses/1");
     });
 
     it("has a nav bar", () => {
@@ -26,5 +26,21 @@ describe("Home Page student login", () => {
         cy.get('a[href="/courses"]')
         .should('contain.text', 'Courses')
     });
+
+    it("has a Users button", () => {
+        cy.get('a[href="/users"]')
+        .should('contain.text', 'Users')
+    });
+
+    it("has an Admin button", () => {
+        cy.get('a[href="/admin/dashboard"]')
+        .should('contain.text', 'Admin')
+    });
+
+    it("has a Students button", () => {
+        cy.get('a[href="/courses/1"]')
+        .should('contain.text', 'Students')
+    });
+
 
 }); // Home Page

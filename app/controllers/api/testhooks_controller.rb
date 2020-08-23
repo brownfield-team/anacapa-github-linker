@@ -5,24 +5,34 @@ module Api
         skip_before_action :authenticate_user!
 
         def login_student
-            user = FactoryBot.create("user","student")  
+            begin
+                user = User.where({username: "student"}).first
+            rescue
+                user = FactoryBot.create("user","student") 
+            end 
             sign_in user
             response = {
                 env: Rails.env,
                 status: "signed in",
                 user: user
             }
+            logger.debug "response: #{response}"
             respond_with response
         end
 
         def login_admin
-            admin = FactoryBot.create("user","admin")  
+            begin
+                admin = User.where({username: "admin"}).first
+            rescue
+                admin = FactoryBot.create("user","admin") 
+            end 
             sign_in admin
             response = {
                 env: Rails.env,
                 status: "signed in",
                 user: admin
             }
+            logger.debug "response: #{response}"
             respond_with response
         end
         private

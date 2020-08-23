@@ -1,11 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 course1:
+  id: 1
   name: course1
   course_organization: test-course-org
   hidden: false
 
 course2:
+  id: 2
   name: course2
   course_organization: test-course-org-two
   hidden: false

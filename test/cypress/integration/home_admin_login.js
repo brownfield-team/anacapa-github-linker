@@ -1,11 +1,11 @@
-describe("Home Page student login", () => {
+describe("Home Page admin login", () => {
 
     before(() => {
-        cy.appScenario("database_cleaner_start");
+        // cy.appScenario("database_cleaner_start");
     });
 
     after(() => {
-        cy.appScenario("database_cleaner_clean");
+        // cy.appScenario("database_cleaner_clean");
     });
 
     beforeEach(() => { 
