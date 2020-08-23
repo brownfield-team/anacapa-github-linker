@@ -60,3 +60,5 @@ jobs:
           start: bin/rails server -e test -p 5017
           # quote the url to be safe against YML parsing surprises
           wait-on: 'http://localhost:5017'
+        run: |
+          yarn cypress open --project ./test

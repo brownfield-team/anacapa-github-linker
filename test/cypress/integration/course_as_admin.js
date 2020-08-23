@@ -8,9 +8,20 @@ describe("Course as admin", () => {
         // cy.appScenario("database_cleaner_clean");
     });
 
+    let courseUrl;
+
     beforeEach(() => { 
         cy.request("/api/testhooks/login_admin");
-        cy.visit("/courses/1");
+        cy.visit("/courses");
+        cy.get('table#course_list')
+            .find('a')
+            .invoke('attr', 'href')
+            .then((href) => {
+                cy.log(`href=${href}`);
+                courseUrl = href
+            }).then( () => {
+                cy.visit(courseUrl)
+            });
     });
 
     it("has a nav bar", () => {
@@ -38,9 +49,18 @@ describe("Course as admin", () => {
     });
 
     it("has a Students button", () => {
-        cy.get('a[href="/courses/1"]')
+        cy.get(`a[href="${courseUrl}"]`)
         .should('contain.text', 'Students')
     });
 
+    it("has a Students button", () => {
+        cy.get(`a[href="${courseUrl}"]`)
+        .should('contain.text', 'Students')
+    });
+
+    it("has a Project Teams button", () => {
+        cy.get(`a[href="${courseUrl}/project_teams"]`)
+        .should('contain.text', 'Project Teams')
+    });
 
 }); // Home Page
