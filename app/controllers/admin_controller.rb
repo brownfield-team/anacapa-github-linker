@@ -8,6 +8,11 @@ class AdminController < ApplicationController
       authorize! :manage, :all
     end
 
+    def flipper_features
+      Flipper.features.map{|f| {name: f.name, enabled: Flipper.enabled?(f.name.to_sym,current_user)} }
+    end
+    helper_method :flipper_features
+
     # This is an intricate bit of code that formats the results of this really messed up SQL query into a dictionary
     # of table names and their corresponding row counts.
     # Source of query: https://stackoverflow.com/a/42121447/3950780

@@ -150,4 +150,7 @@ class User < ApplicationRecord
     users.joins(:roles).where("roles.name = ?", role_str).where("roles.resource_id is null")
   end
 
+  def flipper_id
+    return username
+  end
 end

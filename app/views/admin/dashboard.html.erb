@@ -66,3 +66,29 @@
 
   </div>
 </div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">Feature Toggles (Flipper)</div>
+  </div>
+  <div class="panel-body">
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Enabled</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% flipper_features.each do |f| %>
+        <tr>
+          <td><%= f[:name] %></td>
+          <td><%= f[:enabled] %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>
