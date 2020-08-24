@@ -1,0 +1,70 @@
+<p>On this page, you can automatically generate repositories for each roster student
+   for a specified assignment. 
+   The repo names will be prefixed with the assignment name you enter, followed by
+   a hyphen, and then the students github id.
+   </p>
+
+<%= form_tag course_generate_repos_path, method: :post do %>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">Assignment Name</span>
+    <%= text_field_tag :assignment_name, (params[:assignment_name] or ""), class: 'form-control', placeholder:
+        "e.g. 'asn01'" %>
+  </div>
+  <p></p>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">Student Permission</span>
+    <% permission_options = '<option value="pull">Read</option>
+        <option value="push">Write</option>
+        <option value="admin" selected="selected">Admin</option>' %>
+    <%= select_tag :permission, raw(permission_options), class: 'form-control'%>
+  </div>
+  <p></p>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">Repo Visibility</span>
+    <% visibility_options = '<option value="public">Public</option>
+        <option value="private" selected="selected">Private</option>' %>
+    <%= select_tag :visibility, raw(visibility_options), class: 'form-control'%>
+  </div>
+  <p></p>
+  <%= submit_tag "Create Repositories", class: 'btn btn-primary', data: {confirm: "Are you sure you want to create these assignment repositories on GitHub?"} %>
+<% end %>
+
+ <h2>Instructions</h2>
+ <ul>
+    <li> 
+      <b>Assignment Name</b> should be a string containing only letters, numbers, hyphens and underscores.
+    </li>
+    <li> 
+      <b>Student Permission</b> is the permission that each student will have to their own repo, normally <code>Admin</code>, which
+        gives the student full control over the repo.  The <code>Write</code> setting
+        allows the student to push commits to the repo, but does not allow the student to change repo settings. 
+        <code>Read</code> permission can be used to create repos for sharing instructor feedback with each 
+        individual student; the instructor has full permission to the repo, but for the student, the repo is read-only.
+    </li>
+    <li> 
+      <b>Visibility</b> controls whether the created repos are public or private.  
+        Provided that you have set your course organizations default member permissions to <code>None</code>,
+        private repos are visible only to the student for whom they were created, and
+        to owners of the course organization.
+    </li>
+   </ul>
+   <p> After you click the "Create Repositories" button, a background job is launched
+       to create the repos.  You can check on the status of repo creation by refreshing
+       the Jobs Page, which is where you are redirected after the job is launched.
+   </p>
+   <p> 
+      Repos are only created for students that have "joined" the course by  
+      logging into GitHub.  If some students join the course after you have
+      already created repos for an assignment, you can run the job again
+      with the same assignment name; existing repos are unaffected, and 
+      new repos will be created for the students that don't already have one.
+   </p>
+   <p> 
+      Students don't immediately get access to the repo; instead, they 
+      receive an invitation to collaborate on the repo, which they must
+      click to accept.   The format of the invitation URL is
+      <code>https://github.com/ucsb-cs123-f20/pa01-chundhau/invitations</code>,
+      where <code>ucsb-cs123-f20</code> is the name of the course organization 
+      on GitHub, <code>pa01</code> is the assignment name, <code>chundhau</code>
+      is the student's GitHub username.
+   </p>

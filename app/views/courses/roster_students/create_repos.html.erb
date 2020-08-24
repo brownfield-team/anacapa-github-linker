@@ -1,0 +1,30 @@
+<p>On this page, you can automatically generate repositories for each roster student
+   for a specified assignment. 
+   The repo names will be prefixed with the assignment name you enter, followed by
+   a hyphen, and then the students github id.
+   </p>
+
+<%= form_tag generate_repos_course_roster_students_path, method: :post do %>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">Assignment Name</span>
+    <%= text_field_tag :assignment_name, (params[:assignment_name] or ""), class: 'form-control', placeholder:
+        "e.g. 'asn01'" %>
+  </div>
+  <p></p>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">Team Permission</span>
+    <% permission_options = '<option value="pull">Read</option>
+        <option value="push">Write</option>
+        <option value="admin" selected="selected">Admin</option>' %>
+    <%= select_tag :permission, raw(permission_options), class: 'form-control'%>
+  </div>
+  <p></p>
+  <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">Repo Visibility</span>
+    <% visibility_options = '<option value="public">Public</option>
+        <option value="private" selected="selected">Private</option>' %>
+    <%= select_tag :visibility, raw(visibility_options), class: 'form-control'%>
+  </div>
+  <p></p>
+  <%= submit_tag "Create Repositories", class: 'btn btn-primary', data: {confirm: "Are you sure you want to create these assignment repositories on GitHub?"} %>
+<% end %>
