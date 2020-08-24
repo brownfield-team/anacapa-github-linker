@@ -254,6 +254,7 @@ end
       csv << GithubRepo.commit_csv_export_headers
       repo_commit_events.each do |c|
         csv << GithubRepo.commit_csv_export_fields(self,c)
+
       end
     end
   end
@@ -295,4 +296,5 @@ end
     basis = "#{i.url} #{i.issue_created_at} #{i.title} #{i.body}"
     Zlib.crc32 basis
   end
+
 end

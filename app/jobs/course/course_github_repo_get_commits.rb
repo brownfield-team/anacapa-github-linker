@@ -39,6 +39,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
           commits = query_results[:data][:repository][:ref][:target][:history][:edges]
         rescue
           return "Unexpected result returned from graphql query: #{sawyer_resource_to_s(query_results)}"
+
         end
         results = store_commits_in_database(commits)
         final_results = combine_results(final_results,results)
@@ -47,6 +48,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       job_outcome = all_good?(final_results) ? "Successfully" : " with errors; CHECK LOG; note that total commits retrieved does NOT MATCH number stored and/or updated"
 
       "Job Completed #{job_outcome}. Retrieved #{final_results["total_commits"]} commits for Course #{@course.name} for Repo #{@github_repo.name}. Stored #{final_results["total_new_commits"]} new commits, Updated #{final_results["total_updated_commits"]} existing commits in database."
+
     end  
 
     def store_commits_in_database(commits)
@@ -64,12 +66,12 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     end
 
     def store_one_commit_in_database(c)
-    
       commit = RepoCommitEvent.new
       result = update_one_commit(commit,c)
     end
 
      
+
     # Regrettably, the v4 graphql api doesn't yet support
     # getting the filenames changed.  
     # See: https://github.community/t/get-a-repositorys-commits-along-with-changed-patches-and-the-url-to-changed-files-using-graphql-v4/13585
@@ -88,6 +90,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         commit.files_changed = c[:node][:changedFiles]
         commit.additions = c[:node][:additions]
         commit.deletions = c[:node][:deletions]
+
         commit.message = c[:node][:message]
         commit.commit_hash =  c[:node][:oid]
         commit.url =  c[:node][:url]
@@ -101,6 +104,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       rescue
         raise
         puts "***ERROR*** update_commit_fields commit #{sawyer_resource_to_s(c)} @github_repo #{@github_repo}"
+
         return 0
       end
 
@@ -156,6 +160,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
                         node {
                           additions
                           deletions
+
                           committedViaWeb
                           changedFiles
                           messageHeadline
@@ -189,6 +194,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         result = sawyer_resource.to_s 
       end
       result
+
     end
 end
   

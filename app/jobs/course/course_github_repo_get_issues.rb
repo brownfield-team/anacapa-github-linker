@@ -39,6 +39,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
           issues = query_results[:data][:repository][:issues][:nodes]
         rescue
           return "Unexpected result returned from graphql query: #{sawyer_resource_to_s(query_results)}"
+
         end
         results = store_issues_in_database(issues)
         final_results = combine_results(final_results,results)
@@ -47,6 +48,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
       job_outcome = all_good?(final_results) ? "Successfully" : " with errors; CHECK LOG; note that total issues retrieved does NOT MATCH number stored and/or updated"
 
       "Job Completed #{job_outcome}.  Retrieved #{final_results["total_issues"]} issues for Course #{@course.name} for Repo #{@github_repo.name}. Stored #{final_results["total_new_issues"]} new issues, Updated #{final_results["total_updated_issues"]} existing issues in database."
+
     end  
 
     def store_issues_in_database(issues)
@@ -150,6 +152,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         return 1
       rescue
         puts "***ERROR*** on issue.save! issue #{i} @github_repo #{@github_repo}"
+
         return 0
       end
     end
@@ -168,6 +171,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
       graphql_query_string = graphql_query(repo_name, org_name, after)
       options = { query: graphql_query_string }.to_json
       github_machine_user.post '/graphql', options
+
     end
 
     def graphql_query(repo_name, org_name, after)
@@ -251,6 +255,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         result = sawyer_resource.to_s 
       end
       result
+
     end
 end
   

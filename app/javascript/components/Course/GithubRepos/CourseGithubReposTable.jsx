@@ -7,6 +7,7 @@ import { githubRepoRoute } from "../../../services/service-routes";
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 
 
+
 class CourseGithubReposTable extends Component {
 
     constructor(props) {
@@ -53,6 +54,7 @@ class CourseGithubReposTable extends Component {
 
     renderRepoShowPageUrl = (cell, row, rowIndex, extraData) => {
         const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}`;
+
         return (
             <a href={url}>{cell}</a>
         );
