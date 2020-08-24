@@ -77,6 +77,11 @@ class User < ApplicationRecord
     self.roster_students.map { |student| student.course }
   end
 
+  def enrolled_in?(course_name)
+    course_names = courses.map{|c| c.name}
+    course_names.include?(course_name)
+  end
+
   def courses_administrating
     if has_role? :user
       return []
