@@ -36,14 +36,20 @@ def setup_features(features)
   end
 end
 
-if ActiveRecord::Base.connection.data_source_exists? 'flipper_features'
-  setup_features(features)
-end
-
-# Register all course names as groups
-
-Course.all_course_names.each do |course_name|
-  Flipper.register(course_name) do |actor|
-    actor.respond_to?(:enrolled_in?) && actor.enrolled_in?(course_name)
+def register_course_names_as_groups
+  Course.all_course_names.each do |course_name|
+    Flipper.register(course_name) do |actor|
+      actor.respond_to?(:enrolled_in?) && actor.enrolled_in?(course_name)
+    end
   end
 end
+
+if Rails.env!="test" && ActiveRecord::Base.connection.data_source_exists?('flipper_features')
+  # For Rails.env=="test", the database doesn't exists 
+  # yet when initializers are run.  But that's ok; we don't need
+  # this setup in a test environment.  You'd probably mock or stub the
+  # feature toggle being on/off if you depend on that for a test.
+  setup_features(features)
+  register_course_names_as_groups
+end
+
