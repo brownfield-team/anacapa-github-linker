@@ -213,18 +213,18 @@ class CoursesController < ApplicationController
     def cross_check_user_emails_with_class(course)
       email_to_student = Hash.new
       course.roster_students.each do |student|
-        email_to_student[student.email] = student
+        email_to_student[student.email.downcase] = student
         if student.email.end_with? '@umail.ucsb.edu'
           new_email = student.email.gsub('@umail.ucsb.edu','@ucsb.edu')
-          email_to_student[new_email] = student
+          email_to_student[new_email.downcase] = student
         elsif student.email.end_with? '@ucsb.edu'
           old_email = student.email.gsub('@ucsb.edu','@umail.ucsb.edu')
-          email_to_student[old_email] = student
+          email_to_student[old_email.downcase] = student
         end
       end
 
       session_user.emails.each do |email|
-        roster_student = email_to_student[email[:email]]
+        roster_student = email_to_student[email[:email].downcase]
         if roster_student
           return roster_student
         end
