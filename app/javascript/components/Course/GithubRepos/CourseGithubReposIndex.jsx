@@ -6,12 +6,15 @@ import CourseGithubReposControls from "./CourseGithubReposControls";
 import axios from "../../../helpers/axios-rails";
 import { Alert, Form } from 'react-bootstrap';
 
+import {debounce} from "debounce";
+
 import { githubReposRoute } from "../../../services/service-routes";
 
 class CourseGithubReposIndex extends Component {
     constructor(props) {
         super(props);
         this.state = { search: this.props.search ?? "", type: this.props.visibility ?? "", error: "", repos: [], page: 1, pageSize: 25, totalSize: 0 };
+        this.onSearchChanged = debounce(this.onSearchChanged, 1000);
     }
 
     componentDidMount() {
@@ -19,6 +22,7 @@ class CourseGithubReposIndex extends Component {
     }
 
     performSearch = (searchValue) => {
+
         this.setState({page: 1, search: searchValue}, () => {
             this.updateRepos();
         });
@@ -41,6 +45,7 @@ class CourseGithubReposIndex extends Component {
     }
 
     updateRepos = () => {
+
         const url = githubReposRoute(this.props.course_id);
         const params = {search: this.state.search, visibility: this.state.visibility, page: this.state.page, per_page: this.state.pageSize};
         // Otherwise, calling setState fails because the scope for "this" is the success/error function.

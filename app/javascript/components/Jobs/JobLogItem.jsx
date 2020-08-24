@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import * as PropTypes from 'prop-types';
 import sanitizeHtml from 'sanitize-html';
 
+
 class JobLogItem extends Component {
     render() {
         const cj = this.props.completed_job; // Save some characters
@@ -17,6 +18,7 @@ class JobLogItem extends Component {
                     <td>{cj.time_elapsed}</td>
                     <td dangerouslySetInnerHTML={{__html: cleanedSummary}}>
                     </td>
+
                 </tr>
             );
     }

@@ -12,6 +12,7 @@
 
 ActiveRecord::Schema.define(version: 20200728000517) do
 
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,6 +26,7 @@ ActiveRecord::Schema.define(version: 20200728000517) do
     t.bigint "github_repo_id"
     t.index ["course_id"], name: "index_completed_jobs_on_course_id"
     t.index ["github_repo_id"], name: "index_completed_jobs_on_github_repo_id"
+
   end
 
   create_table "courses", force: :cascade do |t|
@@ -134,6 +136,7 @@ ActiveRecord::Schema.define(version: 20200728000517) do
     t.string "author_email"
     t.integer "additions"
     t.integer "deletions"
+
     t.index ["github_repo_id"], name: "index_repo_commit_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_commit_events_on_roster_student_id"
   end
