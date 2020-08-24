@@ -39,3 +39,11 @@ end
 if ActiveRecord::Base.connection.data_source_exists? 'flipper_features'
   setup_features(features)
 end
+
+# Register all course names as groups
+
+Course.all_course_names.each do |course_name|
+  Flipper.register(course_name) do |actor|
+    actor.respond_to?(:enrolled_in?) && actor.enrolled_in?(course_name)
+  end
+end
