@@ -34,6 +34,7 @@ class CourseNavBar extends Component {
                         <MenuItem eventKey="github_repos" href={this.props.github_repos_path}>All Repos</MenuItem>
                         <MenuItem eventKey="project_repos" href={this.props.project_repos_path}>Project Repos</MenuItem>
                         <MenuItem eventKey="repos" href={this.props.repos_path}>Repo Search</MenuItem>
+                        <MenuItem eventKey="create_assignment_repos" href={this.props.create_assignment_repos_path}>Create Assignment Repos</MenuItem>
                     </NavDropdown>
                     <NavItem eventKey="events" href={this.props.events_path}>Events</NavItem>
                     <NavItem eventKey="slack" href={this.props.slack_path}>Slack</NavItem>
@@ -56,6 +57,7 @@ CourseNavBar.propTypes = {
     project_teams_path: PropTypes.string.isRequired,
     org_teams_path: PropTypes.string.isRequired,
     repos_path: PropTypes.string.isRequired,
+    create_assignment_repos_path: PropTypes.string.isRequired,
     github_repos_path: PropTypes.string.isRequired,
     project_repos_path: PropTypes.string.isRequired,
     events_path: PropTypes.string.isRequired,
