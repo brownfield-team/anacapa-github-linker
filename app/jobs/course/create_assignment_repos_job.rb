@@ -18,7 +18,7 @@ class CreateAssignmentReposJob < CourseJob
           repos_created += create_assignment_repo(repo_name, rs)
       end
   
-      "#{pluralize repos_created, "repository"} created for assignment #{@assignment_name} with team permission level #{@permission_level}."
+      "#{pluralize repos_created, "repository"} created for assignment #{@assignment_name} with student permission level #{@permission_level}."
     end
   
     def create_assignment_repo(repo_name, roster_student)
