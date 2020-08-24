@@ -169,6 +169,28 @@ class CoursesController < ApplicationController
     redirect_to course_repos_path(@course, search: params[:search])
   end
 
+  def create_repos
+    @course = Course.find(params[:course_id])
+  end
+
+  def generate_repos
+    @course = Course.find(params[:course_id])
+    assignment_name = params[:assignment_name]
+    permission_level = params[:permission]
+    visibility = params[:visibility]
+    unless legal_repo_name(assignment_name)
+      redirect_to course_create_repos_path, alert: "Assignment name must be a legal repo name (letters, digits, hyphen, underscore, no spaces)"
+      return
+    end
+    options = {:assignment_name => assignment_name,  :permission_level => permission_level, :visibility => visibility}
+    CreateAssignmentReposJob.perform_async(@course.id, options)
+    redirect_to course_jobs_path, notice: "Repository creation successfully queued."
+  end
+
+  def legal_repo_name(str)
+    str =~ /^[\w-]+$/
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course
