@@ -122,3 +122,8 @@ gem "activesupport", ">= 5.2.4.3"
 group :development, :test do
   gem 'factory_bot_rails'
 end
+
+# Feature toggle (see: https://github.com/jnunemaker/flipper)
+gem 'flipper'
+gem 'flipper-ui'
+gem 'flipper-active_record'
