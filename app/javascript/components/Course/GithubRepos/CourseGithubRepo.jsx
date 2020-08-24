@@ -1,11 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import * as PropTypes from 'prop-types';
 import { Form, Checkbox, FormGroup } from "react-bootstrap";
-import CourseGithubReposTable from "./CourseGithubReposTable";
 import ReposService from "../../../services/repos-service";
-import { Table } from "react-bootstrap";
 import CourseGithubReposTable from "./CourseGithubReposTable";
-
 
 class CourseGithubRepo extends Component {
 
@@ -38,11 +35,6 @@ class CourseGithubRepo extends Component {
         });
     };
    
-
-
-    }
-
-
     render() {
         return (
             <Fragment>
