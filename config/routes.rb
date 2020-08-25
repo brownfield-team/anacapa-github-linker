@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   end
 
   constraints CanAccessFlipperUI do
-    mount Flipper::UI.app(Flipper) => '/flipper'
+    mount Flipper::UI.app(Flipper) => '/admin/flipper'
   end
 
   namespace :api, :defaults => { :format => 'json' } do
