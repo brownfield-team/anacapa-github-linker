@@ -11,6 +11,7 @@ class Course < ApplicationRecord
   has_many :roster_students, dependent: :destroy
   has_many :completed_jobs, dependent: :destroy
   has_many :github_repos, dependent: :destroy, class_name: '::GithubRepo'
+  has_many :assignments, dependent: :destroy
   has_many :org_teams, dependent: :destroy
   has_one :slack_workspace, dependent: :destroy
   has_one :org_webhook, dependent: :destroy

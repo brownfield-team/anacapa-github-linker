@@ -22,6 +22,7 @@ Rails.application.routes.draw do
         resources :project_teams
         resources :org_teams
         resources :github_repos
+        resources :assignments
         resources :roster_students do
           get :activity
           get :commits
@@ -48,7 +49,8 @@ Rails.application.routes.draw do
     post :generate_repos
     
     scope module: :courses do
-      
+      resources :assignments
+
       resources :roster_students do
         collection do
           post :import
