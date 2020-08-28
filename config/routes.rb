@@ -8,6 +8,10 @@ Rails.application.routes.draw do
     get 'sign_out', :to => 'devise/sessions#destroy', :as => :signout
   end
 
+  constraints CanAccessFlipperUI do
+    mount Flipper::UI.app(Flipper) => '/admin/flipper'
+  end
+
   namespace :api, :defaults => { :format => 'json' } do
 
     match 'testhooks/login_student' => 'testhooks#login_student', :via => :get

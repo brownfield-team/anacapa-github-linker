@@ -275,6 +275,8 @@ class Course < ApplicationRecord
     GRAPHQL
   end
   
-
+  def self.all_course_names
+      Course.all.map{|c| c.name}
+  end
 end
 
