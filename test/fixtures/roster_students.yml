@@ -20,6 +20,7 @@ roster3:
   perm: 123
   first_name: Wes
   last_name: P
-  email: wes@email.com
+  email: WES@email.com
   course: course2
   enrolled: false
+

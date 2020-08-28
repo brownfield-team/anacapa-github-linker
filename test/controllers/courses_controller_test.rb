@@ -193,6 +193,24 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_equal @enroll_success_flash_notice, flash[:notice]
   end
 
+
+  test "user can join class even if case of email doesn't match" do
+
+    user = @user
+    sign_in user
+    course = courses(:course2)
+
+    stub_find_user_in_org(user.username, course.course_organization, false)
+    stub_invite_user_to_org(user.username, course.course_organization)
+    stub_check_user_emails(user.email)
+    assert_difference('user.roster_students.count', 1) do
+      post course_join_path(course_id: course.id)
+    end
+    assert_redirected_to courses_url
+    enroll_success_flash_notice = %Q[You were successfully invited to #{course.name}! View and accept your invitation <a href="https://github.com/orgs/#{course.course_organization}/invitation">here</a>.]
+    assert_equal enroll_success_flash_notice, flash[:notice]
+  end
+
   test "roster student can NOT join class if NOT on class roster" do
 
     user_julie = users(:julie)
