@@ -74,7 +74,7 @@ jobs:
       - name: Fix watched files problem
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p 
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2.9.5
         with:
           install: false
           build: npx cypress install
@@ -89,7 +89,7 @@ jobs:
         #   RAILS_ENV: test
         #   RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
       - name: Store Cypress Screenshots on Failure
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: cypress-screenshots
