@@ -35,7 +35,7 @@ jobs:
           echo "RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}" >> $GITHUB_ENV
       - uses: actions/checkout@v1
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.31.1
+        uses: ruby/setup-ruby@v1.66.1
         with:
           ruby-version: 2.6.5
       - uses: borales/actions-yarn@v2.0.0
