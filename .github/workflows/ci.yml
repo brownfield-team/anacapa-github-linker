@@ -24,9 +24,18 @@ jobs:
         options: --entrypoint redis-server
 
     steps:
+      - name: Set Environment Variables
+        id: set_github_env
+        run: |
+          echo "DATABASE_URL=postgres://postgres:@localhost:5432/test" >> $GITHUB_ENV
+          echo "PGUSER=postgres" >> $GITHUB_ENV
+          echo "PGPASSWORD=postgres" >> $GITHUB_ENV
+          echo "REDIS_URL=redis://localhost:6379/0" >> $GITHUB_ENV
+          echo "RAILS_ENV=test" >> $GITHUB_ENV
+          echo "RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}" >> $GITHUB_ENV
       - uses: actions/checkout@v1
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.31.1
+        uses: ruby/setup-ruby@v1.66.1
         with:
           ruby-version: 2.6.5
       - uses: borales/actions-yarn@v2.0.0
@@ -47,13 +56,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cypress-
       - name: Build and run rails tests
-        env:
-          DATABASE_URL: postgres://postgres:@localhost:5432/test
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          REDIS_URL: redis://localhost:6379/0
-          RAILS_ENV: test
-          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           sudo apt-get -yqq install libpq-dev
           bundle config path vendor/bundle
@@ -65,22 +67,15 @@ jobs:
       - name: Fix watched files problem
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p 
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2.9.5
         with:
           install: false
           build: npx cypress install
           start: bundle exec rails server -e test -p 5017
           wait-on: http://localhost:5017
           command:  yarn cypress run --project ./test
-        env:
-          DATABASE_URL: postgres://postgres:@localhost:5432/test
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          REDIS_URL: redis://localhost:6379/0
-          RAILS_ENV: test
-          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
       - name: Store Cypress Screenshots on Failure
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: cypress-screenshots
