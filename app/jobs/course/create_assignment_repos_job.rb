@@ -45,7 +45,7 @@ class CreateAssignmentReposJob < CourseJob
       result = github_machine_user.put(url, { "permission": "#{@permission_level}" })
       puts "\n\nadd_repository_contributor, result=#{result.to_json}"
     rescue Exception => e
-      puts "PERMISSION ERROR with #{repo_name} for user #{roster_student.user.username} #{e}"
+      puts "PERMISSION ERROR with #{repo_name} for user #{username} #{e}"
       return 0
     end
     1
