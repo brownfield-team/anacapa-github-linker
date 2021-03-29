@@ -8,8 +8,9 @@ class CreateAssignmentReposJob < CourseJob
       @permission_level = options[:permission_level].downcase
       @assignment_name = options[:assignment_name]
       @org_id = get_org_node_id
-      @errors = 0
-  
+      @create_errors = 0
+      @permission_errors = 0
+
       roster_students = @course.roster_students.to_a.select{ |rs|
         !rs.is_ta? && rs.user && rs.user.username
       }
@@ -18,7 +19,7 @@ class CreateAssignmentReposJob < CourseJob
           repo_name = "#{@assignment_name}-#{rs.user.username}" 
           repos_created += create_assignment_repo(repo_name, rs)
       end
-      error_message = (@errors == 0 ? "" : " with #{@errors} errors (see log)")
+      error_message = ( (@permission_errors + @create_errors) == 0 ) ? "" : " with #{@create_errors} create errors and #{@permission_errors} permission errors(see log)"
       "#{pluralize repos_created, "repository"} created for assignment #{@assignment_name} with student permission level #{@permission_level}. #{error_message}"
     end
   
@@ -26,15 +27,14 @@ class CreateAssignmentReposJob < CourseJob
       begin
         response = github_machine_user.post '/graphql', { query: create_assignment_repo_query(repo_name)}.to_json
         if !response.respond_to?(:data) || response.respond_to?(:errors)
-          puts "ERROR with #{repo_name} for user #{roster_student.user.username} #{response}"
-          @errors += 1
-          return 0
+          puts "ERROR creating #{repo_name} for user #{roster_student.user.username} #{sawyer_resource_to_json(response)}"
+          @create_errors += 1
         end
         new_repo_full_name = get_repo_name_and_create_record(response, roster_student)
         add_repository_contributor(repo_name,roster_student.user.username)
       rescue Exception => e
         puts "ERROR with #{repo_name} for user #{roster_student.user.username} #{e}"
-        @errors += 1
+        @permission_errors += 1
         return 0
       end
       1
@@ -88,5 +88,9 @@ class CreateAssignmentReposJob < CourseJob
           }
         }
       GRAPHQL
+    end
+
+    def sawyer_resource_to_json(sawyer_resource)
+      sawyer_resource.map(&:to_h).to_json
     end
   end
