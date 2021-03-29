@@ -10,6 +10,7 @@ class CreateAssignmentReposJob < CourseJob
       @org_id = get_org_node_id
       @create_errors = 0
       @permission_errors = 0
+      @db_errors = 0
 
       roster_students = @course.roster_students.to_a.select{ |rs|
         !rs.is_ta? && rs.user && rs.user.username
@@ -19,25 +20,38 @@ class CreateAssignmentReposJob < CourseJob
           repo_name = "#{@assignment_name}-#{rs.user.username}" 
           repos_created += create_assignment_repo(repo_name, rs)
       end
-      error_message = ( (@permission_errors + @create_errors) == 0 ) ? "" : " with #{@create_errors} create errors and #{@permission_errors} permission errors(see log)"
+      error_message = ( (@permission_errors + @create_errors + @db_errors) == 0 ) ? "" : " with #{@create_errors} create errors, #{@permission_errors} permission errors, and  #{@db_errors} db errors (see log)"
       "#{pluralize repos_created, "repository"} created for assignment #{@assignment_name} with student permission level #{@permission_level}. #{error_message}"
     end
   
     def create_assignment_repo(repo_name, roster_student)
+      retval = 0
       begin
         response = github_machine_user.post '/graphql', { query: create_assignment_repo_query(repo_name)}.to_json
         if !response.respond_to?(:data) || response.respond_to?(:errors)
-          puts "ERROR creating #{repo_name} for user #{roster_student.user.username} #{sawyer_resource_to_json(response)}"
+          puts "CREATION ERROR for #{repo_name} for user #{roster_student.user.username} #{response.to_h}"
           @create_errors += 1
         end
+        retval = 1
+      rescue Exception => e
+        puts "CREATION ERROR with #{repo_name} for user #{roster_student.user.username} #{e}"
+        @create_errors += 1
+      end
+
+      begin
         new_repo_full_name = get_repo_name_and_create_record(response, roster_student)
+      rescue Exception => e
+        puts "DB ERROR with #{repo_name} for user #{roster_student.user.username} #{e}"
+        @db_errors += 1
+      end
+
+      begin
         add_repository_contributor(repo_name,roster_student.user.username)
       rescue Exception => e
-        puts "ERROR with #{repo_name} for user #{roster_student.user.username} #{e}"
+        puts "PERMISSION ERROR with #{repo_name} for user #{roster_student.user.username} #{e}"
         @permission_errors += 1
-        return 0
       end
-      1
+      retval
     end
   
     def add_repository_contributor(repo_name,username)
@@ -90,7 +104,5 @@ class CreateAssignmentReposJob < CourseJob
       GRAPHQL
     end
 
-    def sawyer_resource_to_json(sawyer_resource)
-      sawyer_resource.map(&:to_h).to_json
-    end
+   
   end
