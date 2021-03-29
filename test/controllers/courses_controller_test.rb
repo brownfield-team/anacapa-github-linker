@@ -63,7 +63,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   test "should create course" do
     stub_updating_org_membership("#{@org}")
     assert_difference('Course.count', 1) do
-      post courses_url, params: { course: { name: "blah", course_organization: "#{@org}" } }
+      post courses_url, params: { course: { name: "blah", term: "blah", course_organization: "#{@org}" } }
     end
 
     assert_redirected_to course_url(Course.last)
