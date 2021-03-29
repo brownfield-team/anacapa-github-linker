@@ -31,18 +31,18 @@ class CreateAssignmentReposJob < CourseJob
         if !response.respond_to?(:data) || response.respond_to?(:errors)
           puts "CREATION ERROR for #{repo_name} for user #{roster_student.user.username} #{response.to_h}"
           @create_errors += 1
+        else
+          begin
+            new_repo_full_name = get_repo_name_and_create_record(response, roster_student)
+          rescue Exception => e
+            puts "DB ERROR with #{repo_name} for user #{roster_student.user.username} #{e}"
+            @db_errors += 1
+          end
         end
         retval = 1
       rescue Exception => e
         puts "CREATION ERROR with #{repo_name} for user #{roster_student.user.username} #{e}"
         @create_errors += 1
-      end
-
-      begin
-        new_repo_full_name = get_repo_name_and_create_record(response, roster_student)
-      rescue Exception => e
-        puts "DB ERROR with #{repo_name} for user #{roster_student.user.username} #{e}"
-        @db_errors += 1
       end
 
       begin
