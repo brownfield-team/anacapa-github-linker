@@ -6,6 +6,7 @@ class Course < ApplicationRecord
   # validates :name,  presence: true,
   #                   length: { minimum: 3 }
   validates :name, presence: true, length: { minimum: 3 }, uniqueness: true
+  validates :term, presence: false
   validates :course_organization, presence: true, length: { minimum: 3 }, uniqueness: true
   validate :check_course_org_exists
   has_many :roster_students, dependent: :destroy
