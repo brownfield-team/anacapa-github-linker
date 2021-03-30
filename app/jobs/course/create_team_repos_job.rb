@@ -36,7 +36,7 @@ class CreateTeamReposJob < CourseJob
 
   def update_permissions_team_repo(repo_name, team)
     begin
-      github_machine_user.put("/orgs/#{@course.course_organization}/teams/#{team.slug}/repos/#{new_repo_full_name}", {"permission": "#{@permission_level}"})
+      github_machine_user.put("/orgs/#{@course.course_organization}/teams/#{team.slug}/repos/#{repo_name}", {"permission": "#{@permission_level}"})
     rescue Exception => e
       puts "PERMISSION ERROR with #{repo_name} for team #{team} #{e}"
     end
