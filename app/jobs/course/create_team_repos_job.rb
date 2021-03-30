@@ -10,22 +10,35 @@ class CreateTeamReposJob < CourseJob
 
     matching_teams = OrgTeam.where(course_id: @course.id).where("name ~* ?", options[:team_pattern])
     repos_created = 0
+    repos_permissions_updated = 0
     matching_teams.each do |team|
       repo_name = options[:repo_pattern].sub("{team}", team.slug)
       repos_created += create_team_repo(repo_name, team)
+      repos_permissions_updated += update_permissions_team_repo(repo_name, team)
     end
 
-    "#{pluralize repos_created, "repository"} created with team permission level #{@permission_level}."
+    "#{pluralize repos_created, "repository"} created and permissions updated for #{pluralize repos_permissions_updated, "repository"} with team permission level #{@permission_level}."
   end
 
   def create_team_repo(repo_name, team)
-    response = github_machine_user.post '/graphql', { query: create_team_repo_query(repo_name, team.team_id) }.to_json
-    if !response.respond_to?(:data) || response.respond_to?(:errors)
+    begin
+      response = github_machine_user.post '/graphql', { query: create_team_repo_query(repo_name, team.team_id) }.to_json
+      if !response.respond_to?(:data) || response.respond_to?(:errors)
+        return 0
+      end
+      new_repo_full_name = get_repo_name_and_create_record(response, team.id)
+    rescue Exception => e
+      puts "CREATION ERROR with #{repo_name} for team #{team} #{e}"
       return 0
     end
-    new_repo_full_name = get_repo_name_and_create_record(response, team.id)
-    unless @permission_level == "read"
+    1
+  end
+
+  def update_permissions_team_repo(repo_name, team)
+    begin
       github_machine_user.put("/orgs/#{@course.course_organization}/teams/#{team.slug}/repos/#{new_repo_full_name}", {"permission": "#{@permission_level}"})
+    rescue Exception => e
+      puts "PERMISSION ERROR with #{repo_name} for team #{team} #{e}"
     end
     1
   end
