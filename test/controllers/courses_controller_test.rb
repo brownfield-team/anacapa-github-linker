@@ -111,7 +111,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     stub_organization_membership_admin_in_org(course_organization, ENV["MACHINE_USER_NAME"])
     stub_organization_is_an_org(course_organization)
 
-    course = Course.create(name: "old course name", course_organization: course_organization, hidden: false)
+    course = Course.create(name: "old course name", term: "old course term", course_organization: course_organization, hidden: false)
     assert_nil Course.find_by(name: new_course_name)
 
     patch course_url(course), params: { course: { name: new_course_name } }
@@ -127,7 +127,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     stub_organization_membership_admin_in_org(course_organization, ENV["MACHINE_USER_NAME"])
     stub_organization_is_an_org(course_organization)
 
-    course = Course.create(term: "old course term", course_organization: course_organization, hidden: false)
+    course = Course.create(name: "old course name", term: "old course term", course_organization: course_organization, hidden: false)
     assert_nil Course.find_by(term: new_course_term)
 
     patch course_url(course), params: { course: { term: new_course_term } }
