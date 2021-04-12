@@ -14,6 +14,7 @@ class Course < ApplicationRecord
   has_many :org_teams, dependent: :destroy
   has_one :slack_workspace, dependent: :destroy
   has_one :org_webhook, dependent: :destroy
+  belongs_to :school
   has_many :org_webhook_events, dependent: :destroy
   has_many :project_teams
 
