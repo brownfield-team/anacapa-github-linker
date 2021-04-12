@@ -1,5 +1,3 @@
-import cloneDeep from "lodash.clonedeep"
-
 export default function vectorToCounts(vector) {
     let counts = {}
     vector.forEach(
