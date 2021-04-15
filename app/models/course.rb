@@ -16,6 +16,7 @@ class Course < ApplicationRecord
   has_one :org_webhook, dependent: :destroy
   has_many :org_webhook_events, dependent: :destroy
   has_many :project_teams
+  belongs_to :school
 
   after_save :update_org_webhook, if: :will_save_change_to_github_webhooks_enabled?
   before_destroy :remove_webhook_from_course_org
