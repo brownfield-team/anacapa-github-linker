@@ -34,8 +34,6 @@ ActiveRecord::Schema.define(version: 2021_04_15_164332) do
     t.datetime "updated_at", null: false
     t.boolean "hidden"
     t.boolean "github_webhooks_enabled"
-    t.bigint "school_id"
-    t.index ["school_id"], name: "index_courses_on_school_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -281,7 +279,6 @@ ActiveRecord::Schema.define(version: 2021_04_15_164332) do
 
   add_foreign_key "completed_jobs", "courses"
   add_foreign_key "completed_jobs", "github_repos"
-  add_foreign_key "courses", "schools"
   add_foreign_key "github_repos", "courses"
   add_foreign_key "org_webhook_events", "courses"
   add_foreign_key "org_webhook_events", "github_repos"
