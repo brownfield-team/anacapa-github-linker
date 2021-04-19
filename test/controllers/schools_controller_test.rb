@@ -6,12 +6,20 @@ class SchoolsControllerTest < ActionDispatch::IntegrationTest
     @school = schools(:ucsb)
     @admin_user = users(:wes)
     @admin_user.add_role(:admin)
+    @user = users(:tim)
+
     sign_in @admin_user
   end
 
-  test "should get index" do
+  test "acces granted for schools index as admin" do
     get schools_url
     assert_response :success
+  end
+
+  test "acces denied for schools index" do
+    sign_in @user
+    get schools_url
+    assert_redirected_to root_path
   end
 
   test "should get new" do
