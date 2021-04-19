@@ -24,7 +24,7 @@
   <div class="field">
     <%= form.label :school %>
     <%= form.collection_select :school_id, School.order(:abbreviation), :id, :abbreviation, include_blank: true, id: :course_name %>
-    <%= link_to 'New School', new_school_path, target: :_blank %>
+    <%= link_to 'Manage Schools', schools_path, target: :_blank %>
   </div>
 
   <div class="field">
