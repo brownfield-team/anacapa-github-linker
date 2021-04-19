@@ -63,10 +63,13 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   test "should create course" do
     stub_updating_org_membership("#{@org}")
     assert_difference('Course.count', 1) do
-      post courses_url, params: { course: { name: "blah", course_organization: "#{@org}" } }
+      post courses_url, params: { course: { name: "blah", term: "blah_term", course_organization: "#{@org}" } }
     end
 
     assert_redirected_to course_url(Course.last)
+    assert_equal Course.last.name, "blah" 
+    assert_equal Course.last.term, "blah_term" 
+    assert_equal Course.last.course_organization, "#{@org}" 
   end
 
 
@@ -74,7 +77,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     fake_org_name = "not-a-real-org"
     stub_organization_does_not_exist(fake_org_name)
     assert_difference('Course.count', 0) do
-      post courses_url, params: { course: { name: "blah", course_organization: fake_org_name } }
+      post courses_url, params: { course: { name: "blah", term: "term", course_organization: fake_org_name } }
     end
 
     assert_response :ok
@@ -86,7 +89,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     stub_organization_is_an_org(org_name)
     stub_organization_exists_but_not_admin_in_org(org_name)
     assert_difference('Course.count', 0) do
-      post courses_url, params: {course: { name: "name", course_organization: org_name}}
+      post courses_url, params: {course: { name: "name", term: "term", course_organization: org_name}}
     end
 
     assert_response :ok
@@ -111,12 +114,28 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     stub_organization_membership_admin_in_org(course_organization, ENV["MACHINE_USER_NAME"])
     stub_organization_is_an_org(course_organization)
 
-    course = Course.create(name: "old course name", course_organization: course_organization, hidden: false)
+    course = Course.create(name: "old course name", term: "old course term", course_organization: course_organization, hidden: false)
     assert_nil Course.find_by(name: new_course_name)
 
     patch course_url(course), params: { course: { name: new_course_name } }
 
     assert_not_nil Course.find_by(name: new_course_name)
+    assert_redirected_to course_url(course)
+  end
+
+  test "should update course term" do
+    new_course_term = 'new_course_term'
+    course_organization = "course_org"
+
+    stub_organization_membership_admin_in_org(course_organization, ENV["MACHINE_USER_NAME"])
+    stub_organization_is_an_org(course_organization)
+
+    course = Course.create(name: "old course name", term: "old course term", course_organization: course_organization, hidden: false)
+    assert_nil Course.find_by(term: new_course_term)
+
+    patch course_url(course), params: { course: { term: new_course_term } }
+
+    assert_not_nil Course.find_by(term: new_course_term)
     assert_redirected_to course_url(course)
   end
 

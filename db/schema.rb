@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 2021_04_15_164332) do
     t.boolean "github_webhooks_enabled"
     t.bigint "school_id"
     t.index ["school_id"], name: "index_courses_on_school_id"
+    t.string "term"
   end
 
   create_table "flipper_features", force: :cascade do |t|
