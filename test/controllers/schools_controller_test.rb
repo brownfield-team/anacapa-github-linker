@@ -49,6 +49,24 @@ class SchoolsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to school_url(School.last)
   end
 
+  test "should not create school without name" do
+    assert_difference('School.count', 0) do
+      post schools_url, params: { school: { abbreviation: @school.abbreviation} }
+    end
+
+    assert_response :ok
+    assert_select 'div#error_explanation li', "Name can't be blank"
+  end
+
+  test "should not create school without abbreviation" do
+    assert_difference('School.count', 0) do
+      post schools_url, params: { school: { name: @school.name } }
+    end
+
+    assert_response :ok
+    assert_select 'div#error_explanation li', "Abbreviation can't be blank"
+  end
+
   test "should show school" do
     get school_url(@school)
     assert_response :success
