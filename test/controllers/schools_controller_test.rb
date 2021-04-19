@@ -7,18 +7,32 @@ class SchoolsControllerTest < ActionDispatch::IntegrationTest
     @admin_user = users(:wes)
     @admin_user.add_role(:admin)
     @user = users(:tim)
+    @instructor_user = users(:julie)
+    @instructor_user.add_role(:instructor)
 
     sign_in @admin_user
   end
 
-  test "acces granted for schools index as admin" do
+  test "should ge schools index" do
     get schools_url
     assert_response :success
   end
 
-  test "acces denied for schools index" do
+  test "access denied for schools index" do
     sign_in @user
     get schools_url
+    assert_redirected_to root_path
+  end
+
+  test "access denied to instructors for schools index" do
+    sign_in @instructor_user
+    get schools_url
+    assert_redirected_to root_path
+  end
+
+  test "access denied for schools new" do
+    sign_in @user
+    get new_school_url
     assert_redirected_to root_path
   end
 
