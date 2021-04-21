@@ -19,6 +19,7 @@
     Otherwise you can find a list of courses you can enroll in. </p>
   <% end %>
 
+  <%= react_component("HomePage", props: { courses: @courses }, prerender: false) %>
   <div class="row">
   <div class="col-sm-6">
       <%# search the course list %>
