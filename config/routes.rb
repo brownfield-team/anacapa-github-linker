@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     match 'testhooks/login_student' => 'testhooks#login_student', :via => :get
     match 'testhooks/login_admin' => 'testhooks#login_admin', :via => :get
 
+    resources :visitors
+
     resources :courses do
       scope module: :courses do
         resources :project_teams
