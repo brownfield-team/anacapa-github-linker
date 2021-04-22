@@ -40,7 +40,7 @@ class SchoolsIndex extends Component {
 }
 
 SchoolsIndex.propTypes = {
-	schools_list: ProprTypes.array.isRequired
+	schools_list: PropTypes.array.isRequired
 };
 
 export default SchoolsIndex;
