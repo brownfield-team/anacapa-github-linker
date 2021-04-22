@@ -11,6 +11,8 @@ import CourseGithubRepo from "../components/Course/GithubRepos/CourseGithubRepo"
 import JobLauncher from "../components/Jobs/JobLauncher";
 import JobLog from "../components/Jobs/JobLog";
 
+import SchoolsIndex from "../components/Schools/SchoolsIndex";
+
 import "../styles.css"
 
 ReactOnRails.register({
@@ -21,5 +23,6 @@ ReactOnRails.register({
   CourseGithubReposIndex,
   CourseGithubRepo,
   JobLauncher,
-  JobLog
+  JobLog,
+  SchoolsIndex
 });
