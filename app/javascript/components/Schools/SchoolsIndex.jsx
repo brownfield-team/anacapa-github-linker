@@ -1,11 +1,33 @@
 import React, { Component, Fragment } from 'react';
 import SchoolsIndexItem from "./SchoolsIndexItem"
 import * as PropTypes from 'prop-types';
+import axios from "axios";
+import {schoolsRoute} from "../../services/service-routes";
+import ReactOnRails from "react-on-rails";
 
 class SchoolsIndex extends Component {
 	constructor(props) {
 		super(props);
-		// Do I need csrf token stuff here?
+		this.state = {schools: []};
+		const csrfToken = ReactOnRails.authenticityToken();
+        axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
+        axios.defaults.params = {}
+        axios.defaults.params['authenticity_token'] = csrfToken;
+	}
+
+
+	componentDidMount() {
+		this.getSchools();
+	}
+
+	getSchools = () => {
+		axios.get(schoolsRoute).then(response => {
+			this.setState({schools: response.data});
+		});
+	}
+
+	deleteSchool = school => {
+		axios.delete(school.path).then(_ => this.getSchools());
 	}
 
 	render() {
@@ -17,7 +39,7 @@ class SchoolsIndex extends Component {
 							<div className="panel-title">Schools</div>
 						</div>
 					</div>
-					<div className="panel-body">
+					<div className="panel panel-body">
 						<table className="table">
 							<thead>
 								<tr>
@@ -27,8 +49,8 @@ class SchoolsIndex extends Component {
 								</tr>
 							</thead>
 							<tbody>
-								{this.props.schools_list.map(school =>
-									<SchoolsIndexItem school={school} key={`school-${school.abbreviation}`}/>
+								{this.state.schools.map(school =>
+									<SchoolsIndexItem school={school} onDelete={this.deleteSchool} key={school.id}/>
 								)}
 							</tbody>
 						</table>
@@ -39,8 +61,6 @@ class SchoolsIndex extends Component {
 	}
 }
 
-SchoolsIndex.propTypes = {
-	schools_list: PropTypes.array.isRequired
-};
+SchoolsIndex.propTypes = {};
 
 export default SchoolsIndex;
