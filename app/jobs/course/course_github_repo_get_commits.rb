@@ -34,39 +34,34 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       while more_pages
         query_results = perform_graphql_query(@github_repo.name,@course.course_organization,end_cursor)
         begin
-          more_pages = query_results[:data][:repository][:ref][:target][:history][:pageInfo][:hasNextPage]
-          end_cursor = query_results[:data][:repository][:ref][:target][:history][:pageInfo][:endCursor]
-          commits = query_results[:data][:repository][:ref][:target][:history][:edges]
+          default_branch_data = query_results[:data][:repository][:defaultBranchRef]
+          more_pages = default_branch_data[:target][:history][:pageInfo][:hasNextPage]
+          end_cursor = default_branch_data[:target][:history][:pageInfo][:endCursor]
+          commits = default_branch_data[:target][:history][:edges]
+          branch_name = default_branch_data[:name]
         rescue
           return "Unexpected result returned from graphql query: #{sawyer_resource_to_s(query_results)}"
         end
-        results = store_commits_in_database(commits)
+        results = store_commits_in_database(commits, branch_name)
         final_results = final_results + results
       end
       "Commits retrieved for Course: #{@course.name} Repo: #{@github_repo.name}<br />      #{final_results.report}"
     end  
 
-    def store_commits_in_database(commits)
+    def store_commits_in_database(commits, branch_name)
       total_new_commits = 0
       total_updated_commits = 0
       commits.each{ |c|
-        existing_commit = RepoCommitEvent.where(commit_hash: c[:node][:oid]).first
-        if existing_commit
-          total_updated_commits += update_one_commit(existing_commit, c)
+        existing_commit = RepoCommitEvent.find_or_initialize_by(commit_hash: c[:node][:oid])
+        if existing_commit.persisted?
+          total_updated_commits += update_one_commit(existing_commit, c, branch_name)
         else
-          total_new_commits += store_one_commit_in_database(c) 
+          total_new_commits += update_one_commit(existing_commit, c, branch_name)
         end
       }
      JobResult.new(commits.length,total_new_commits,total_updated_commits)
     end
 
-    def store_one_commit_in_database(c)
-    
-      commit = RepoCommitEvent.new
-      result = update_one_commit(commit,c)
-    end
-
-     
     # Regrettably, the v4 graphql api doesn't yet support
     # getting the filenames changed.  
     # See: https://github.community/t/get-a-repositorys-commits-along-with-changed-patches-and-the-url-to-changed-files-using-graphql-v4/13585
@@ -80,7 +75,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       result
     end
 
-    def update_one_commit(commit, c)
+    def update_one_commit(commit, c, branch_name)
       begin
         commit.files_changed = c[:node][:changedFiles]
         commit.additions = c[:node][:additions]
@@ -90,7 +85,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         commit.url =  c[:node][:url]
         commit.commit_timestamp =  c[:node][:author][:date]
         commit.github_repo = @github_repo
-        commit.branch = "master"
+        commit.branch = branch_name
         commit.committed_via_web = c[:node][:committedViaWeb]
         commit.author_login = c.node&.author&.user&.login
         commit.author_name = c.node&.author&.name
@@ -139,7 +134,8 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         <<-GRAPHQL
         query { 
             repository(name: "#{repo_name}", owner: "#{org_name}") {
-              ref(qualifiedName: "master") {
+              defaultBranchRef {
+                name
                 target {
                   ... on Commit {
                     id
