@@ -95,19 +95,4 @@ yarn-debug.log*
 
 test/cypress/videos
 test/cypress/screenshots
-.vagrant/bundler/global.sol
-.vagrant/machines/default/hyperv/action_configure
-.vagrant/machines/default/hyperv/action_provision
-.vagrant/machines/default/hyperv/action_set_name
-.vagrant/machines/default/hyperv/box_meta
-.vagrant/machines/default/hyperv/creator_uid
-.vagrant/machines/default/hyperv/id
-.vagrant/machines/default/hyperv/index_uuid
-.vagrant/machines/default/hyperv/private_key
-.vagrant/machines/default/hyperv/synced_folders
-.vagrant/machines/default/hyperv/vagrant_cwd
-.vagrant/machines/default/hyperv/Virtual Hard Disks/ubuntu-18.04-amd64.vhdx
-.vagrant/machines/default/hyperv/Virtual Machines/87EF7010-A170-4F6E-AC26-48D5D6081AA4.vmcx
-.vagrant/machines/default/hyperv/Virtual Machines/87EF7010-A170-4F6E-AC26-48D5D6081AA4.vmgs
-.vagrant/machines/default/hyperv/Virtual Machines/87EF7010-A170-4F6E-AC26-48D5D6081AA4.VMRS
-.vagrant/rgloader/loader.rb
+.vagrant/**
