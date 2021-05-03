@@ -20,13 +20,13 @@ class SchoolsIndex extends Component {
 		this.getSchools();
 	}
 
-	getSchools = () => {
+	getSchools() {
 		axios.get(schoolsRoute).then(response => {
 			this.setState({schools: response.data});
 		});
 	}
 
-	deleteSchool = school => {
+	deleteSchool(school) {
 		axios.delete(school.path).then(_ => this.getSchools());
 	}
 
