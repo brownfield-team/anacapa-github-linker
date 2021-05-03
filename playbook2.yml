@@ -1,0 +1,9 @@
+---
+- name: phase two
+  hosts: all
+  tasks:
+    - name: rvm gemsets | enabled
+      shell: rvm user gemsets
+
+    - name: ruby 2.6.6 | present
+      shell: rvm install 2.6.6

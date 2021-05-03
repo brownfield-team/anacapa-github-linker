@@ -1,0 +1,65 @@
+---
+- name: phase one
+  hosts: all
+  become: yes
+  tasks:
+    - name: rvm source | present
+      apt_repository:
+        repo: ppa:rael-gc/rvm
+        state: present
+
+    - name: nodesource signing key | present
+      apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        state: present
+
+    - name: launchpad nodejs source | absent
+      apt_repository:
+        repo: ppa:chris-lea/node.js
+        state: absent
+
+    - name: nodesource nodejs source | present
+      apt_repository:
+        repo: deb https://deb.nodesource.com/node_10.x bionic main
+        state: present
+
+    - name: yarn signing key | present
+      apt_key:
+        url: https://dl.yarnpkg.com/debian/pubkey.gpg
+        state: present
+
+    - name: yarn source | present
+      apt_repository:
+        repo: deb https://dl.yarnpkg.com/debian/ stable main
+        state: present
+
+    - name:
+        rvm, nodejs, yarn, posrgresql, postgresql-client, libpq-dev | present
+        (latest)
+      apt:
+        update_cache: yes
+        name:
+          - rvm
+          - nodejs
+          - yarn
+          - postgresql-client
+          - postgresql
+          - libpq-dev
+        state: latest
+
+    - name: user in rvm group | yes
+      user:
+        name: vagrant
+        groups:
+          - rvm
+        state: present
+
+    - name: postgres service | enabled
+      service:
+        name: postgresql
+        enabled: true
+
+    - name: postgres password | set
+      shell:
+        cmd: psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
+      become_user: postgres

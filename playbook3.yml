@@ -1,0 +1,15 @@
+---
+- name: phase three
+  hosts: all
+  tasks:
+    - name: bundler | present
+      shell: gem install bundler
+
+    - name: ruby dependencies | installed
+      shell: bundle install
+
+    - name: yarn dependencies | installed
+      shell: yarn
+
+    - name: database | reset
+      shell: rake db:drop db:create db:migrate db:fixtures:load
