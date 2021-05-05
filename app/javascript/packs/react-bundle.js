@@ -13,6 +13,8 @@ import JobLog from "../components/Jobs/JobLog";
 
 import SchoolsIndex from "../components/Schools/SchoolsIndex";
 
+import ReactTest from "../components/ReactT/ReactTest";
+
 import "../styles.css"
 
 ReactOnRails.register({
@@ -24,5 +26,6 @@ ReactOnRails.register({
   CourseGithubRepo,
   JobLauncher,
   JobLog,
+  ReactTest,
   SchoolsIndex
 });
