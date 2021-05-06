@@ -34,18 +34,13 @@ class SchoolsIndex extends Component {
 		return (
 			<Fragment>
 				<div>
-					<div className="panel panel-default">
-						<div className="panel-heading">
-							<div className="panel-title">Schools</div>
-						</div>
-					</div>
 					<div className="panel panel-body">
 						<table className="table">
 							<thead>
 								<tr>
-									<th>Name</th>
-									<th>Abbreviation</th>
-									<th colSpan="3"></th>
+									<th scope="col">Name</th>
+									<th scope="col">Abbreviation</th>
+									<th scope="col" colSpan="3"></th>
 								</tr>
 							</thead>
 							<tbody>
