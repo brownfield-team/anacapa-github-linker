@@ -1,0 +1,33 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Sprints</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Start date</th>
+      <th>End date</th>
+      <th>Course</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @sprints.each do |sprint| %>
+      <tr>
+        <td><%= sprint.name %></td>
+        <td><%= sprint.start_date %></td>
+        <td><%= sprint.end_date %></td>
+        <td><%= sprint.course %></td>
+        <td><%= link_to 'Show', sprint %></td>
+        <td><%= link_to 'Edit', edit_sprint_path(sprint) %></td>
+        <td><%= link_to 'Destroy', sprint, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Sprint', new_sprint_path %>
