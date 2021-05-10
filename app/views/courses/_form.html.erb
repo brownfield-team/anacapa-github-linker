@@ -22,6 +22,14 @@
   </div>
 
   <div class="field">
+    <%= form.label :school %>
+    <%= form.collection_select :school_id, School.order(:abbreviation), :id, :abbreviation, include_blank: true, id: :course_name %>
+    <% if current_user.has_role? :admin %>
+      <%= link_to 'Manage Schools', schools_path, target: :_blank %>
+    <% end %>
+  </div>
+
+  <div class="field">
     <%= form.label :course_organization %>
     <%= form.text_field :course_organization, id: :course_name %>
   </div>
