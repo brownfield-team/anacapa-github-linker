@@ -18,71 +18,8 @@ and render differently depending on whether or not the user is privlidged %>
     Otherwise you can find a list of courses you are enrolled in below. </p>
 <% end %>
 
-<div class="row">
-  <div class="col-sm-6">
-     <!--
-      <%# search the course list %>
-      <div class="input-group">
-        <span class="input-group-addon" id="basic-addon1">Course Name</span>
-        <input id="courses_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">
-      </div>
-      -->
-    <%# table containing the course list %>
-    <table class="table table-sm" id="course_list">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Hidden</th>
-          <th colspan="3"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @courses.each do |course| %>
-          <% if can? :read, course or course.roster_students.any? {|student| student.user_id == current_user.id and student.enrolled} %>
-            <tr>
-              <td>
-                <%=
-                  if can? :read, course
-                    link_to "#{course.name}", course_path(course)
-                  else
-                    course.name
-                  end
-                %>
-              </td>
-              <td>
-                <%= course.hidden ? "Hidden" : "Visible" %>
-              </td>
-              <td>
-                <% if can? :update, course %>
-                  <%= link_to 'Edit', edit_course_path(course), class: 'btn btn-warning btn-sm'%>
-                <% end %>
-                <% if can? :delete, course %>
-                  <%= link_to 'Delete', course_path(course), method: :delete, data: { confirm: "Are you sure you want to PERMANENTLY DELETE '#{course.name}'?"}, class: 'btn btn-danger btn-sm'%>
-                <% end %>
-              </td>
-            </tr>
-          <% end %>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-</div>
+<%= react_component("CoursesIndex", prerender: false) %>
 
-<script>
-
-function filter_list_by_keyword() {
-  var keyword = $("#courses_search").val().toLowerCase();
-  console.log("search for: " + keyword);
-  $("#course_list tr").each(function(element) {
-    var text = $(this).text();
-    if (text.toLowerCase().indexOf(keyword) === -1) {
-      $(this).hide();
-    } else {
-      $(this).show();
-    }
-  });
-}
-</script>
 
 <br>
 
