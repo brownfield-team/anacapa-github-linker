@@ -1,0 +1,89 @@
+<div id="course-informed-consent-panel" class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">Informed Consent Records  for <%= @parent.name %> </div>
+  </div>
+  <div class="panel-body">
+    <p>Upload a new roster:</p>
+
+    <div style="margin-bottom: 20px" >
+
+      <%= form_tag import_course_informed_consents_path(@parent), multipart: true, class: "form-inline", style: "display:inline-block;", id: "roster-upload-form" do %>
+
+        <%= file_field_tag :file, class: "form-control" %>
+
+        <input type="text" style="display: none;" id="csv-header-map-hidden-field" name="csv_header_map" >
+        <input type="checkbox" style="display: none;" checked="false" id="csv-header-toggle-hidden-field" name="csv_header_toggle" >
+        
+      <% end %>
+
+
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Name</th>
+          <th>Student Consents</th>
+          <th>Roster Student Id</th>
+          <th colspan="3"></th>
+        </tr>
+      </thead>
+
+      <tbody class="students-list">
+        <% @parent.informed_consents.each do |ic| %>
+          <tr>
+            <td><%= ic.perm %></td>
+            <td><%= ic.name %></td>
+            <td><%= ic.student_consents %></td>
+            <td><%= ic.roster_student&.id %></td>
+            <td><%= link_to 'Show', course_informed_consent_path(@parent, ic) %></td>
+            <td><%= link_to 'Edit', edit_course_informed_consent_path(@parent, ic) %></td>
+            <td><%= link_to 'Remove', course_informed_consent_path(@parent, ic), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= link_to 'New Informed Consent', new_course_informed_consent_path(@parent), class: "btn btn-success" %>
+
+  </div>
+</div>
+
+<!-- upload modal -->
+    <!-- prep the data on the client side first -->
+    <div class="modal fade " id="upload-modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Match Fields to Columns</h4>
+          </div>
+          <div class="modal-body" style="overflow: auto; white-space: nowrap;">
+            <p>
+              <input type="checkbox" id="first-row-is-header" onchange="headerToggle(this)" checked> First row is a
+              header
+            </p>
+            <table class="table first-row-disabled">
+              <thead>
+                <!-- dyn populated by JS file for this controller -->
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+            <p id="rows-not-shown"></p>
+          </div>
+          <div class="modal-footer">
+            <h4 id="csv-upload-error" class="hidden" style="width: 100%;text-align: center;float: left;margin-bottom: -20px;">
+              <span class="label label-lg label-danger">ERROR: Selecting a column for Student ID is required} </span>
+            </h4>
+            <button type="button" class="btn btn-default" data-dismiss="modal" onClick="window.location.reload()">Close</button>
+            <button type="button" class="btn btn-primary" onclick="uploadSubmitInformedConsents();">Upload</button>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->

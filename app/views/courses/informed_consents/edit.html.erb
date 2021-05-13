@@ -1,0 +1,6 @@
+<h1>Editing Informed Consent Record for <%= @informed_consent.name %></h1>
+
+<%= render 'form', informed_consent: @informed_consent %>
+
+<%= link_to 'Show', course_informed_consent_path, :class => "btn btn-outline-secondary" %> |
+<%= link_to 'Back', course_informed_consents_path(@parent), :class => "btn btn-outline-secondary" %>

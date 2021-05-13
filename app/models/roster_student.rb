@@ -35,4 +35,15 @@ class RosterStudent < ApplicationRecord
     !user.nil? && user.has_role?(:ta, course)
   end
 
+  def consents
+    informed_consent = course.informed_consents.where(roster_student_id: id).first
+    return nil if informed_consent.nil?
+    informed_consent.student_consents
+  end
+
+  def consents_as_Y_or_N
+    student_consents = consents
+    return nil if student_consents.nil?
+    student_consents ? "Y" : "N"
+  end
 end

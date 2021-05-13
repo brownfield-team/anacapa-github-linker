@@ -9,4 +9,10 @@ class PurgeCourseReposJob < CourseJob
     destroyed_teams = OrgTeam.where(:course_id => @course.id).destroy_all
     "Purged #{pluralize destroyed_repos.size, "repo record"} and #{pluralize destroyed_teams.size, "team record"} from the database."
   end
+
+  @confirmation_dialog = "Are you REALLY SURE you want to purge the course orgs GitHub repo data?"
+
+  def self.confirmation_dialog
+    @confirmation_dialog
+  end
 end
