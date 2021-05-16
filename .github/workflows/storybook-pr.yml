@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Publish PR Storybook
 on: [pull_request]
 jobs:
   build-and-deploy:
