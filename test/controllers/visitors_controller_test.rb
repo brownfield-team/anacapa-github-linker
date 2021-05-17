@@ -48,7 +48,7 @@ class VisitorsControllerTest < ActionDispatch::IntegrationTest
     # sign in here
     @user = users(:tim)
     sign_in @user
- 
+
     stub_course_organization("test-org-name")
     stub_course_organization("course-org-1")
     stub_course_organization("course-org-2")
@@ -62,7 +62,7 @@ class VisitorsControllerTest < ActionDispatch::IntegrationTest
 
     get root_url
     assert_response :success
-    assert_select 'tr.is_course_row', count: visible_course_count
+    assert_equal response.body.scan('"name":').count, visible_course_count
   end
 
   private

@@ -177,7 +177,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
     get root_url
     assert_response :ok
-    assert_select 'a.list-group-item-info'
+    assert response.body.scan(course_name).count > 0
   end
 
   test "should destroy course" do

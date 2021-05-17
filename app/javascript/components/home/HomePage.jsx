@@ -1,51 +1,70 @@
-import React, { Component, Fragment } from 'react';
-import * as PropTypes from 'prop-types';
-import CoursesService from '../../services/courses-service'
-import ReactOnRails from "react-on-rails";
-import { Row, Col, MenuItem, Tab, Nav, NavItem, NavDropdown, Button } from "react-bootstrap";
+import React, {Component, Fragment} from 'react';
+import VisitorsService from "../../services/visitors-service";
 
 class HomePage extends Component {
-
-    joinCourse(courseId) {
-        CoursesService.joinCourse(courseId)
-    }
-
     constructor(props) {
         super(props);
-        const csrfToken = ReactOnRails.authenticityToken();
-        axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
-        axios.defaults.params = {}
-        axios.defaults.params['authenticity_token'] = csrfToken;
+        this.state = {courses: [], filteredCourses: []}
     }
+
+    componentDidMount() {
+        VisitorsService.getCourseList().then(coursesResponse => {
+            this.setState({courses: coursesResponse, filteredCourses: coursesResponse});
+        })
+    }
+
+    renderCourseName = (course) => {
+        if (!course.can_read && !course.can_manage) {
+            return course.name;
+        } else if (course.can_read && !course.can_manage) {
+            return <a className={"list-group-item justify-content-between"} href={course.path}>{course.name}</a>;
+        } else if (course.can_manage) {
+            return <a className={"list-group-item justify-content-between list-group-item-info"}
+                      href={course.path}>{course.name}</a>;
+        }
+    }
+
+    filterCourses = (query) => {
+        const filteredCourses = this.state.courses.filter(c => c.name.indexOf(query) !== -1);
+        this.setState({filteredCourses})
+    }
+
 
     render() {
-        return (<table class="table table-sm" id="course_list">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th colspan="2"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.props.courses.map(course=><tr>
-            <td>
-                {course.name}
-            </td>
-            <td>
-                <button onClick={()=>this.joinCourse(course.id)} className={"btn btn-info btn-sm"}>
-                    Join
-                </button>
-            </td>
-          </tr>
-          )}
-        </tbody>
-      </table>)
-        
+        return (
+            <Fragment>
+                <div className="input-group">
+                    <span className="input-group-addon" id="basic-addon1">Course Name</span>
+                    <input onChange={e => this.filterCourses(e.target.value)} id="courses_search" type="text" className="form-control" placeholder="Search courses..."/>
+                </div>
+                <table className="table table-sm" id="course_list">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th colSpan="2"/>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {this.state.filteredCourses.map(course => <tr key={course.id} class="is_course_row">
+                            <td>
+                                {this.renderCourseName(course)}
+                            </td>
+                            <td>
+                                {!course.user_enrolled ?
+                                    <a href={course.join_path} data-method={"post"} className={"btn btn-info btn-sm"}>
+                                        Join
+                                    </a> :
+                                    <span> You have already joined the course: <a
+                                        href={`https://github.com/${course.course_organization}`}>{course.course_organization}</a>
+                            </span>}
+                            </td>
+                        </tr>
+                    )}
+                    </tbody>
+                </table>
+            </Fragment>
+        );
     }
 }
-
-HomePage.propTypes = {
-    courses : PropTypes.array.isRequired
-};
 
 export default HomePage;
