@@ -45,7 +45,7 @@ class HomePage extends Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {this.state.filteredCourses.map(course => <tr key={course.id} class="is_course_row">
+                    {this.state.filteredCourses.map(course => <tr key={course.id}>
                             <td>
                                 {this.renderCourseName(course)}
                             </td>
