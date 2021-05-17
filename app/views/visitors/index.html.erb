@@ -19,65 +19,7 @@
     Otherwise you can find a list of courses you can enroll in. </p>
   <% end %>
 
-  <div class="row">
-  <div class="col-sm-6">
-      <%# search the course list %>
-      <div class="input-group">
-        <span class="input-group-addon" id="basic-addon1">Course Name</span>
-        <input id="courses_search" type="text" class="form-control" placeholder="Search..." onkeyup="filter_list_by_keyword()">
-      </div>
-
-    <%# table containing the course list %>
-    <table class="table table-sm" id="course_list">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th colspan="2"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @courses.each do |course| %>
-          <tr class="is_course_row">
-            <td>
-              <%= 
-                if can? :mange, course
-                  link_to "#{course.name}", course_path(course),class: "list-group-item justify-content-between list-group-item-info"
-                elsif can? :read, course
-                  link_to "#{course.name}", course_path(course),class: "list-group-item justify-content-between"
-                else
-                  course.name
-                end
-              %>
-                
-            </td>
-              <%# otherwise they behave as a normal student, show student options. %>
-            <% if course.roster_students.any? {|student| student.user_id == current_user.id and student.enrolled} %>
-              <td>You have already joined the course: <%= link_to(course.course_organization, "https://github.com/" + course.course_organization)%> </td>
-            <% else%>
-              <td><%= link_to 'Join', course_join_path(:course_id => course.id), method: :post, class: 'btn btn-info btn-sm' %></td>
-            <% end %>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<script>
-
-function filter_list_by_keyword() {
-  var keyword = $("#courses_search").val().toLowerCase();
-  console.log("search for: " + keyword);
-  $("#course_list tr").each(function(element) {
-    var text = $(this).text();
-    if (text.toLowerCase().indexOf(keyword) === -1) {
-      $(this).hide();
-    } else {
-      $(this).show();
-    }
-  });
-}
-</script>
+  <%= react_component("HomePage", props: { courses: @courses }, prerender: false) %>
 
 <br>
   

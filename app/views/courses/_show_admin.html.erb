@@ -12,7 +12,7 @@
   <% end %>
 </p>
 <%#= link_to "View Course Roster (#{@course.roster_students.length} enrolled)", course_roster_students_path(@course), class: "btn", role: "button" %>
-<div class="panel panel-default">
+<div id="course-admin-panel" class="panel panel-default">
   <div class="panel-heading">
     <div class="btn-group pull-right">
       <%= link_to "Download Roster (CSV)", course_roster_students_path(@course, :format => "csv"), method: :get, class: "btn btn-default" %>
@@ -52,7 +52,8 @@
         <thead>
           <tr>
             <th data-sortable="true" data-field="StudentID" data-filter-control="input">Student ID</th>
-            <th data-sortable="true" data-field="Name" data-filter-control="input">Name</th>
+            <th data-sortable="true" data-field="First Name" data-filter-control="input">First Name</th>
+            <th data-sortable="true" data-field="Last Name" data-filter-control="input">Last Name</th>
             <th data-sortable="true" data-field="Email" data-filter-control="input">Email</th>
             <th data-sortable="true" data-field="Enrolled" data-filter-control="select">Enrolled</th>
             <th data-sortable="true" data-field="Section" data-filter-control="select">Section</th>
@@ -63,14 +64,17 @@
             <th data-sortable="true" data-field="GithubId" data-filter-control="input">Github ID</th>
             <th data-sortable="true" data-field="OrgMembership" data-filter-control="select">Org Status</th>
             <th data-sortable="true" data-field="Teams" data-filter-control="input">Teams</th>
+            <th data-sortable="true" data-field="Consent" data-filter-control="input">Consent</th>
+
             <th></th>
           </tr>
         </thead>
         <tbody class="students-list">
           <% @course.roster_students.each do |student| %>
             <tr>
-              <td><%= student.perm %></td>
-              <td><%= link_to student.full_name, course_roster_student_path(@course, student) %></td>
+              <td><%= link_to student.perm,  course_roster_student_path(@course, student) %></td>
+              <td><%= link_to student.first_name,  course_roster_student_path(@course, student) %></td>
+              <td><%= link_to student.last_name,  course_roster_student_path(@course, student) %></td>
               <td><%= student.email %></td>
               <td><%= student.enrolled ? "True" : "False" %></td>
               <td><%= student.section %></td>
@@ -97,6 +101,9 @@
                     <%= link_to(team.name, team.url) + (", " unless index == student.org_teams.size - 1) %>
                   <% end %>
                 </td>
+               <td>
+                 <%= student.consents_as_Y_or_N %>
+               </td>
                 <% if can? :destroy, student %>
                   <td><%= link_to 'Remove', course_roster_student_path(@course, student), method: :delete, data: {confirm: 'Are you sure?'} %></td>
                 <% end %>
@@ -135,7 +142,7 @@
               <span class="label label-lg label-danger">ERROR: Please select { {First Name, Last Name } | Full Name, Perm, Email} </span>
             </h4>
             <button type="button" class="btn btn-default" data-dismiss="modal" onClick="window.location.reload()">Close</button>
-            <button type="button" class="btn btn-primary" onclick="uploadSubmit();">Upload</button>
+            <button type="button" class="btn btn-primary" onclick="uploadSubmitRosterStudents();">Upload</button>
           </div>
         </div>
         <!-- /.modal-content -->

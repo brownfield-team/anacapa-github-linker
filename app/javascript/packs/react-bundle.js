@@ -6,12 +6,14 @@ import CourseNavBar from "../components/CourseNavBar/CourseNavBar";
 import StudentActivity from "../components/ActivityDashboard/Student/StudentActivity";
 
 import CourseGithubReposIndex from "../components/Course/GithubRepos/CourseGithubReposIndex";
+import CourseGithubReposProjectRepos from "../components/Course/GithubRepos/CourseGithubReposProjectRepos";
 import CourseGithubRepo from "../components/Course/GithubRepos/CourseGithubRepo";
 
 import JobLauncher from "../components/Jobs/JobLauncher";
 import JobLog from "../components/Jobs/JobLog";
 
 import SchoolsIndex from "../components/Schools/SchoolsIndex";
+import HomePage from "../components/home/HomePage";
 
 import "../styles.css"
 
@@ -21,8 +23,10 @@ ReactOnRails.register({
   CourseNavBar,
   StudentActivity,
   CourseGithubReposIndex,
+  CourseGithubReposProjectRepos,
   CourseGithubRepo,
   JobLauncher,
   JobLog,
-  SchoolsIndex
+  SchoolsIndex,
+  HomePage
 });
