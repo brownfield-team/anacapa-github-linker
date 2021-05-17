@@ -12,7 +12,7 @@
 
 # emacs backup files
 
-\#*\#  
+\#*\#
 
 # bundler state
 /.bundle
@@ -99,3 +99,6 @@ yarn-debug.log*
 
 test/cypress/videos
 test/cypress/screenshots
+
+# Storybook build folder
+storybook-static/

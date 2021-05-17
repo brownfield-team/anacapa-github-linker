@@ -1,0 +1,24 @@
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+import HomePage from "../../components/home/HomePage";
+import { BrowserRouter } from "react-router-dom";
+import { createMemoryHistory } from "history";
+
+
+<Meta title="components/home/HomePage" component={HomePage} />
+
+# HomePage
+
+The `HomePage` component implements a list of courses on the home page,
+with controls to allow students to join courses, and other features.
+
+export const Template = (args) => {
+  return (
+      <HomePage {...args} />
+  )
+}
+
+<Canvas>
+  <Story name="Example" args={{ label: 'Example' }}>
+    {Template.bind({})}
+   </Story>
+</Canvas>
