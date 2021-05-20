@@ -19,5 +19,6 @@ export const studentUiRoute = (courseId, studentId) => `/courses/${courseId}/ros
 export const githubReposRoute = (courseId) => `${courseGithubReposRoute(courseId)}`
 export const githubRepoRoute = (courseId, githubRepoId) => `${courseGithubReposRoute(courseId)}/${githubRepoId}`
 
+export const schoolsRoute = `/api/schools`;
 export const visitorsRoute = "/api/visitors";
 export const courseJoinRoute = (courseId) => `/courses/${courseId}/join`
