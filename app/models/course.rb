@@ -6,9 +6,11 @@ class Course < ApplicationRecord
   # validates :name,  presence: true,
   #                   length: { minimum: 3 }
   validates :name, presence: true, length: { minimum: 3 }, uniqueness: true
+  validates :term, presence: false
   validates :course_organization, presence: true, length: { minimum: 3 }, uniqueness: true
   validate :check_course_org_exists
   has_many :roster_students, dependent: :destroy
+  has_many :informed_consents, dependent: :destroy
   has_many :completed_jobs, dependent: :destroy
   has_many :github_repos, dependent: :destroy, class_name: '::GithubRepo'
   has_many :org_teams, dependent: :destroy
@@ -16,6 +18,7 @@ class Course < ApplicationRecord
   has_one :org_webhook, dependent: :destroy
   has_many :org_webhook_events, dependent: :destroy
   has_many :project_teams
+  belongs_to :school, optional: true
 
   after_save :update_org_webhook, if: :will_save_change_to_github_webhooks_enabled?
   before_destroy :remove_webhook_from_course_org
@@ -117,6 +120,7 @@ class Course < ApplicationRecord
     return (self.roster_students.map { |student| student.user }).compact
   end
 
+
   # import roster students from a roster file provided by gradescope
   def import_students(file, header_map, header_row_exists)
     ext = File.extname(file.original_filename)
@@ -189,37 +193,139 @@ class Course < ApplicationRecord
     )
   end
 
-  # export roster students to a CSV file
-  def export_students_to_csv
+  def unenroll_all_students
+    self.roster_students.each do |student|
+      student.enrolled = false
+      student.save
+    end
+  end
+
+  def import_informed_consents(file, header_map, header_row_exists)
+    ext = File.extname(file.original_filename)
+    spreadsheet = Roo::Spreadsheet.open(file, extension: ext)
+
+    # get index for each param
+    id_index = header_map.index("student_id")
+    name_index = header_map.index("name")
+    student_consents_index = header_map.index("student_consents")
+
+    delete_all_existing_informed_consents
+
+    # start at row 1 if header row exists (via checkbox)
+    ((header_row_exists ? 2 : 1)..spreadsheet.last_row).each do |i|
+      spreadsheet_row = spreadsheet.row(i)
+
+      row = {} # build dynamically based on choices
+
+      row["student_id"] = spreadsheet_row[id_index]
+      row["name"] = spreadsheet_row[name_index]
+      row["student_consents"] = spreadsheet_row[student_consents_index] unless student_consents_index.nil?
+
+      next if row.values.all?(&:nil?) # skip empty rows
+
+      informed_consent = informed_consents.find_by(perm: row["student_id"]) || informed_consents.new
+
+      informed_consent.perm = row["student_id"]
+      informed_consent.name = row["name"]
+      informed_consent.student_consents = student_consents_index.nil? ? true : row["student_consents"] 
+      
+      informed_consent.roster_student = roster_students.where(perm: informed_consent.perm).first
+
+      informed_consent.save
+    end
+  end
+
+  def delete_all_existing_informed_consents
+    self.informed_consents.map(&:destroy)
+  end
+
+  def commit_csv_export_headers
+    GithubRepo.commit_csv_export_headers
+  end
+
+  def commit_csv_export_fields(repo,c)
+    GithubRepo.commit_csv_export_fields(repo,c)
+  end
+
+  def export_commits_to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w[student_id email first_name last_name enrolled section github_username slack_uid slack_username slack_display_name org_status teams]
-
-      roster_students.each do |user|
-        org_member_status = user.org_membership_type || user.is_org_member
-
-        slack_uid = user.slack_user.nil? ? nil : user.slack_user.uid
-        slack_username = user.slack_user.nil? ? nil : user.slack_user.username
-        slack_display_name = user.slack_user.nil? ? nil : user.slack_user.display_name
-
-        csv << [
-          user.perm,
-          user.email,
-          user.first_name,
-          user.last_name,
-          user.enrolled,
-          user.section,
-          user.username,
-          slack_uid,
-          slack_username,
-          slack_display_name,
-          org_member_status,
-          user.teams_string,
-        ]
+      csv << commit_csv_export_headers
+      github_repos.each do |repo|
+        repo.repo_commit_events.each do |c|
+          csv << commit_csv_export_fields(repo,c)
+        end
       end
     end
   end
 
-  # export roster students to a CSV file
+  def issue_csv_export_headers
+    GithubRepo.issue_csv_export_headers
+  end
+
+  def issue_csv_export_fields(repo,c)
+    GithubRepo.issue_csv_export_fields(repo,c)
+  end
+
+  def export_issues_to_csv
+    CSV.generate(headers: true) do |csv|
+      csv << issue_csv_export_headers
+      github_repos.each do |repo|
+        repo.repo_issue_events.each do |c|
+          csv << issue_csv_export_fields(repo,c)
+        end
+      end
+    end
+  end
+  
+  def student_csv_export_headers
+    %w[
+      student_id 
+      email 
+      first_name 
+      last_name 
+      enrolled 
+      section 
+      github_username 
+      slack_uid 
+      slack_username 
+      slack_display_name 
+      org_status teams
+    ]
+  end
+
+
+  def student_csv_export_fields(user)
+    org_member_status = user.org_membership_type || user.is_org_member
+
+    slack_uid = user.slack_user.nil? ? nil : user.slack_user.uid
+    slack_username = user.slack_user.nil? ? nil : user.slack_user.username
+    slack_display_name = user.slack_user.nil? ? nil : user.slack_user.display_name
+
+    [
+      user.perm,
+      user.email,
+      user.first_name,
+      user.last_name,
+      user.enrolled,
+      user.section,
+      user.username,
+      slack_uid,
+      slack_username,
+      slack_display_name,
+      org_member_status,
+      user.teams_string,
+    ]
+  end
+
+  def export_students_to_csv
+    CSV.generate(headers: true) do |csv|
+      csv << student_csv_export_headers
+      roster_students.each do |user|
+        csv << student_csv_export_fields(user)
+      end
+    end
+  end
+
   def export_students_to_json
     result = []
     roster_students.each do |user|
@@ -247,12 +353,6 @@ class Course < ApplicationRecord
     result.to_json
   end
 
-  def unenroll_all_students
-    self.roster_students.each do |student|
-      student.enrolled = false
-      student.save
-    end
-  end
 
   def github_user_lookup(github_username) 
     response = github_machine_user.post '/graphql', 

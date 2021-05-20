@@ -41,6 +41,8 @@ jobs:
       - uses: borales/actions-yarn@v2.0.0
         with:
           cmd: install
+      - name: Fix watched files problem
+        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
       - name: Cache gems
         uses: actions/cache@preview
         with:
@@ -64,8 +66,6 @@ jobs:
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
           bundle exec rails test
-      - name: Fix watched files problem
-        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p 
       - name: Cypress run
         uses: cypress-io/github-action@v2.9.5
         with:

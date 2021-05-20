@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_24_183703) do
+ActiveRecord::Schema.define(version: 2021_04_19_160808) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,9 @@ ActiveRecord::Schema.define(version: 2020_08_24_183703) do
     t.datetime "updated_at", null: false
     t.boolean "hidden"
     t.boolean "github_webhooks_enabled"
+    t.string "term"
+    t.bigint "school_id"
+    t.index ["school_id"], name: "index_courses_on_school_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -240,6 +243,13 @@ ActiveRecord::Schema.define(version: 2020_08_24_183703) do
     t.index ["user_id"], name: "index_roster_students_on_user_id"
   end
 
+  create_table "schools", force: :cascade do |t|
+    t.string "name"
+    t.string "abbreviation"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "slack_users", force: :cascade do |t|
     t.string "uid"
     t.string "username"
@@ -305,6 +315,7 @@ ActiveRecord::Schema.define(version: 2020_08_24_183703) do
 
   add_foreign_key "completed_jobs", "courses"
   add_foreign_key "completed_jobs", "github_repos"
+  add_foreign_key "courses", "schools"
   add_foreign_key "github_repos", "courses"
   add_foreign_key "org_webhook_events", "courses"
   add_foreign_key "org_webhook_events", "github_repos"
