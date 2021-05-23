@@ -139,6 +139,23 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to course_url(course)
   end
 
+  test "should update course start and end dates" do
+    new_course_start_date = '2021-09-23'
+    new_course_end_date = '2021-12-20'
+    course_organization = "course_org"
+
+    stub_organization_membership_admin_in_org(course_organization, ENV["MACHINE_USER_NAME"])
+    stub_organization_is_an_org(course_organization)
+
+    course = Course.create(name: "old course name", term: "old course term", course_organization: course_organization, start_date: "2021-08-23", end_date: "2021-12-10", hidden: false)
+    assert_nil Course.find_by(start_date: new_course_start_date, end_date: new_course_end_date)
+
+    patch course_url(course), params: { course: { start_date: new_course_start_date, end_date: new_course_end_date } }
+
+    assert_not_nil Course.find_by(start_date: new_course_start_date, end_date: new_course_end_date)
+    assert_redirected_to course_url(course)
+  end
+
   def test_update_should_hide_course
     course_name = 'fake course_name'
     course_organization = "course_org"
