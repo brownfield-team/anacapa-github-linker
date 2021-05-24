@@ -2,5 +2,5 @@
 
 <%= render 'form', sprint: @sprint %>
 
-<%= link_to 'Show', course_sprint_path(:id, @sprint) %> |
-<%= link_to 'Back', course_sprints_path %>
+<%= link_to 'Show', course_sprint_path(@course, @sprint) %> |
+<%= link_to 'Back', edit_course_path(@course) %>

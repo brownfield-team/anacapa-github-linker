@@ -44,8 +44,8 @@ class SprintsController < ApplicationController
   def update
     respond_to do |format|
       if @sprint.update(sprint_params)
-        format.html { redirect_to @course, notice: 'Sprint was successfully updated.' }
-        format.json { render :show, status: :ok, location: @sprint }
+        format.html { redirect_to edit_course_path(@course), notice: 'Sprint was successfully updated.' }
+        format.json { render :show, status: :ok, location: edit_course_path(@course) }
       else
         format.html { render :edit }
         format.json { render json: @sprint.errors, status: :unprocessable_entity }
@@ -58,7 +58,7 @@ class SprintsController < ApplicationController
   def destroy
     @sprint.destroy
     respond_to do |format|
-      format.html { redirect_to course_sprints_path, notice: 'Sprint was successfully destroyed.' }
+      format.html { redirect_to edit_course_path(@course), notice: 'Sprint was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
