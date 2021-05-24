@@ -26,12 +26,12 @@ class SprintsController < ApplicationController
   # POST /sprints
   # POST /sprints.json
   def create
-    @sprint = Sprint.new(sprint_params)
+    @sprint = @course.sprints.new(sprint_params)
 
     respond_to do |format|
       if @sprint.save
-        format.html { redirect_to @course, notice: 'Sprint was successfully created.' }
-        format.json { render :show, status: :created, location: @course }
+        format.html { redirect_to edit_course_path(@course), notice: 'Sprint was successfully created.' }
+        format.json { render :show, status: :created, location: edit_course_path(@course) }
       else
         format.html { render :new }
         format.json { render json: @sprint.errors, status: :unprocessable_entity }
