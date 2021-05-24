@@ -48,6 +48,8 @@ Rails.application.routes.draw do
     get :create_repos
     post :generate_repos
     
+    resources :sprints
+
     scope module: :courses do
       
       resources :roster_students do
@@ -73,6 +75,7 @@ Rails.application.routes.draw do
       end
 
       resources :sprints
+
       
       get "project_teams(/*all)", to: "project_teams#index", as: :project_teams
       resource :github_webhooks, :only => [:create], :defaults => {:format => :json} do
