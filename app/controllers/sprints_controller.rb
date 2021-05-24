@@ -1,6 +1,6 @@
 class SprintsController < ApplicationController
   before_action :set_sprint, only: [:show, :edit, :update, :destroy]
-  before_action :set_course, only: [:new]
+  before_action :set_course
 
   # GET /courses/:course_id/sprints
   # GET /courses/:course_id/sprints.json
@@ -30,8 +30,8 @@ class SprintsController < ApplicationController
 
     respond_to do |format|
       if @sprint.save
-        format.html { redirect_to @sprint, notice: 'Sprint was successfully created.' }
-        format.json { render :show, status: :created, location: @sprint }
+        format.html { redirect_to @course, notice: 'Sprint was successfully created.' }
+        format.json { render :show, status: :created, location: @course }
       else
         format.html { render :new }
         format.json { render json: @sprint.errors, status: :unprocessable_entity }
@@ -44,7 +44,7 @@ class SprintsController < ApplicationController
   def update
     respond_to do |format|
       if @sprint.update(sprint_params)
-        format.html { redirect_to @sprint, notice: 'Sprint was successfully updated.' }
+        format.html { redirect_to @course, notice: 'Sprint was successfully updated.' }
         format.json { render :show, status: :ok, location: @sprint }
       else
         format.html { render :edit }
@@ -58,7 +58,7 @@ class SprintsController < ApplicationController
   def destroy
     @sprint.destroy
     respond_to do |format|
-      format.html { redirect_to sprints_url, notice: 'Sprint was successfully destroyed.' }
+      format.html { redirect_to course_sprints_path, notice: 'Sprint was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

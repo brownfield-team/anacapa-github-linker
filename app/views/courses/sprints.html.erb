@@ -20,9 +20,9 @@
         <td><%= sprint.start_date %></td>
         <td><%= sprint.end_date %></td>
         <td><%= sprint.course %></td>
-        <td><%= link_to 'Show', course_sprint_path(:id, sprint) %></td>
-        <td><%= link_to 'Edit', edit_course_sprint_path(:id, sprint) %></td>
-        <td><%= link_to 'Destroy', course_sprint_path(:id, sprint), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', course_sprint_path(@course, sprint) %></td>
+        <td><%= link_to 'Edit', edit_course_sprint_path(@course, sprint) %></td>
+        <td><%= link_to 'Destroy', course_sprint_path(@course, sprint), method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
