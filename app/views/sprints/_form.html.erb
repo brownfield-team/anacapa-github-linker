@@ -1,4 +1,4 @@
-<%= form_with(model: sprint, local: true, url: course_sprints_path) do |form| %>
+<%= form_with(model: [@course, sprint], local: true, url: course_sprint_path) do |form| %>
   <% if sprint.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(sprint.errors.count, "error") %> prohibited this sprint from being saved:</h2>
@@ -24,11 +24,6 @@
   <div class="field">
     <%= form.label :end_date %>
     <%= form.date_select :end_date %>
-  </div>
-
-  <div class="field">
-    <%= form.label :course_id %>
-    <%= form.text_field :course_id %>
   </div>
 
   <div class="actions">
