@@ -1,4 +1,4 @@
-<%= form_with(model: sprint, local: true) do |form| %>
+<%= form_with(model: sprint, local: true, url: course_sprints_path) do |form| %>
   <% if sprint.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(sprint.errors.count, "error") %> prohibited this sprint from being saved:</h2>

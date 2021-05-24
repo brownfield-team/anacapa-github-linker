@@ -2,6 +2,7 @@ require 'Octokit_Wrapper'
 
 class CoursesController < ApplicationController
   before_action :set_course, only: [:show, :edit, :update, :destroy]
+  before_action :set_sprints, only: [:show, :edit, :update]
   load_and_authorize_resource
   layout 'courses', except: :index
 
@@ -23,6 +24,11 @@ class CoursesController < ApplicationController
 
   # GET /courses/1/edit
   def edit
+  end
+
+  def sprints
+    @course = Course.find(params[:course_id])
+    @sprints = @course.sprints
   end
 
   # POST /courses
@@ -195,6 +201,10 @@ class CoursesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_course
       @course = Course.find(params[:id])
+    end
+
+    def set_sprints
+      @sprints = Course.find(params[:id]).sprints
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
