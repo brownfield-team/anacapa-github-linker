@@ -19,9 +19,6 @@ module Api::Courses
         unless project_repos_query.nil? || project_repos_query.empty?
           @github_repos = @github_repos.where(is_project_repo: project_repos_query)
         end
-        github_repos_array = @github_repos.to_a
-        github_repos_hash_array = github_repos_array.map{ |repo| repo_to_hash(repo) }
-        paginate json: github_repos_hash_array
     end
 
     # TODO: This should be refactored into the same method as the index, but the index currently returns a differently
@@ -39,7 +36,7 @@ module Api::Courses
     end
 
     def show
-      respond_with repo_to_hash(@github_repo)
+
     end
 
     def update
