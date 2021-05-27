@@ -35,7 +35,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
 
 
     courseId = () => this.props.course.id;
-    orgName = () => this.props.course.course_organization;
+    orgName = () => this.props.repo.organization;
     repoName = (repo) => repo.name;
 
 

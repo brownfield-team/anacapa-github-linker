@@ -30,7 +30,7 @@ export default class CourseGithubRepoIssueTimeline extends Component {
     }
 
     courseId = () => this.props.repo.course_id;
-    orgName = () => this.props.course.course_organization;
+    orgName = () => this.props.repo.organization;
     repoName = () => this.props.repo.name;
 
 
