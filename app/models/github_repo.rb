@@ -38,7 +38,7 @@ class GithubRepo < ApplicationRecord
     ActiveRecord::Base.connection.exec_query(query)
   end
 
-  def self.create_external_repo(organization, name, course)
+  def self.create_repo_from_name(organization, name, course)
     repo_info = GithubRepo.fetch_repo_info(organization, name)
     return nil if repo_info.nil?
     GithubRepo.create(
@@ -49,7 +49,7 @@ class GithubRepo < ApplicationRecord
       full_name: repo_info[:nameWithOwner],
       visibility: repo_info[:isPrivate] ? "private" : "public",
       last_updated_at: repo_info[:updatedAt],
-      external: true,
+      external: course.course_organization != organization,
     )
   end
 
