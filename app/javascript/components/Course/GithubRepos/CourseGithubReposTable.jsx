@@ -15,17 +15,17 @@ class CourseGithubReposTable extends Component {
 
     columns =
         [{
-            dataField: 'repo.name',
+            dataField: 'name',
             text: 'Name',
             editable: false,
             formatter: (cell, row, rowIndex, extraData) => this.renderRepoShowPageUrl(cell, row, rowIndex, {"course_id": this.props.course_id})
         }, {
-            dataField: 'repo.url',
+            dataField: 'url',
             text: 'on Github',
             editable: false,
             formatter: (cell) => this.renderRepoGithubUrl(cell)
         }, {
-            dataField: 'repo.visibility',
+            dataField: 'visibility',
             text: 'Visibility',
             editable: false
         }, {
@@ -47,14 +47,14 @@ class CourseGithubReposTable extends Component {
             editable: false,
             formatter: (cell, row, rowIndex, extraData) => this.renderIssueCSVLink(cell, row, rowIndex, {"course_id": this.props.course_id})
         },{
-            dataField: 'repo.is_project_repo',
+            dataField: 'is_project_repo',
             text: 'Project Repo',
             editable: false,
             formatter: (cell) => (cell===true) ? "true" : ""
         }];
 
     renderRepoShowPageUrl = (cell, row, rowIndex, extraData) => {
-        const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}`;
+        const url = `/courses/${extraData.course_id}/github_repos/${row.id}`;
 
         return (
             <a href={url}>{cell}</a>
@@ -68,14 +68,14 @@ class CourseGithubReposTable extends Component {
     }
 
     renderCommitCSVLink = (cell, row, rowIndex, extraData) => {
-        const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}/repo_commit_events.csv`;
+        const url = `/courses/${extraData.course_id}/github_repos/${row.id}/repo_commit_events.csv`;
         return (
                 <a href={url}>CSV</a>
         );
     }
 
     renderIssueCSVLink = (cell, row, rowIndex, extraData) => {
-        const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}/repo_issue_events.csv`;
+        const url = `/courses/${extraData.course_id}/github_repos/${row.id}/repo_issue_events.csv`;
         return (
                 <a href={url}>CSV</a>
         );
@@ -103,11 +103,11 @@ class CourseGithubReposTable extends Component {
                 <BootstrapTable
                     columns={this.columns}
                     data={this.props.repos}
-                    keyField="repo.id"
+                    keyField="id"
                     remote={ { pagination: true, filter: false, sort: false } }
-                    pagination={ 
+                    pagination={
                         this.props.paginationHandler ?
-                        this.paginationOptions()  : 
+                        this.paginationOptions()  :
                         undefined
                     }
                     onTableChange={ this.onTableChange }

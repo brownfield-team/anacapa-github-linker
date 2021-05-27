@@ -16,29 +16,30 @@ export default class CourseGithubRepoIssueUserEdits extends Component {
     }
 
     componentDidMount() {
+        console.log(this.props.repo);
         this.updateIssues();
     }
 
     updateIssues = () => {
         const url = graphqlRoute(this.courseId());
 
-        const ieQuery = IssueUserEdits.query(this.orgName(), this.repoName(), ""); 
+        const ieQuery = IssueUserEdits.query(this.orgName(), this.repoName(), "");
         const ieAccept =  IssueUserEdits.accept();
-       
+
         const setIssueEdits = (o) => {this.setState({issueEdits: o});}
         const issueEditsQueryObject = new GraphqlQuery(url,ieQuery,ieAccept,setIssueEdits);
         issueEditsQueryObject.post();
     }
 
-    courseId = () => this.props.repo.repo.course_id;
+    courseId = () => this.props.repo.course_id;
     orgName = () => this.props.course.course_organization;
-    repoName = () => this.props.repo.repo.name;
+    repoName = () => this.props.repo.name;
 
     render() {
        let statsDisplay = "";
        let debugDisplay = "";
-       
-        if (this.state.issueEdits && 
+
+        if (this.state.issueEdits &&
             this.state.issueEdits.success) {
             let statistics = IssueUserEdits.computeStats(this.state.issueEdits.data, this.props.databaseId_to_team)
             statsDisplay = (
@@ -50,7 +51,7 @@ export default class CourseGithubRepoIssueUserEdits extends Component {
                     <JSONPretty data={this.state.issueEdits.data}></JSONPretty>
                 </Fragment>
             )
-        } else if (this.state.issueEdits && 
+        } else if (this.state.issueEdits &&
                    this.state.issueEdits.status != 0) {
             debugDisplay = (
                 <Fragment>

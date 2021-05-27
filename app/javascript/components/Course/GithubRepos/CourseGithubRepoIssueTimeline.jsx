@@ -21,25 +21,25 @@ export default class CourseGithubRepoIssueTimeline extends Component {
     updateIssues = () => {
         const url = graphqlRoute(this.courseId());
 
-        const tlQuery = IssueTimelineItems.query(this.orgName(), this.repoName(), ""); 
+        const tlQuery = IssueTimelineItems.query(this.orgName(), this.repoName(), "");
         const tlAccept =  IssueTimelineItems.accept();
-       
+
         const setTimelineItems = (o) => {this.setState({timelineItems: o});}
         const timelineQueryObject = new GraphqlQuery(url,tlQuery,tlAccept,setTimelineItems);
         timelineQueryObject.post();
     }
 
-    courseId = () => this.props.repo.repo.course_id;
+    courseId = () => this.props.repo.course_id;
     orgName = () => this.props.course.course_organization;
-    repoName = () => this.props.repo.repo.name;
+    repoName = () => this.props.repo.name;
 
 
     render() {
 
        let statsDisplay = "";
        let debugDisplay = "";
-       
-        if (this.state.timelineItems && 
+
+        if (this.state.timelineItems &&
             this.state.timelineItems.success) {
             let statistics = IssueTimelineItems.computeStats(this.state.timelineItems.data)
             statsDisplay = (
@@ -51,7 +51,7 @@ export default class CourseGithubRepoIssueTimeline extends Component {
                     <JSONPretty data={this.state.timelineItems.data}></JSONPretty>
                 </Fragment>
             )
-        } else if (this.state.timelineItems && 
+        } else if (this.state.timelineItems &&
                    this.state.timelineItems.status != 0) {
             debugDisplay = (
                 <Fragment>

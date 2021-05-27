@@ -1,5 +1,5 @@
 import axios from '../helpers/axios-rails';
-import {githubReposRoute, githubRepoRoute} from "./service-routes";
+import {githubReposRoute, githubRepoRoute, externalReposRoute} from "./service-routes";
 
 class ReposService {
     static async getGithubRepos(courseId) {
@@ -8,6 +8,10 @@ class ReposService {
 
     static async getGithubRepo(courseId, githubRepoId) {
         return axios.get(githubRepoRoute(courseId, githubRepoId)).then(response => response.data);
+    }
+
+    static async createGithubRepo(courseId, githubRepo) {
+        return axios.post(githubReposRoute(courseId), githubRepo).then(response => response.data);
     }
 
     static async updateGithubRepo(courseId, githubRepoId, githubRepo) {

@@ -19,7 +19,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         super(props);
         GraphqlQuery.csrf_token_fix();
         this.state = {
-            repos:null, 
+            repos:null,
             issueEdits:null,
             team_stats: {},
             team_stats_vector: [],
@@ -36,10 +36,10 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
 
     courseId = () => this.props.course.id;
     orgName = () => this.props.course.course_organization;
-    repoName = (repo) => repo.repo.name;
+    repoName = (repo) => repo.name;
 
 
-    
+
     componentDidUpdate(prevProps,prevState) {
         if (!isEqual(this.props.repos,this.state.repos)) {
             this.setState({repos: this.props.repos});
@@ -51,13 +51,13 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
         const repos = this.props.repos;
 
         const repo_names = repos.map(
-            (r) => r.repo.name
+            (r) => r.name
         )
 
         let repo_keys_to_null = vectorToObject(repo_names,()=>null);
         let repo_keys_to_empty_array = vectorToObject(repo_names,()=>[]);
 
-        this.setState({ 
+        this.setState({
             edit_query_results: { ...repo_keys_to_null },
             edit_stats: { ...repo_keys_to_null },
             edit_combined_count: {},
@@ -69,13 +69,13 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
             overall_combined_count_by_team: {},
             errors: { ... repo_keys_to_empty_array}
         });
-       
+
         const url = graphqlRoute(this.courseId());
 
         repos.forEach( (repo) => {
-            let ieQuery = IssueUserEdits.query(this.orgName(), this.repoName(repo), ""); 
+            let ieQuery = IssueUserEdits.query(this.orgName(), this.repoName(repo), "");
             let ieAccept =  IssueUserEdits.accept();
-            let tlQuery = IssueTimelineItems.query(this.orgName(), this.repoName(repo), ""); 
+            let tlQuery = IssueTimelineItems.query(this.orgName(), this.repoName(repo), "");
             let tlAccept =  IssueTimelineItems.accept();
             let setIssueEdits = (o) => {
                 let new_edit_query_results = this.state.edit_query_results;
@@ -83,7 +83,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 let new_edit_combined_count = this.state.edit_combined_count;
                 let new_edit_combined_count_by_student = this.state.edit_combined_count_by_student;
 
-                let new_overall_combined_count_by_team = 
+                let new_overall_combined_count_by_team =
                     this.state.overall_combined_count_by_team;
                 let new_errors = this.state.errors;
 
@@ -110,8 +110,8 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 } else {
                     new_errors[this.repoName(repo)].push(o.error)
                 }
-                    
-                this.setState({ 
+
+                this.setState({
                     edit_query_results: new_edit_query_results,
                     edit_stats: new_edit_stats,
                     edit_combined_count: new_edit_combined_count,
@@ -129,7 +129,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 let new_timeline_combined_count = this.state.timeline_combined_count;
                 let new_timeline_combined_count_by_student = this.state.timeline_combined_count_by_student;
 
-                let new_overall_combined_count_by_team = 
+                let new_overall_combined_count_by_team =
                         this.state.overall_combined_count_by_team;
                 let new_errors = this.state.errors;
 
@@ -156,8 +156,8 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 } else {
                     new_errors[this.repoName(repo)].push(o.error)
                 }
-                    
-                this.setState({ 
+
+                this.setState({
                     timeline_query_results: new_timeline_query_results,
                     timeline_stats: new_timeline_stats,
                     timeline_combined_count: new_timeline_combined_count,
@@ -179,7 +179,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
     computeOverallTeamStats = () => {
         const teamNamesVector = this.props.org_teams.map( (t)=> t.name);
         let team_stats = {}
-        Object.keys(this.state.edit_combined_count).forEach( 
+        Object.keys(this.state.edit_combined_count).forEach(
             (team) => {
                 if (! (team in team_stats)) {
                     team_stats[team] = {issueEdits: 0, timelineItems: 0, total: 0}
@@ -188,7 +188,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 team_stats[team]["total"] += this.state.edit_combined_count[team]
             }
         );
-        Object.keys(this.state.timeline_combined_count).forEach( 
+        Object.keys(this.state.timeline_combined_count).forEach(
             (team) => {
                 if (! (team in team_stats)) {
                     team_stats[team] = {issueEdits: 0, timelineItems: 0, total: 0}
@@ -200,17 +200,17 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
 
         const team_stats_vector = objectToVector(team_stats,"name");
 
-        this.setState({ 
+        this.setState({
             team_stats: team_stats,
             team_stats_vector: team_stats_vector
         });
     }
 
-   
+
     computeOverallStudentStats = () => {
         const databaseIds = Object.keys(this.props.databaseId_to_student)
         let student_stats = {}
-        Object.keys(this.state.edit_combined_count_by_student).forEach( 
+        Object.keys(this.state.edit_combined_count_by_student).forEach(
             (databaseId) => {
                 if (! (databaseId in student_stats)) {
                     student_stats[databaseId] = {issueEdits: 0, timelineItems: 0, total: 0}
@@ -219,7 +219,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 student_stats[databaseId]["total"] += this.state.edit_combined_count_by_student[databaseId]
             }
         );
-        Object.keys(this.state.timeline_combined_count_by_student).forEach( 
+        Object.keys(this.state.timeline_combined_count_by_student).forEach(
             (databaseId) => {
                 if (! (databaseId in student_stats)) {
                     student_stats[databaseId] = {issueEdits: 0, timelineItems: 0, total: 0}
@@ -248,7 +248,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
 
         const student_stats_vector = objectToVector(student_stats,"databaseId");
 
-        this.setState({ 
+        this.setState({
             student_stats: student_stats,
             student_stats_vector: student_stats_vector
         });
@@ -365,7 +365,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 />
             </Fragment>
         );
-               
+
         const issueUserEditsDebugging = (
             <Fragment>
                 <JSONPrettyPanel
@@ -383,7 +383,7 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
                 <JSONPrettyPanel
                     expression={"this.state.edit_query_results"}
                     value={this.state.edit_query_results}
-                /> 
+                />
             </Fragment>
         );
 
