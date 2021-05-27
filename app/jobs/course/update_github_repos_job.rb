@@ -23,9 +23,9 @@ class UpdateGithubReposJob < CourseJob
     "#{pluralize num_created, "repo"} created, #{num_updated} refreshed. #{pluralize collaborators_found, "collaborator"} and
 #{pluralize team_refresh_results[:teams], "team collaborator"} found for #{repos_found_collaborators_for} and #{pluralize team_refresh_results[:repos], "repo"}, respectively."
   end
-  
+
   def create_or_update_repo(github_repo)
-    existing_record = GithubRepo.find_by_repo_id(github_repo.databaseId)
+    existing_record = GithubRepo.find_by(repo_id: github_repo.databaseId, course: @course)
     unless existing_record.nil?
       num_created = 0
       repo_record = existing_record
@@ -47,7 +47,7 @@ class UpdateGithubReposJob < CourseJob
 
   def create_or_update_collaborators(github_repo, course_student_users)
     usernames = course_student_users.map { |user| user.username }
-    db_repo_record = GithubRepo.find_by_repo_id(github_repo.databaseId)
+    db_repo_record = GithubRepo.find_by(repo_id: github_repo.databaseId, course: @course)
 
     collaborator_list = collaborator_list_from_response_repo(github_repo)
     filtered_collaborator_list = collaborator_list.select { |collaborator| usernames.include?(collaborator.node.login) }
@@ -136,7 +136,7 @@ class UpdateGithubReposJob < CourseJob
   def update_team_repo_collaborators(team_record, repo_list)
     num_repos_collaborator_for = 0
     repo_list.each do |repo|
-      repo_record = GithubRepo.find_by_repo_id(repo.node.databaseId)
+      repo_record = GithubRepo.find_by(repo_id: repo.node.databaseId, course: @course)
       unless repo_record.nil?
         contributor_record = RepoTeamContributor.find_by(org_team_id: team_record.id, github_repo_id: repo_record.id)
         if contributor_record.nil?
