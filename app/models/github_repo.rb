@@ -15,6 +15,10 @@ class GithubRepo < ApplicationRecord
   # For all but repositories and users (uid), we use the "node_id" string provided by GitHub to fill this field. HOWEVER, for repositories (repo_id),
   # because GitHub sometimes omits the node_id for repos, we use the GitHub "id" integer (in GraphQL responses, this is called the "databaseId").
 
+  def organization
+    full_name.split("/")[0]
+  end
+
   def find_contributors
     # This query gets certain information about a student, their user, and relationship to the repository in question.
     # It is written in raw SQL because it would take several queries using Rails syntax.
