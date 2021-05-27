@@ -49,6 +49,10 @@ module Api::Courses
       respond_with github_repo, json: github_repo
     end
 
+    def destroy
+      @github_repo.destroy
+    end
+
     private
 
     def github_repo_params
