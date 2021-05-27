@@ -18,6 +18,9 @@ class ReposService {
         return axios.put(githubRepoRoute(courseId, githubRepoId), githubRepo).then(response => response.data);
     }
 
+    static async getExternalRepos(courseId) {
+        return axios.get(externalReposRoute(courseId)).then(response => response.data);
+    }
 }
 
 export default ReposService;
