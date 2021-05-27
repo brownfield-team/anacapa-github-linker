@@ -24,6 +24,14 @@ module Api::Courses
         paginate json: github_repos_hash_array
     end
 
+    def create
+      repo = GithubRepo.create_repo_from_name(params[:organization], params[:name], @course)
+      if repo.nil?
+        render :json => {:error => "Could not find a repository by that name and organization. Check that the repository exists and that the linker's machine user has access to it."},
+               status: 422
+      end
+    end
+
     def show
       respond_with repo_to_hash(@github_repo)
     end
@@ -38,7 +46,7 @@ module Api::Courses
     private
 
     def github_repo_params
-      params.require(:github_repo).permit(:is_project_repo)
+      params.require(:github_repo).permit(:is_project_repo, :name, :organization)
     end
 
     def repo_to_hash(repo)
