@@ -24,6 +24,12 @@ module Api::Courses
         paginate json: github_repos_hash_array
     end
 
+    # TODO: This should be refactored into the same method as the index, but the index currently returns a differently
+    # structured hash. Can be done with jbuilders easily.
+    def external
+      @github_repos = @course.github_repos.where(external: true)
+    end
+
     def create
       repo = GithubRepo.create_repo_from_name(params[:organization], params[:name], @course)
       if repo.nil?
