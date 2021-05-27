@@ -9,6 +9,7 @@ module Api::Courses
         search_query = params[:search]
         visibility_query = params[:visibility]
         project_repos_query = params[:is_project_repo]
+        external_filter = ActiveModel::Type::Boolean.new.cast(params[:external])
 
         unless search_query.nil? || search_query.empty?
           @github_repos = @github_repos.where("name LIKE ?", "%#{search_query}%")
@@ -19,12 +20,9 @@ module Api::Courses
         unless project_repos_query.nil? || project_repos_query.empty?
           @github_repos = @github_repos.where(is_project_repo: project_repos_query)
         end
-    end
-
-    # TODO: This should be refactored into the same method as the index, but the index currently returns a differently
-    # structured hash. Can be done with jbuilders easily.
-    def external
-      @github_repos = @course.github_repos.where(external: true)
+        unless external_filter.nil?
+          @github_repos = @github_repos.where(external: external_filter)
+        end
     end
 
     def create
