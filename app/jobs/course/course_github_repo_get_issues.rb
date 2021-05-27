@@ -6,25 +6,29 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
     @job_description = "Get issues for this repo"
     @github_repo_full_name
 
-    def result_hash(total, new_count, updated_count) 
-      { 
-        "total_issues" => total,
-        "total_new_issues" => new_count,
-        "total_updated_issues" => updated_count
-      }
-    end
+    # defJobResult.newh(total, new_count, updated_count) 
+    #   { 
+    #     "total_issues" => total,
+    #     "total_new_issues" => new_count,
+    #     "total_updated_issues" => updated_count
+    #   }
+    # end
 
-    def combine_results(h1,h2) 
-      {
-        "total_issues" => h1["total_issues"] + h2["total_issues"],
-        "total_new_issues" => h1["total_new_issues"] + h2["total_new_issues"],
-        "total_updated_issues" => h1["total_updated_issues"] + h2["total_updated_issues"]
-      }
-    end
+    # def combine_results(h1,h2) 
+    #   {
+    #     "total_issues" => h1["total_issues"] + h2["total_issues"],
+    #     "total_new_issues" => h1["total_new_issues"] + h2["total_new_issues"],
+    #     "total_updated_issues" => h1["total_updated_issues"] + h2["total_updated_issues"]
+    #   }
+    # end
+
+    # def all_good?JobResult.newh)
+    #  JobResult.newh["total_issues"]=JobResult.newh["total_new_issues"] +JobResult.newh["total_updated_issues"]
+    # end
 
     def attempt_job(options)
       @github_repo_full_name = "#{@course.course_organization}/#{@github_repo.name}"      
-      final_results = result_hash(0,0,0)
+      final_results = JobResult.new
       more_pages = true
       end_cursor = ""
       while more_pages
@@ -34,13 +38,12 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
           end_cursor = query_results[:data][:repository][:issues][:pageInfo][:endCursor]
           issues = query_results[:data][:repository][:issues][:nodes]
         rescue
-          return "Unexpected result returned from graphql query: #{sawyerResourceToString(query_results)}"
+          return "Unexpected result returned from graphql query: #{sawyer_resource_to_s(query_results)}"
         end
         results = store_issues_in_database(issues)
-        final_results = combine_results(final_results,results)
+        final_results = final_results + results
       end
-
-      "Job Complete; Retrieved #{final_results["total_issues"]} issues for Course #{@course.name} for Repo #{@github_repo.name}. Stored #{final_results["total_new_issues"]} new issues, Updated #{final_results["total_updated_issues"]} existing issues in database."
+      "Issues retrieved for Course: #{@course.name} Repo: #{@github_repo.name} <br/>      #{final_results.report}"
     end  
 
     def store_issues_in_database(issues)
@@ -54,55 +57,96 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
           total_new_issues += store_one_issue_in_database(i) 
         end
       }
-     result_hash(issues.length,total_new_issues,total_updated_issues)
+    JobResult.new(issues.length,total_new_issues,total_updated_issues)
     end
 
     def store_one_issue_in_database(i)
-    
       issue = RepoIssueEvent.new
+      result = update_one_issue(issue,i)
+    end
+
+    def column_name(x)
+      begin
+        x[:column][:name]
+      rescue
+        ""
+      end
+    end
+
+    def column_project_name(x)
+      begin
+        x[:column][:project][:name]
+      rescue
+        ""
+      end
+    end
+    
+    def column_project_url(x)
+      begin
+        x[:column][:project][:url]
+      rescue
+        ""
+      end
+    end
+
+    def assignee_names(x)
+      begin
+        x[:assignees][:nodes].map{ |node|
+          node[:name] || ""
+        }
+      rescue
+        nil
+      end
+    end
+
+    def assignee_logins(x)
+      begin
+        x[:assignees][:nodes].map{ |node|
+          node[:login] || ""
+        }
+      rescue
+        nil
+      end
+    end
+
+    def update_one_issue(issue, i)
       begin
         issue.url =  i[:url]
+        issue.issue_id = i[:id]
         issue.github_repo = @github_repo
+        issue.title = i[:title]
+        issue.body = i[:body]
+        issue.state = i[:state]
+        issue.closed = i[:closed]
+        issue.closed_at = i[:closedAt]
+        issue.issue_created_at = i[:createdAt]
+        issue.assignee_count = i[:assignees][:totalCount]
+        issue.assignee_names = assignee_names(i)
+        issue.assignee_logins = assignee_logins(i)
+        issue.project_card_count = i[:projectCards][:totalCount]
+        issue.project_card_column_names=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_name(x)})
+        issue.project_card_column_project_names=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_project_name(x)})
+        issue.project_card_column_project_urls=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_project_url(x)})
       rescue
+        raise
+        puts "***ERROR*** update_issue_fields issue #{sawyer_resource_to_s(i)} @github_repo #{@github_repo}"
         return 0
       end
       
       begin  # "try" block
         username = i[:author][:login]
-        issue.roster_student = lookup_roster_student_by_github_uid(uid)
-      rescue # optionally: `rescue Exception => ex`
-        username = ""
-        issue.roster_student = nil
-      end 
-      begin
-        issue.save!
-        return 1
-      rescue
-        return 0
-      end
-    end
-
-   
-    def update_one_issue(issue, i)
-      begin
-        issue.url =  i[:url]
-        issue.github_repo = @github_repo
-      rescue
-        return 0
-      end
-
-
-      begin  # "try" block
-        username = i[:author][:login]
+        issue.author_login = username
         issue.roster_student = lookup_roster_student_by_github_username(username)
       rescue # optionally: `rescue Exception => ex`
         username = ""
         issue.roster_student = nil
       end 
+
       begin
         issue.save!
         return 1
       rescue
+        puts "***ERROR*** on issue.save! issue #{i} @github_repo #{@github_repo}"
         return 0
       end
     end
@@ -111,9 +155,16 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         @course.student_for_github_username(username)
     end
 
+    def array_or_singleton_to_s(a)
+      return nil if a.nil? or a.length==0
+      return a.first.to_s if a.length==1
+      a.sort.to_s
+    end
+
     def perform_graphql_query(repo_name, org_name, after="")
       graphql_query_string = graphql_query(repo_name, org_name, after)
-      github_machine_user.post '/graphql', { query: graphql_query_string }.to_json
+      options = { query: graphql_query_string }.to_json
+      github_machine_user.post '/graphql', options
     end
 
     def graphql_query(repo_name, org_name, after)
@@ -133,52 +184,70 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
 
         <<-GRAPHQL
         {
-            repository(name: "#{repo_name}", owner: "#{org_name}") {
-              issues(first: 50 #{after_clause}) {
-                pageInfo {
-                  startCursor
-                  hasNextPage
-                  endCursor
-                }
-                nodes {
-                    assignees(first: 50) {
-                    pageInfo {
-                      startCursor
-                      hasNextPage
-                      endCursor
-                    }
-                    totalCount
-                    nodes {
-                      id
-                      login
+          repository(name: "#{repo_name}", owner: "#{org_name}") {
+            issues(first: 50 #{after_clause}) {
+              pageInfo {
+                startCursor
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                projectCards(first: 50) {
+                  totalCount
+                  nodes {
+                    column {
                       name
+                      project {
+                        name
+                        url
+                        number
+                      }
                     }
                   }
-                  closed
-                  closedAt
-                  url
-                  number
-                  title
-                  body
-                  author {
-                    login
-                  }
-                  databaseId
-                  milestone {
-                    id
-                  }
-                  state
                 }
+                assignees(first: 50) {
+                  pageInfo {
+                    startCursor
+                    hasNextPage
+                    endCursor
+                  }
+                  totalCount
+                  nodes {
+                    id
+                    login
+                    name
+                  }
+                }
+                id
+                closed
+                closedAt
+                createdAt
+                url
+                number
+                title
+                body
+                author {
+                  login
+                }
+                databaseId
+                milestone {
+                  id
+                }
+                state
               }
             }
           }
-          
-            
+        }
         GRAPHQL
     end
 
-    def sawyerResourceToJson(sawyer_resource)
-      sawyer_resource.map(&:to_h).to_json
+    def sawyer_resource_to_s(sawyer_resource)
+      begin
+        result = sawyer_resource.to_hash.to_s
+      rescue
+        result = sawyer_resource.to_s 
+      end
+      result
     end
 end
   

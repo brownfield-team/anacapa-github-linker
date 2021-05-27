@@ -69,10 +69,13 @@ class UpdateGithubReposJob < CourseJob
   # We have to manually handle pagination because Octokit has no built-in support for GraphQL
   def get_github_repos(course_org, cursor = "")
     response = github_machine_user.post '/graphql', { query: repository_graphql_query(course_org, cursor) }.to_json
-    if !response.respond_to?(:data) || response.respond_to?(:errors)
-      puts "ERROR: response is: #{response.to_json}"
+    unless response.respond_to?(:data)
+      puts "ERROR: response is: #{response}"
       return []
-    end   
+    end
+    if response.respond_to?(:errors)
+      puts "NONFATAL ERROR OCCURRED while fetching github repo information: #{response[:errors]}"
+    end
     repo_list = repo_list_from_response(response)
     if repo_list.count < 100 # If there are less than 100 records (max page size), this is the last page
       return repo_list
@@ -85,6 +88,9 @@ class UpdateGithubReposJob < CourseJob
   end
 
   def collaborator_list_from_response_repo(repo_response)
+    if repo_response.collaborators.nil?
+      return []
+    end
     repo_response.collaborators.edges
   end
 

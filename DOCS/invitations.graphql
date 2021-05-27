@@ -1,0 +1,23 @@
+
+  organization(login: "ucsb-cs48-s20") {
+    team(slug: "s0-t1-budget") {
+      invitations(first: 50) {
+        totalCount
+        __typename
+        nodes {
+          id
+        }
+      }
+      members(first: 100) {
+        edges {
+          role
+          node {
+            databaseId
+            login
+            name
+          }
+        }
+      }
+    }
+  }
+}

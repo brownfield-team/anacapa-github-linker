@@ -1,0 +1,24 @@
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+import CourseNavBar from "../../components/CourseNavBar/CourseNavBar";
+import { BrowserRouter } from "react-router-dom";
+import { createMemoryHistory } from "history";
+
+
+<Meta title="components/CourseNavBar/CourseNavBar" component={CourseNavBar} />
+
+# CourseNavBar
+
+The `CourseNavBar` appears at the top of the Courses page.
+
+export const Template = (args) => {
+  return (
+      <CourseNavBar {...args} />
+  )
+}
+
+<Canvas>
+  <Story name="Example" args={{ label: 'Example' }}>
+    {Template.bind({})}
+   </Story>
+</Canvas>
+

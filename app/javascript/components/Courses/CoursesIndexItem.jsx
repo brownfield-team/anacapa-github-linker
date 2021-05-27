@@ -21,7 +21,7 @@ class CoursesIndexItem extends Component {
 	render() {
 		return (
 			<tr>
-				<td> {this.props.course.school.abbreviation} </td>
+				<td> { this.props.course.school ? this.props.course.school.abbreviation : "" } </td>
 				<td><a href={this.props.course.path}>{this.props.course.name}</a></td>
 				<td> {this.props.course.term} </td>
 				<this.hiddenText hidden={this.props.course.hidden}/>
