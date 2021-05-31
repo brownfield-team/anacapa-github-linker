@@ -23,7 +23,7 @@ class CourseGithubRepo extends Component {
     }
 
     courseId = () => {
-        return this.props.repo.course_id;
+        return this.state.github_repo.course_id;
     }
 
     handleCheckboxChange = changeEvent => {
