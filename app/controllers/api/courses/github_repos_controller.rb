@@ -38,10 +38,9 @@ module Api::Courses
     end
 
     def update
-      github_repo = GithubRepo.find(params[:id])
-      github_repo.update_attributes(github_repo_params)
-      github_repo.save
-      respond_with github_repo, json: github_repo
+      @github_repo = GithubRepo.find(params[:id])
+      @github_repo.update_attributes(github_repo_params)
+      @github_repo.save
     end
 
     def destroy
