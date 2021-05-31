@@ -55,7 +55,7 @@ Rails.application.routes.draw do
     post :generate_repos
     get :project_repos
     scope module: :courses do
-      
+
       resources :roster_students do
         collection do
           post :import
@@ -68,6 +68,9 @@ Rails.application.routes.draw do
         end
       end
       resources :github_repos do
+        collection do
+          get :external
+        end
         resources :repo_commit_events
         resources :repo_issue_events
         post :run_job
@@ -82,14 +85,14 @@ Rails.application.routes.draw do
           get :unadded
         end
       end
-      
+
       get "project_teams(/*all)", to: "project_teams#index", as: :project_teams
       resource :github_webhooks, :only => [:create], :defaults => {:format => :json} do
         # empty block
       end
       # While this is somewhat frowned upon in Rails convention, I refuse to name the controller "SlacksController"
       resource :slack, :controller => 'slack'
-      
+
     end # scope module: :courses
   end
 

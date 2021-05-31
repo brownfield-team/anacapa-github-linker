@@ -11,15 +11,19 @@ class CourseGithubRepo extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {github_repo: this.props.repo.repo}
+        this.state = {github_repo: undefined};
     }
 
     componentDidMount() {
-       
+        this.fetchRepo();
+    }
+
+    fetchRepo = () => {
+        ReposService.getGithubRepo(this.props.course_id, this.props.repo_id).then(repo => this.setState({github_repo: repo}));
     }
 
     courseId = () => {
-        return this.props.repo.repo.course_id;
+        return this.state.github_repo.course_id;
     }
 
     handleCheckboxChange = changeEvent => {
@@ -37,16 +41,19 @@ class CourseGithubRepo extends Component {
             this.setState({github_repo: repoResponse});
         });
     };
-   
+
     render() {
+        const githubRepo = this.state.github_repo;
+        if (githubRepo == null) return "Loading...";
+        const course = githubRepo.course;
         return (
             <Fragment>
                 <CourseGithubReposTable
-                    repos={[this.props.repo]}
+                    repos={[githubRepo]}
                     page={1}
                     pageSize={1}
                     totalSize={1}
-                    course={this.props.course}
+                    course={course}
                     {...this.props}
                 />
                 <div className="panel panel-default">
@@ -57,7 +64,7 @@ class CourseGithubRepo extends Component {
                         <Form onSubmit={e => {e.preventDefault();  return false;}}>
                             <FormGroup >
                                 <Checkbox
-                                 checked={this.state.github_repo.is_project_repo}
+                                 checked={githubRepo.is_project_repo}
                                  onChange={this.handleCheckboxChange}
                                 >
                                     Is Project Repo
@@ -65,11 +72,11 @@ class CourseGithubRepo extends Component {
                             </FormGroup>
                         </Form>
                     </div>
-               
+
                 </div>
                 <CourseGithubRepoStatistics
-                   repo={this.props.repo.repo}
-                   course={this.props.course}
+                   repo={githubRepo}
+                   course={course}
                    {...this.props}
                 >
                 </CourseGithubRepoStatistics>
@@ -79,8 +86,8 @@ class CourseGithubRepo extends Component {
 }
 
 CourseGithubRepo.propTypes = {
-    repo : PropTypes.object.isRequired,
-    course: PropTypes.object.isRequired
+    repo_id: PropTypes.string.isRequired,
+    course_id: PropTypes.string.isRequired
 };
 
 export default CourseGithubRepo;

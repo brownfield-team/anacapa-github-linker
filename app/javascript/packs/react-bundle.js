@@ -15,6 +15,8 @@ import JobLog from "../components/Jobs/JobLog";
 import SchoolsIndex from "../components/Schools/SchoolsIndex";
 import HomePage from "../components/home/HomePage";
 
+import ExternalReposPage from "../components/Course/GithubRepos/ExternalRepos/ExternalReposPage";
+
 import "../styles.css"
 
 ReactOnRails.register({
@@ -28,5 +30,6 @@ ReactOnRails.register({
   JobLauncher,
   JobLog,
   SchoolsIndex,
-  HomePage
+  HomePage,
+  ExternalReposPage,
 });

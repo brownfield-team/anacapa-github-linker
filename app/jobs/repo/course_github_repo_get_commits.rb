@@ -6,15 +6,15 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     @job_description = "Get commits for this repo"
     @github_repo_full_name
 
-    # def result_hash(total, new_count, updated_count) 
-    #   { 
+    # def result_hash(total, new_count, updated_count)
+    #   {
     #     "total_commits" => total,
     #     "total_new_commits" => new_count,
     #     "total_updated_commits" => updated_count
     #   }
     # end
 
-    # def combine_results(h1,h2) 
+    # def combine_results(h1,h2)
     #   {
     #     "total_commits" => h1["total_commits"] + h2["total_commits"],
     #     "total_new_commits" => h1["total_new_commits"] + h2["total_new_commits"],
@@ -27,12 +27,12 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     # end
 
     def attempt_job(options)
-      @github_repo_full_name = "#{@course.course_organization}/#{@github_repo.name}"      
+      @github_repo_full_name = @github_repo.full_name
       final_results = JobResult.new
       more_pages = true
       end_cursor = ""
       while more_pages
-        query_results = perform_graphql_query(@github_repo.name,@course.course_organization,end_cursor)
+        query_results = perform_graphql_query(@github_repo.name, @github_repo.organization, end_cursor)
         begin
           default_branch_data = query_results[:data][:repository][:defaultBranchRef]
           more_pages = default_branch_data[:target][:history][:pageInfo][:hasNextPage]
@@ -46,7 +46,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         final_results = final_results + results
       end
       "Commits retrieved for Course: #{@course.name} Repo: #{@github_repo.name}<br />      #{final_results.report}"
-    end  
+    end
 
     def store_commits_in_database(commits, branch_name)
       total_new_commits = 0
@@ -63,7 +63,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     end
 
     # Regrettably, the v4 graphql api doesn't yet support
-    # getting the filenames changed.  
+    # getting the filenames changed.
     # See: https://github.community/t/get-a-repositorys-commits-along-with-changed-patches-and-the-url-to-changed-files-using-graphql-v4/13585
     def filenames_changed(commit_sha)
       begin
@@ -104,7 +104,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       rescue # optionally: `rescue Exception => ex`
         uid = ""
         commit.roster_student = nil
-      end 
+      end
       begin
         commit.save!
         return 1
@@ -126,7 +126,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         if after != ""
           after_clause=", after: \"#{after}\""
         else
-          after_clause = ""  
+          after_clause = ""
         end
         # Although the published limit on Graphql queries is 100,
         # in practice, we've found that it sometimes fails.
@@ -179,9 +179,8 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       begin
         result = sawyer_resource.to_hash.to_s
       rescue
-        result = sawyer_resource.to_s 
+        result = sawyer_resource.to_s
       end
       result
     end
 end
-  
