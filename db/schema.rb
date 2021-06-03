@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_23_044524) do
+ActiveRecord::Schema.define(version: 2021_05_27_190854) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,8 @@ ActiveRecord::Schema.define(version: 2021_05_23_044524) do
     t.string "term"
     t.datetime "start_date"
     t.datetime "end_date"
+    t.bigint "school_id"
+    t.index ["school_id"], name: "index_courses_on_school_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -65,7 +67,22 @@ ActiveRecord::Schema.define(version: 2021_05_23_044524) do
     t.integer "repo_id"
     t.string "full_name"
     t.string "visibility"
+    t.boolean "is_project_repo"
+    t.boolean "external"
     t.index ["course_id"], name: "index_github_repos_on_course_id"
+  end
+
+  create_table "informed_consents", force: :cascade do |t|
+    t.string "perm"
+    t.string "name"
+    t.bigint "course_id"
+    t.boolean "student_consents"
+    t.bigint "roster_student_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_informed_consents_on_course_id"
+    t.index ["perm", "course_id"], name: "index_informed_consents_on_perm_and_course_id", unique: true
+    t.index ["roster_student_id", "course_id"], name: "index_informed_consents_on_roster_student_id_and_course_id", unique: true
   end
 
   create_table "org_teams", force: :cascade do |t|
@@ -134,6 +151,11 @@ ActiveRecord::Schema.define(version: 2021_05_23_044524) do
     t.datetime "updated_at", null: false
     t.string "filenames_changed"
     t.boolean "committed_via_web"
+    t.string "author_login"
+    t.string "author_name"
+    t.string "author_email"
+    t.integer "additions"
+    t.integer "deletions"
     t.index ["github_repo_id"], name: "index_repo_commit_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_commit_events_on_roster_student_id"
   end
@@ -154,6 +176,20 @@ ActiveRecord::Schema.define(version: 2021_05_23_044524) do
     t.string "action_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "title"
+    t.string "body"
+    t.string "state"
+    t.boolean "closed"
+    t.datetime "closed_at"
+    t.integer "assignee_count"
+    t.string "assignee_logins"
+    t.string "assignee_names"
+    t.integer "project_card_count"
+    t.string "project_card_column_names"
+    t.string "project_card_column_project_names"
+    t.string "project_card_column_project_urls"
+    t.datetime "issue_created_at"
+    t.string "author_login"
     t.index ["github_repo_id"], name: "index_repo_issue_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_issue_events_on_roster_student_id"
   end
@@ -208,6 +244,13 @@ ActiveRecord::Schema.define(version: 2021_05_23_044524) do
     t.index ["email", "course_id"], name: "index_roster_students_on_email_and_course_id", unique: true
     t.index ["perm", "course_id"], name: "index_roster_students_on_perm_and_course_id", unique: true
     t.index ["user_id"], name: "index_roster_students_on_user_id"
+  end
+
+  create_table "schools", force: :cascade do |t|
+    t.string "name"
+    t.string "abbreviation"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "slack_users", force: :cascade do |t|
@@ -275,6 +318,7 @@ ActiveRecord::Schema.define(version: 2021_05_23_044524) do
 
   add_foreign_key "completed_jobs", "courses"
   add_foreign_key "completed_jobs", "github_repos"
+  add_foreign_key "courses", "schools"
   add_foreign_key "github_repos", "courses"
   add_foreign_key "org_webhook_events", "courses"
   add_foreign_key "org_webhook_events", "github_repos"

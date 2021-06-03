@@ -106,6 +106,11 @@ class CoursesController < ApplicationController
     authorize! :jobs, @course
   end
 
+  def informed_consents
+    @course = Course.find(params[:course_id])
+    authorize! :informed_consents, @course
+  end
+
   def teams
     @course = Course.find(params[:course_id])
     authorize! :teams, @course
@@ -136,7 +141,7 @@ class CoursesController < ApplicationController
   # List of course jobs to make available to run
   def course_job_list
     @course = Course.find(params[:course_id])
-    jobs = [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, PurgeCourseReposJob]
+    jobs = [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, RefreshProjectRepoCommitsJob, RefreshProjectRepoIssuesJob,PurgeCourseReposJob]
     if @course.slack_workspace.present?
       jobs << AssociateSlackUsersJob
     end
@@ -191,6 +196,24 @@ class CoursesController < ApplicationController
     str =~ /^[\w-]+$/
   end
 
+  def project_repos
+    @course = Course.find(params[:course_id])
+  end
+
+  def commits
+    @course = Course.find(params[:course_id])
+    respond_to do |format|
+      format.csv { send_data @course.export_commits_to_csv, filename: "#{@course.course_organization}-commits-#{Date.today}.csv" }
+    end
+  end
+
+  def issues
+    @course = Course.find(params[:course_id])
+    respond_to do |format|
+      format.csv { send_data @course.export_issues_to_csv, filename: "#{@course.course_organization}-issues-#{Date.today}.csv" }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course
@@ -199,7 +222,7 @@ class CoursesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_params
-      params.require(:course).permit(:name,:course_organization, :start_date, :end_date,:hidden, :search, :github_webhooks_enabled, :term)
+      params.require(:course).permit(:name,:course_organization,:hidden, :search, :github_webhooks_enabled, :term, :school_id)
     end
 
     def add_instructor(id)
@@ -216,7 +239,7 @@ class CoursesController < ApplicationController
         email_to_student[student.email.downcase] = student
         if student.email.end_with? '@umail.ucsb.edu'
           new_email = student.email.gsub('@umail.ucsb.edu','@ucsb.edu')
-          email_to_student[new_email.downcase] = student
+          email_to_student[new_email] = student
         elsif student.email.end_with? '@ucsb.edu'
           old_email = student.email.gsub('@ucsb.edu','@umail.ucsb.edu')
           email_to_student[old_email.downcase] = student

@@ -23,9 +23,9 @@ class UpdateGithubReposJob < CourseJob
     "#{pluralize num_created, "repo"} created, #{num_updated} refreshed. #{pluralize collaborators_found, "collaborator"} and
 #{pluralize team_refresh_results[:teams], "team collaborator"} found for #{repos_found_collaborators_for} and #{pluralize team_refresh_results[:repos], "repo"}, respectively."
   end
-  
+
   def create_or_update_repo(github_repo)
-    existing_record = GithubRepo.find_by_repo_id(github_repo.databaseId)
+    existing_record = GithubRepo.find_by(repo_id: github_repo.databaseId, course: @course)
     unless existing_record.nil?
       num_created = 0
       repo_record = existing_record
@@ -47,7 +47,7 @@ class UpdateGithubReposJob < CourseJob
 
   def create_or_update_collaborators(github_repo, course_student_users)
     usernames = course_student_users.map { |user| user.username }
-    db_repo_record = GithubRepo.find_by_repo_id(github_repo.databaseId)
+    db_repo_record = GithubRepo.find_by(repo_id: github_repo.databaseId, course: @course)
 
     collaborator_list = collaborator_list_from_response_repo(github_repo)
     filtered_collaborator_list = collaborator_list.select { |collaborator| usernames.include?(collaborator.node.login) }
@@ -69,10 +69,13 @@ class UpdateGithubReposJob < CourseJob
   # We have to manually handle pagination because Octokit has no built-in support for GraphQL
   def get_github_repos(course_org, cursor = "")
     response = github_machine_user.post '/graphql', { query: repository_graphql_query(course_org, cursor) }.to_json
-    if !response.respond_to?(:data) || response.respond_to?(:errors)
-      puts "ERROR: response is: #{response.to_json}"
+    unless response.respond_to?(:data)
+      puts "ERROR: response is: #{response}"
       return []
-    end   
+    end
+    if response.respond_to?(:errors)
+      puts "NONFATAL ERROR OCCURRED while fetching github repo information: #{response[:errors]}"
+    end
     repo_list = repo_list_from_response(response)
     if repo_list.count < 100 # If there are less than 100 records (max page size), this is the last page
       return repo_list
@@ -85,6 +88,9 @@ class UpdateGithubReposJob < CourseJob
   end
 
   def collaborator_list_from_response_repo(repo_response)
+    if repo_response.collaborators.nil?
+      return []
+    end
     repo_response.collaborators.edges
   end
 
@@ -130,7 +136,7 @@ class UpdateGithubReposJob < CourseJob
   def update_team_repo_collaborators(team_record, repo_list)
     num_repos_collaborator_for = 0
     repo_list.each do |repo|
-      repo_record = GithubRepo.find_by_repo_id(repo.node.databaseId)
+      repo_record = GithubRepo.find_by(repo_id: repo.node.databaseId, course: @course)
       unless repo_record.nil?
         contributor_record = RepoTeamContributor.find_by(org_team_id: team_record.id, github_repo_id: repo_record.id)
         if contributor_record.nil?

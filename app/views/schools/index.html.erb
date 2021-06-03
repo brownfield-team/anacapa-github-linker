@@ -1,0 +1,10 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Schools</h1>
+<%= react_component("SchoolsIndex", prerender: false, props: {
+  schools_list: @schools
+}) %>
+
+<br>
+
+<%= link_to 'New School', new_school_path %>
