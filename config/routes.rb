@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :schools
   # resources :roster_students
   # devise routes
   devise_for :users, :controllers => {
@@ -20,6 +21,7 @@ Rails.application.routes.draw do
     resources :visitors
 
     resources :courses do
+      post :graphql
       scope module: :courses do
         resources :project_teams
         resources :org_teams
@@ -32,6 +34,8 @@ Rails.application.routes.draw do
         end
       end
     end
+
+    resources :schools
   end
 
   # courses routes
@@ -43,21 +47,30 @@ Rails.application.routes.draw do
     get :repos
     get :search_repos
     get :events
+    get :commits
+    get :issues
     post :run_course_job
     post :update_ta
-
     get :create_repos
     post :generate_repos
-    
+    get :project_repos
     scope module: :courses do
-      
+
       resources :roster_students do
         collection do
           post :import
         end
         get :activity
       end
+      resources :informed_consents do
+        collection do
+          post :import
+        end
+      end
       resources :github_repos do
+        collection do
+          get :external
+        end
         resources :repo_commit_events
         resources :repo_issue_events
         post :run_job
@@ -72,14 +85,14 @@ Rails.application.routes.draw do
           get :unadded
         end
       end
-      
+
       get "project_teams(/*all)", to: "project_teams#index", as: :project_teams
       resource :github_webhooks, :only => [:create], :defaults => {:format => :json} do
         # empty block
       end
       # While this is somewhat frowned upon in Rails convention, I refuse to name the controller "SlacksController"
       resource :slack, :controller => 'slack'
-      
+
     end # scope module: :courses
   end
 

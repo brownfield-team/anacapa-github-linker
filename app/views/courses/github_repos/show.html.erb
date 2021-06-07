@@ -1,20 +1,21 @@
 <%= react_component("CourseGithubRepo",
-                        props: {current_path: request.env['PATH_INFO'], 
-                                can_edit: can?(:update, @course),
-                                course_id: params[:course_id].to_i,
-                                course: @parent,
-                                repo: @github_repo_plus_commit_count
+                        props: {current_path: request.env['PATH_INFO'],
+                                can_edit: can?(:update, @parent),
+                                course_id: params[:course_id],
+                                repo_id: params[:id],
+                                databaseId_to_team: uid2TeamMap(@parent),
+                                databaseId_to_student: uid2StudentMap(@parent)
                         },
-                        prerender: false) 
+                        prerender: false)
 %>
 
 <%= react_component("JobLauncher", prerender: false, props: {
     jobs_list: course_github_repo_job_info_list,
     run_url_prefix: "/courses/#{@course.id}/github_repos/#{@github_repo.id}/run_job"
-}) 
+})
 %>
 <%= react_component("JobLog", prerender: false, props: {
     completed_jobs_list: CompletedJob.last_ten_jobs(@course.id, @github_repo.id)
-}) 
+})
 %>
 

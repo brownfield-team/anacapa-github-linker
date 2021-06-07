@@ -1,7 +1,7 @@
 class Courses::GithubWebhooksController
   class PushHook
     def self.process_hook(course, payload)
-      repo = GithubRepo.find_by_repo_id(payload[:repository][:id])
+      repo = GithubRepo.find_by(repo_id: payload[:repository][:id], course: course)
       branch = /refs\/heads\/(.*)/.match(payload[:ref])[1]
       student = course.student_for_uid(payload[:sender][:id])
       payload[:commits].each do |payload_commit|

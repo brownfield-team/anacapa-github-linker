@@ -1,11 +1,11 @@
 import React, { Component, Fragment } from 'react';
-import { Table } from "react-bootstrap";
 import BootstrapTable from 'react-bootstrap-table-next';
 
 import PropTypes from 'prop-types';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-
 import { githubRepoRoute } from "../../../services/service-routes";
+import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
+
 
 class CourseGithubReposTable extends Component {
 
@@ -15,17 +15,17 @@ class CourseGithubReposTable extends Component {
 
     columns =
         [{
-            dataField: 'repo.name',
+            dataField: 'name',
             text: 'Name',
             editable: false,
             formatter: (cell, row, rowIndex, extraData) => this.renderRepoShowPageUrl(cell, row, rowIndex, {"course_id": this.props.course_id})
         }, {
-            dataField: 'repo.url',
+            dataField: 'url',
             text: 'on Github',
             editable: false,
             formatter: (cell) => this.renderRepoGithubUrl(cell)
         }, {
-            dataField: 'repo.visibility',
+            dataField: 'visibility',
             text: 'Visibility',
             editable: false
         }, {
@@ -33,6 +33,7 @@ class CourseGithubReposTable extends Component {
             text: 'Commit Count',
             editable: false
         },{
+            dataField: 'dummy1',
             text: 'Commit CSV',
             editable: false,
             formatter: (cell, row, rowIndex, extraData) => this.renderCommitCSVLink(cell, row, rowIndex, {"course_id": this.props.course_id})
@@ -41,15 +42,19 @@ class CourseGithubReposTable extends Component {
             text: 'Issue Count',
             editable: false
         },{
+            dataField: 'dummy2',
             text: 'Issue CSV',
             editable: false,
             formatter: (cell, row, rowIndex, extraData) => this.renderIssueCSVLink(cell, row, rowIndex, {"course_id": this.props.course_id})
+        },{
+            dataField: 'is_project_repo',
+            text: 'Project Repo',
+            editable: false,
+            formatter: (cell) => (cell===true) ? "true" : ""
         }];
 
     renderRepoShowPageUrl = (cell, row, rowIndex, extraData) => {
-        console.log("renderRepoShowPageUrl");
-        console.log("row="+JSON.stringify(row));
-        const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}`;
+        const url = `/courses/${extraData.course_id}/github_repos/${row.id}`;
 
         return (
             <a href={url}>{cell}</a>
@@ -63,14 +68,14 @@ class CourseGithubReposTable extends Component {
     }
 
     renderCommitCSVLink = (cell, row, rowIndex, extraData) => {
-        const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}/repo_commit_events.csv`;
+        const url = `/courses/${extraData.course_id}/github_repos/${row.id}/repo_commit_events.csv`;
         return (
                 <a href={url}>CSV</a>
         );
     }
 
     renderIssueCSVLink = (cell, row, rowIndex, extraData) => {
-        const url = `/courses/${extraData.course_id}/github_repos/${row.repo.id}/repo_issue_events.csv`;
+        const url = `/courses/${extraData.course_id}/github_repos/${row.id}/repo_issue_events.csv`;
         return (
                 <a href={url}>CSV</a>
         );
@@ -93,8 +98,6 @@ class CourseGithubReposTable extends Component {
     }
 
     render() {
-        console.log("CourseGithubReposTable render");
-        console.log("this.props.repos="+JSON.stringify(this.props.repos));
         return (
             <Fragment>
                 <BootstrapTable
@@ -102,9 +105,9 @@ class CourseGithubReposTable extends Component {
                     data={this.props.repos}
                     keyField="id"
                     remote={ { pagination: true, filter: false, sort: false } }
-                    pagination={ 
+                    pagination={
                         this.props.paginationHandler ?
-                        this.paginationOptions()  : 
+                        this.paginationOptions()  :
                         undefined
                     }
                     onTableChange={ this.onTableChange }
@@ -120,7 +123,8 @@ CourseGithubReposTable.propTypes = {
     paginationHandler: PropTypes.func,
     page: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,
-    totalSize: PropTypes.number.isRequired
+    totalSize: PropTypes.number.isRequired,
+    course: PropTypes.object.isRequired
 };
 
 export default CourseGithubReposTable;
