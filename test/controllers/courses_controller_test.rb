@@ -159,6 +159,27 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
   end
 
+  def test_update_should_unhide_course
+    course_name = 'fake course_name'
+    course_organization = "course_org"
+
+    stub_organization_membership_admin_in_org(course_organization, ENV["MACHINE_USER_NAME"])
+    stub_organization_is_an_org(course_organization)
+
+    assert_nil Course.find_by(name: course_name)
+    course = Course.create(name: course_name, course_organization: course_organization, hidden: false)
+
+    patch course_url(course), params: { course: { hidden: 0 } }
+
+    after = Course.find_by(name: course_name)
+    assert_not_nil after
+    refute after.hidden
+
+    get root_url
+    assert_response :ok
+    assert response.body.scan(course_name).count > 0
+  end
+
   test "should destroy course" do
     assert_difference('Course.count', -1) do
       delete course_url(@course)
