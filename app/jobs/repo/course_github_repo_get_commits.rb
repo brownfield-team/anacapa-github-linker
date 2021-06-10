@@ -128,6 +128,18 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         else
           after_clause = ""
         end
+
+        # if there is a start and end date for the course, use it
+        # otherwise the since/until clause is empty
+
+        since_until_clause = ""
+
+        if ( @course.start_date != "" and @course.end_date != "")
+          start_date = @course.start_date.to_time.iso8601 # convert to correct format
+          end_date = @course.end_date.to_time.iso8601 # convert to correct format
+          since_until_clause = ", since: \"#{start_date}\", until: \"#{end_date}\""
+        end
+
         # Although the published limit on Graphql queries is 100,
         # in practice, we've found that it sometimes fails.
         # 50 seems to be safer round number.
@@ -139,7 +151,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
                 target {
                   ... on Commit {
                     id
-                    history(first: 50 #{after_clause}) {
+                    history(first: 50 #{after_clause} #{since_until_clause}) {
                       pageInfo {
                         startCursor
                         hasNextPage
