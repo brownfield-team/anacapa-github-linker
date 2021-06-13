@@ -11,13 +11,15 @@
       <tbody>
       <% @teams.each do |team| %>
         <tr>
-          <td><%= team.name %></td>
+          <td><%= link_to team.name, team.url %></td>
           <td>
             <table class="table table-bordered">
+              <thead>
                 <th data-sortable="true" data-field="Student" data-filter-control="input">Student</th>
                 <th data-sortable="true" data-field="GithubId" data-filter-control="input">GitHub ID</th>
                 <th data-sortable="true" data-field="Role" data-filter-control="select">Role</th>
-                <tbody class="students-list">
+              </thead>
+              <tbody class="students-list">
                 <% role_url = team.url + "/members" %>
                 <% team.student_team_memberships.each do |student| %>
                   <tr>
@@ -33,12 +35,14 @@
                   </tr>
                 <% end %>
               </tbody>
-          </table>
+            </table>
           </td>
           <td>
             <table class="table table-bordered">
+              <thead>
               <th data-sortable="true" data-field="Student" data-filter-control="input">Name</th>
               <th data-sortable="true" data-field="Role" data-filter-control="select">Team Permission Level</th>
+              </thead>
               <tbody class="students-list">
                 <% access_url = team.url + "/repositories" %>
                 <% team.repo_team_contributors.each do |repo| %>
