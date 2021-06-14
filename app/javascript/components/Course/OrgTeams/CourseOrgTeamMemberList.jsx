@@ -28,7 +28,7 @@ class CourseOrgTeamMembersList extends Component {
                 dataField: 'membership.role',
                 text: 'Role',
                 editable: false,
-                formatter: (cell) => this.renderTeamMemberRole(cell)
+                formatter: (cell, row) => this.renderTeamMemberRole(cell, row)
             },
         ];
 
@@ -48,9 +48,8 @@ class CourseOrgTeamMembersList extends Component {
         );
     }
 
-    renderTeamMemberRole = (cell) => {
-        // const url = `https://github.com/orgs/${put_org_name_here}/teams/${put_team_name_here}/members?query=${put_students_github_id_here}`;
-        const url = "FIX_ME";
+    renderTeamMemberRole = (cell, row) => {
+        const url = `https://github.com/orgs/${this.props.team.course.course_organization}/teams/${this.props.team.org_team.name}/members?query=${row.github_id}`;
         return (
             <a href={url}>{cell}</a>
         );
