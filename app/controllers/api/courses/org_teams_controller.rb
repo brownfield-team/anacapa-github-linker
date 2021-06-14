@@ -9,7 +9,14 @@ module Api::Courses
     end
 
     def show
-      respond_with @org_team
+      members = @org_team.student_team_memberships.map{ |s| { 
+          membership: s, 
+          full_name: s.roster_student.full_name, 
+          github_id: s.roster_student.user.username 
+        } 
+      }
+      response = { org_team: @org_team, members: members, course: @course }
+      respond_with response
     end
   end
 end
