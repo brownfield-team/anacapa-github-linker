@@ -1,0 +1,8 @@
+<%= react_component("CourseOrgTeam",
+                        props: {current_path: request.env['PATH_INFO'],
+                                can_edit: can?(:update, @parent),
+                                course_id: params[:course_id],
+                                org_team_id: params[:id]
+                        },
+                        prerender: false)
+%>

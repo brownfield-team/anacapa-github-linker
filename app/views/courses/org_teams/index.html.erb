@@ -1,3 +1,14 @@
+<%= react_component("CourseOrgTeamsIndex",
+                        props: {current_path: request.env['PATH_INFO'],
+                                can_edit: can?(:update, @course),
+                                course_id: params[:course_id].to_i,
+                                course: @parent
+                        },
+                        prerender: false)
+%>
+
+
+
 <div class="row">
   <div class="col-md-12">
     <table class="table" data-toggle="table" data-search="true">

@@ -9,6 +9,9 @@ import CourseGithubReposIndex from "../components/Course/GithubRepos/CourseGithu
 import CourseGithubReposProjectRepos from "../components/Course/GithubRepos/CourseGithubReposProjectRepos";
 import CourseGithubRepo from "../components/Course/GithubRepos/CourseGithubRepo";
 
+import CourseOrgTeam from "../components/Course/OrgTeams/CourseOrgTeam";
+import CourseOrgTeamsIndex from "../components/Course/OrgTeams/CourseOrgTeamsIndex";
+
 import JobLauncher from "../components/Jobs/JobLauncher";
 import JobLog from "../components/Jobs/JobLog";
 
@@ -27,6 +30,8 @@ ReactOnRails.register({
   CourseGithubReposIndex,
   CourseGithubReposProjectRepos,
   CourseGithubRepo,
+  CourseOrgTeam,
+  CourseOrgTeamsIndex,
   JobLauncher,
   JobLog,
   SchoolsIndex,
