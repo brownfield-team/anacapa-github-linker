@@ -133,8 +133,8 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         # otherwise the since/until clause is empty
 
         since_until_clause = ""
-
-        if ( @course.start_date != "" and @course.end_date != "")
+        
+        if ( (@course.start_date != nil) and (@course.end_date != nil) )
           start_date = @course.start_date.to_time.iso8601 # convert to correct format
           end_date = @course.end_date.to_time.iso8601 # convert to correct format
           since_until_clause = ", since: \"#{start_date}\", until: \"#{end_date}\""
