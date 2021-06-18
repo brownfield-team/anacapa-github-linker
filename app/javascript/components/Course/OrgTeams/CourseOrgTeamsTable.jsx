@@ -17,11 +17,11 @@ class CourseOrgTeamsTable extends Component {
                 dataField: 'name',
                 text: 'Team',
                 editable: false,
-                formatter: (cell, row, rowIndex, extraData) => this.renderTeamShowPageUrl(cell, row, rowIndex, { "course_id": this.props.course_id })
+                formatter: (cell, row, rowIndex, extraData) => this.renderTeamShowPageUrl(cell, row, rowIndex, { "course_id": this.props.course_id, "table_size": this.props.teams.length })
             },
             {
                 dataField: 'url',
-                text: 'on Github',
+                text: 'Manage',
                 editable: false,
                 formatter: (cell) => this.renderRepoGithubUrl(cell)
             },
@@ -30,14 +30,20 @@ class CourseOrgTeamsTable extends Component {
     renderTeamShowPageUrl = (cell, row, rowIndex, extraData) => {
         const url = `/courses/${extraData.course_id}/org_teams/${row.id}`;
 
-        return (
-            <a href={url}>{cell}</a>
-        );
+        console.log("props = ", this.props)
+        if (extraData.table_size > 1)
+            return (
+                <a href={url}>{cell}</a>
+            );
+        else
+            return (
+                cell
+            );
     }
 
     renderRepoGithubUrl = (cell) => {
         return (
-            <a href={cell}>on Github</a>
+            <a href={cell}>Manage on Github...</a>
         );
     }
 
