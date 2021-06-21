@@ -15,7 +15,15 @@ module Api::Courses
           github_id: s.roster_student.user.username 
         } 
       }
-      response = { org_team: @org_team, members: members, course: @course }
+
+      repos = @org_team.repo_team_contributors.map{ |r| {
+          repo: r,
+          repo_name: r.github_repo.name,
+          permission: r.permission_level
+        }
+      }
+
+      response = { org_team: @org_team, members: members, course: @course, repos: repos }
       respond_with response
     end
   end

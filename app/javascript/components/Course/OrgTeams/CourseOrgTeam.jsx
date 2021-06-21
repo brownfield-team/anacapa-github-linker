@@ -5,13 +5,13 @@ import CourseOrgTeamMemberList from "./CourseOrgTeamMemberList";
 
 
 import OrgTeamsService from "../../../services/org-teams-service";
+import CourseOrgTeamRepoList from './CourseOrgTeamRepoList';
 
 
 class CourseOrgTeam extends Component {
 
     constructor(props) {
         super(props);
-        console.log("In constructor of CourseOrgTeam, props=",props);
         this.state = {team: undefined};
     }
 
@@ -20,10 +20,8 @@ class CourseOrgTeam extends Component {
     }
 
     fetchTeam = () => {
-        console.log("fetchTeam was called");
         OrgTeamsService.getOrgTeam(this.props.course_id, this.props.org_team_id).then(
             (team) => {
-                console.log("callback for getOrgTeam: ", team);
                 this.setState({team: team})
             }
         );
@@ -31,7 +29,6 @@ class CourseOrgTeam extends Component {
 
     render() {
         const team = this.state.team;
-        console.log("render, team=",team);
 
         if (team == null) return "Loading...";
         return (
@@ -44,6 +41,10 @@ class CourseOrgTeam extends Component {
                     {...this.props}
                 />
                 <CourseOrgTeamMemberList 
+                    team={team}
+                    {...this.props}
+                />
+                <CourseOrgTeamRepoList
                     team={team}
                     {...this.props}
                 />
