@@ -29,13 +29,13 @@ class CoursesIndex extends Component {
 
 	 renderEditButton = (cell, row) => {
 		return (
-			<Button variant="warning" data-testid={`edit-button-${row.id}`} href={`${row.edit_path}`} >Edit</Button>
+			<Button className="btn btn-warning" variant="warning" data-testid={`edit-button-${row.id}`} href={`${row.edit_path}`} >Edit</Button>
 		)
 	}
 
 	 renderDeleteButton = (cell, row) => {
 		return (
-			<Button variant="danger" data-testid={`delete-button-${row.id}`} onClick={() => this.deleteCourse(row)} >Delete</Button>
+			<Button className="btn btn-danger" variant="danger" data-testid={`delete-button-${row.id}`} onClick={() => {if(window.confirm(`Delete course ${row.name}?`)) {this.deleteCourse(row)}}} >Delete</Button>
 		)
 	}
 
