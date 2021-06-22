@@ -100,6 +100,7 @@ class CoursesIndex extends Component {
 				columns={this.columns}
 				data={this.state.courses}
 				keyField="id"
+				id="course_list"
 			/>
 
 			// <Fragment>
