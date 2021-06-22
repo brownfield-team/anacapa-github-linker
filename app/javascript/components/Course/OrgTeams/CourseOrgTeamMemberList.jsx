@@ -49,9 +49,8 @@ class CourseOrgTeamMembersList extends Component {
     }
 
     renderTeamMemberRole = (cell, row) => {
-        const url = `https://github.com/orgs/${this.props.team.course.course_organization}/teams/${this.props.team.org_team.name}/members?query=${row.github_id}`;
         return (
-            <a href={url}>{cell}</a>
+            cell
         );
     }
 

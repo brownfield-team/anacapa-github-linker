@@ -42,8 +42,9 @@ class CourseOrgTeamsTable extends Component {
     }
 
     renderRepoGithubUrl = (cell) => {
+        const url = `${cell}/members`
         return (
-            <a href={cell}>Manage on Github...</a>
+            <a href={url}>Manage on Github...</a>
         );
     }
 
