@@ -94,7 +94,6 @@ class CoursesIndex extends Component {
 
 	render() {
 		return (
-
 			<BootstrapTable
 				boostrap4={true}
 				columns={this.columns}
@@ -102,32 +101,6 @@ class CoursesIndex extends Component {
 				keyField="id"
 				id="course_list"
 			/>
-
-			// <Fragment>
-			// 	<div>
-			// 		<div className="panel panel-body">
-			// 			<table className="bootstrap-table" data-toggle="table" data-search="true" data-pagination="true" data-show-columns="true" data-show-columns-toggle-all="true" data-show-pagination-switch="true" data-filter-control="true">
-			// 				<thead>
-			// 					<tr>
-			// 						<th scope="col">School</th>
-			// 						<th scope="col">Name</th>
-			// 						<th scope="col">Term</th>
-			// 						<th scope="col">Hidden</th>
-			// 						<th scope="col">GitHub Organization</th>
-			// 						<th scope="col" colSpan="2">Actions</th>
-			// 					</tr>
-			// 				</thead>
-			// 				<tbody>
-			// 					{this.state.courses.map(course =>
-			// 						<CoursesIndexItem course={course} onDelete={this.deleteCourse} key={course.id} />
-			// 					)}
-			// 				</tbody>
-			// 			</table>
-			// 		</div>
-			// 	</div>
-			// </Fragment>
-
-
 		);
 	}
 }
