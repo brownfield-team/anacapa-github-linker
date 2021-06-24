@@ -37,9 +37,12 @@ class CommitsAnalytics extends Component {
             commitDataDict[value.full_name] = null
         }
 
-        const response = fetch(`/courses/${team.org_team.course_id}/github_repos/${team.repos[0].repo.github_repo_id}/repo_commit_events.csv`).then(response => response.text().then(responseCSV => Papa.parse(responseCSV)))
+        const response = fetch(`/courses/${team.org_team.course_id}/github_repos/${team.repos[0].repo.github_repo_id}/repo_commit_events.csv`).then(response => response.text().then(responseCSV => Papa.parse(responseCSV)));
+
+        const alt_response = fetch(`/courses/${team.org_team.course_id}/github_repos/${team.repos[0].repo.github_repo_id}/repo_commit_events`).then(response => console.log("response from API is",response));
 
         response.then(csv => {
+            console.log("csv=",csv);
             for (let i = 1; i < csv.data.length - 1; i++) {
                 if (csv.data[i][11] in commitDataDict) {
                     if (startDate != undefined && endDate != undefined) {
