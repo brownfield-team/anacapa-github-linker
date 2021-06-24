@@ -35,5 +35,11 @@ module Api
       Octokit_Wrapper::Octokit_Wrapper.machine_user
     end
 
+    respond_to :json
+    load_and_authorize_resource
+
+    def index
+    end
+
   end
 end
