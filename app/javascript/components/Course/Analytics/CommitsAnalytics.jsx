@@ -37,34 +37,30 @@ class CommitsAnalytics extends Component {
             commitDataDict[value.full_name] = null
         }
 
-        const response = fetch(`/courses/${team.org_team.course_id}/github_repos/${team.repos[0].repo.github_repo_id}/repo_commit_events.csv`).then(response => response.text().then(responseCSV => Papa.parse(responseCSV)));
-
-        const alt_response = fetch(`/courses/${team.org_team.course_id}/github_repos/${team.repos[0].repo.github_repo_id}/repo_commit_events`).then(response => console.log("response from API is",response));
-
-        response.then(csv => {
-            console.log("csv=",csv);
-            for (let i = 1; i < csv.data.length - 1; i++) {
-                if (csv.data[i][11] in commitDataDict) {
-                    if (startDate != undefined && endDate != undefined) {
-                        if (csv.data[i][17] > startDate.toISOString() && csv.data[i][17] < endDate.toISOString()) {
-                            commitDataDict[csv.data[i][11]] += parseInt(csv.data[i][15])
-                            commitDataDict[csv.data[i][11]] += parseInt(csv.data[i][16])
+        for (const [key, repos] of Object.entries(team.repos)) {
+            const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos/${repos.repo.github_repo_id}/repo_commit_events`).then(response => response.json()).then(json => {
+                for (let i = 1; i < json.length; i++) {
+                    var student_name = json[i]["roster_student"]["first_name"] + " " + json[i]["roster_student"]["last_name"]
+                    if (student_name in commitDataDict) {
+                        if (startDate != undefined && endDate != undefined) {
+                            if (json.data[i]["commit_timestamp"] > startDate.toISOString() && json[i]["commit_timestamp"] < endDate.toISOString()) {
+                                commitDataDict[student_name] += json[i]["additions"]
+                                commitDataDict[student_name] += json[i]["deletions"]
+                            }
+                        } else {
+                            commitDataDict[student_name] += json[i]["additions"]
+                            commitDataDict[student_name] += json[i]["deletions"]
                         }
-                    } else {
-                        commitDataDict[csv.data[i][11]] += parseInt(csv.data[i][15])
-                        commitDataDict[csv.data[i][11]] += parseInt(csv.data[i][16])
                     }
                 }
-            }
 
-            if (this.checkProperties(commitDataDict)) {
-                commitDataDict = {}
-            }
+                if (this.checkProperties(commitDataDict)) {
+                    commitDataDict = {}
+                }
 
-            this.setState({commitData: commitDataDict})
-            
-            console.log("commitDataDict", commitDataDict)
-        })
+                this.setState({commitData: commitDataDict})
+            });
+        }
     }
 
     onDateRangeChanged = (date, isStart) => {
