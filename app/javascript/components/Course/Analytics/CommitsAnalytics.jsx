@@ -3,7 +3,6 @@ import * as PropTypes from 'prop-types';
 
 import { PieChart } from 'react-chartkick'
 import 'chartkick/chart.js'
-import Papa from 'papaparse';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
