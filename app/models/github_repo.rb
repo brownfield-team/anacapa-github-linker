@@ -1,18 +1,23 @@
 require 'zlib'
+
 class GithubRepo < ApplicationRecord
   belongs_to :course
   has_many :repo_contributors
   has_many :users, through: :repo_contributors
   has_many :repo_team_contributors, dependent: :destroy
   has_many :org_teams, through: :repo_team_contributors
-  has_many :org_webhook_events
-  has_many :repo_commit_events
-  has_many :repo_issue_events
+  has_many :org_webhook_events, dependent: :destroy
+  has_many :repo_commit_events, dependent: :destroy
+  has_many :repo_issue_events, dependent: :destroy
 
   # Note: most (if not all) of the GitHub-related objects store a unique identifier for that object assigned by GitHub.
   # These are, by our convention, something like #repo_id, #hook_id, #team_id, etc.
   # For all but repositories and users (uid), we use the "node_id" string provided by GitHub to fill this field. HOWEVER, for repositories (repo_id),
   # because GitHub sometimes omits the node_id for repos, we use the GitHub "id" integer (in GraphQL responses, this is called the "databaseId").
+
+  def organization
+    full_name.split("/")[0]
+  end
 
   def find_contributors
     # This query gets certain information about a student, their user, and relationship to the repository in question.
@@ -35,6 +40,42 @@ class GithubRepo < ApplicationRecord
       WHERE #{self.id} = rtc.github_repo_id
     SQL
     ActiveRecord::Base.connection.exec_query(query)
+  end
+
+  def self.create_repo_from_name(organization, name, course)
+    repo_info = GithubRepo.fetch_repo_info(organization, name)
+    return nil if repo_info.nil?
+    GithubRepo.create(
+      course: course,
+      name: repo_info[:name],
+      repo_id: repo_info[:databaseId],
+      url: repo_info[:url],
+      full_name: repo_info[:nameWithOwner],
+      visibility: repo_info[:isPrivate] ? "private" : "public",
+      last_updated_at: repo_info[:updatedAt],
+      external: course.course_organization != organization,
+    )
+  end
+
+  def self.fetch_repo_info(organization, name)
+    query_variables = { organization: organization, name: name }
+    repo_query = <<-GRAPHQL
+    query($organization: String!, $name: String!) { 
+      repository(owner: $organization, name: $name) {
+        databaseId
+        name
+        url
+        updatedAt
+        isPrivate
+        nameWithOwner
+        owner {
+          login
+        }
+      }
+    }
+    GRAPHQL
+    fetched_repo = github_machine_user.post '/graphql', { query: repo_query, variables: query_variables }.to_json
+    fetched_repo.to_h.dig(:data, :repository)
   end
 
   def self.commit_csv_export_headers
@@ -69,8 +110,8 @@ class GithubRepo < ApplicationRecord
 
   def self.doc_only_commit?(c)
     begin
-      filenames = c.filenames_changed[1..-2].gsub("\"","").split(",")
-      filenames.map{ |filename| 
+      filenames = c.filenames_changed[1..-2].gsub("\"", "").split(",")
+      filenames.map { |filename|
         filename.end_with?(".md")
       }.reduce(:|)
     rescue
@@ -79,13 +120,13 @@ class GithubRepo < ApplicationRecord
   end
 
   def self.merge_commit?(c)
-      [
-        "Merge branch",
-        "Merge pull request",
-        "Merged remote-tracking branch"
-      ].map{ |p| 
-        c&.message&.start_with?(p)
-      }.reduce(:|)
+    [
+      "Merge branch",
+      "Merge pull request",
+      "Merged remote-tracking branch"
+    ].map { |p|
+      c&.message&.start_with?(p)
+    }.reduce(:|)
   end
 
   def self.alt_merge_commit?(c)
@@ -93,31 +134,31 @@ class GithubRepo < ApplicationRecord
       "merge ",
       "merged ",
       "merging "
-    ].map{ |p| 
+    ].map { |p|
       c&.message&.downcase&.start_with?(p)
     }.reduce(:|)
-end
+  end
 
-  def self.commit_meets_inclusion_criteria?(repo,c)
+  def self.commit_meets_inclusion_criteria?(repo, c)
     return false if doc_only_commit?(c)
     return false if c.roster_student.nil?
-    return false if repo.visibility=="private" && !c.roster_student.consents
+    return false if repo.visibility == "private" && !c.roster_student.consents
     return false if alt_merge_commit?(c)
     true
-  end 
+  end
 
-  def self.team_names(c) 
+  def self.team_names(c)
     "TBD"
   end
 
   # self.method so it can be reused in course.rb
-  def self.commit_csv_export_fields(repo,c)
+  def self.commit_csv_export_fields(repo, c)
 
-    author_teams_array = c.roster_student&.org_teams&.map{ |team| team.name }
+    author_teams_array = c.roster_student&.org_teams&.map { |team| team.name }
     author_teams = self.array_or_singleton_to_s(author_teams_array)
 
     [
-      commit_meets_inclusion_criteria?(repo,c),
+      commit_meets_inclusion_criteria?(repo, c),
       c.commit_hash,
       author_teams,
       doc_only_commit?(c),
@@ -131,7 +172,7 @@ end
       c.roster_student&.full_name,
       c.roster_student&.user&.username,
       c.branch,
-      c.files_changed, 
+      c.files_changed,
       c.additions,
       c.deletions,
       c.commit_timestamp,
@@ -183,24 +224,24 @@ end
     i.project_card_column_names&.upcase&.include?("DONE")
   end
 
-  def self.issue_meets_inclusion_criteria?(repo,i)
+  def self.issue_meets_inclusion_criteria?(repo, i)
     return false if !i.closed and not in_done_column(i)
     return false if i.roster_student.nil?
-    return false if repo.visibility=="private" && !i.roster_student.consents
+    return false if repo.visibility == "private" && !i.roster_student.consents
     true
-  end 
+  end
 
   def self.assignee_list_to_array(assignees)
     begin
-      return [] if assignees.nil? or assignees=="[]" or assignees==""
-      cleaned = assignees.gsub("\"","").gsub("[","").gsub("]","").gsub(" ","")
+      return [] if assignees.nil? or assignees == "[]" or assignees == ""
+      cleaned = assignees.gsub("\"", "").gsub("[", "").gsub("]", "").gsub(" ", "")
       puts("\n##### cleaned: #{cleaned} \n")
       cleaned.split(",")
     end
   end
 
-  def self.issue_csv_export_fields(repo,i)
-    author_teams_array = i.roster_student&.org_teams&.map{ |team| team.name }
+  def self.issue_csv_export_fields(repo, i)
+    author_teams_array = i.roster_student&.org_teams&.map { |team| team.name }
     author_teams = self.array_or_singleton_to_s(author_teams_array)
 
     assignee_teams_array = []
@@ -208,21 +249,20 @@ end
 
     assignees = assignee_list_to_array(i.assignee_logins)
     puts("\n##### assignees: #{assignees} \n")
-    assignees.map{ |login|
+    assignees.map { |login|
       student = repo.course.student_for_github_username(login)
-      student_teams_array = student&.org_teams&.map{ |team| team.name }
+      student_teams_array = student&.org_teams&.map { |team| team.name }
       assignee_teams_array |= student_teams_array unless student_teams_array.nil?
     }
     assignee_teams = self.array_or_singleton_to_s(assignee_teams_array)
     puts("\n\n##### assignee_teams: #{assignee_teams} \n\n")
 
-
     [
-      issue_meets_inclusion_criteria?(repo,i),
-      issue_hash(i), 
+      issue_meets_inclusion_criteria?(repo, i),
+      issue_hash(i),
       author_teams || assignee_teams,
-      i.roster_student&.consents,  
-      i.state,       
+      i.roster_student&.consents,
+      i.state,
       self.in_done_column(i),
       i.url,
       repo.name,
@@ -253,7 +293,7 @@ end
     CSV.generate(headers: true) do |csv|
       csv << GithubRepo.commit_csv_export_headers
       repo_commit_events.each do |c|
-        csv << GithubRepo.commit_csv_export_fields(self,c)
+        csv << GithubRepo.commit_csv_export_fields(self, c)
       end
     end
   end
@@ -262,35 +302,35 @@ end
     CSV.generate(headers: true) do |csv|
       csv << GithubRepo.issue_csv_export_headers
       repo_issue_events.each do |c|
-        csv << GithubRepo.issue_csv_export_fields(self,c)
+        csv << GithubRepo.issue_csv_export_fields(self, c)
       end
     end
   end
 
-  def self.checklist_item_count(body) 
+  def self.checklist_item_count(body)
     # both checked and unchecked
     return 0 if body.nil?
     body.scan(/\r\n[ ]*- \[[ x]\]/).count
   end
 
-  def self.checklist_item_checked_count(body) 
+  def self.checklist_item_checked_count(body)
     return 0 if body.nil?
     # both checked and unchecked
     body.scan(/\r\n[ ]*- \[x\]/).count
   end
 
-  def self.checklist_item_unchecked_count(body) 
+  def self.checklist_item_unchecked_count(body)
     return 0 if body.nil?
     # both checked and unchecked
     body.scan(/\r\n[ ]*- \[ \]/).count
   end
 
   def self.array_or_singleton_to_s(a)
-    return nil if a.nil? or a.length==0
-    return a.first.to_s if a.length==1
+    return nil if a.nil? or a.length == 0
+    return a.first.to_s if a.length == 1
     a.sort.to_s
   end
-  
+
   def self.issue_hash(i)
     basis = "#{i.url} #{i.issue_created_at} #{i.title} #{i.body}"
     Zlib.crc32 basis

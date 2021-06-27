@@ -35,6 +35,16 @@
   </div>
 
   <div class="field">
+    <%= form.label :start_date %>
+    <%= form.date_field :start_date, id: :course_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :end_date %>
+    <%= form.date_field :end_date, id: :course_name %>
+  </div>
+
+  <div class="field">
     <%= form.label :github_webhooks_enabled %>
     <%= form.check_box :github_webhooks_enabled, id: :course_github_webhooks_enabled %>
   </div>

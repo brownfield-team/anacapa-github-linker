@@ -10,6 +10,7 @@ export const graphqlRoute = (courseId) => `${courseRoute(courseId)}/graphql`
 export const projectTeamsRoute = (courseId) => `${courseProjectTeamsRoute(courseId)}`
 export const projectTeamRoute = (courseId, projectTeamId) => `${courseProjectTeamsRoute(courseId)}/${projectTeamId}`
 export const orgTeamsRoute = (courseId) => `${courseOrgTeamsRoute(courseId)}`;
+export const orgTeamRoute = (courseId, orgTeamId) => `${courseOrgTeamsRoute(courseId)}/${orgTeamId}`;
 
 export const studentsRoute = (courseId) => `${courseStudentsRoute(courseId)}`
 export const studentRoute = (courseId, rosterStudentId) => `${courseStudentsRoute(courseId)}/${rosterStudentId}`

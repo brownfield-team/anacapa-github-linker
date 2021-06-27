@@ -17,7 +17,11 @@ module Courses
     end
 
     def project_repos
-     
+
+    end
+
+    def external
+
     end
 
     def show

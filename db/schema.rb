@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_19_160808) do
+ActiveRecord::Schema.define(version: 2021_05_27_190854) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,8 @@ ActiveRecord::Schema.define(version: 2021_04_19_160808) do
     t.boolean "hidden"
     t.boolean "github_webhooks_enabled"
     t.string "term"
+    t.datetime "start_date"
+    t.datetime "end_date"
     t.bigint "school_id"
     t.index ["school_id"], name: "index_courses_on_school_id"
   end
@@ -66,6 +68,7 @@ ActiveRecord::Schema.define(version: 2021_04_19_160808) do
     t.string "full_name"
     t.string "visibility"
     t.boolean "is_project_repo"
+    t.boolean "external"
     t.index ["course_id"], name: "index_github_repos_on_course_id"
   end
 
