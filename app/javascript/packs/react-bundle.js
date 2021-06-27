@@ -15,7 +15,6 @@ import CourseOrgTeamsIndex from "../components/Course/OrgTeams/CourseOrgTeamsInd
 import JobLauncher from "../components/Jobs/JobLauncher";
 import JobLog from "../components/Jobs/JobLog";
 
-import CoursesIndex from "../components/Courses/CoursesIndex";
 import SchoolsIndex from "../components/Schools/SchoolsIndex";
 import HomePage from "../components/home/HomePage";
 
@@ -36,7 +35,6 @@ ReactOnRails.register({
   CourseOrgTeamsIndex,
   JobLauncher,
   JobLog,
-  CoursesIndex,
   SchoolsIndex,
   HomePage,
   ExternalReposPage,
