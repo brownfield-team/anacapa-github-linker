@@ -35,9 +35,9 @@ ActiveRecord::Schema.define(version: 2021_05_27_190854) do
     t.boolean "hidden"
     t.boolean "github_webhooks_enabled"
     t.string "term"
+    t.bigint "school_id"
     t.datetime "start_date"
     t.datetime "end_date"
-    t.bigint "school_id"
     t.index ["school_id"], name: "index_courses_on_school_id"
   end
 

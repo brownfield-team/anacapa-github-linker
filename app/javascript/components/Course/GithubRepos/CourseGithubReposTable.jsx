@@ -47,6 +47,15 @@ class CourseGithubReposTable extends Component {
             editable: false,
             formatter: (cell, row, rowIndex, extraData) => this.renderIssueCSVLink(cell, row, rowIndex, {"course_id": this.props.course_id})
         },{
+            dataField:"pr_count",
+            text:'PR Count',
+            editable: false,
+        },{
+            dataField: 'dummy3',
+            text: 'PR CSV',
+            editable: false,
+            // formatter: (cell, row, rowIndex, extraData) => this.renderIssueCSVLink(cell, row, rowIndex, {"course_id": this.props.course_id})
+        },{
             dataField: 'is_project_repo',
             text: 'Project Repo',
             editable: false,
