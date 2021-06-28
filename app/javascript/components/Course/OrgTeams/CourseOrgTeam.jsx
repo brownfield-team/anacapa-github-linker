@@ -7,6 +7,7 @@ import CourseOrgTeamMemberList from "./CourseOrgTeamMemberList";
 import OrgTeamsService from "../../../services/org-teams-service";
 import CourseOrgTeamRepoList from './CourseOrgTeamRepoList';
 import CommitsAnalytics from '../Analytics/CommitsAnalytics';
+import ChangeAnalytics from '../Analytics/ChangeAnalytics';
 
 
 class CourseOrgTeam extends Component {
@@ -52,11 +53,24 @@ class CourseOrgTeam extends Component {
                 />
                 <Panel>
                     <Panel.Heading>
-                            <Panel.Title>Analytics</Panel.Title>
+                            <Panel.Title>Commit Analytics</Panel.Title>
                     </Panel.Heading>
                     <Panel.Body>
                         <div align="center">
                             <CommitsAnalytics
+                                team={team}
+                                {...this.props}
+                            />
+                        </div>
+                    </Panel.Body>
+                </Panel>
+                <Panel>
+                    <Panel.Heading>
+                            <Panel.Title>Change Analytics</Panel.Title>
+                    </Panel.Heading>
+                    <Panel.Body>
+                        <div align="center">
+                            <ChangeAnalytics
                                 team={team}
                                 {...this.props}
                             />

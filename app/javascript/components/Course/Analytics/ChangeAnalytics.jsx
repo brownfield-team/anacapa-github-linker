@@ -9,7 +9,7 @@ import {InputGroup, FormControl, Button} from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-class CommitsAnalytics extends Component {
+class ChangeAnalytics extends Component {
 
     constructor(props) {
         super(props);
@@ -46,10 +46,12 @@ class CommitsAnalytics extends Component {
                     if (student_name in commitDataDict) {
                         if (startDate != undefined && endDate != undefined) {
                             if (json[i]["commit_timestamp"] > startDate.toISOString() && json[i]["commit_timestamp"] < endDate.toISOString()) {
-                                commitDataDict[student_name] += 1
+                                commitDataDict[student_name] += json[i]["additions"]
+                                commitDataDict[student_name] += json[i]["deletions"]
                             }
                         } else {
-                            commitDataDict[student_name] += 1
+                            commitDataDict[student_name] += json[i]["additions"]
+                            commitDataDict[student_name] += json[i]["deletions"]
                         }
                     }
                 }
@@ -114,7 +116,7 @@ class CommitsAnalytics extends Component {
                         </InputGroup.Addon>
                     </InputGroup>
                 </div>
-                <PieChart data={commitData} legend="bottom" width="500px" height="500px" empty="No Commits" />
+                <PieChart data={commitData} legend="bottom" width="500px" height="500px" empty="No Change" />
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
                     <DatePicker
                         selected={this.state.startDate}
@@ -134,7 +136,7 @@ class CommitsAnalytics extends Component {
                         minDate={this.state.startDate}
                     />
                     <a onClick={() => this.onButtonClick()}>
-                        <button>Get Commits</button>
+                        <button>Get Change</button>
                     </a>
                 </div>
             </Fragment>
@@ -142,8 +144,8 @@ class CommitsAnalytics extends Component {
     }
 }
 
-CommitsAnalytics.propTypes = {
+ChangeAnalytics.propTypes = {
     team: PropTypes.object.isRequired,
 };
 
-export default CommitsAnalytics;
+export default ChangeAnalytics;
