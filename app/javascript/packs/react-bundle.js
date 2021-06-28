@@ -19,6 +19,7 @@ import SchoolsIndex from "../components/Schools/SchoolsIndex";
 import HomePage from "../components/home/HomePage";
 
 import ExternalReposPage from "../components/Course/GithubRepos/ExternalRepos/ExternalReposPage";
+import CoursesIndex from "../components/Courses/CoursesIndex";
 
 import "../styles.css"
 
@@ -37,4 +38,5 @@ ReactOnRails.register({
   SchoolsIndex,
   HomePage,
   ExternalReposPage,
+  CoursesIndex
 });
