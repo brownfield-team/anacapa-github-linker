@@ -112,6 +112,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
     def update_one_issue(issue, i)
       begin
         issue.url =  i[:url]
+        issue.number = i[:number]
         issue.issue_id = i[:id]
         issue.github_repo = @github_repo
         issue.title = i[:title]
