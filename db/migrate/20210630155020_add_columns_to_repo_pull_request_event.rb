@@ -15,7 +15,7 @@ class AddColumnsToRepoPullRequestEvent < ActiveRecord::Migration[5.2]
     add_column :repo_pull_request_events, :project_card_count, :integer
     add_column :repo_pull_request_events, :project_card_column_names, :string
     add_column :repo_pull_request_events, :project_card_column_project_names, :string
-    add_column :repo_pull_request_events, :project_card_project_urls, :string
+    add_column :repo_pull_request_events, :project_card_column_project_urls, :string
     add_column :repo_pull_request_events, :pull_request_created_at, :datetime
     add_column :repo_pull_request_events, :author_login, :string
   end

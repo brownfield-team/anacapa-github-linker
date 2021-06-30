@@ -94,11 +94,13 @@ class CourseGithubRepoGetPullRequests < CourseGithubRepoJob
     def update_one_pull_request(pullRequest, i)
       begin
         pullRequest.url =  i[:url]
-        pullRequest.pull_request_id = i[:id]
+        pullRequest.pr_id = i[:id]
         pullRequest.github_repo = @github_repo
         pullRequest.title = i[:title]
         pullRequest.body = i[:body]
         pullRequest.state = i[:state]
+        pullRequest.changedFiles = i[:changedFiles]
+        pullRequest.reviewDecision = i[:reviewDecision]
         pullRequest.closed = i[:closed]
         pullRequest.closed_at = i[:closedAt]
         pullRequest.merged_at = i[:mergedAt]
@@ -111,8 +113,6 @@ class CourseGithubRepoGetPullRequests < CourseGithubRepoJob
         pullRequest.project_card_column_names=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_name(x)})
         pullRequest.project_card_column_project_names=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_project_name(x)})
         pullRequest.project_card_column_project_urls=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_project_url(x)})
-        pullRequest.changedFiles = i[:changedFiles]
-        pullRequest.reviewDecision = [i:reviewDecision]
       rescue
         raise
         puts "***ERROR*** update_pull_request_fields PR #{sawyer_resource_to_s(i)} @github_repo #{@github_repo}"
