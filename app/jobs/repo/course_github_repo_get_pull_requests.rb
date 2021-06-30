@@ -1,5 +1,5 @@
 require 'json'
-class CourseGithubRepoGetIssues < CourseGithubRepoJob
+class CourseGithubRepoGetPullRequests < CourseGithubRepoJob
 
     @job_name = "Get Pull Requests for this Repo"
     @job_short_name = "course_github_repo_get_pull_requests"
@@ -16,7 +16,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         begin
           more_pages = query_results[:data][:repository][:pullRequests][:pageInfo][:hasNextPage]
           end_cursor = query_results[:data][:repository][:pullRequests][:pageInfo][:endCursor]
-          issues = query_results[:data][:repository][:pullRequests][:nodes]
+          pullRequests = query_results[:data][:repository][:pullRequests][:nodes]
         rescue
           return "Unexpected result returned from graphql query: #{sawyer_resource_to_s(query_results)}"
         end
@@ -27,24 +27,24 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
       "Pull Requests retrieved for Course: #{@course.name} Repo: #{@github_repo.name} <br/>      #{final_results.report}"
     end
 
-    def store_issues_in_database(pullRequests)
+    def store_pull_requests_in_database(pullRequests)
       total_new_pull_requests = 0
       total_updated_pull_requests = 0
       #TODO UPDATE PULL REQUESTS'S TABLE
       pullRequests.each{ |i|
-        existing_pull_request = RepoIssueEvent.where(url: i[:url]).first
+        existing_pull_request = RepoPullRequestEvent.where(url: i[:url]).first
         if existing_pull_request
-          total_updated_pull_requests += update_one_issue(existing_pull_request, i)
+          total_updated_pull_requests += update_one_pull_request(existing_pull_request, i)
         else
-          total_new_pull_requests += store_one_issue_in_database(i)
+          total_new_pull_requests += store_one_pull_request_in_database(i)
         end
       }
     JobResult.new(pullRequests.length,total_new_pull_requests,total_updated_pull_requests)
     end
 
-    def store_one_issue_in_database(i)
-      issue = RepoIssueEvent.new
-      result = update_one_issue(issue,i)
+    def store_one_pull_request_in_database(i)
+      pullRequest = RepoPullRequestEvent.new
+      result = update_one_pull_request(pullRequest,i)
     end
 
     def column_name(x)
@@ -101,6 +101,8 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         pullRequest.state = i[:state]
         pullRequest.closed = i[:closed]
         pullRequest.closed_at = i[:closedAt]
+        pullRequest.merged_at = i[:mergedAt]
+        pullRequest.merged = i[:merged]
         pullRequest.pull_request_created_at = i[:createdAt]
         pullRequest.assignee_count = i[:assignees][:totalCount]
         pullRequest.assignee_names = assignee_names(i)
@@ -113,7 +115,7 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         pullRequest.reviewDecision = [i:reviewDecision]
       rescue
         raise
-        puts "***ERROR*** update_issue_fields issue #{sawyer_resource_to_s(i)} @github_repo #{@github_repo}"
+        puts "***ERROR*** update_pull_request_fields PR #{sawyer_resource_to_s(i)} @github_repo #{@github_repo}"
         return 0
       end
 
@@ -206,6 +208,8 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
                 closed
                 closedAt
                 createdAt
+                mergedAt
+                merged
                 url
                 number
                 title
