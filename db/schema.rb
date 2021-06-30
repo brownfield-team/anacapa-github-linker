@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_27_190854) do
+ActiveRecord::Schema.define(version: 2021_06_30_155020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -202,6 +202,24 @@ ActiveRecord::Schema.define(version: 2021_05_27_190854) do
     t.string "action_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "title"
+    t.string "body"
+    t.string "state"
+    t.string "reviewDecision"
+    t.integer "changedFiles"
+    t.boolean "closed"
+    t.datetime "closed_at"
+    t.boolean "merged"
+    t.datetime "merged_at"
+    t.integer "assignee_count"
+    t.string "assignee_logins"
+    t.string "assignee_names"
+    t.integer "project_card_count"
+    t.string "project_card_column_names"
+    t.string "project_card_column_project_names"
+    t.string "project_card_project_urls"
+    t.datetime "pull_request_created_at"
+    t.string "author_login"
     t.index ["github_repo_id"], name: "index_repo_pull_request_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_pull_request_events_on_roster_student_id"
   end
