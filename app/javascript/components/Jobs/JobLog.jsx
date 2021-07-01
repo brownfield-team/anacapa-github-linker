@@ -12,9 +12,31 @@ class JobLog extends Component {
         axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
         axios.defaults.params = {}
         axios.defaults.params['authenticity_token'] = csrfToken;
+        this.state = { jobList: undefined }
+    }
+
+    componentDidMount() {
+        this.fetchJobLog();
+        this.interval = setInterval(() => this.fetchJobLog(), 10000);
+    }
+    
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    fetchJobLog = () => {
+        if (this.props.completed_jobs_list.length != 0) {
+            const response = fetch(`/api/courses/${this.props.completed_jobs_list[0].course_id}/job_log/`).then(json => json.json()).then(parsedJson => {
+                this.setState({ jobList: parsedJson })
+            })
+        }
     }
 
     render() {
+        const jobList = this.state.jobList;
+
+        if (jobList == null) return "Loading...";
+
         return (
             <Fragment>
                 <div className="panel panel-default">
@@ -33,8 +55,8 @@ class JobLog extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.props.completed_jobs_list.map(completed_job =>
-                                    <JobLogItem key={`completed-job-${completed_job.id}`} completed_job={completed_job} {...this.props} />
+                                {this.state.jobList.map(completed_job =>
+                                    <JobLogItem key={`completed-job-${completed_job.id}`} completed_job={completed_job} {...this.state.jobList} />
                                 )}
                             </tbody>
                         </table>
