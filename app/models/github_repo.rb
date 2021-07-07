@@ -232,6 +232,13 @@ class GithubRepo < ApplicationRecord
     true
   end
 
+  def self.pull_request_meets_inclusion_criteria?(repo, i)
+    return false if !i.closed and !i.merged and not in_done_column(i) 
+    return false if i.roster_student.nil?
+    return false if repo.visibility == "private" && !i.roster_student.consents
+    true
+  end
+
   def self.assignee_list_to_array(assignees)
     begin
       return [] if assignees.nil? or assignees == "[]" or assignees == ""
@@ -290,6 +297,97 @@ class GithubRepo < ApplicationRecord
     ]
   end
 
+
+  def self.pull_request_csv_export_headers
+    %w[
+      include
+      random
+      teams
+      author_consents
+      state
+      done
+      url
+      github_repo_name
+      github_repo_url
+      github_repo_visibility
+      title
+      created_at
+      closed
+      closed_at
+      merged
+      merged_at
+      reviewDecision
+      changedFiles
+      author_login
+      author_name
+      author_teams
+      assignee_count
+      assignee_logins
+      assignee_names
+      assignee_teams
+      project_card_count
+      project_column_names
+      project_names
+      project_urls
+      checklist_items
+      checked
+      unchecked
+    ]
+  end
+
+  def self.pull_request_csv_export_fields(repo, i)
+    author_teams_array = i.roster_student&.org_teams&.map { |team| team.name }
+    author_teams = self.array_or_singleton_to_s(author_teams_array)
+
+    assignee_teams_array = []
+    puts("\n##### i.assignee_logins: #{i.assignee_logins} \n")
+
+    assignees = assignee_list_to_array(i.assignee_logins)
+    puts("\n##### assignees: #{assignees} \n")
+    assignees.map { |login|
+      student = repo.course.student_for_github_username(login)
+      student_teams_array = student&.org_teams&.map { |team| team.name }
+      assignee_teams_array |= student_teams_array unless student_teams_array.nil?
+    }
+    assignee_teams = self.array_or_singleton_to_s(assignee_teams_array)
+    puts("\n\n##### assignee_teams: #{assignee_teams} \n\n")
+
+    [
+      pull_request_meets_inclusion_criteria?(repo, i),
+      pull_request_hash(i),
+      author_teams || assignee_teams,
+      i.roster_student&.consents,
+      i.state,
+      self.in_done_column(i),
+      i.url,
+      repo.name,
+      repo.url,
+      repo.visibility,
+      i.title,
+      i.pull_request_created_at,
+      i.closed,
+      i.closed_at,
+      i.merged,
+      i.merged_at,
+      i.reviewDecision,
+      i.changedFiles,
+      i.author_login,
+      i.roster_student&.full_name,
+      author_teams,
+      i.assignee_count,
+      i.assignee_logins,
+      i.assignee_names,
+      assignee_teams,
+      i.project_card_count,
+      i.project_card_column_names,
+      i.project_card_column_project_names,
+      i.project_card_column_project_urls,
+      self.checklist_item_count(i.body),
+      self.checklist_item_checked_count(i.body),
+      self.checklist_item_unchecked_count(i.body),
+    ]
+  end
+
   def export_commits_to_csv
     CSV.generate(headers: true) do |csv|
       csv << GithubRepo.commit_csv_export_headers
@@ -304,6 +402,15 @@ class GithubRepo < ApplicationRecord
       csv << GithubRepo.issue_csv_export_headers
       repo_issue_events.each do |c|
         csv << GithubRepo.issue_csv_export_fields(self, c)
+      end
+    end
+  end
+
+  def export_pull_requests_to_csv
+    CSV.generate(headers: true) do |csv|
+      csv << GithubRepo.pull_request_csv_export_headers
+      repo_pull_request_events.each do |c|
+        csv << GithubRepo.pull_request_csv_export_fields(self, c)
       end
     end
   end
@@ -336,4 +443,12 @@ class GithubRepo < ApplicationRecord
     basis = "#{i.url} #{i.issue_created_at} #{i.title} #{i.body}"
     Zlib.crc32 basis
   end
+
+  def self.pull_request_hash(i)
+    basis = "#{i.url} #{i.pull_request_created_at} #{i.title} #{i.body}"
+    Zlib.crc32 basis
+  end
+
 end
+
+

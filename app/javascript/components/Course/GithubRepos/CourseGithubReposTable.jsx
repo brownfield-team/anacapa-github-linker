@@ -54,7 +54,7 @@ class CourseGithubReposTable extends Component {
             dataField: 'dummy3',
             text: 'PR CSV',
             editable: false,
-            // formatter: (cell, row, rowIndex, extraData) => this.renderIssueCSVLink(cell, row, rowIndex, {"course_id": this.props.course_id})
+            formatter: (cell, row, rowIndex, extraData) => this.renderPullRequestCSVLink(cell, row, rowIndex, {"course_id": this.props.course_id})
         },{
             dataField: 'is_project_repo',
             text: 'Project Repo',
@@ -85,6 +85,13 @@ class CourseGithubReposTable extends Component {
 
     renderIssueCSVLink = (cell, row, rowIndex, extraData) => {
         const url = `/courses/${extraData.course_id}/github_repos/${row.id}/repo_issue_events.csv`;
+        return (
+                <a href={url}>CSV</a>
+        );
+    }
+
+    renderPullRequestCSVLink= (cell, row, rowIndex, extraData) => {
+        const url = `/courses/${extraData.course_id}/github_repos/${row.id}/repo_pull_request_events.csv`;
         return (
                 <a href={url}>CSV</a>
         );
