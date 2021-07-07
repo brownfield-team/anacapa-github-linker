@@ -58,7 +58,8 @@ module Api::Courses
       {
         repo: repo,
         commit_count: github_repo.repo_commit_events.count,
-        issue_count: github_repo.repo_issue_events.count
+        issue_count: github_repo.repo_issue_events.count,
+        pr_count: github_repo.repo_pull_request_events.count
       }
 
     end
