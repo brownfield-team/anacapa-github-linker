@@ -26,7 +26,9 @@ Rails.application.routes.draw do
         resources :job_log
         resources :project_teams
         resources :org_teams
-        resources :github_repos
+        resources :github_repos do
+          resources :job_log
+        end  
         resources :roster_students do
           get :activity
           get :commits

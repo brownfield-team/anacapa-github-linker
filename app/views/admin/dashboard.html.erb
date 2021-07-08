@@ -38,7 +38,9 @@
 }) %>
 
 <%= react_component("JobLog", prerender: false, props: {
-    completed_jobs_list: CompletedJob.last_ten_jobs(nil,nil)
+   course_id: nil,
+   repo_id: nil
+  # completed_jobs_list: CompletedJob.last_ten_jobs(nil,nil)
 }) %>
 
 <div class="panel panel-default">
