@@ -1,4 +1,4 @@
-module Api::Courses
+module Api
   class JobLogController < ApplicationController
     respond_to :json
     

@@ -25,8 +25,16 @@ class JobLog extends Component {
     }
 
     fetchJobLog = () => {
-        if (this.props.completed_jobs_list.length != 0) {
-            const response = fetch(`/api/courses/${this.props.completed_jobs_list[0].course_id}/job_log/`).then(json => json.json()).then(parsedJson => {
+        if (this.props.course_id != undefined && this.props.github_id == undefined) {
+            const response = fetch(`/api/courses/${this.props.course_id}/job_log/`).then(json => json.json()).then(parsedJson => {
+                this.setState({ jobList: parsedJson })
+            })
+        } else if (this.props.course_id != undefined && this.props.github_id != undefined) {
+            const response = fetch(`/api/courses/${this.props.course_id}/github_repos/${this.props.github_id}/job_log/`).then(json => json.json()).then(parsedJson => {
+                this.setState({ jobList: parsedJson })
+            })
+        } else if (this.props.course_id == undefined && this.props.github_id == undefined) {
+            const response = fetch(`/api/job_log/`).then(json => json.json()).then(parsedJson => {
                 this.setState({ jobList: parsedJson })
             })
         }
@@ -68,7 +76,8 @@ class JobLog extends Component {
 }
 
 JobLog.propTypes = {
-    completed_jobs_list: PropTypes.array.isRequired
+    course_id: PropTypes.number.isRequired,
+    github_id: PropTypes.number.isRequired,
 };
 
 export default JobLog;
