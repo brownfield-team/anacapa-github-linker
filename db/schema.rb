@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema.define(version: 2021_06_30_155020) do
 
   # These are extensions that must be enabled in order to support this database
@@ -190,6 +191,7 @@ ActiveRecord::Schema.define(version: 2021_06_30_155020) do
     t.string "project_card_column_project_urls"
     t.datetime "issue_created_at"
     t.string "author_login"
+    t.integer "number"
     t.index ["github_repo_id"], name: "index_repo_issue_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_issue_events_on_roster_student_id"
   end

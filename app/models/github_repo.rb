@@ -197,6 +197,7 @@ class GithubRepo < ApplicationRecord
       state
       done
       url
+      number
       github_repo_name
       github_repo_url
       github_repo_visibility
@@ -273,6 +274,7 @@ class GithubRepo < ApplicationRecord
       i.state,
       self.in_done_column(i),
       i.url,
+      i.number,
       repo.name,
       repo.url,
       repo.visibility,
