@@ -77,6 +77,7 @@ Rails.application.routes.draw do
         end
         resources :repo_commit_events
         resources :repo_issue_events
+        resources :repo_pull_request_events
         post :run_job
       end
 
