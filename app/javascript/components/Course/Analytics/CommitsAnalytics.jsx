@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import * as PropTypes from 'prop-types';
 
-import { PieChart } from 'react-chartkick'
+import { ColumnChart } from 'react-chartkick'
 import 'chartkick/chart.js'
 
 import {InputGroup, FormControl, Button} from "react-bootstrap";
@@ -9,15 +9,19 @@ import {InputGroup, FormControl, Button} from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+import Loader from "react-loader-spinner";
+
 class CommitsAnalytics extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {commitData: undefined, startDate: startDate, endDate: endDate, repoId: this.props.team.repos[0].repo.github_repo_id};
+        this.state = {commitData: undefined, startDate: startDate, endDate: endDate, loading: false, repoId: undefined};
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 30);
         const endDate = new Date();
     }
+
+    
 
     checkProperties(obj) {
         for (var key in obj) {
@@ -28,10 +32,22 @@ class CommitsAnalytics extends Component {
     }
 
     componentDidMount() {
-        this.getCommitData(this.props.team, undefined, undefined)
+        this.getProjectRepos(this.props.team)
+    }
+    
+    getProjectRepos = (team) => {
+        const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos?is_project_repo=true`).then(response => response.json()).then(json => {
+            if (json.length > 0) {
+                console.log("repoId", json[0]["id"])
+                this.setState({repoId: json[0]["id"]})
+            }
+        }).then(response => {
+            this.getCommitData(this.props.team, undefined, undefined)
+        })
     }
 
     getCommitData = (team, startDate, endDate) => {
+        this.setState({loading: true})
         var commitDataDict = {}
 
         for (const [key, value] of Object.entries(team.members)) {
@@ -39,7 +55,6 @@ class CommitsAnalytics extends Component {
         }
 
         const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos/${this.state.repoId}/repo_commit_events`).then(response => response.json()).then(json => {
-            console.log("json", json)
             for (let i = 1; i < json.length; i++) {
                 if (json[i]["roster_student_id"] != null) {
                     var student_name = json[i]["roster_student"]["first_name"] + " " + json[i]["roster_student"]["last_name"]
@@ -59,7 +74,7 @@ class CommitsAnalytics extends Component {
                 commitDataDict = {}
             }
 
-            this.setState({commitData: commitDataDict})
+            this.setState({commitData: commitDataDict, loading: false})
         });
     }
 
@@ -81,7 +96,7 @@ class CommitsAnalytics extends Component {
     }
 
     onButtonClickGetRepo() {
-        console.log("this.props", this.props)
+        this.setState({loading: true})
         const response = fetch(`/api/courses/${this.props.course_id}/github_repos/`).then(response => response.json()).then(json => {
             for (const [key, repo] of Object.entries(json)) {
                 if (repo["name"] == this.state.repoName) {
@@ -92,6 +107,7 @@ class CommitsAnalytics extends Component {
                 }
             }
         });
+        
     }
 
     render() {
@@ -110,11 +126,14 @@ class CommitsAnalytics extends Component {
                         onChange={e => this.setState({repoName: e.target.value})}
                         />
                         <InputGroup.Addon addon="append" style={{alignSelf: 'stretch', padding: "0px", margin: "0px"}}>
-                            <Button variant="secondary" size="sm" style={{alignSelf: 'stretch', padding: ".5px", margin: "0px"}} onClick={() => this.onButtonClickGetRepo()}>Change Repo</Button>
+                            <Button variant="secondary" size="sm" style={{alignSelf: 'stretch', padding: ".5px", margin: "0px"}} onClick={() => this.onButtonClickGetRepo()}>
+                                Change Repo
+                            </Button>
                         </InputGroup.Addon>
                     </InputGroup>
                 </div>
-                <PieChart data={commitData} legend="bottom" width="500px" height="500px" empty="No Commits" />
+                {this.state.loading && <Loader type="TailSpin" color="#00BFFF" height={80} width={80}/>}
+                {!this.state.loading && <ColumnChart data={commitData} width="900px" height="500px" empty="No Commits" colors={["red", "blue", "green", "yellow", "purple", "pink", "orange"]} disabled={this.state.loading}/>}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
                     <DatePicker
                         selected={this.state.startDate}
