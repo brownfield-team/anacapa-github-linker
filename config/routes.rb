@@ -19,13 +19,17 @@ Rails.application.routes.draw do
     match 'testhooks/login_admin' => 'testhooks#login_admin', :via => :get
 
     resources :visitors
+    resources :job_log
 
     resources :courses do
       post :graphql
       scope module: :courses do
+        resources :job_log
         resources :project_teams
         resources :org_teams
-        resources :github_repos
+        resources :github_repos do
+          resources :job_log
+        end
         resources :roster_students do
           get :activity
           get :commits
@@ -73,6 +77,7 @@ Rails.application.routes.draw do
         end
         resources :repo_commit_events
         resources :repo_issue_events
+        resources :repo_pull_request_events
         post :run_job
       end
 
