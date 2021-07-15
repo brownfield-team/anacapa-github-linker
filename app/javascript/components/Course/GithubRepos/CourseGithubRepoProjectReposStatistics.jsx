@@ -14,6 +14,8 @@ import isEqual from 'lodash.isequal';
 import cloneDeep from "lodash.clonedeep"
 import JSONPrettyPanel from '../../Utilities/JsonPrettyPanel';
 
+import OrphanCommitsPanel from '../OrphanCommits/OrphanCommitsPanel';
+
 export default class CourseGithubReposProjectReposStatistics extends Component {
     constructor(props) {
         super(props);
@@ -473,6 +475,19 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
 
         return (
             <Fragment>
+                 {/* <Panel id="collapsible-panel-team-statistics" defaultExpanded >
+                    <Panel.Heading>
+                        <Panel.Title toggle>
+                            Orphan Commits
+                        </Panel.Title>
+                    </Panel.Heading>
+                    <Panel.Collapse>
+                        <Panel.Body>
+                           <p>Orphan Commits UI goes Here</p>
+                        </Panel.Body>
+                    </Panel.Collapse>
+                </Panel> */}
+                <OrphanCommitsPanel {...this.props} />
                 <Panel id="collapsible-panel-team-statistics" defaultExpanded >
                     <Panel.Heading>
                         <Panel.Title toggle>
