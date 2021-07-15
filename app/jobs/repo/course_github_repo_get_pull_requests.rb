@@ -1,30 +1,10 @@
 require 'json'
-class CourseGithubRepoGetIssues < CourseGithubRepoJob
+class CourseGithubRepoGetPullRequests < CourseGithubRepoJob
 
-    @job_name = "Get Issues for this Repo"
-    @job_short_name = "course_github_repo_get_issues"
-    @job_description = "Get issues for this repo"
+    @job_name = "Get Pull Requests for this Repo"
+    @job_short_name = "course_github_repo_get_pull_requests"
+    @job_description = "Get pull requests for this repo"
     @github_repo_full_name
-
-    # defJobResult.newh(total, new_count, updated_count)
-    #   {
-    #     "total_issues" => total,
-    #     "total_new_issues" => new_count,
-    #     "total_updated_issues" => updated_count
-    #   }
-    # end
-
-    # def combine_results(h1,h2)
-    #   {
-    #     "total_issues" => h1["total_issues"] + h2["total_issues"],
-    #     "total_new_issues" => h1["total_new_issues"] + h2["total_new_issues"],
-    #     "total_updated_issues" => h1["total_updated_issues"] + h2["total_updated_issues"]
-    #   }
-    # end
-
-    # def all_good?JobResult.newh)
-    #  JobResult.newh["total_issues"]=JobResult.newh["total_new_issues"] +JobResult.newh["total_updated_issues"]
-    # end
 
     def attempt_job(options)
       @github_repo_full_name = @github_repo.full_name
@@ -34,35 +14,37 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
       while more_pages
         query_results = perform_graphql_query(@github_repo.name, @github_repo.organization, end_cursor)
         begin
-          more_pages = query_results[:data][:repository][:issues][:pageInfo][:hasNextPage]
-          end_cursor = query_results[:data][:repository][:issues][:pageInfo][:endCursor]
-          issues = query_results[:data][:repository][:issues][:nodes]
+          more_pages = query_results[:data][:repository][:pullRequests][:pageInfo][:hasNextPage]
+          end_cursor = query_results[:data][:repository][:pullRequests][:pageInfo][:endCursor]
+          pullRequests = query_results[:data][:repository][:pullRequests][:nodes]
         rescue
           return "Unexpected result returned from graphql query: #{sawyer_resource_to_s(query_results)}"
         end
-        results = store_issues_in_database(issues)
+        #TODO Store in a new pull requests' table
+        results = store_pull_requests_in_database(pullRequests)
         final_results = final_results + results
       end
-      "Issues retrieved for Course: #{@course.name} Repo: #{@github_repo.name} <br/>      #{final_results.report}"
+      "Pull Requests retrieved for Course: #{@course.name} Repo: #{@github_repo.name} <br/>      #{final_results.report}"
     end
 
-    def store_issues_in_database(issues)
-      total_new_issues = 0
-      total_updated_issues = 0
-      issues.each{ |i|
-        existing_issue = RepoIssueEvent.where(url: i[:url]).first
-        if existing_issue
-          total_updated_issues += update_one_issue(existing_issue, i)
+    def store_pull_requests_in_database(pullRequests)
+      total_new_pull_requests = 0
+      total_updated_pull_requests = 0
+      #TODO UPDATE PULL REQUESTS'S TABLE
+      pullRequests.each{ |i|
+        existing_pull_request = RepoPullRequestEvent.where(url: i[:url]).first
+        if existing_pull_request
+          total_updated_pull_requests += update_one_pull_request(existing_pull_request, i)
         else
-          total_new_issues += store_one_issue_in_database(i)
+          total_new_pull_requests += store_one_pull_request_in_database(i)
         end
       }
-    JobResult.new(issues.length,total_new_issues,total_updated_issues)
+    JobResult.new(pullRequests.length,total_new_pull_requests,total_updated_pull_requests)
     end
 
-    def store_one_issue_in_database(i)
-      issue = RepoIssueEvent.new
-      result = update_one_issue(issue,i)
+    def store_one_pull_request_in_database(i)
+      pullRequest = RepoPullRequestEvent.new
+      result = update_one_pull_request(pullRequest,i)
     end
 
     def column_name(x)
@@ -109,45 +91,48 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
       end
     end
 
-    def update_one_issue(issue, i)
+    def update_one_pull_request(pullRequest, i)
       begin
-        issue.url =  i[:url]
-        issue.number = i[:number]
-        issue.issue_id = i[:id]
-        issue.github_repo = @github_repo
-        issue.title = i[:title]
-        issue.body = i[:body]
-        issue.state = i[:state]
-        issue.closed = i[:closed]
-        issue.closed_at = i[:closedAt]
-        issue.issue_created_at = i[:createdAt]
-        issue.assignee_count = i[:assignees][:totalCount]
-        issue.assignee_names = assignee_names(i)
-        issue.assignee_logins = assignee_logins(i)
-        issue.project_card_count = i[:projectCards][:totalCount]
-        issue.project_card_column_names=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_name(x)})
-        issue.project_card_column_project_names=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_project_name(x)})
-        issue.project_card_column_project_urls=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_project_url(x)})
+        pullRequest.url =  i[:url]
+        pullRequest.pr_id = i[:id]
+        pullRequest.github_repo = @github_repo
+        pullRequest.title = i[:title]
+        pullRequest.body = i[:body]
+        pullRequest.state = i[:state]
+        pullRequest.changedFiles = i[:changedFiles]
+        pullRequest.reviewDecision = i[:reviewDecision]
+        pullRequest.closed = i[:closed]
+        pullRequest.closed_at = i[:closedAt]
+        pullRequest.merged_at = i[:mergedAt]
+        pullRequest.merged = i[:merged]
+        pullRequest.pull_request_created_at = i[:createdAt]
+        pullRequest.assignee_count = i[:assignees][:totalCount]
+        pullRequest.assignee_names = assignee_names(i)
+        pullRequest.assignee_logins = assignee_logins(i)
+        pullRequest.project_card_count = i[:projectCards][:totalCount]
+        pullRequest.project_card_column_names=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_name(x)})
+        pullRequest.project_card_column_project_names=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_project_name(x)})
+        pullRequest.project_card_column_project_urls=array_or_singleton_to_s(i[:projectCards][:nodes].map{|x| column_project_url(x)})
       rescue
         raise
-        puts "***ERROR*** update_issue_fields issue #{sawyer_resource_to_s(i)} @github_repo #{@github_repo}"
+        puts "***ERROR*** update_pull_request_fields PR #{sawyer_resource_to_s(i)} @github_repo #{@github_repo}"
         return 0
       end
 
       begin  # "try" block
         username = i[:author][:login]
-        issue.author_login = username
-        issue.roster_student = lookup_roster_student_by_github_username(username)
+        pullRequest.author_login = username
+        pullRequest.roster_student = lookup_roster_student_by_github_username(username)
       rescue # optionally: `rescue Exception => ex`
         username = ""
-        issue.roster_student = nil
+        pullRequest.roster_student = nil
       end
 
       begin
-        issue.save!
+        pullRequest.save!
         return 1
       rescue
-        puts "***ERROR*** on issue.save! issue #{i} @github_repo #{@github_repo}"
+        puts "***ERROR*** on pullRequest.save! pullRequest #{i} @github_repo #{@github_repo}"
         return 0
       end
     end
@@ -182,11 +167,11 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
         # TODO: Get body, and parse for checkboxes, complete and incomplete
         # TODO: Add number of assignees, and try to tie assignees back to
         #   roster students if possible.
-
+        
         <<-GRAPHQL
         {
           repository(name: "#{repo_name}", owner: "#{org_name}") {
-            issues(first: 50 #{after_clause}) {
+            pullRequests(first: 50 #{after_clause}) {
               pageInfo {
                 startCursor
                 hasNextPage
@@ -223,6 +208,8 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
                 closed
                 closedAt
                 createdAt
+                mergedAt
+                merged
                 url
                 number
                 title
@@ -235,6 +222,8 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
                   id
                 }
                 state
+                changedFiles
+                reviewDecision
               }
             }
           }
