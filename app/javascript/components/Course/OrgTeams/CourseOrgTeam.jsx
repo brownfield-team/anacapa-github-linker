@@ -66,7 +66,7 @@ class CourseOrgTeam extends Component {
                 </Panel>
                 <Panel>
                     <Panel.Heading>
-                            <Panel.Title>Change Analytics</Panel.Title>
+                            <Panel.Title>LOC Changed</Panel.Title>
                     </Panel.Heading>
                     <Panel.Body>
                         <div align="center">

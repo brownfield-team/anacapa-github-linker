@@ -4,7 +4,7 @@ import * as PropTypes from 'prop-types';
 import { ColumnChart } from 'react-chartkick'
 import 'chartkick/chart.js'
 
-import {InputGroup, FormControl, Button} from "react-bootstrap";
+import {ButtonToolbar, DropdownButton, MenuItem} from "react-bootstrap";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -15,13 +15,11 @@ class CommitsAnalytics extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {commitData: undefined, startDate: startDate, endDate: endDate, loading: false, repoId: undefined};
+        this.state = {commitData: undefined, startDate: startDate, endDate: endDate, loading: false, repoId: undefined, repoTitle: undefined, projRepos: undefined};
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 30);
         const endDate = new Date();
     }
-
-    
 
     checkProperties(obj) {
         for (var key in obj) {
@@ -38,8 +36,7 @@ class CommitsAnalytics extends Component {
     getProjectRepos = (team) => {
         const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos?is_project_repo=true`).then(response => response.json()).then(json => {
             if (json.length > 0) {
-                console.log("repoId", json[0]["id"])
-                this.setState({repoId: json[0]["id"]})
+                this.setState({repoId: json[0]["id"], repoTitle: json[0]["name"], projRepos: json})
             }
         }).then(response => {
             this.getCommitData(this.props.team, undefined, undefined)
@@ -95,19 +92,20 @@ class CommitsAnalytics extends Component {
         this.forceUpdate()
     }
 
-    onButtonClickGetRepo() {
+    onButtonClickGetRepo(repoName) {
         this.setState({loading: true})
         const response = fetch(`/api/courses/${this.props.course_id}/github_repos/`).then(response => response.json()).then(json => {
             for (const [key, repo] of Object.entries(json)) {
-                if (repo["name"] == this.state.repoName) {
-                    this.setState({repoId: repo["id"]})
+                if (repo["name"] == repoName) {
+                    this.setState({repoId: repo["id"], repoTitle: repo["name"]})
 
                     this.getCommitData(this.props.team, this.state.startDate, this.state.endDate)
                     this.forceUpdate()
                 }
             }
+            
+            this.setState({loading: false})
         });
-        
     }
 
     render() {
@@ -118,20 +116,15 @@ class CommitsAnalytics extends Component {
         return (
             <Fragment>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", padding: "0px", margin: "0px" }}>
-                    <InputGroup className="mb-3" className="w-25" style={{ paddingTop: "0px", marginTop: "0px" }}>
-                        <FormControl
-                        placeholder="Different repository?"
-                        aria-label="Different repository?"
-                        aria-describedby="basic-addon2"
-                        onChange={e => this.setState({repoName: e.target.value})}
-                        />
-                        <InputGroup.Addon addon="append" style={{alignSelf: 'stretch', padding: "0px", margin: "0px"}}>
-                            <Button variant="secondary" size="sm" style={{alignSelf: 'stretch', padding: ".5px", margin: "0px"}} onClick={() => this.onButtonClickGetRepo()}>
-                                Change Repo
-                            </Button>
-                        </InputGroup.Addon>
-                    </InputGroup>
+                    <ButtonToolbar>
+                        <DropdownButton title="Change Repo" id="dropdown-size-medium">
+                            {this.state.projRepos.map((object, index) => {
+                                return(<MenuItem key={object["name"]} onClick={() => this.onButtonClickGetRepo(object["name"])}>{object["name"]}</MenuItem>);
+                            })}
+                        </DropdownButton>
+                    </ButtonToolbar>
                 </div>
+                {this.state.repoTitle}
                 {this.state.loading && <Loader type="TailSpin" color="#00BFFF" height={80} width={80}/>}
                 {!this.state.loading && <ColumnChart data={commitData} width="900px" height="500px" empty="No Commits" colors={["red", "blue", "green", "yellow", "purple", "pink", "orange"]} disabled={this.state.loading}/>}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
