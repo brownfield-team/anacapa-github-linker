@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import CourseGithubReposTable from "./CourseGithubReposTable";
 import CourseGithubRepoProjectReposStatistics from "./CourseGithubRepoProjectReposStatistics";
+import OrphanCommitsPanel from '../OrphanCommits/OrphanCommitsPanel';
+
 
 import axios from "../../../helpers/axios-rails";
 import { Alert, Form } from 'react-bootstrap';
@@ -74,6 +76,9 @@ class CourseGithubReposProjectRepos extends Component {
                         {...this.props}
                     />
                 </div>
+                <OrphanCommitsPanel
+                  repos={this.state.repos}
+                 {...this.props} />
                 <CourseGithubRepoProjectReposStatistics 
                     repos={this.state.repos}
                     course={this.props.course}
