@@ -34,7 +34,7 @@ module Api::Courses
     end
 
     def show
-
+      
     end
 
     def update

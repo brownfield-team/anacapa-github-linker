@@ -28,6 +28,7 @@ Rails.application.routes.draw do
         resources :project_teams
         resources :org_teams
         resources :github_repos do
+          resources :repo_commit_events
           resources :job_log
         end
         resources :roster_students do
