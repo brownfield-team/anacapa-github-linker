@@ -21,7 +21,7 @@ import HomePage from "../components/home/HomePage";
 import ExternalReposPage from "../components/Course/GithubRepos/ExternalRepos/ExternalReposPage";
 import CoursesIndex from "../components/Courses/CoursesIndex";
 
-import OrphanCommitsPanel from '../components/Course/OrphanCommits/OrphanCommitsPanel';
+import OrphanCommitsByNamePanel from '../components/Course/OrphanCommits/OrphanCommitsByNamePanel';
 
 import "../styles.css"
 
@@ -41,5 +41,5 @@ ReactOnRails.register({
   HomePage,
   ExternalReposPage,
   CoursesIndex,
-  OrphanCommitsPanel
+  OrphanCommitsByNamePanel
 });

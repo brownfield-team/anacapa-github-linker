@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Panel } from 'react-bootstrap'
+import OrphanCommitsByNameTable from './OrphanCommitsByNameTable';
 
 
-export default class OrphanCommitsPanel extends Component {
+export default class OrphanCommitsByNamePanel extends Component {
     constructor(props) {
         super(props);
     }
@@ -18,12 +19,12 @@ export default class OrphanCommitsPanel extends Component {
                  <Panel id="collapsible-panel-orphan-commits" defaultExpanded >
                     <Panel.Heading>
                         <Panel.Title toggle>
-                            Orphan Commits
+                            Orphan Commits By Name
                         </Panel.Title>
                     </Panel.Heading>
                     <Panel.Collapse>
                         <Panel.Body>
-                           <p>Orphan Commits UI will go Here</p>
+                           <OrphanCommitsByNameTable names={[{name: "name1", count: 5},{name: "name2", count:3 }]} />
                         </Panel.Body>
                     </Panel.Collapse>
                 </Panel>
@@ -32,7 +33,7 @@ export default class OrphanCommitsPanel extends Component {
     }
 }
 
-OrphanCommitsPanel.propTypes = {
+OrphanCommitsByNamePanel.propTypes = {
    
 };
 
