@@ -5,7 +5,6 @@ module Api
     include Response
 
     def graphql
-      puts("graphql")
       @course = Course.find(params[:course_id])
       query = params[:query]
       accept = params[:accept]
@@ -18,6 +17,13 @@ module Api
       json_response(@course.commits)
     end
     
+    def orphans
+      @course = Course.find(params[:course_id])
+      response = { course: @course, orphan_author_emails: @course.orphan_author_emails, orphan_author_name: @course.orphan_author_names }
+      json_response(response)
+    end
+  
+
     private
 
 
@@ -32,7 +38,6 @@ module Api
           }
         } : {}
       result = github_machine_user.send :request, :post, '/graphql', data, options
-      puts("result=#{result.to_hash.to_s}")
       result
     end
 

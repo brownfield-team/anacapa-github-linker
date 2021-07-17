@@ -8,16 +8,17 @@ import OrphanCommitsByNamePanel from '../OrphanCommits/OrphanCommitsByNamePanel'
 import axios from "../../../helpers/axios-rails";
 import { Alert, Form } from 'react-bootstrap';
 
-import { githubReposRoute } from "../../../services/service-routes";
+import { githubReposRoute, orphanCommitsRoute } from "../../../services/service-routes";
 
 class CourseGithubReposProjectRepos extends Component {
     constructor(props) {
         super(props);
-        this.state = {  error: "", repos: [], page: 1, pageSize: 25, totalSize: 0 };
+        this.state = {  error: "", orphanError: "", repos: [], orphanCommits: [], page: 1, pageSize: 25, totalSize: 0 };
     }
 
     componentDidMount() {
         this.updateRepos();
+        this.updateOrphanCommits();
     }
 
     paginationHandler = (page, pageSize) => {
@@ -49,16 +50,44 @@ class CourseGithubReposProjectRepos extends Component {
         });
     }
 
-    renderError() { // Or don't
+    updateOrphanCommits = () => {
+        const url = orphanCommitsRoute(this.props.course_id);
+        const params = {};
+        // Otherwise, calling setState fails because the scope for "this" is the success/error function.
+        const self = this;
+        Rails.ajax({
+            url: url,
+            type: "get",
+            data: $.param(params),
+            beforeSend: function() {
+                return true;
+            },
+            success: function (data, status, xhr) {
+                self.setState({ orphanCommits: data, orphanError: "" });
+            },
+            error: function (data) {
+                self.setState({ orphanCommits: [], orphanError: data });
+            }
+        });
+    }
+
+    renderError() { 
         const error = this.state.error;
+        const orphanError = this.state.orphanError;
+
         return (
             <div>
             { error !== "" &&
                 <Alert id="error-alert" variant="danger"> {error} </Alert>
             }
+            { orphanError !== "" &&
+                <Alert id="error-alert-orphan-commits" variant="danger"> {orphanError} </Alert>
+            }
             </div>
         );
     }
+
+   
 
     render() {
         return (
@@ -78,6 +107,7 @@ class CourseGithubReposProjectRepos extends Component {
                 </div>
                 <OrphanCommitsByNamePanel
                   repos={this.state.repos}
+                  orphanCommits={this.state.orphanCommits}
                  {...this.props} />
                 <CourseGithubRepoProjectReposStatistics 
                     repos={this.state.repos}

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Panel } from 'react-bootstrap'
 import OrphanCommitsByNameTable from './OrphanCommitsByNameTable';
-
+import JSONPrettyPanel from '../../Utilities/JsonPrettyPanel';
 
 export default class OrphanCommitsByNamePanel extends Component {
     constructor(props) {
@@ -28,6 +28,10 @@ export default class OrphanCommitsByNamePanel extends Component {
                         </Panel.Body>
                     </Panel.Collapse>
                 </Panel>
+                <JSONPrettyPanel 
+                  expression={"this.props.orphanCommits"}
+                  value={this.props.orphanCommits}
+                 />
             </>
         );
     }

@@ -23,6 +23,7 @@ Rails.application.routes.draw do
 
     resources :courses do
       post :graphql
+      get :orphans
       scope module: :courses do
         resources :job_log
         resources :project_teams

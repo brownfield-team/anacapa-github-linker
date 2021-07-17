@@ -14,7 +14,6 @@ module Slack
       command_text = params[:text]
       # When a user is tagged, it is provided to the command in the form <@U012ABCDEF|worf> or <@U012ABCDEF>
       # This Regex string plucks U012ABCDEF, the user id from the string.
-      puts request.to_s
       pluck_user_id_regex = /<@([^|]*)[|>]/
       user_id_matches = command_text.scan(pluck_user_id_regex)
       if user_id_matches.empty?

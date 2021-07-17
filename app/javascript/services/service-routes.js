@@ -5,6 +5,9 @@ const courseOrgTeamsRoute = (courseId) => `${courseRoute(courseId)}/org_teams`
 const courseStudentsRoute = (courseId) => `${courseRoute(courseId)}/roster_students`
 const courseGithubReposRoute = (courseId) => `${courseRoute(courseId)}/github_repos`
 
+export const orphanCommitsRoute = (courseId) => `${courseRoute(courseId)}/orphans`
+
+
 export const graphqlRoute = (courseId) => `${courseRoute(courseId)}/graphql`
 
 export const projectTeamsRoute = (courseId) => `${courseProjectTeamsRoute(courseId)}`
@@ -24,3 +27,4 @@ export const githubRepoRoute = (courseId, githubRepoId) => `${courseGithubReposR
 export const schoolsRoute = `/api/schools`;
 export const visitorsRoute = "/api/visitors";
 export const courseJoinRoute = (courseId) => `/courses/${courseId}/join`
+
