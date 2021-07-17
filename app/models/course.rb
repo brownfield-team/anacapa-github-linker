@@ -253,6 +253,26 @@ class Course < ApplicationRecord
      github_repos.map{ |repo| repo.repo_commit_events }.flatten(1)
   end
 
+  def orphans
+    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil) }.flatten(1)
+  end
+
+  def orphans_by_email(author_email)
+    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil, author_email: author_email)}.flatten(1)
+  end
+
+  def orphans_by_name(author_name)
+    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil, author_name: author_name)}.flatten(1)
+  end
+
+  def orphan_author_emails
+    self.orphans.group_by{ |h| h.author_email}.map{|k,v| [k, v.size]}.to_h
+  end
+
+  def orphan_author_names
+    self.orphans.group_by{ |h| h.author_name}.map{|k,v| [k, v.size]}.to_h
+  end
+
   def export_commits_to_csv
     CSV.generate(headers: true) do |csv|
       csv << commit_csv_export_headers
@@ -380,7 +400,11 @@ class Course < ApplicationRecord
     }
     GRAPHQL
   end
-  
+
+  def project_repos
+    self.github_repos.where(is_project_repo: true)
+  end
+
   def self.all_course_names
       Course.all.map{|c| c.name}
   end
