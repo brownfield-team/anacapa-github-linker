@@ -12,6 +12,7 @@ class Course < ApplicationRecord
   validates :end_date, presence: false
   validate :check_course_org_exists
   has_many :roster_students, dependent: :destroy
+  has_many :orphan_names, dependent: :destroy
   has_many :informed_consents, dependent: :destroy
   has_many :completed_jobs, dependent: :destroy
   has_many :github_repos, dependent: :destroy, class_name: '::GithubRepo'
@@ -39,6 +40,11 @@ class Course < ApplicationRecord
 
   def student_for_uid(uid)
     RosterStudent.where(course_id: self.id).includes(:user).references(:user).merge(User.where(uid: uid.to_s)).first
+  end
+
+  def student_for_orphan_name(name)
+    orphanName = OrphanName.where(course_id: self.id, name: name).first
+    orphanName ? orphanName.roster_student : nil
   end
 
   def student_for_github_username(username)

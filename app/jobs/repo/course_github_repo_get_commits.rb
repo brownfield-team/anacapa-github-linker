@@ -75,6 +75,32 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       result
     end
 
+    def update_roster_student(commit, c, branch_name)
+      begin  # "try" block
+        uid = c[:node][:author][:user][:databaseId]
+        commit.roster_student = lookup_roster_student_by_github_uid(uid)
+        return
+      rescue # optionally: `rescue Exception => ex`
+        uid = ""
+        commit.roster_student = nil
+      end
+
+      # Try with the orphan records
+
+      begin  # "try" block
+        10.times { Rails.logger.info "***** orphan fixed *****" }
+        name = c[:node][:author][:name]
+        commit.roster_student = lookup_roster_student_by_orphan_name(name)
+        Rails.logger.info "name: #{name} commit: #{commit}"
+        return
+      rescue # optionally: `rescue Exception => ex`
+        Rails.logger.info "commit: #{commit}"
+        name = ""
+        commit.roster_student = nil
+      end
+
+    end
+
     def update_one_commit(commit, c, branch_name)
       begin
         commit.files_changed = c[:node][:changedFiles]
@@ -98,13 +124,10 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
 
       commit.filenames_changed = filenames_changed(commit.commit_hash)
 
-      begin  # "try" block
-        uid = c[:node][:author][:user][:databaseId]
-        commit.roster_student = lookup_roster_student_by_github_uid(uid)
-      rescue # optionally: `rescue Exception => ex`
-        uid = ""
-        commit.roster_student = nil
-      end
+      update_roster_student(commit, c, branch_name)
+
+     
+
       begin
         commit.save!
         return 1
@@ -115,6 +138,10 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
 
     def lookup_roster_student_by_github_uid(uid)
       @course.student_for_uid(uid)
+    end
+
+    def lookup_roster_student_by_orphan_name(name)
+      @course.student_for_orphan_name(name)
     end
 
     def perform_graphql_query(repo_name, org_name, after="")

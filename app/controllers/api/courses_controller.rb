@@ -19,7 +19,9 @@ module Api
     
     def orphans
       @course = Course.find(params[:course_id])
-      response = { course: @course, orphan_author_emails: @course.orphan_author_emails, orphan_author_name: @course.orphan_author_names }
+      orphan_author_emails = @course.orphan_author_emails.map{ |k,v| {email: k, count: v} }
+      orphan_author_names = @course.orphan_author_names.map{ |k,v| {name: k, count: v} }
+      response = { course: @course, orphan_author_emails: orphan_author_emails, orphan_author_names: orphan_author_names }
       json_response(response)
     end
   

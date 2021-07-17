@@ -6,6 +6,8 @@ const courseStudentsRoute = (courseId) => `${courseRoute(courseId)}/roster_stude
 const courseGithubReposRoute = (courseId) => `${courseRoute(courseId)}/github_repos`
 
 export const orphanCommitsRoute = (courseId) => `${courseRoute(courseId)}/orphans`
+export const orphanNamesRoute = (courseId) => `${courseRoute(courseId)}/orphan_names`
+export const orphanCommitsByNameRoute = (courseId, name) => `${courseRoute(courseId)}/orphan_commits_by_name/${encodeURI(name)}`
 
 
 export const graphqlRoute = (courseId) => `${courseRoute(courseId)}/graphql`

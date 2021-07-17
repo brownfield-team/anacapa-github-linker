@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 2021_06_30_155020) do
+ActiveRecord::Schema.define(version: 2021_07_17_170043) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -114,6 +113,14 @@ ActiveRecord::Schema.define(version: 2021_06_30_155020) do
     t.bigint "course_id"
     t.string "hook_url"
     t.index ["course_id"], name: "index_org_webhooks_on_course_id"
+  end
+
+  create_table "orphan_names", force: :cascade do |t|
+    t.string "name"
+    t.bigint "course_id"
+    t.bigint "roster_student_id"
+    t.index ["course_id"], name: "index_orphan_names_on_course_id"
+    t.index ["roster_student_id"], name: "index_orphan_names_on_roster_student_id"
   end
 
   create_table "project_roles", force: :cascade do |t|
@@ -219,7 +226,7 @@ ActiveRecord::Schema.define(version: 2021_06_30_155020) do
     t.integer "project_card_count"
     t.string "project_card_column_names"
     t.string "project_card_column_project_names"
-    t.string "project_card_project_urls"
+    t.string "project_card_column_project_urls"
     t.datetime "pull_request_created_at"
     t.string "author_login"
     t.index ["github_repo_id"], name: "index_repo_pull_request_events_on_github_repo_id"

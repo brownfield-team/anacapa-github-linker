@@ -141,7 +141,7 @@ class CoursesController < ApplicationController
   # List of course jobs to make available to run
   def course_job_list
     @course = Course.find(params[:course_id])
-    jobs = [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, RefreshProjectRepoCommitsJob, RefreshProjectRepoIssuesJob,RefreshProjectRepoPullRequestsJob,PurgeCourseReposJob]
+    jobs = [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, RefreshProjectRepoCommitsJob, RefreshProjectRepoIssuesJob,RefreshProjectRepoPullRequestsJob,PurgeCourseReposJob, FixOrphanCommitsJob]
     if @course.slack_workspace.present?
       jobs << AssociateSlackUsersJob
     end
@@ -199,6 +199,10 @@ class CoursesController < ApplicationController
   def project_repos
     @course = Course.find(params[:course_id])
   end
+
+  # def orphan_commits
+  #   @course = Course.find(params[:course_id])
+  # end
 
   def commits
     @course = Course.find(params[:course_id])
