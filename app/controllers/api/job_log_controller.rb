@@ -3,7 +3,7 @@ module Api
     respond_to :json
     
     def index
-      joblog = CompletedJob.last_ten_jobs(params[:course_id],params[:github_repo_id])
+      joblog = CompletedJob.last_ten_jobs(nil,nil)
       render json: joblog
     end
   end
