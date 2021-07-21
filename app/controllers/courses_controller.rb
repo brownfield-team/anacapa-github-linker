@@ -204,10 +204,6 @@ class CoursesController < ApplicationController
     @course = Course.find(params[:course_id])
   end
 
-  # def orphan_commits
-  #   @course = Course.find(params[:course_id])
-  # end
-
   def commits
     @course = Course.find(params[:course_id])
     respond_to do |format|
