@@ -28,6 +28,10 @@ import OrphanCommitsByEmail from '../components/Course/OrphanCommits/OrphanCommi
 import "../styles.css"
 
 ReactOnRails.register({
+  CoursesIndex,
+  OrphanCommits,
+  OrphanCommitsByName,
+  OrphanCommitsByEmail,
   Users,
   ProjectTeams,
   CourseNavBar,
@@ -41,9 +45,5 @@ ReactOnRails.register({
   JobLog,
   SchoolsIndex,
   HomePage,
-  ExternalReposPage,
-  CoursesIndex,
-  OrphanCommits,
-  OrphanCommitsByName,
-  OrphanCommitsByEmail
+  ExternalReposPage
 });
