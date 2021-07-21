@@ -14,29 +14,26 @@ class RepoCommitEventsTable extends Component {
         [{
             dataField: 'id',
             text: 'id',
-            sort: true
         },
         {
             dataField: 'commit_hash',
             text: 'SHA',
-            sort: true,
             formatter: (cell, row) => this.formatCommitHash(cell, row)
         },{
             dataField: 'author_login',
             text: 'author_login',
-            sort: true
         }, {
             dataField: 'author_name',
             text: 'author_name',
-            sort: true
         },{
             dataField: 'author_email',
             text: 'author_email',
-            sort: true
-        }, {
+        },{
+            dataField: 'commit_timestamp',
+            text: 'timestamp',
+        },  {
             dataField: 'github_repo.name',
             text: 'repo',
-            sort: true,
             formatter: (cell, row) => <a href={row.github_repo.url}>{cell}</a>
 
         }];

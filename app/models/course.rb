@@ -262,19 +262,19 @@ class Course < ApplicationRecord
   end
 
   def commits
-     github_repos.map{ |repo| repo.repo_commit_events }.flatten(1)
+     github_repos.map{ |repo| repo.repo_commit_events }.flatten(1).sort_by!{ |c| c.commit_timestamp}
   end
 
   def orphans
-    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil) }.flatten(1)
+    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil) }.flatten(1).sort_by!{ |c| c.commit_timestamp}
   end
 
   def orphans_by_email(author_email)
-    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil, author_email: author_email)}.flatten(1)
+    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil, author_email: author_email)}.flatten(1).sort_by!{ |c| c.commit_timestamp}
   end
 
   def orphans_by_name(author_name)
-    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil, author_name: author_name)}.flatten(1)
+    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil, author_name: author_name)}.flatten(1).sort_by!{ |c| c.commit_timestamp}
   end
 
   def orphan_author_emails
