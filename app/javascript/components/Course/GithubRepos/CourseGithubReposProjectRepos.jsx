@@ -2,32 +2,20 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import CourseGithubReposTable from "./CourseGithubReposTable";
 import CourseGithubRepoProjectReposStatistics from "./CourseGithubRepoProjectReposStatistics";
-import OrphanCommitsByNamePanel from '../OrphanCommits/OrphanCommitsByNamePanel';
-import OrphanNamesPanel from '../OrphanCommits/OrphanNamesPanel';
 
 import axios from "../../../helpers/axios-rails";
 import { Alert, Form } from 'react-bootstrap';
 
-import { githubReposRoute, orphanCommitsRoute, orphanNamesRoute } from "../../../services/service-routes";
+import { githubReposRoute } from "../../../services/service-routes";
 
 class CourseGithubReposProjectRepos extends Component {
-   
-   
     constructor(props) {
-       
         super(props);
-        this.state = {  
-            error: "", 
-            repos: [], 
-            page: 1, 
-            pageSize: 25, 
-            totalSize: 0 
-        };
+        this.state = {  error: "", repos: [], page: 1, pageSize: 25, totalSize: 0 };
     }
 
     componentDidMount() {
         this.updateRepos();
-      
     }
 
     paginationHandler = (page, pageSize) => {
@@ -59,11 +47,8 @@ class CourseGithubReposProjectRepos extends Component {
         });
     }
 
-   
-
-    renderError() { 
+    renderError() { // Or don't
         const error = this.state.error;
-     
         return (
             <div>
             { error !== "" &&
@@ -72,7 +57,6 @@ class CourseGithubReposProjectRepos extends Component {
             </div>
         );
     }
-
 
     render() {
         return (

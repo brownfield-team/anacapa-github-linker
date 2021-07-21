@@ -77,7 +77,6 @@ class CourseOrgTeam extends Component {
                         </div>
                     </Panel.Body>
                 </Panel>
-                
             </Fragment>
         );
     }
