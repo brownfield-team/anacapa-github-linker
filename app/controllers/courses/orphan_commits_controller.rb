@@ -23,13 +23,22 @@ module Courses
 
     def assign_by_email
       roster_student = RosterStudent.find(params[:roster_student_id])
-      message = "Assigning orphan email '#{params[:email]}' to roster student #{params[:roster_student_id]} (#{roster_student.full_name}), Fix Orphan Commits Job launched "
+      message = "Assigning orphan email '#{params[:email]}' to roster student #{params[:roster_student_id]} (#{roster_student.full_name}) "
       Rails.logger.info message
       on = OrphanEmail.new(email: params[:email], course:@course, roster_student_id: params[:roster_student_id]).save!
-      FixOrphanCommitsJob.perform_async(@course.id)
+      message += requeueOrphanCommitsIfNotRunning
       redirect_to course_orphan_commits_path(@course), notice: message   
     end
 
+    def requeueOrphanCommitsIfNotRunning
+      latestOrphanCommitsJob  = CompletedJob.where(job_name: "Fix Orphan Commits").order("created_at DESC").last
+      if latestOrphanCommitsJob.nil? || latestOrphanCommitsJob.summary != "In progress"
+        FixOrphanCommitsJob.perform_async(@course.id)
+        "Fix Orphan Commits Job launched "
+      else
+        "Orphan Commits Job already in progress (#{latestOrphanCommitsJob.time_elapsed})"
+      end
+    end
 
   end
 end
