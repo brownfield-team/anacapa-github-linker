@@ -35,14 +35,14 @@ class OrphanCommitsByEmailTable extends Component {
             <a href={url}>{cell}</a>
         );
     }
-  
+
     renderCountUrl = (cell, row) => {
         const url = this.orphanCommitsByEmailPage(this.props.course_id, row.email);
         return (
             <a href={url}>{cell}</a>
         );
     }
-  
+
 
     render() {
         return (
@@ -51,7 +51,7 @@ class OrphanCommitsByEmailTable extends Component {
                     columns={this.columns}
                     data={this.props.emails}
                     keyField="email"
-                    defaultSorted = {[{ dataField: "count", order: "desc"}]}
+                    defaultSorted={[{ dataField: "count", order: "desc" }]}
                 />
             </>
         );

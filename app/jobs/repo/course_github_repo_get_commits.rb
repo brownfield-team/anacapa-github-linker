@@ -80,22 +80,9 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         uid = c[:node][:author][:user][:databaseId]
         commit.roster_student = lookup_roster_student_by_github_uid(uid)
         return
-      rescue # optionally: `rescue Exception => ex`
-        uid = ""
-        commit.roster_student = nil
+      rescue 
+        commit.roster_student = commit.roster_student_for_commit(@course)
       end
-
-      # Try with the orphan records
-
-      begin  # "try" block
-        name = c[:node][:author][:name]
-        commit.roster_student = lookup_roster_student_by_orphan_name(name)
-        return
-      rescue # optionally: `rescue Exception => ex`
-        name = ""
-        commit.roster_student = nil
-      end
-
     end
 
     def update_one_commit(commit, c, branch_name)

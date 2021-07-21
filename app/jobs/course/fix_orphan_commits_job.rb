@@ -18,17 +18,11 @@ class FixOrphanCommitsJob < CourseJob
     end
 
     def process_orphan_commits
+      10.times { Rails.logger.info "**** process_orphan_commits ***"}
       @orphans.each do |orphan|
-        process_orphan(orphan)
+        orphan.fix_orphan_commit(@course)
       end
     end
 
-    def process_orphan(orphan)
-        roster_student = @course.student_for_orphan_name(orphan.author_name)
-        if roster_student.nil?
-          roster_student = @course.student_for_orphan_email(orphan.author_email)
-        end
-        orphan.roster_student = roster_student
-        orphan.save!
-    end
+   
 end

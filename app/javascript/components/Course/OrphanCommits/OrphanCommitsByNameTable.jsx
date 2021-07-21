@@ -38,14 +38,14 @@ class OrphanCommitsByNameTable extends Component {
             <a href={url}>{cell}</a>
         );
     }
-  
+
     renderCountUrl = (cell, row) => {
         const url = this.orphanCommitsByNamePage(this.props.course_id, row.name);
         return (
             <a href={url}>{cell}</a>
         );
     }
-  
+
 
     render() {
         return (
@@ -54,7 +54,7 @@ class OrphanCommitsByNameTable extends Component {
                     columns={this.columns}
                     data={this.props.names}
                     keyField="name"
-                    defaultSorted = {[{ dataField: "count", order: "desc"}]}
+                    defaultSorted={[{ dataField: "count", order: "desc" }]}
                 />
             </>
         );
