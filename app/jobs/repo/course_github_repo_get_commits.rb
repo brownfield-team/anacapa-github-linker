@@ -88,13 +88,10 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       # Try with the orphan records
 
       begin  # "try" block
-        10.times { Rails.logger.info "***** orphan fixed *****" }
         name = c[:node][:author][:name]
         commit.roster_student = lookup_roster_student_by_orphan_name(name)
-        Rails.logger.info "name: #{name} commit: #{commit}"
         return
       rescue # optionally: `rescue Exception => ex`
-        Rails.logger.info "commit: #{commit}"
         name = ""
         commit.roster_student = nil
       end
@@ -117,16 +114,14 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         commit.author_name = c.node&.author&.name
         commit.author_email = c.node&.author&.email
       rescue
+        Rails.logger.error "***ERROR*** update_commit_fields commit #{sawyer_resource_to_s(c)} @github_repo #{@github_repo}"
         raise
-        puts "***ERROR*** update_commit_fields commit #{sawyer_resource_to_s(c)} @github_repo #{@github_repo}"
         return 0
       end
 
       commit.filenames_changed = filenames_changed(commit.commit_hash)
 
       update_roster_student(commit, c, branch_name)
-
-     
 
       begin
         commit.save!
