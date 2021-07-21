@@ -9,6 +9,7 @@ class Courses::GithubWebhooksController
           next
         end
         commit = RepoCommitEvent.new
+        commit.course = course
         commit.files_changed = payload_commit[:added].union(payload_commit[:removed], payload_commit[:modified]).size
         commit.message = payload_commit[:message]
         commit.commit_hash = payload_commit[:id]
