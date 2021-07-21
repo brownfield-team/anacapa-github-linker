@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
-import * as PropTypes from 'prop-types';
 import axios from "../../../helpers/axios-rails"
 import ReactOnRails from "react-on-rails";
-
-
-import { Table } from 'react-bootstrap';
-import JSONPrettyPanel from '../../Utilities/JsonPrettyPanel';
 
 import RepoCommitEventsTable from '../../RepoCommitEvents/RepoCommitEventsTable';
 
@@ -13,7 +8,6 @@ import { orphanCommitsByEmailRoute } from "../../../services/service-routes";
 
 import AssignOrphanEmailToRosterStudent from "./AssignOrphanEmailToRosterStudent";
 import OrphanEmailDisplay from './OrphanEmailDisplay';
-import OrphanEmailsPanel from './OrphanEmailsPanel';
 
 class OrphanCommitsByEmail extends Component {
 
@@ -41,15 +35,11 @@ class OrphanCommitsByEmail extends Component {
     }
 
     updateOrphanCommitsByEmail = () => {
-        console.log("updateOrphanCommits");
-        console.log("this.props=", this.props);
-        console.log("this.state=", this.state);
-
+       
         const url = orphanCommitsByEmailRoute(this.props.params.course_id, this.props.params.email);
         const params = { page: this.state.page, per_page: this.state.pageSize };
 
-
-        // Otherwise, calling setState fails because the scope for "this" is the success/error function.
+        // self=this; Otherwise, calling setState fails because the scope for "this" is the success/error function.
         const self = this;
         Rails.ajax({
             url: url,

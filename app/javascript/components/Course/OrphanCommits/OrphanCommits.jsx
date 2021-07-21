@@ -23,9 +23,7 @@ const empty_orphan_commits = {
 
 class OrphanCommits extends Component {
 
-
     constructor(props) {
-
         super(props);
 
         const csrfToken = ReactOnRails.authenticityToken();
@@ -50,14 +48,9 @@ class OrphanCommits extends Component {
     }
 
     updateOrphanCommits = () => {
-        console.log("updateOrphanCommits");
-        console.log("this.props=", this.props);
-        console.log("this.state=", this.state);
-        console.log("empty_orphan_commits=", empty_orphan_commits);
-
         const url = orphanCommitsRoute(this.props.course_id);
         const params = {};
-        // Otherwise, calling setState fails because the scope for "this" is the success/error function.
+        // self=this; Otherwise, calling setState fails because the scope for "this" is the success/error function.
         const self = this;
         Rails.ajax({
             url: url,
@@ -79,15 +72,9 @@ class OrphanCommits extends Component {
     }
 
     updateOrphanNames = () => {
-        console.log("updateOrphanNames");
-        console.log("this.props=", this.props);
-        console.log("this.state=", this.state);
-        console.log("empty_orphan_commits=", empty_orphan_commits);
-
-
         const url = orphanNamesRoute(this.props.course_id);
         const params = {};
-        // Otherwise, calling setState fails because the scope for "this" is the success/error function.
+        // self=this; Otherwise, calling setState fails because the scope for "this" is the success/error function.
         const self = this;
         Rails.ajax({
             url: url,
@@ -109,15 +96,9 @@ class OrphanCommits extends Component {
     }
 
     updateOrphanEmails = () => {
-        console.log("updateOrphanEmails");
-        console.log("this.props=", this.props);
-        console.log("this.state=", this.state);
-        console.log("empty_orphan_commits=", empty_orphan_commits);
-
-
         const url = orphanEmailsRoute(this.props.course_id);
         const params = {};
-        // Otherwise, calling setState fails because the scope for "this" is the success/error function.
+        // self=this, Otherwise, calling setState fails because the scope for "this" is the success/error function.
         const self = this;
         Rails.ajax({
             url: url,

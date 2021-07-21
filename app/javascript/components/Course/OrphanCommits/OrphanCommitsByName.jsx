@@ -41,15 +41,13 @@ class OrphanCommitsByName extends Component {
     }
 
     updateOrphanCommitsByName = () => {
-        console.log("updateOrphanCommits");
-        console.log("this.props=", this.props);
-        console.log("this.state=", this.state);
+
 
         const url = orphanCommitsByNameRoute(this.props.params.course_id, this.props.params.name);
         const params = { page: this.state.page, per_page: this.state.pageSize };
 
 
-        // Otherwise, calling setState fails because the scope for "this" is the success/error function.
+        // self=this; Otherwise , calling setState fails because the scope for "this" is the success/error function.
         const self = this;
         Rails.ajax({
             url: url,

@@ -15,7 +15,6 @@ export default class OrphanCommitsByEmailPanel extends Component {
     }
 
     render() {
-        console.log("this.props=",this.props);
         const author_emails = this.props.orphanCommits.orphan_author_emails;
         return (
             <>

@@ -15,7 +15,6 @@ export default class OrphanCommitsByNamePanel extends Component {
     }
 
     render() {
-        console.log("this.props=",this.props);
         const author_names = this.props.orphanCommits.orphan_author_names;
         return (
             <>

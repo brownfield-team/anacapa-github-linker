@@ -17,7 +17,7 @@ class CourseOrgTeamsIndex extends Component {
     }
 
     performSearch = (searchValue) => {
-        this.setState({page: 1, search: searchValue}, () => {
+        this.setState({ page: 1, search: searchValue }, () => {
             this.updateTeams();
         });
     }
@@ -27,27 +27,27 @@ class CourseOrgTeamsIndex extends Component {
             return;
         }
 
-        this.setState({page: 1, visibility: visibilityValue}, () => {
-           this.updateTeams();
+        this.setState({ page: 1, visibility: visibilityValue }, () => {
+            this.updateTeams();
         });
     }
 
     paginationHandler = (page, pageSize) => {
-        this.setState({page: page, pageSize: pageSize}, () => {
+        this.setState({ page: page, pageSize: pageSize }, () => {
             this.updateTeams();
         });
     }
 
     updateTeams = () => {
         const url = orgTeamsRoute(this.props.course_id);
-        const params = {search: this.state.search, visibility: this.state.visibility, page: this.state.page, per_page: this.state.pageSize};
-        // Otherwise, calling setState fails because the scope for "this" is the success/error function.
+        const params = { search: this.state.search, visibility: this.state.visibility, page: this.state.page, per_page: this.state.pageSize };
+        // self=this; Otherwise , calling setState fails because the scope for "this" is the success/error function.
         const self = this;
         Rails.ajax({
             url: url,
             type: "get",
             data: $.param(params),
-            beforeSend: function() {
+            beforeSend: function () {
                 return true;
             },
             success: function (data, status, xhr) {
@@ -65,9 +65,9 @@ class CourseOrgTeamsIndex extends Component {
         const error = this.state.error;
         return (
             <div>
-            { error !== "" &&
-                <Alert id="error-alert" variant="danger"> {error} </Alert>
-            }
+                {error !== "" &&
+                    <Alert id="error-alert" variant="danger"> {error} </Alert>
+                }
             </div>
         );
     }
@@ -75,7 +75,7 @@ class CourseOrgTeamsIndex extends Component {
     render() {
         return (
             <div>
-                { this.renderError() }
+                {this.renderError()}
                 <CourseOrgTeamsTable
                     teams={this.state.teams}
                     page={this.state.page}
@@ -93,8 +93,8 @@ class CourseOrgTeamsIndex extends Component {
 CourseOrgTeamsIndex.propTypes = {
     search: PropTypes.string,
     type: PropTypes.string,
-    course_id : PropTypes.number.isRequired,
-    course : PropTypes.object.isRequired
+    course_id: PropTypes.number.isRequired,
+    course: PropTypes.object.isRequired
 };
 
 export default CourseOrgTeamsIndex;

@@ -33,14 +33,12 @@ class RosterStudentAssign extends Component {
     }
 
     updateRosterStudents = () => {
-        console.log("updateRosterStudents");
-        console.log("this.props=", this.props);
-        console.log("this.state=", this.state);
+       
 
         const url = courseStudentsRoute(this.props.params.course_id);
         console.log("url=", url);
         const params = {};
-        // Otherwise, calling setState fails because the scope for "this" is the success/error function.
+        // self=this; Otherwise, calling setState fails because the scope for "this" is the success/error function.
         const self = this;
         Rails.ajax({
             url: url,
