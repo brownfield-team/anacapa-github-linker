@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_17_170043) do
+ActiveRecord::Schema.define(version: 2021_07_20_233132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -113,6 +113,14 @@ ActiveRecord::Schema.define(version: 2021_07_17_170043) do
     t.bigint "course_id"
     t.string "hook_url"
     t.index ["course_id"], name: "index_org_webhooks_on_course_id"
+  end
+
+  create_table "orphan_emails", force: :cascade do |t|
+    t.string "email"
+    t.bigint "course_id"
+    t.bigint "roster_student_id"
+    t.index ["course_id"], name: "index_orphan_emails_on_course_id"
+    t.index ["roster_student_id"], name: "index_orphan_emails_on_roster_student_id"
   end
 
   create_table "orphan_names", force: :cascade do |t|

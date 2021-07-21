@@ -2,7 +2,7 @@ module Api::Courses
   class RosterStudentsController < ApplicationController
     respond_to :json
     load_and_authorize_resource :course
-    before_action :load_student
+    before_action :load_student, except: [:index]
 
     def index
       respond_with @course.roster_students

@@ -2,12 +2,9 @@ import React, { Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import PropTypes from 'prop-types';
 
-import { orphanCommitsByNameRoute } from "../../../services/service-routes"
+class OrphanCommitsByEmailTable extends Component {
 
-class OrphanCommitsByNameTable extends Component {
-
-    orphanCommitsByNamePage = (courseId, name) => `/courses/${courseId}/orphan_commits_by_name?name=${encodeURI(name)}`
-
+    orphanCommitsByEmailPage = (courseId, email) => `/courses/${courseId}/orphan_commits_by_email?email=${encodeURI(email)}`;
 
     constructor(props) {
         super(props);
@@ -16,11 +13,11 @@ class OrphanCommitsByNameTable extends Component {
     columns =
         [
             {
-                dataField: 'name',
-                text: 'Name',
+                dataField: 'email',
+                text: 'Email',
                 editable: false,
                 sort: true,
-                formatter: (cell, row) => this.renderNameUrl(cell, row)
+                formatter: (cell, row) => this.renderEmailUrl(cell, row)
 
             },
             {
@@ -32,15 +29,15 @@ class OrphanCommitsByNameTable extends Component {
             },
         ];
 
-    renderNameUrl = (cell, row) => {
-        const url = this.orphanCommitsByNamePage(this.props.course_id, cell);
+    renderEmailUrl = (cell, row) => {
+        const url = this.orphanCommitsByEmailPage(this.props.course_id, cell);
         return (
             <a href={url}>{cell}</a>
         );
     }
   
     renderCountUrl = (cell, row) => {
-        const url = this.orphanCommitsByNamePage(this.props.course_id, row.name);
+        const url = this.orphanCommitsByEmailPage(this.props.course_id, row.email);
         return (
             <a href={url}>{cell}</a>
         );
@@ -52,8 +49,8 @@ class OrphanCommitsByNameTable extends Component {
             <>
                 <BootstrapTable
                     columns={this.columns}
-                    data={this.props.names}
-                    keyField="name"
+                    data={this.props.emails}
+                    keyField="email"
                     defaultSorted = {[{ dataField: "count", order: "desc"}]}
                 />
             </>
@@ -61,9 +58,9 @@ class OrphanCommitsByNameTable extends Component {
     }
 }
 
-OrphanCommitsByNameTable.propTypes = {
-    names: PropTypes.array.isRequired,
+OrphanCommitsByEmailTable.propTypes = {
+    emails: PropTypes.array.isRequired,
     course_id: PropTypes.number.isRequired
 };
 
-export default OrphanCommitsByNameTable;
+export default OrphanCommitsByEmailTable;

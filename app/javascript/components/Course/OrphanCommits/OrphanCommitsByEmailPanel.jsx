@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Panel } from 'react-bootstrap'
-import OrphanCommitsByNameTable from './OrphanCommitsByNameTable';
+import OrphanCommitsByEmailTable from './OrphanCommitsByEmailTable';
 import JSONPrettyPanel from '../../Utilities/JsonPrettyPanel';
 import RepoCommitEventsTable from '../../RepoCommitEvents/RepoCommitEventsTable';
 
-export default class OrphanCommitsByNamePanel extends Component {
+export default class OrphanCommitsByEmailPanel extends Component {
     constructor(props) {
         super(props);
     }
@@ -16,19 +16,19 @@ export default class OrphanCommitsByNamePanel extends Component {
 
     render() {
         console.log("this.props=",this.props);
-        const author_names = this.props.orphanCommits.orphan_author_names;
+        const author_emails = this.props.orphanCommits.orphan_author_emails;
         return (
             <>
                  <Panel id="collapsible-panel-orphan-commits" defaultExpanded >
                     <Panel.Heading>
                         <Panel.Title toggle>
-                            Orphan Commits By Name
+                            Orphan Commits By Email
                         </Panel.Title>
                     </Panel.Heading>
                     <Panel.Collapse>
                         <Panel.Body>
-                           <OrphanCommitsByNameTable 
-                                names={author_names} 
+                           <OrphanCommitsByEmailTable 
+                                emails={author_emails} 
                                 course_id={this.props.course_id} />
                         </Panel.Body>
                     </Panel.Collapse>
@@ -38,7 +38,7 @@ export default class OrphanCommitsByNamePanel extends Component {
     }
 }
 
-OrphanCommitsByNamePanel.propTypes = {
+OrphanCommitsByEmailPanel.propTypes = {
    
 };
 

@@ -2,13 +2,15 @@ export const coursesRoute = `/api/courses/`;
 const courseRoute = (courseId) => `/api/courses/${courseId}`;
 const courseProjectTeamsRoute = (courseId) => `${courseRoute(courseId)}/project_teams`
 const courseOrgTeamsRoute = (courseId) => `${courseRoute(courseId)}/org_teams`
-const courseStudentsRoute = (courseId) => `${courseRoute(courseId)}/roster_students`
+export const courseStudentsRoute = (courseId) => `${courseRoute(courseId)}/roster_students`
 const courseGithubReposRoute = (courseId) => `${courseRoute(courseId)}/github_repos`
 
 export const orphanCommitsRoute = (courseId) => `${courseRoute(courseId)}/orphans`
 export const orphanNamesRoute = (courseId) => `${courseRoute(courseId)}/orphan_names`
-export const orphanCommitsByNameRoute = (courseId, name) => `${courseRoute(courseId)}/orphan_commits_by_name/${encodeURI(name)}`
+export const orphanEmailsRoute = (courseId) => `${courseRoute(courseId)}/orphan_emails`
 
+export const orphanCommitsByNameRoute = (courseId, name) => `${courseRoute(courseId)}/orphan_commits_by_name?name=${encodeURI(name)}`
+export const orphanCommitsByEmailRoute = (courseId, email) => `${courseRoute(courseId)}/orphan_commits_by_email?email=${encodeURI(email)}`
 
 export const graphqlRoute = (courseId) => `${courseRoute(courseId)}/graphql`
 

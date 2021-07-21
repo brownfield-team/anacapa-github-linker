@@ -9,13 +9,13 @@ import JSONPrettyPanel from '../../Utilities/JsonPrettyPanel';
 
 import RepoCommitEventsTable from '../../RepoCommitEvents/RepoCommitEventsTable';
 
-import { orphanCommitsByNameRoute } from "../../../services/service-routes";
+import { orphanCommitsByEmailRoute } from "../../../services/service-routes";
 
-import AssignOrphanNameToRosterStudent from "./AssignOrphanNameToRosterStudent";
-import OrphanNameDisplay from './OrphanNameDisplay';
-import OrphanNamesPanel from './OrphanNamesPanel';
+import AssignOrphanEmailToRosterStudent from "./AssignOrphanEmailToRosterStudent";
+import OrphanEmailDisplay from './OrphanEmailDisplay';
+import OrphanEmailsPanel from './OrphanEmailsPanel';
 
-class OrphanCommitsByName extends Component {
+class OrphanCommitsByEmail extends Component {
 
 
     constructor(props) {
@@ -37,15 +37,15 @@ class OrphanCommitsByName extends Component {
     }
 
     componentDidMount() {
-        this.updateOrphanCommitsByName()
+        this.updateOrphanCommitsByEmail()
     }
 
-    updateOrphanCommitsByName = () => {
+    updateOrphanCommitsByEmail = () => {
         console.log("updateOrphanCommits");
         console.log("this.props=", this.props);
         console.log("this.state=", this.state);
 
-        const url = orphanCommitsByNameRoute(this.props.params.course_id, this.props.params.name);
+        const url = orphanCommitsByEmailRoute(this.props.params.course_id, this.props.params.email);
         const params = { page: this.state.page, per_page: this.state.pageSize };
 
 
@@ -75,16 +75,16 @@ class OrphanCommitsByName extends Component {
 
     paginationHandler = (page, pageSize) => {
         this.setState({ page: page, pageSize: pageSize }, () => {
-            this.updateOrphanCommitsByName();
+            this.updateOrphanCommitsByEmail();
         });
     }
 
     render() {
         return (
             <>
-                <h1>Orphan Commits By Name</h1>
+                <h1>Orphan Commits By Email</h1>
 
-                <OrphanNameDisplay name={this.props.params.name} />
+                <OrphanEmailDisplay email={this.props.params.email} />
 
                 <RepoCommitEventsTable
                     commits={this.state.orphanCommits}
@@ -100,7 +100,7 @@ class OrphanCommitsByName extends Component {
                     select the roster student from the drop down menu,
                     then click "assign".
                 </p>
-                <AssignOrphanNameToRosterStudent
+                <AssignOrphanEmailToRosterStudent
                     course={this.props.course}
                     {...this.props}
                 />
@@ -109,8 +109,8 @@ class OrphanCommitsByName extends Component {
     }
 }
 
-OrphanCommitsByName.propTypes = {
+OrphanCommitsByEmail.propTypes = {
 
 };
 
-export default OrphanCommitsByName;
+export default OrphanCommitsByEmail;

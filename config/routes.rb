@@ -25,6 +25,10 @@ Rails.application.routes.draw do
       post :graphql
       get :orphans
       scope module: :courses do
+
+        get 'orphan_commits_by_name', to: 'orphan_names#commits_by_name'
+        get 'orphan_commits_by_email', to: 'orphan_emails#commits_by_email'
+
         resources :job_log
         resources :project_teams
         resources :org_teams
@@ -32,6 +36,8 @@ Rails.application.routes.draw do
           resources :repo_commit_events
           resources :job_log
         end
+        resources :orphan_names
+        resources :orphan_emails
         resources :roster_students do
           get :activity
           get :commits
@@ -94,6 +100,15 @@ Rails.application.routes.draw do
       end
 
       get "project_teams(/*all)", to: "project_teams#index", as: :project_teams
+      get "orphan_commits(/*all)", to: "orphan_commits#index", as: :orphan_commits
+      
+      get 'orphan_commits_by_name', to: 'orphan_commits#by_name'
+      get 'orphan_commits_by_email', to: 'orphan_commits#by_email'
+
+      post 'orphan_commits_by_name/assign/:name/to/:roster_student_id',   to: 'orphan_commits#assign_by_name'
+      post 'orphan_commits_by_email/assign', to: 'orphan_commits#assign_by_email'
+
+
       resource :github_webhooks, :only => [:create], :defaults => {:format => :json} do
         # empty block
       end

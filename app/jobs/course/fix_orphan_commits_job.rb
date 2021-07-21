@@ -24,7 +24,11 @@ class FixOrphanCommitsJob < CourseJob
     end
 
     def process_orphan(orphan)
-        orphan.roster_student = @course.student_for_orphan_name(orphan.author_name)
+        roster_student = @course.student_for_orphan_name(orphan.author_name)
+        if roster_student.nil?
+          roster_student = @course.student_for_orphan_email(orphan.author_email)
+        end
+        orphan.roster_student = roster_student
         orphan.save!
     end
 end

@@ -28,10 +28,6 @@ export default class OrphanNamesPanel extends Component {
                         </Panel.Body>
                     </Panel.Collapse>
                 </Panel>
-                <JSONPrettyPanel 
-                  expression={"this.props"}
-                  value={this.props}
-                 />
             </>
         );
     }

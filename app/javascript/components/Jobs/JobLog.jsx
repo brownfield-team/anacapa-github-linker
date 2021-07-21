@@ -76,8 +76,7 @@ class JobLog extends Component {
 }
 
 JobLog.propTypes = {
-    course_id: PropTypes.number.isRequired,
-    github_id: PropTypes.number.isRequired,
+  
 };
 
 export default JobLog;
