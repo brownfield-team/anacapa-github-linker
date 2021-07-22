@@ -10,7 +10,6 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
 ActiveRecord::Schema.define(version: 2021_06_30_155020) do
 
   # These are extensions that must be enabled in order to support this database
@@ -219,7 +218,7 @@ ActiveRecord::Schema.define(version: 2021_06_30_155020) do
     t.integer "project_card_count"
     t.string "project_card_column_names"
     t.string "project_card_column_project_names"
-    t.string "project_card_project_urls"
+    t.string "project_card_column_project_urls"
     t.datetime "pull_request_created_at"
     t.string "author_login"
     t.index ["github_repo_id"], name: "index_repo_pull_request_events_on_github_repo_id"
