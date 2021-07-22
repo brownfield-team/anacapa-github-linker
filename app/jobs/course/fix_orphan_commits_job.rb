@@ -18,7 +18,6 @@ class FixOrphanCommitsJob < CourseJob
     end
 
     def process_orphan_commits
-      10.times { Rails.logger.info "**** process_orphan_commits ***"}
       @orphans.each do |orphan|
         orphan.fix_orphan_commit(@course)
       end

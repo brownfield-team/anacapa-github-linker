@@ -14,7 +14,7 @@ module Courses
 
     def assign_by_name
       roster_student = RosterStudent.find(params[:roster_student_id])
-      message = "Assigning orphan name '#{params[:name]}' to roster student #{params[:roster_student_id]} (#{roster_student.full_name}), Fix Orphan Commits Job launched "
+      message = "Assigning orphan name '#{params[:name]}' to roster student #{params[:roster_student_id]} (#{roster_student.full_name}) "
       Rails.logger.info message
       on = OrphanName.new(name: params[:name], course:@course, roster_student_id: params[:roster_student_id]).save!
       message += requeueOrphanCommitsIfNotRunning
