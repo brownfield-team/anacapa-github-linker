@@ -314,6 +314,26 @@ class Course < ApplicationRecord
       end
     end
   end
+
+  def pull_request_csv_export_headers
+    GithubRepo.pull_request_csv_export_headers
+  end
+
+  def pull_request_csv_export_fields(repo,c)
+    GithubRepo.pull_request_csv_export_fields(repo,c)
+  end
+
+  def export_pull_requests_to_csv
+    CSV.generate(headers: true) do |csv|
+      csv << pull_request_csv_export_headers
+      github_repos.each do |repo|
+        repo.repo_pull_request_events.each do |c|
+          csv << pull_request_csv_export_fields(repo,c)
+        end
+      end
+    end
+  end
+  
   
   def student_csv_export_headers
     %w[

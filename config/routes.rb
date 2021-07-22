@@ -61,6 +61,7 @@ Rails.application.routes.draw do
     get :events
     get :commits
     get :issues
+    get :pull_requests
     post :run_course_job
     post :update_ta
     get :create_repos

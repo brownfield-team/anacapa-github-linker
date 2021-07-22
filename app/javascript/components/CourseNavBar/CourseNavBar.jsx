@@ -45,6 +45,7 @@ class CourseNavBar extends Component {
                     <NavDropdown  id="nav-downloads-dropdown" title="Downloads">
                         <NavItem eventKey="download-commits" href={this.props.download_commits_path}>Download Commits</NavItem>
                         <NavItem eventKey="download-issues" href={this.props.download_issues_path}>Download Issues</NavItem>
+                        <NavItem eventKey="download-pullRequests" href={this.props.download_pull_requests_path}>Download Pull Requests</NavItem>
                     </NavDropdown>
                     <NavItem eventKey="edit" href={this.props.edit_path} disabled={!this.props.can_edit}>Edit Course</NavItem>
                 </Nav>
@@ -72,6 +73,7 @@ CourseNavBar.propTypes = {
     create_teams_path: PropTypes.string.isRequired,
     download_commits_path: PropTypes.string.isRequired,
     download_issues_path: PropTypes.string.isRequired,
+    download_pull_requests_path: PropTypes.string.isRequired,
     can_edit: PropTypes.bool.isRequired
 };
 

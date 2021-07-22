@@ -218,6 +218,13 @@ class CoursesController < ApplicationController
     end
   end
 
+  def pull_requests
+    @course = Course.find(params[:course_id])
+    respond_to do |format|
+      format.csv {send_data @course.export_pull_requests_to_csv, filename:"#{@course.course_organization}-pull_requests-#{Date.today}.csv"}
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course
