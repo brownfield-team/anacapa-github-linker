@@ -87,7 +87,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
 
     def update_one_commit(commit, c, branch_name)
       begin
-        commit.course = @course
+        commit.course_id = @course.id
         commit.files_changed = c[:node][:changedFiles]
         commit.additions = c[:node][:additions]
         commit.deletions = c[:node][:deletions]
