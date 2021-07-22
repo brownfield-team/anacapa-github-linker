@@ -16,7 +16,7 @@ module Courses
       roster_student = RosterStudent.find(params[:roster_student_id])
       message = "Assigning orphan name '#{params[:name]}' to roster student #{params[:roster_student_id]} (#{roster_student.full_name}) "
       Rails.logger.info message
-      on = OrphanName.findOrInitializeBy(name: params[:name], course:@course, roster_student_id: params[:roster_student_id]).save!
+      on = OrphanName.find_or_initialize_by(name: params[:name], course:@course, roster_student_id: params[:roster_student_id]).save!
       message += requeueOrphanCommitsIfNotRunning
       redirect_to course_orphan_commits_path(@course), notice: message   
     end
@@ -25,7 +25,7 @@ module Courses
       roster_student = RosterStudent.find(params[:roster_student_id])
       message = "Assigning orphan email '#{params[:email]}' to roster student #{params[:roster_student_id]} (#{roster_student.full_name}) "
       Rails.logger.info message
-      OrphanEmail.findOrInitializeBy(email: params[:email], course:@course, roster_student_id: params[:roster_student_id]).save!
+      OrphanEmail.find_or_initialize_by(email: params[:email], course:@course, roster_student_id: params[:roster_student_id]).save!
       message += requeueOrphanCommitsIfNotRunning
       redirect_to course_orphan_commits_path(@course), notice: message   
     end
