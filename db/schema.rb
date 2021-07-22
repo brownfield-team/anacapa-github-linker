@@ -295,6 +295,16 @@ ActiveRecord::Schema.define(version: 2021_06_30_155020) do
     t.index ["course_id"], name: "index_slack_workspaces_on_course_id"
   end
 
+  create_table "sprints", force: :cascade do |t|
+    t.string "name"
+    t.date "start_date"
+    t.date "end_date"
+    t.bigint "course_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_sprints_on_course_id"
+  end
+
   create_table "student_team_memberships", force: :cascade do |t|
     t.bigint "roster_student_id"
     t.bigint "org_team_id"
@@ -355,5 +365,6 @@ ActiveRecord::Schema.define(version: 2021_06_30_155020) do
   add_foreign_key "roster_students", "courses"
   add_foreign_key "roster_students", "users"
   add_foreign_key "slack_users", "slack_workspaces"
+  add_foreign_key "sprints", "courses"
   add_foreign_key "student_team_memberships", "project_roles"
 end

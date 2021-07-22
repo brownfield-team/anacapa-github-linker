@@ -52,7 +52,42 @@
   <div class="field">
     <%= form.label :hidden %>
     <%= form.check_box :hidden %>
-  </div>
+  
+  <% if @sprints %>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="panel-title">Sprints</div>
+      </div>
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Start date</th>
+              <th>End date</th>
+              <th colspan="3"></th>
+            </tr>
+          </thead>
+          <tbody>
+              <% @sprints.each do |sprint| %>
+                    <tr>
+                      <td><%= sprint.name %></td>
+                      <td><%= sprint.start_date %></td>
+                      <td><%= sprint.end_date %></td>
+                      <td><%= link_to 'Show', course_sprint_path(course, sprint) %></td>
+                      <td><%= link_to 'Edit', edit_course_sprint_path(course, sprint) %></td>
+                      <td><%= link_to 'Destroy', course_sprint_path(course, sprint), method: :delete, data: { confirm: 'Are you sure?' }
+              %></td>
+                    </tr>
+              <% end %>
+
+          </tbody>
+        </table>
+        <%= link_to 'New Sprint', new_course_sprint_path(@course) %>
+      </div>
+    </div>
+  <% end %>
+
 
   <div class="actions">
     <%= form.submit %>
