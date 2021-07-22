@@ -3,17 +3,23 @@ import VisitorsService from "../../services/visitors-service";
 import BootstrapTable from 'react-bootstrap-table-next';
 import { Button } from "react-bootstrap";
 import { coursesRoute } from "../../services/service-routes";
+import axios from "axios";
 
 class HomePage extends Component {
     constructor(props) {
         super(props);
-        this.state = {courses: [], filteredCourses: []}
+        this.state = {courses: [], filteredCourses: [], csrfToken: ""}
     }
 
     componentDidMount() {
         VisitorsService.getCourseList().then(coursesResponse => {
             this.setState({courses: coursesResponse, filteredCourses: coursesResponse});
         })
+
+		const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+		this.setState({
+			csrfToken: csrf
+		});
     }
 
     filterCourses = (query) => {
@@ -34,7 +40,20 @@ class HomePage extends Component {
 		return (
             <div>
                 {!row.user_enrolled ?
-                    <Button className="btn btn-success" variant="success" data-testid={`join-button-${row.id}`} href={`${row.join_path}`} >Join</Button>
+					<form method="post" action={`${row.join_path}`}>
+						<input
+							type="hidden"
+							name="authenticity_token"
+							value={this.state.csrfToken}
+						></input>
+						<Button type="submit"
+							className="btn btn-success"
+							variant="success"
+							data-testid={`assign-button-${row.id}`}
+						>
+							Join
+						</Button>
+					</form>
                      :
                     <span> You have already joined the course: <a
                         href={`https://github.com/${row.course_organization}`}>{row.course_organization}</a>
