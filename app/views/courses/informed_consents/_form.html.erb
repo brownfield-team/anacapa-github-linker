@@ -1,0 +1,38 @@
+
+<%= form_for([@parent,@informed_consent]) do |form| %>
+  <% if informed_consent.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(informed_consent.errors.count, "error") %> prohibited this informed_consent from being saved:</h2>
+
+      <ul>
+      <% informed_consent.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <div class="field">
+    <%= form.label "Student ID number" %>
+    <%= form.text_field :perm, id: :informed_consent_perm %>
+  </div>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :informed_consent_first_name %>
+  </div>
+
+  <div class="field">
+    <br>
+    <%= form.label "Student Consents: " %>
+    <%= form.radio_button :student_consents, 'true', checked: @informed_consent.student_consents %>
+    <%= label :student_consents_true, 'True' %>
+    <%= form.radio_button :student_consents, 'false', checked: (!@informed_consent.student_consents) %>
+    <%= label :student_consents_false, 'False' %>
+
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

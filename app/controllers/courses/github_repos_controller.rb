@@ -16,13 +16,22 @@ module Courses
       @github_repos = @parent.github_repos.all
     end
 
+    def project_repos
+
+    end
+
+    def external
+
+    end
+
     def show
       @course = Course.find(params[:course_id])
       @github_repo = GithubRepo.find(params[:id])
       @github_repo_plus_commit_count = {
         repo: @github_repo,
         commit_count: @github_repo.repo_commit_events.count,
-        issue_count: @github_repo.repo_issue_events.count
+        issue_count: @github_repo.repo_issue_events.count,
+        pr_count: @github_repo.repo_pull_request_events.count
       }
     end
 
@@ -41,7 +50,8 @@ module Courses
     def course_github_repo_job_list
       # @course = Course.find(params[:course_id])
       # @github_repo = GithubRepo.find(params[:id])
-      jobs = [CourseGithubRepoTestJob, CourseGithubRepoGetCommits, CourseGithubRepoGetIssues]
+
+      jobs = [CourseGithubRepoTestJob, CourseGithubRepoGetCommits, CourseGithubRepoGetIssues, CourseGithubRepoGetSDLCEvents]
       jobs
     end
     helper_method :course_github_repo_job_list

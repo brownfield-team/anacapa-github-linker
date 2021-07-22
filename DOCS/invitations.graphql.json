@@ -1,0 +1,1 @@
+{"query" : "query { organization(login: \"ucsb-cs48-s20\") {     team(slug: \"s0-t1-budget\") {       invitations(first: 50) {         totalCount         __typename         nodes {          invitee { login databaseId  } role    }       }      }}}"}

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :schools
   # resources :roster_students
   # devise routes
   devise_for :users, :controllers => {
@@ -17,11 +18,19 @@ Rails.application.routes.draw do
     match 'testhooks/login_student' => 'testhooks#login_student', :via => :get
     match 'testhooks/login_admin' => 'testhooks#login_admin', :via => :get
 
+    resources :visitors
+    resources :job_log
+
     resources :courses do
+      post :graphql
       scope module: :courses do
+        resources :job_log
         resources :project_teams
         resources :org_teams
-        resources :github_repos
+        resources :github_repos do
+          resources :repo_commit_events
+          resources :job_log
+        end
         resources :roster_students do
           get :activity
           get :commits
@@ -30,6 +39,8 @@ Rails.application.routes.draw do
         end
       end
     end
+
+    resources :schools
   end
 
   # courses routes
@@ -42,25 +53,36 @@ Rails.application.routes.draw do
     get :search_repos
     get :events
     get :sprints
+    get :commits
+    get :issues
     post :run_course_job
     post :update_ta
-
     get :create_repos
     post :generate_repos
     
     resources :sprints
 
+    get :project_repos
     scope module: :courses do
-      
+
       resources :roster_students do
         collection do
           post :import
         end
         get :activity
       end
+      resources :informed_consents do
+        collection do
+          post :import
+        end
+      end
       resources :github_repos do
+        collection do
+          get :external
+        end
         resources :repo_commit_events
         resources :repo_issue_events
+        resources :repo_pull_request_events
         post :run_job
       end
 
