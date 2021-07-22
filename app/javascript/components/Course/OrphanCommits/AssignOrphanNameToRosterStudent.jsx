@@ -18,10 +18,6 @@ class AssignOrphanNameToRosterStudent extends Component {
         this.state = {};
     }
 
-    componentDidMount() {
-
-    }
-
     updateOrphanNames = () => {
         const url = orphanNamesRoute(this.props.course_id);
         const params = {};
@@ -35,12 +31,9 @@ class AssignOrphanNameToRosterStudent extends Component {
                 return true;
             },
             success: function (data, status, xhr) {
-                console.log("success");
                 self.setState(prevState => ({ ...prevState, orphanNames: data, orphanNamesError: "" }));
-                console.log("success this.state=", this.state);
             },
             error: function (data) {
-                console.log("failure");
                 self.setState(prevState => ({ ...prevState, orphanNames: [], orphanNamesError: data }));
             }
         });

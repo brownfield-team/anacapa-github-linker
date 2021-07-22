@@ -17,10 +17,6 @@ class AssignOrphanEmailToRosterStudent extends Component {
         this.state = {};
     }
 
-    componentDidMount() {
-
-    }
-
     updateOrphanEmails = () => {
 
         const url = orphanEmailsRoute(this.props.course_id);
@@ -35,12 +31,9 @@ class AssignOrphanEmailToRosterStudent extends Component {
                 return true;
             },
             success: function (data, status, xhr) {
-                console.log("success");
                 self.setState(prevState => ({ ...prevState, orphanEmails: data, orphanEmailsError: "" }));
-                console.log("success this.state=", this.state);
             },
             error: function (data) {
-                console.log("failure");
                 self.setState(prevState => ({ ...prevState, orphanEmails: [], orphanEmailsError: data }));
             }
         });
