@@ -270,6 +270,7 @@ class Course < ApplicationRecord
   end
 
   def orphans_by_email(author_email)
+    Rails.logger.info "author_email=#{author_email}"
     github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil, author_email: author_email)}.flatten(1).sort_by!{ |c| c.commit_timestamp}
   end
 
