@@ -12,6 +12,8 @@ class Course < ApplicationRecord
   validates :end_date, presence: false
   validate :check_course_org_exists
   has_many :roster_students, dependent: :destroy
+  has_many :orphan_names, dependent: :destroy
+  has_many :orphan_emails, dependent: :destroy
   has_many :informed_consents, dependent: :destroy
   has_many :completed_jobs, dependent: :destroy
   has_many :github_repos, dependent: :destroy, class_name: '::GithubRepo'
@@ -39,6 +41,16 @@ class Course < ApplicationRecord
 
   def student_for_uid(uid)
     RosterStudent.where(course_id: self.id).includes(:user).references(:user).merge(User.where(uid: uid.to_s)).first
+  end
+
+  def student_for_orphan_name(name)
+    orphanName = OrphanName.where(course_id: self.id, name: name).first
+    orphanName ? orphanName.roster_student : nil
+  end
+
+  def student_for_orphan_email(email)
+    orphanEmail = OrphanEmail.where(course_id: self.id, email: email).first
+    orphanEmail ? orphanEmail.roster_student : nil
   end
 
   def student_for_github_username(username)
@@ -250,7 +262,28 @@ class Course < ApplicationRecord
   end
 
   def commits
-     github_repos.map{ |repo| repo.repo_commit_events }.flatten(1)
+     github_repos.map{ |repo| repo.repo_commit_events }.flatten(1).sort_by!{ |c| c.commit_timestamp}
+  end
+
+  def orphans
+    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil) }.flatten(1).sort_by!{ |c| c.commit_timestamp}
+  end
+
+  def orphans_by_email(author_email)
+    Rails.logger.info "author_email=#{author_email}"
+    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil, author_email: author_email)}.flatten(1).sort_by!{ |c| c.commit_timestamp}
+  end
+
+  def orphans_by_name(author_name)
+    github_repos.map{ |repo| repo.repo_commit_events.where(roster_student: nil, author_name: author_name)}.flatten(1).sort_by!{ |c| c.commit_timestamp}
+  end
+
+  def orphan_author_emails
+    self.orphans.group_by{ |h| h.author_email}.map{|k,v| [k, v.size]}.to_h
+  end
+
+  def orphan_author_names
+    self.orphans.group_by{ |h| h.author_name}.map{|k,v| [k, v.size]}.to_h
   end
 
   def export_commits_to_csv
@@ -400,7 +433,11 @@ class Course < ApplicationRecord
     }
     GRAPHQL
   end
-  
+
+  def project_repos
+    self.github_repos.where(is_project_repo: true)
+  end
+
   def self.all_course_names
       Course.all.map{|c| c.name}
   end

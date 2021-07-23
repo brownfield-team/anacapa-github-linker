@@ -75,8 +75,19 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       result
     end
 
+    def update_roster_student(commit, c, branch_name)
+      begin  # "try" block
+        uid = c[:node][:author][:user][:databaseId]
+        commit.roster_student = lookup_roster_student_by_github_uid(uid)
+        return
+      rescue 
+        commit.roster_student = commit.roster_student_for_commit(@course)
+      end
+    end
+
     def update_one_commit(commit, c, branch_name)
       begin
+        commit.course_id = @course.id
         commit.files_changed = c[:node][:changedFiles]
         commit.additions = c[:node][:additions]
         commit.deletions = c[:node][:deletions]
@@ -91,20 +102,15 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         commit.author_name = c.node&.author&.name
         commit.author_email = c.node&.author&.email
       rescue
+        Rails.logger.error "***ERROR*** update_commit_fields commit #{sawyer_resource_to_s(c)} @github_repo #{@github_repo}"
         raise
-        puts "***ERROR*** update_commit_fields commit #{sawyer_resource_to_s(c)} @github_repo #{@github_repo}"
         return 0
       end
 
       commit.filenames_changed = filenames_changed(commit.commit_hash)
 
-      begin  # "try" block
-        uid = c[:node][:author][:user][:databaseId]
-        commit.roster_student = lookup_roster_student_by_github_uid(uid)
-      rescue # optionally: `rescue Exception => ex`
-        uid = ""
-        commit.roster_student = nil
-      end
+      update_roster_student(commit, c, branch_name)
+
       begin
         commit.save!
         return 1
@@ -115,6 +121,10 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
 
     def lookup_roster_student_by_github_uid(uid)
       @course.student_for_uid(uid)
+    end
+
+    def lookup_roster_student_by_orphan_name(name)
+      @course.student_for_orphan_name(name)
     end
 
     def perform_graphql_query(repo_name, org_name, after="")

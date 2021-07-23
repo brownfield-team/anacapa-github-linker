@@ -21,9 +21,17 @@ import HomePage from "../components/home/HomePage";
 import ExternalReposPage from "../components/Course/GithubRepos/ExternalRepos/ExternalReposPage";
 import CoursesIndex from "../components/Courses/CoursesIndex";
 
+import OrphanCommits from '../components/Course/OrphanCommits/OrphanCommits';
+import OrphanCommitsByName from '../components/Course/OrphanCommits/OrphanCommitsByName';
+import OrphanCommitsByEmail from '../components/Course/OrphanCommits/OrphanCommitsByEmail';
+
 import "../styles.css"
 
 ReactOnRails.register({
+  CoursesIndex,
+  OrphanCommits,
+  OrphanCommitsByName,
+  OrphanCommitsByEmail,
   Users,
   ProjectTeams,
   CourseNavBar,
@@ -37,6 +45,5 @@ ReactOnRails.register({
   JobLog,
   SchoolsIndex,
   HomePage,
-  ExternalReposPage,
-  CoursesIndex
+  ExternalReposPage
 });

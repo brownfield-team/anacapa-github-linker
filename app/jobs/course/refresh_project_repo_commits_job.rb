@@ -13,8 +13,7 @@ class RefreshProjectRepoCommitsJob < CourseJob
       result_hash = {
         project_repos: []
       }
-      project_repos = @course.github_repos.where(is_project_repo: true)
-      project_repos.each do |repo|
+      @course.project_repos.each do |repo|
         result_hash[:project_repos] << process_repo(repo)
       end
 

@@ -135,13 +135,17 @@ class CoursesController < ApplicationController
       redirect_to course_jobs_path, alert: "You do not have permission to run this job. Ask an admin to run it for you."
     end
     job.perform_async(params[:course_id].to_i)
-    redirect_to course_jobs_path, notice: "Job successfully queued."
+    if params[:redirect_url]
+      redirect_to params[:redirect_url], notice: "Job successfully queued"
+    else
+      redirect_to course_jobs_path, notice: "Job successfully queued."
+    end
   end
 
   # List of course jobs to make available to run
   def course_job_list
     @course = Course.find(params[:course_id])
-    jobs = [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, RefreshProjectRepoCommitsJob, RefreshProjectRepoIssuesJob,RefreshProjectRepoPullRequestsJob,PurgeCourseReposJob]
+    jobs = [TestJob, StudentsOrgMembershipCheckJob, UpdateGithubReposJob, RefreshGithubTeamsJob, RefreshProjectRepoCommitsJob, RefreshProjectRepoIssuesJob,RefreshProjectRepoPullRequestsJob,PurgeCourseReposJob, FixOrphanCommitsJob]
     if @course.slack_workspace.present?
       jobs << AssociateSlackUsersJob
     end

@@ -35,6 +35,7 @@ class CourseNavBar extends Component {
                         <MenuItem eventKey="project_repos" href={this.props.project_repos_path}>Project Repos</MenuItem>
                         <MenuItem eventKey="external_repos" href={this.props.external_repos_path}>External Repos</MenuItem>
                         <MenuItem eventKey="repos" href={this.props.repos_path}>Repo Search</MenuItem>
+                        <MenuItem eventKey="orphan_commits" href={this.props.orphan_commits_path}>Orphan Commits</MenuItem>
                         <MenuItem eventKey="create_assignment_repos" href={this.props.create_assignment_repos_path}>Create Assignment Repos</MenuItem>
                     </NavDropdown>
                     <NavItem eventKey="events" href={this.props.events_path}>Events</NavItem>

@@ -2,6 +2,7 @@ class HookEventRecord < ApplicationRecord
   self.abstract_class = true
   belongs_to :github_repo, optional: true
   belongs_to :roster_student, optional: true
+  belongs_to :course,  optional: true
 
   def event_type
     self.class.name

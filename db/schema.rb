@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_30_155020) do
+ActiveRecord::Schema.define(version: 2021_07_21_225059) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -115,6 +115,22 @@ ActiveRecord::Schema.define(version: 2021_06_30_155020) do
     t.index ["course_id"], name: "index_org_webhooks_on_course_id"
   end
 
+  create_table "orphan_emails", force: :cascade do |t|
+    t.string "email"
+    t.bigint "course_id"
+    t.bigint "roster_student_id"
+    t.index ["course_id"], name: "index_orphan_emails_on_course_id"
+    t.index ["roster_student_id"], name: "index_orphan_emails_on_roster_student_id"
+  end
+
+  create_table "orphan_names", force: :cascade do |t|
+    t.string "name"
+    t.bigint "course_id"
+    t.bigint "roster_student_id"
+    t.index ["course_id"], name: "index_orphan_names_on_course_id"
+    t.index ["roster_student_id"], name: "index_orphan_names_on_roster_student_id"
+  end
+
   create_table "project_roles", force: :cascade do |t|
     t.string "name"
     t.string "color"
@@ -156,6 +172,8 @@ ActiveRecord::Schema.define(version: 2021_06_30_155020) do
     t.string "author_email"
     t.integer "additions"
     t.integer "deletions"
+    t.bigint "course_id"
+    t.index ["course_id"], name: "index_repo_commit_events_on_course_id"
     t.index ["github_repo_id"], name: "index_repo_commit_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_commit_events_on_roster_student_id"
   end
@@ -345,6 +363,7 @@ ActiveRecord::Schema.define(version: 2021_06_30_155020) do
   add_foreign_key "org_webhooks", "courses"
   add_foreign_key "project_teams", "github_repos"
   add_foreign_key "project_teams", "org_teams"
+  add_foreign_key "repo_commit_events", "courses"
   add_foreign_key "repo_commit_events", "github_repos"
   add_foreign_key "repo_commit_events", "roster_students"
   add_foreign_key "repo_issue_events", "github_repos"
