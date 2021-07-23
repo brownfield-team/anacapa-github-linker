@@ -9,8 +9,8 @@ export const orphanCommitsRoute = (courseId) => `${courseRoute(courseId)}/orphan
 export const orphanNamesRoute = (courseId) => `${courseRoute(courseId)}/orphan_names`
 export const orphanEmailsRoute = (courseId) => `${courseRoute(courseId)}/orphan_emails`
 
-export const orphanCommitsByNameRoute = (courseId, name) => `${courseRoute(courseId)}/orphan_commits_by_name?name=${encodeURI(name)}`
-export const orphanCommitsByEmailRoute = (courseId, email) => `${courseRoute(courseId)}/orphan_commits_by_email?email=${encodeURI(email)}`
+export const orphanCommitsByNameRoute = (courseId, name) => `${courseRoute(courseId)}/orphan_commits_by_name?name=${encodeURIComponent(name)}`
+export const orphanCommitsByEmailRoute = (courseId, email) => `${courseRoute(courseId)}/orphan_commits_by_email?email=${encodeURIComponent(email)}`
 
 export const graphqlRoute = (courseId) => `${courseRoute(courseId)}/graphql`
 

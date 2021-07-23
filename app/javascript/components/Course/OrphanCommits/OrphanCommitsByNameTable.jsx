@@ -6,7 +6,7 @@ import { orphanCommitsByNameRoute } from "../../../services/service-routes"
 
 class OrphanCommitsByNameTable extends Component {
 
-    orphanCommitsByNamePage = (courseId, name) => `/courses/${courseId}/orphan_commits_by_name?name=${encodeURI(name)}`
+    orphanCommitsByNamePage = (courseId, name) => `/courses/${courseId}/orphan_commits_by_name?name=${encodeURIComponent(name)}`
 
 
     constructor(props) {

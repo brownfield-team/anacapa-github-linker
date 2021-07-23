@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 class OrphanCommitsByEmailTable extends Component {
 
-    orphanCommitsByEmailPage = (courseId, email) => `/courses/${courseId}/orphan_commits_by_email?email=${encodeURI(email)}`;
+    orphanCommitsByEmailPage = (courseId, email) => `/courses/${courseId}/orphan_commits_by_email?email=${encodeURIComponent(email)}`;
 
     constructor(props) {
         super(props);
