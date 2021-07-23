@@ -10,7 +10,7 @@ class RepoCommitEvent < HookEventRecord
   def roster_student_for_commit(course)
     rs = course.student_for_github_username(self.author_login)
     rs = course.student_for_orphan_name(self.author_name) if rs.nil?  
-    rs = course.student_for_orphan_email(CGI.unescape(self.author_email)) if rs.nil?
+    rs = course.student_for_orphan_email(self.author_email) if rs.nil?
     rs
   end
 
