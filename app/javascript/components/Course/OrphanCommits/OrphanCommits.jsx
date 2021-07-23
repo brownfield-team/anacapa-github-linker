@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-import * as PropTypes from 'prop-types';
-import axios from "../../../helpers/axios-rails"
-import ReactOnRails from "react-on-rails";
 
 import OrphanCommitsByNamePanel from './OrphanCommitsByNamePanel';
 import OrphanCommitsByEmailPanel from './OrphanCommitsByEmailPanel';
 import OrphanNamesPanel from '../OrphanCommits/OrphanNamesPanel';
 import OrphanEmailsPanel from '../OrphanCommits/OrphanEmailsPanel';
 
-import { Alert, Form } from 'react-bootstrap';
-import JSONPrettyPanel from '../../Utilities/JsonPrettyPanel';
+import { Alert } from 'react-bootstrap';
 import JobLauncher from "../../Jobs/JobLauncher";
 import JobLog from "../../Jobs/JobLog";
 
@@ -25,11 +21,6 @@ class OrphanCommits extends Component {
 
     constructor(props) {
         super(props);
-
-        const csrfToken = ReactOnRails.authenticityToken();
-        axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
-        axios.defaults.params = {}
-        axios.defaults.params['authenticity_token'] = csrfToken;
 
         this.state = {
             orphanError: "",
@@ -122,6 +113,7 @@ class OrphanCommits extends Component {
     renderError() {
         const orphanError = this.state.orphanError;
         const orphanNamesError = this.state.orphanNamesError;
+        const orphanEmailsError = this.state.orphanEmailsError;
 
         return (
             <div>
@@ -130,6 +122,9 @@ class OrphanCommits extends Component {
                 }
                 {orphanNamesError !== "" &&
                     <Alert id="error-alert-orphan-names" variant="danger"> {orphanNamesError} </Alert>
+                }
+                 {orphanEmailsError !== "" &&
+                    <Alert id="error-alert-orphan-emails" variant="danger"> {orphanEmailsError} </Alert>
                 }
             </div>
         );
