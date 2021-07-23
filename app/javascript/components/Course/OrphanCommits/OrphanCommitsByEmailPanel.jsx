@@ -1,17 +1,10 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Panel } from 'react-bootstrap'
 import OrphanCommitsByEmailTable from './OrphanCommitsByEmailTable';
-import JSONPrettyPanel from '../../Utilities/JsonPrettyPanel';
-import RepoCommitEventsTable from '../../RepoCommitEvents/RepoCommitEventsTable';
 
 export default class OrphanCommitsByEmailPanel extends Component {
     constructor(props) {
         super(props);
-    }
-
-    componentDidUpdate(prevProps,prevState) {
-      
     }
 
     render() {
@@ -37,7 +30,4 @@ export default class OrphanCommitsByEmailPanel extends Component {
     }
 }
 
-OrphanCommitsByEmailPanel.propTypes = {
-   
-};
 
