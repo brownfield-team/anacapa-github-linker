@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import axios from "../../../helpers/axios-rails"
 import ReactOnRails from "react-on-rails";
-
+import { Alert } from 'react-bootstrap';
 
 import { Table } from 'react-bootstrap';
 import JSONPrettyPanel from '../../Utilities/JsonPrettyPanel';
@@ -77,10 +77,24 @@ class OrphanCommitsByName extends Component {
         });
     }
 
+    renderError() {
+        const orphanError = this.state.orphanError;
+       
+        return (
+            <div>
+                {orphanError !== "" &&
+                    <Alert id="error-alert-orphan-commits" variant="danger"> {orphanError} </Alert>
+                }
+            </div>
+        );
+    }
+
     render() {
         return (
             <>
                 <h1>Orphan Commits By Name</h1>
+
+                {this.renderError()}
 
                 <OrphanNameDisplay name={this.props.params.name} />
 

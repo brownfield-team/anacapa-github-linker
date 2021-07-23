@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import axios from "../../../helpers/axios-rails"
-import ReactOnRails from "react-on-rails";
+import { Alert } from 'react-bootstrap';
 
 import RepoCommitEventsTable from '../../RepoCommitEvents/RepoCommitEventsTable';
 
@@ -15,11 +14,6 @@ class OrphanCommitsByEmail extends Component {
     constructor(props) {
 
         super(props);
-
-        const csrfToken = ReactOnRails.authenticityToken();
-        axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
-        axios.defaults.params = {}
-        axios.defaults.params['authenticity_token'] = csrfToken;
 
         this.state = {
             orphanCommits: [],
@@ -36,7 +30,7 @@ class OrphanCommitsByEmail extends Component {
 
     updateOrphanCommitsByEmail = () => {
        
-        const url = orphanCommitsByEmailRoute(this.props.params.course_id, this.props.params.email);
+        const url = orphanCommitsByEmailRoute(this.props.params.course_id, this.props.params.email) ;
         const params = { page: this.state.page, per_page: this.state.pageSize };
 
         // self=this; Otherwise, calling setState fails because the scope for "this" is the success/error function.
@@ -69,10 +63,24 @@ class OrphanCommitsByEmail extends Component {
         });
     }
 
+    renderError() {
+        const orphanError = this.state.orphanError;
+       
+        return (
+            <div>
+                {orphanError !== "" &&
+                    <Alert id="error-alert-orphan-commits" variant="danger"> {orphanError} </Alert>
+                }
+            </div>
+        );
+    }
+
     render() {
         return (
             <>
                 <h1>Orphan Commits By Email</h1>
+
+                {this.renderError()}
 
                 <OrphanEmailDisplay email={this.props.params.email} />
 
