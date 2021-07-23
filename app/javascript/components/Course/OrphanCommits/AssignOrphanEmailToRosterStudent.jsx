@@ -39,7 +39,7 @@ class AssignOrphanEmailToRosterStudent extends Component {
         });
     }
 
-    assign_url = (course_id, email, roster_student_id) => `/courses/${course_id}/orphan_commits_by_email/assign?email=${email}&roster_student_id=${roster_student_id}`;
+    assign_url = (course_id, email, roster_student_id) => `/courses/${course_id}/orphan_commits_by_email/assign?email=${encodeURIComponent(email)}&roster_student_id=${roster_student_id}`;
 
     render() {
         return (

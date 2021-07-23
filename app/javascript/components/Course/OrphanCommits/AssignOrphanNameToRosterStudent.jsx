@@ -39,7 +39,7 @@ class AssignOrphanNameToRosterStudent extends Component {
         });
     }
 
-    assign_url = (course_id, name, roster_student_id) => `/courses/${course_id}/orphan_commits_by_name/assign/${name}/to/${roster_student_id}`;
+    assign_url = (course_id, name, roster_student_id) => `/courses/${course_id}/orphan_commits_by_name/assign/${encodeURIComponent(name)}/to/${roster_student_id}`;
 
     render() {
         return (
