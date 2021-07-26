@@ -33,6 +33,12 @@ class ChangeAnalytics extends Component {
         this.getProjectRepos(this.props.team)
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.team != this.props.team) {
+            this.getProjectRepos(this.props.team)
+        }
+    }
+
     getProjectRepos = (team) => {
         const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos?is_project_repo=true`).then(response => response.json()).then(json => {
             if (json.length > 0) {

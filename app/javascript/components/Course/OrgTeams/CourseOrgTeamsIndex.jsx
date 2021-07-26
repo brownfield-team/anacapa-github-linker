@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import CourseOrgTeamsTable from "./CourseOrgTeamsTable";
 
-import { Alert } from 'react-bootstrap';
+import { Alert, Panel, DropdownButton, MenuItem, ButtonToolbar } from 'react-bootstrap';
 
 import { orgTeamsRoute } from "../../../services/service-routes";
+import CourseOrgTeam from './CourseOrgTeam';
 
 class CourseOrgTeamsIndex extends Component {
     constructor(props) {
         super(props);
-        this.state = { search: this.props.search ?? "", type: this.props.visibility ?? "", error: "", teams: [], page: 1, pageSize: 25, totalSize: 0 };
+        this.state = { search: this.props.search ?? "", type: this.props.visibility ?? "", error: "", teams: [], org_team_id: undefined, teamName: undefined };
     }
 
     componentDidMount() {
@@ -17,7 +17,7 @@ class CourseOrgTeamsIndex extends Component {
     }
 
     performSearch = (searchValue) => {
-        this.setState({ page: 1, search: searchValue }, () => {
+        this.setState({ search: searchValue }, () => {
             this.updateTeams();
         });
     }
@@ -27,20 +27,14 @@ class CourseOrgTeamsIndex extends Component {
             return;
         }
 
-        this.setState({ page: 1, visibility: visibilityValue }, () => {
-            this.updateTeams();
-        });
-    }
-
-    paginationHandler = (page, pageSize) => {
-        this.setState({ page: page, pageSize: pageSize }, () => {
+        this.setState({ visibility: visibilityValue }, () => {
             this.updateTeams();
         });
     }
 
     updateTeams = () => {
         const url = orgTeamsRoute(this.props.course_id);
-        const params = { search: this.state.search, visibility: this.state.visibility, page: this.state.page, per_page: this.state.pageSize };
+        const params = { search: this.state.search, visibility: this.state.visibility };
         // self=this; Otherwise , calling setState fails because the scope for "this" is the success/error function.
         const self = this;
         Rails.ajax({
@@ -52,8 +46,12 @@ class CourseOrgTeamsIndex extends Component {
             },
             success: function (data, status, xhr) {
                 const totalRecords = parseInt(xhr.getResponseHeader("X-Total"));
-                const page = parseInt(xhr.getResponseHeader("X-Page"));
-                self.setState({ teams: data, totalSize: totalRecords, page: page, error: "" });
+
+                if (self.state.org_team_id == undefined) {
+                    self.setState({ org_team_id: data[0].id.toString(), teamName: data[0].name });
+                }
+
+                self.setState({ teams: data, error: "" });   
             },
             error: function (data) {
                 self.setState({ error: data });
@@ -72,19 +70,46 @@ class CourseOrgTeamsIndex extends Component {
         );
     }
 
+    onButtonClick(team) {
+        this.setState({ org_team_id: team.id.toString(), teamName: team.name}, () => {
+            this.forceUpdate();
+        })
+        
+    }
+
     render() {
+        const teams = this.state.teams;
+
+        if (teams.length == 0) return "Loading...";
+
+        const org_team_id = this.state.org_team_id;
+
+        if (org_team_id == undefined) return "Loading...";
+
         return (
             <div>
                 {this.renderError()}
-                <CourseOrgTeamsTable
-                    teams={this.state.teams}
-                    page={this.state.page}
-                    pageSize={this.state.pageSize}
-                    totalSize={this.state.totalSize}
-                    paginationHandler={this.paginationHandler}
-                    course={this.props.course}
-                    {...this.props}
-                />
+                <Panel>
+                    <Panel.Heading>
+                            <Panel.Title>{this.state.teamName}
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", padding: "0px", margin: "0px" }}>
+                                    <ButtonToolbar>
+                                        <DropdownButton title={this.state.teamName} id="dropdown-size-medium">
+                                            {teams.map((object, index) => {
+                                                return(<MenuItem key={object["name"]} onClick={() => this.onButtonClick(object)}>{object["name"]}</MenuItem>);
+                                            })}
+                                        </DropdownButton>
+                                    </ButtonToolbar>
+                                </div>
+                            </Panel.Title>
+                    </Panel.Heading>
+                    <Panel.Body>
+                        <CourseOrgTeam
+                            org_team_id={org_team_id}
+                            course_id={this.props.course_id.toString()}
+                        />
+                    </Panel.Body>
+                </Panel>
             </div>
         );
     }

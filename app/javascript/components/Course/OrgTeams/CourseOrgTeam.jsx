@@ -21,6 +21,12 @@ class CourseOrgTeam extends Component {
         this.fetchTeam();
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.org_team_id != this.props.org_team_id) {
+            this.fetchTeam();
+        }
+    }
+
     fetchTeam = () => {
         OrgTeamsService.getOrgTeam(this.props.course_id, this.props.org_team_id).then(
             (team) => {
