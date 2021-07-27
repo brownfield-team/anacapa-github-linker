@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_21_225059) do
+ActiveRecord::Schema.define(version: 2021_07_27_191054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,9 +35,9 @@ ActiveRecord::Schema.define(version: 2021_07_21_225059) do
     t.boolean "hidden"
     t.boolean "github_webhooks_enabled"
     t.string "term"
+    t.bigint "school_id"
     t.datetime "start_date"
     t.datetime "end_date"
-    t.bigint "school_id"
     t.index ["school_id"], name: "index_courses_on_school_id"
   end
 
@@ -173,6 +173,9 @@ ActiveRecord::Schema.define(version: 2021_07_21_225059) do
     t.integer "additions"
     t.integer "deletions"
     t.bigint "course_id"
+    t.integer "package_lock_json_files_changed"
+    t.integer "package_lock_json_additions"
+    t.integer "package_lock_json_deletions"
     t.index ["course_id"], name: "index_repo_commit_events_on_course_id"
     t.index ["github_repo_id"], name: "index_repo_commit_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_commit_events_on_roster_student_id"

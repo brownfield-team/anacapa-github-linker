@@ -42,20 +42,46 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
      JobResult.new(commits.length,total_new_commits,total_updated_commits)
     end
 
+    def set_package_lock_json_fields_to_zero(commit)
+      commit.package_lock_json_files_changed = 0
+      commit.package_lock_json_additions = 0
+      commit.package_lock_json_deletions = 0
+    end
+
     # Regrettably, the v4 graphql api doesn't yet support
     # getting the filenames changed.
     # See: https://github.community/t/get-a-repositorys-commits-along-with-changed-patches-and-the-url-to-changed-files-using-graphql-v4/13585
     def update_from_restapi(commit)
       commit_sha = commit.commit_hash
+      # Rails.logger.info "commit_object=#{sawyer_resource_to_s(github_commit_object_api_v3)}"
+
       begin
         github_commit_object_api_v3 = github_machine_user.commit(@github_repo_full_name,commit_sha)
-
-        Rails.logger.info "commit_object=#{sawyer_resource_to_s(github_commit_object_api_v3)}"
-
-        commit.filenames_changed = github_commit_object_api_v3[:files].map{ |t| t[:filename]}.to_s
       rescue
-        commit.filenames_changed = ""
+        commit.filenames_changed = "ERROR1"
+        set_package_lock_json_fields_to_zero(commit)
+        return
       end
+      
+      begin
+        array_of_files_changed = github_commit_object_api_v3[:files].map{ |t| t[:filename]}
+        commit.filenames_changed = array_of_files_changed.to_s
+        commit.package_lock_json_files_changed = array_of_files_changed.count{ |s| s.include?("package-lock.json") }
+      rescue
+        commit.filenames_changed = "ERROR2"
+        set_package_lock_json_fields_to_zero(commit)
+        return
+      end
+
+      if commit.package_lock_json_files_changed == 1
+        change = github_commit_object_api_v3[:files].select{ |t| t[:filename].include?("package-lock.json") }
+        raise "Unexpected size for array change=#{change}"  if change.length != 1
+        commit.package_lock_json_additions = change[0].additions
+        commit.package_lock_json_deletions = change[0].deletions
+      else
+        set_package_lock_json_fields_to_zero(commit)
+      end
+
     end
 
     # Here is an example of the JSON returned for the :files object

@@ -156,15 +156,15 @@ class GithubRepo < ApplicationRecord
   end
 
   def self.package_lock_json_files_changed(c)
-    -999
+    c.package_lock_json_files_changed
   end
 
   def self.package_lock_json_additions(c)
-    -999
+    c.package_lock_json_additions
   end
 
   def self.package_lock_json_deletions(c)
-    -999
+    c.package_lock_json_deletions
   end
 
   # self.method so it can be reused in course.rb
