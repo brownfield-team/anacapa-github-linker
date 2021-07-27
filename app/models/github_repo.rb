@@ -106,6 +106,9 @@ class GithubRepo < ApplicationRecord
       author_email
       merge_commit_a
       merge_commit_b
+      package_lock_json_files_changed
+      package_lock_json_additions
+      package_lock_json_deletions
     ]
   end
 
@@ -152,6 +155,18 @@ class GithubRepo < ApplicationRecord
     "TBD"
   end
 
+  def self.package_lock_json_files_changed(c)
+    -999
+  end
+
+  def self.package_lock_json_additions(c)
+    -999
+  end
+
+  def self.package_lock_json_deletions(c)
+    -999
+  end
+
   # self.method so it can be reused in course.rb
   def self.commit_csv_export_fields(repo, c)
 
@@ -183,7 +198,12 @@ class GithubRepo < ApplicationRecord
       c.author_name,
       c.author_email,
       merge_commit?(c),
-      alt_merge_commit?(c)
+      alt_merge_commit?(c),
+      package_lock_json_files_changed(c),
+      package_lock_json_additions(c),
+      package_lock_json_deletions(c),
+      
+
     ]
   end
 
