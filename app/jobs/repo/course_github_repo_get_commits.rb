@@ -73,11 +73,10 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         return
       end
 
-      if commit.package_lock_json_files_changed == 1
+      if commit.package_lock_json_files_changed > 0
         change = github_commit_object_api_v3[:files].select{ |t| t[:filename].include?("package-lock.json") }
-        raise "Unexpected size for array change=#{change}"  if change.length != 1
-        commit.package_lock_json_additions = change[0].additions
-        commit.package_lock_json_deletions = change[0].deletions
+        commit.package_lock_json_additions = change.inject(0) {|sum, hash| sum + hash[:additions]}
+        commit.package_lock_json_deletions = change.inject(0) {|sum, hash| sum + hash[:deletions]}
       else
         set_package_lock_json_fields_to_zero(commit)
       end

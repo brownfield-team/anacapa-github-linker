@@ -109,6 +109,9 @@ class GithubRepo < ApplicationRecord
       package_lock_json_files_changed
       package_lock_json_additions
       package_lock_json_deletions
+      adjusted_files_changed
+      adjusted_additions
+      adjusted_deletions
     ]
   end
 
@@ -167,6 +170,18 @@ class GithubRepo < ApplicationRecord
     c.package_lock_json_deletions
   end
 
+  def self.adjusted_files_changed(c)
+    c.files_changed - c.package_lock_json_files_changed
+  end
+
+  def self.adjusted_additions(c)
+    c.additions - c.package_lock_json_additions
+  end
+
+  def self.adjusted_deletions(c)
+    c.deletions - c.package_lock_json_deletions
+  end
+
   # self.method so it can be reused in course.rb
   def self.commit_csv_export_fields(repo, c)
 
@@ -202,8 +217,9 @@ class GithubRepo < ApplicationRecord
       package_lock_json_files_changed(c),
       package_lock_json_additions(c),
       package_lock_json_deletions(c),
-      
-
+      adjusted_files_changed(c),
+      adjusted_additions(c),
+      adjusted_deletions(c)
     ]
   end
 
