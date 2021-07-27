@@ -6,26 +6,6 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     @job_description = "Get commits for this repo"
     @github_repo_full_name
 
-    # def result_hash(total, new_count, updated_count)
-    #   {
-    #     "total_commits" => total,
-    #     "total_new_commits" => new_count,
-    #     "total_updated_commits" => updated_count
-    #   }
-    # end
-
-    # def combine_results(h1,h2)
-    #   {
-    #     "total_commits" => h1["total_commits"] + h2["total_commits"],
-    #     "total_new_commits" => h1["total_new_commits"] + h2["total_new_commits"],
-    #     "total_updated_commits" => h1["total_updated_commits"] + h2["total_updated_commits"]
-    #   }
-    # end
-
-    # def all_good?(result_hash)
-    #   result_hash["total_commits"]==(result_hash["total_new_commits"] + result_hash["total_updated_commits"])
-    # end
-
     def attempt_job(options)
       @github_repo_full_name = @github_repo.full_name
       final_results = JobResult.new
@@ -65,15 +45,34 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     # Regrettably, the v4 graphql api doesn't yet support
     # getting the filenames changed.
     # See: https://github.community/t/get-a-repositorys-commits-along-with-changed-patches-and-the-url-to-changed-files-using-graphql-v4/13585
-    def filenames_changed(commit_sha)
+    def update_from_restapi(commit)
+      commit_sha = commit.commit_hash
       begin
         github_commit_object_api_v3 = github_machine_user.commit(@github_repo_full_name,commit_sha)
-        result = github_commit_object_api_v3[:files].map{ |t| t[:filename]}.to_s
+
+        Rails.logger.info "commit_object=#{sawyer_resource_to_s(github_commit_object_api_v3)}"
+
+        commit.filenames_changed = github_commit_object_api_v3[:files].map{ |t| t[:filename]}.to_s
       rescue
-        result = ""
+        commit.filenames_changed = ""
       end
-      result
     end
+
+    # Here is an example of the JSON returned for the :files object
+    #
+    # :files=>[
+    #     {:sha=>"cdf1f12ad1878348846fd313214bd607a9ca7b5c", 
+    #     :filename=>"javascript/src/main/pages/Students/EditStudent.js", 
+    #     :status=>"modified", 
+    #     :additions=>1, 
+    #     :deletions=>1,
+    #     :changes=>2, 
+    #     :blob_url=>"https://github.com/ucsb-cs156-s21/proj-mapache-search/blob/0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98/javascript/src/main/pages/Students/EditStudent.js",
+    #     :raw_url=>"https://github.com/ucsb-cs156-s21/proj-mapache-search/raw/0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98/javascript/src/main/pages/Students/EditStudent.js", 
+    #     :contents_url=>"https://api.github.com/repos/ucsb-cs156-s21/proj-mapache-search/contents/javascript/src/main/pages/Students/EditStudent.js?ref=0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98", 
+    #     :patch=>"@@ -43,4 +43,4 @@ const EditStudent = () => {\n   );\n };\n \n-export default EditStudent;\n\\ No newline at end of file\n+export default EditStudent;"
+    #   }
+    # ]
 
     def update_roster_student(commit, c, branch_name)
       begin  # "try" block
@@ -107,7 +106,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         return 0
       end
 
-      commit.filenames_changed = filenames_changed(commit.commit_hash)
+      update_from_restapi(commit)
 
       update_roster_student(commit, c, branch_name)
 
