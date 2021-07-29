@@ -98,7 +98,7 @@
                 <td><%= student.org_membership_type.present? ? student.org_membership_type : "Non-member" %></td>
                 <td>
                   <% student.org_teams.each.with_index do |team, index| %>
-                    <%= link_to(team.name, team.url) + (", " unless index == student.org_teams.size - 1) %>
+                    <%= link_to(team.name, "/courses/" + team.course_id.to_s + "/org_teams/" + team.id.to_s) + (", " unless index == student.org_teams.size - 1) %>
                   <% end %>
                 </td>
                <td>
