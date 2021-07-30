@@ -42,10 +42,36 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
      JobResult.new(commits.length,total_new_commits,total_updated_commits)
     end
 
-    def set_package_lock_json_fields_to_zero(commit)
-      commit.package_lock_json_files_changed = 0
-      commit.package_lock_json_additions = 0
-      commit.package_lock_json_deletions = 0
+    def set_excluded_fields_to_zero(commit)
+      commit.excluded_files_changed = 0
+      commit.excluded_additions = 0
+      commit.excluded_deletions = 0
+    end
+
+    def selected_fields_from_array_of_files_as_json(files)
+      files.map{ |f| {filename: f.filename, additions: f.additions, deletions: f.deletions}}.to_json
+    end
+
+    def file_should_be_excluded(f)
+      # return true if this file should be excluded from commit changes when analyzing
+      #  files changed, and line changes (additions/deletions)
+      # f is a hash in this format, returned by the GitHub API:
+      #   {
+      #     :sha=>"cdf1f12ad1878348846fd313214bd607a9ca7b5c", 
+      #     :filename=>"javascript/src/main/pages/Students/EditStudent.js", 
+      #     :status=>"modified", 
+      #     :additions=>1, 
+      #     :deletions=>1,
+      #     :changes=>2, 
+      #     :blob_url=>"https://github.com/ucsb-cs156-s21/proj-mapache-search/blob/0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98/javascript/src/main/pages/Students/EditStudent.js",
+      #     :raw_url=>"https://github.com/ucsb-cs156-s21/proj-mapache-search/raw/0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98/javascript/src/main/pages/Students/EditStudent.js", 
+      #     :contents_url=>"https://api.github.com/repos/ucsb-cs156-s21/proj-mapache-search/contents/javascript/src/main/pages/Students/EditStudent.js?ref=0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98", 
+      #     :patch=>"@@ -43,4 +43,4 @@ const EditStudent = () => {\n   );\n };\n \n-export default EditStudent;\n\\ No newline at end of file\n+export default EditStudent;"
+      #   }
+      
+      f[:filename].include?("package-lock.json") ||
+      f[:filename].include?("server.compiled.js") ||       
+      f[:filename].starts_with?("client/build/")        
     end
 
     # Regrettably, the v4 graphql api doesn't yet support
@@ -58,46 +84,28 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
       begin
         github_commit_object_api_v3 = github_machine_user.commit(@github_repo_full_name,commit_sha)
       rescue
-        commit.filenames_changed = "ERROR1"
-        set_package_lock_json_fields_to_zero(commit)
+        commit.filenames_changed = "ERROR fetching data from GitHub API"
+        set_excluded_fields_to_zero(commit)
         return
       end
       
-      begin
-        array_of_files_changed = github_commit_object_api_v3[:files].map{ |t| t[:filename]}
-        commit.filenames_changed = array_of_files_changed.to_s
-        commit.package_lock_json_files_changed = array_of_files_changed.count{ |s| s.include?("package-lock.json") }
-      rescue
-        commit.filenames_changed = "ERROR2"
-        set_package_lock_json_fields_to_zero(commit)
-        return
-      end
-
-      if commit.package_lock_json_files_changed > 0
-        change = github_commit_object_api_v3[:files].select{ |t| t[:filename].include?("package-lock.json") }
-        commit.package_lock_json_additions = change.inject(0) {|sum, hash| sum + hash[:additions]}
-        commit.package_lock_json_deletions = change.inject(0) {|sum, hash| sum + hash[:deletions]}
-      else
-        set_package_lock_json_fields_to_zero(commit)
-      end
+      # begin
+        array_of_files_changed = github_commit_object_api_v3[:files]
+        array_of_filenames_changed = array_of_files_changed.map{ |t| t[:filename]}
+        commit.filenames_changed = array_of_filenames_changed.to_s
+        commit.files_json = selected_fields_from_array_of_files_as_json(array_of_files_changed)
+        excluded_files = array_of_files_changed.select{ |f| file_should_be_excluded(f) }
+        commit.excluded_files_changed = excluded_files.count
+        commit.excluded_files_json =  selected_fields_from_array_of_files_as_json(excluded_files)
+        commit.excluded_additions = excluded_files.inject(0) {|sum, hash| sum + hash[:additions]}
+        commit.excluded_deletions = excluded_files.inject(0) {|sum, hash| sum + hash[:deletions]}
+      # rescue
+      #   commit.filenames_changed = "ERROR interpreting data from GitHub API"
+      #   set_excluded_fields_to_zero(commit)
+      #   return
+      # end
 
     end
-
-    # Here is an example of the JSON returned for the :files object
-    #
-    # :files=>[
-    #     {:sha=>"cdf1f12ad1878348846fd313214bd607a9ca7b5c", 
-    #     :filename=>"javascript/src/main/pages/Students/EditStudent.js", 
-    #     :status=>"modified", 
-    #     :additions=>1, 
-    #     :deletions=>1,
-    #     :changes=>2, 
-    #     :blob_url=>"https://github.com/ucsb-cs156-s21/proj-mapache-search/blob/0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98/javascript/src/main/pages/Students/EditStudent.js",
-    #     :raw_url=>"https://github.com/ucsb-cs156-s21/proj-mapache-search/raw/0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98/javascript/src/main/pages/Students/EditStudent.js", 
-    #     :contents_url=>"https://api.github.com/repos/ucsb-cs156-s21/proj-mapache-search/contents/javascript/src/main/pages/Students/EditStudent.js?ref=0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98", 
-    #     :patch=>"@@ -43,4 +43,4 @@ const EditStudent = () => {\n   );\n };\n \n-export default EditStudent;\n\\ No newline at end of file\n+export default EditStudent;"
-    #   }
-    # ]
 
     def update_roster_student(commit, c, branch_name)
       begin  # "try" block

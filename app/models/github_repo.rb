@@ -106,9 +106,11 @@ class GithubRepo < ApplicationRecord
       author_email
       merge_commit_a
       merge_commit_b
-      package_lock_json_files_changed
-      package_lock_json_additions
-      package_lock_json_deletions
+      files_json
+      excluded_files_json
+      excluded_files_changed
+      excluded_additions
+      excluded_deletions
       adjusted_files_changed
       adjusted_additions
       adjusted_deletions
@@ -158,28 +160,28 @@ class GithubRepo < ApplicationRecord
     "TBD"
   end
 
-  def self.package_lock_json_files_changed(c)
-    c.package_lock_json_files_changed
+  def self.excluded_files_changed(c)
+    c.excluded_files_changed
   end
 
-  def self.package_lock_json_additions(c)
-    c.package_lock_json_additions
+  def self.excluded_additions(c)
+    c.excluded_additions
   end
 
-  def self.package_lock_json_deletions(c)
-    c.package_lock_json_deletions
+  def self.excluded_deletions(c)
+    c.excluded_deletions
   end
 
   def self.adjusted_files_changed(c)
-    c.files_changed - c.package_lock_json_files_changed
+    c.files_changed - c.excluded_files_changed
   end
 
   def self.adjusted_additions(c)
-    c.additions - c.package_lock_json_additions
+    c.additions - c.excluded_additions
   end
 
   def self.adjusted_deletions(c)
-    c.deletions - c.package_lock_json_deletions
+    c.deletions - c.excluded_deletions
   end
 
   # self.method so it can be reused in course.rb
@@ -214,9 +216,11 @@ class GithubRepo < ApplicationRecord
       c.author_email,
       merge_commit?(c),
       alt_merge_commit?(c),
-      package_lock_json_files_changed(c),
-      package_lock_json_additions(c),
-      package_lock_json_deletions(c),
+      c.files_json,
+      c.excluded_files_json,
+      excluded_files_changed(c),
+      excluded_additions(c),
+      excluded_deletions(c),
       adjusted_files_changed(c),
       adjusted_additions(c),
       adjusted_deletions(c)
