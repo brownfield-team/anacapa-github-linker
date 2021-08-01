@@ -50,12 +50,24 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
       total_new_issues = 0
       total_updated_issues = 0
       issues.each{ |i|
-        existing_issue = RepoIssueEvent.where(url: i[:url]).first
-        if existing_issue
-          total_updated_issues += update_one_issue(existing_issue, i)
+      if ( (@course.start_date != nil) and (@course.end_date != nil) )
+        start_date = @course.start_date.to_time.iso8601
+        end_date = @course.end_date.to_time.iso8601
+        if i[:createdAt] >= start_date  and i[:createdAt] <= end_date 
+          puts "<- Issue #{i[:number]} date lies within course date window->"
+          puts "startDate = #{start_date} endDate = #{end_date} issueCreatedAT = #{i[:createdAt]}"
+          existing_issue = RepoIssueEvent.where(url: i[:url]).first
+          if existing_issue
+            total_updated_issues += update_one_issue(existing_issue, i)
+          else
+            total_new_issues += store_one_issue_in_database(i)
+          end
         else
-          total_new_issues += store_one_issue_in_database(i)
+          puts "<- Issue #{i[:number]} date lies out of course date window->"
         end
+      end
+  
+
       }
     JobResult.new(issues.length,total_new_issues,total_updated_issues)
     end
