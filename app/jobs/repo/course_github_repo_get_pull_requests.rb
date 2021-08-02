@@ -39,7 +39,7 @@ class CourseGithubRepoGetPullRequests < CourseGithubRepoJob
           total_new_pull_requests += store_one_pull_request_in_database(i)
         end
       }
-    JobResult.new(pullRequests.length,total_new_pull_requests,total_updated_pull_requests)
+    JobResult.new(pullRequests.length,total_new_pull_requests,total_updated_pull_requests,0)
     end
 
     def store_one_pull_request_in_database(i)
