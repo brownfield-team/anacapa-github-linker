@@ -46,38 +46,32 @@ class CourseGithubRepoGetIssues < CourseGithubRepoJob
       "Issues retrieved for Course: #{@course.name} Repo: #{@github_repo.name} <br/>      #{final_results.report}"
     end
 
-    def store_issues_in_database(issues)
-      total_new_issues = 0
-      total_updated_issues = 0
-      issues.each{ |i|
+    def issue_in_date_range(issue)
       if ( (@course.start_date != nil) and (@course.end_date != nil) )
         start_date = @course.start_date.to_time.iso8601
         end_date = @course.end_date.to_time.iso8601
-        if i[:createdAt] >= start_date  and i[:createdAt] <= end_date 
-          puts "<- Issue #{i[:number]} at #{i[:url]}  date lies within course date window->"
-          puts "startDate = #{start_date} endDate = #{end_date} issueCreatedAT = #{i[:createdAt]}"
-          existing_issue = RepoIssueEvent.where(url: i[:url]).first
-          if existing_issue
-            total_updated_issues += update_one_issue(existing_issue, i)
-          else
-            total_new_issues += store_one_issue_in_database(i)
-          end
-        else
-          puts "<- Issue #{i[:number]} at #{i[:url]} date lies out of course date window->"
-        end
+        puts "startDate = #{start_date} endDate = #{end_date} issueCreatedAT = #{issue[:createdAt]}"
+        puts "<- Issue #{issue[:number]} at #{issue[:url]} is being evaluated->"
+        issue[:createdAt] >= start_date  and issue[:createdAt] <= end_date 
       else
-        # start_date and end_dates not defined. Get all issues in this case.
+        true
+      end
+    end
+
+    def store_issues_in_database(issues)
+      total_new_issues = 0
+      total_updated_issues = 0
+      issues_in_date_range = issues.select{|i| issue_in_date_range(i)}
+      issues_in_date_range.each{ |i|
         existing_issue = RepoIssueEvent.where(url: i[:url]).first
         if existing_issue
           total_updated_issues += update_one_issue(existing_issue, i)
         else
           total_new_issues += store_one_issue_in_database(i)
         end
-      end
-  
-
       }
-    JobResult.new(issues.length,total_new_issues,total_updated_issues)
+      total_excluded_issues = issues.length - issues_in_date_range.length
+      JobResult.new(issues.length,total_new_issues,total_updated_issues,total_excluded_issues)
     end
 
     def store_one_issue_in_database(i)
