@@ -74,7 +74,7 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
         #   created += store_one_sdlc_event_in_database(i)
         # end
       }
-     JobResult.new(sdlc_events.length,created,updated)
+     JobResult.new(sdlc_events.length,created,updated,0)
     end
 
     def store_pr_sdlc_events_in_database(sdlc_events)
@@ -89,7 +89,7 @@ class CourseGithubRepoGetSDLCEvents < CourseGithubRepoJob
         #   created += store_one_sdlc_event_in_database(i)
         # end
       }
-     JobResult.new(sdlc_events.length,created,updated)
+     JobResult.new(sdlc_events.length,created,updated,0)
     end
 
 
