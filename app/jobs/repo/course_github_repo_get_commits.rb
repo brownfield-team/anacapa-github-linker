@@ -89,22 +89,16 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         return
       end
       
-      # begin
-        array_of_files_changed = github_commit_object_api_v3[:files]
-        array_of_filenames_changed = array_of_files_changed.map{ |t| t[:filename]}
-        commit.filenames_changed = array_of_filenames_changed.to_s
-        commit.files_json = selected_fields_from_array_of_files_as_json(array_of_files_changed)
-        excluded_files = array_of_files_changed.select{ |f| file_should_be_excluded(f) }
-        commit.excluded_files_changed = excluded_files.count
-        commit.excluded_files_json =  selected_fields_from_array_of_files_as_json(excluded_files)
-        commit.excluded_additions = excluded_files.inject(0) {|sum, hash| sum + hash[:additions]}
-        commit.excluded_deletions = excluded_files.inject(0) {|sum, hash| sum + hash[:deletions]}
-      # rescue
-      #   commit.filenames_changed = "ERROR interpreting data from GitHub API"
-      #   set_excluded_fields_to_zero(commit)
-      #   return
-      # end
-
+      array_of_files_changed = github_commit_object_api_v3[:files]
+      array_of_filenames_changed = array_of_files_changed.map{ |t| t[:filename]}
+      commit.filenames_changed = array_of_filenames_changed.to_s
+      commit.files_json = selected_fields_from_array_of_files_as_json(array_of_files_changed)
+      excluded_files = array_of_files_changed.select{ |f| file_should_be_excluded(f) }
+      commit.excluded_files_changed = excluded_files.count
+      commit.excluded_files_json =  selected_fields_from_array_of_files_as_json(excluded_files)
+      commit.excluded_additions = excluded_files.inject(0) {|sum, hash| sum + hash[:additions]}
+      commit.excluded_deletions = excluded_files.inject(0) {|sum, hash| sum + hash[:deletions]}
+  
     end
 
     def update_roster_student(commit, c, branch_name)
