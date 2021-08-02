@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_21_225059) do
+ActiveRecord::Schema.define(version: 2021_07_27_191054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -173,6 +173,11 @@ ActiveRecord::Schema.define(version: 2021_07_21_225059) do
     t.integer "additions"
     t.integer "deletions"
     t.bigint "course_id"
+    t.string "files_json"
+    t.string "excluded_files_json"
+    t.integer "excluded_files_changed"
+    t.integer "excluded_additions"
+    t.integer "excluded_deletions"
     t.index ["course_id"], name: "index_repo_commit_events_on_course_id"
     t.index ["github_repo_id"], name: "index_repo_commit_events_on_github_repo_id"
     t.index ["roster_student_id"], name: "index_repo_commit_events_on_roster_student_id"
