@@ -36,8 +36,8 @@ class JobResult
     end
 
     def report
-        job_outcome = all_good? ? "Successfully" : "with errors; CHECK LOG; note that total items retrieved does NOT MATCH number created + updated + excluded"
-        "Job Completed #{job_outcome}.<br />        Retrieved #{@total} items. Created #{@created}, Updated #{@updated}, Excluded #{@excluded} in database"
+        job_outcome = all_good? ? "Successfully" : "with errors; CHECK LOG; note that total items retrieved does NOT MATCH number created + updated + excluded."
+        "Job Completed #{job_outcome}.<br />        Retrieved #{@total} items. Created #{@created}, Updated #{@updated} in database, Excluded #{@excluded}"
     end
 
     def +(obj) 
