@@ -27,11 +27,24 @@ class CourseGithubRepoGetPullRequests < CourseGithubRepoJob
       "Pull Requests retrieved for Course: #{@course.name} Repo: #{@github_repo.name} <br/>      #{final_results.report}"
     end
 
+    def pull_request_in_date_range(pullRequest)
+      if ( (@course.start_date != nil) and (@course.end_date != nil) )
+        start_date = @course.start_date.to_time.iso8601
+        end_date = @course.end_date.to_time.iso8601
+        puts "startDate = #{start_date} endDate = #{end_date} pullRequestCreatedAT = #{pullRequest[:createdAt]}"
+        puts "<- pullRequest #{pullRequest[:number]} at #{pullRequest[:url]} is being evaluated->"
+        pullRequest[:createdAt] >= start_date  and pullRequest[:createdAt] <= end_date 
+      else
+        true
+      end
+    end
+
+
     def store_pull_requests_in_database(pullRequests)
       total_new_pull_requests = 0
       total_updated_pull_requests = 0
-      #TODO UPDATE PULL REQUESTS'S TABLE
-      pullRequests.each{ |i|
+      pull_requests_in_date_range = pullRequests.select{|i| pull_request_in_date_range(i)}
+      pull_requests_in_date_range.each{ |i|
         existing_pull_request = RepoPullRequestEvent.where(url: i[:url]).first
         if existing_pull_request
           total_updated_pull_requests += update_one_pull_request(existing_pull_request, i)
@@ -39,7 +52,8 @@ class CourseGithubRepoGetPullRequests < CourseGithubRepoJob
           total_new_pull_requests += store_one_pull_request_in_database(i)
         end
       }
-    JobResult.new(pullRequests.length,total_new_pull_requests,total_updated_pull_requests,0)
+    total_excluded_pull_requests = pullRequests.length - pull_requests_in_date_range.length
+    JobResult.new(pullRequests.length,total_new_pull_requests,total_updated_pull_requests,total_excluded_pull_requests)
     end
 
     def store_one_pull_request_in_database(i)
