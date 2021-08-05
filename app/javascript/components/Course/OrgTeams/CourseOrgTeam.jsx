@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import {Panel, Grid} from "react-bootstrap";
+import {Panel, ButtonToolbar, DropdownButton, MenuItem} from "react-bootstrap";
 import * as PropTypes from 'prop-types';
 import CourseOrgTeamsTable from "./CourseOrgTeamsTable";
 import CourseOrgTeamMemberList from "./CourseOrgTeamMemberList";
@@ -14,7 +14,7 @@ class CourseOrgTeam extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {team: undefined};
+        this.state = {team: undefined, projRepos: undefined, projRepo: undefined, projRepoId: undefined};
     }
 
     componentDidMount() {
@@ -23,7 +23,12 @@ class CourseOrgTeam extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.org_team_id != this.props.org_team_id) {
+            this.setState({projRepo: undefined, projRepoId: undefined})
             this.fetchTeam();
+        }
+
+        if (prevState.team != this.state.team) {
+            this.getProjectRepos(this.state.team)
         }
     }
 
@@ -32,13 +37,43 @@ class CourseOrgTeam extends Component {
             (team) => {
                 this.setState({team: team})
             }
-        );
+        ).then(() => {
+            if (this.state.team.org_team.project_repo_id != null) {
+                const response = fetch(`/api/courses/${this.props.course_id}/github_repos/${this.state.team.org_team.project_repo_id}`).then(response => response.json()).then(json => {
+                    this.setState({projRepo: json["name"], projRepoId: json["id"].toString() })
+                })
+            }
+        })
+    }
+
+    getProjectRepos = (team) => {
+        const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos?is_project_repo=true`).then(response => response.json()).then(json => {
+            if (json.length > 0) {
+                this.setState({projRepos: json})
+            }
+        });
+    }
+
+    onButtonClickGetRepo(repo) {
+        this.state.team.org_team.project_repo_id = repo["id"].toString()
+        const params = this.state.team
+        Rails.ajax({
+            url: `/api/courses/${this.props.course_id}/org_teams/${this.props.org_team_id}`,
+            type: 'put',
+            data: $.param(params),
+        })
+
+        this.setState({ projRepo: repo["name"], projRepoId: repo["id"].toString() });
     }
 
     render() {
         const team = this.state.team;
 
         if (team == null) return "Loading...";
+
+        const projRepos = this.state.projRepos;
+
+        if (projRepos == null) return "Loading...";
 
         return (
             <Fragment>
@@ -49,6 +84,13 @@ class CourseOrgTeam extends Component {
                     totalSize={1}
                     {...this.props}
                 />
+                <ButtonToolbar>
+                    <DropdownButton title={typeof this.state.projRepo !== 'undefined' ? this.state.projRepo : "Assign Repo" } id="dropdown-size-medium">
+                        {this.state.projRepos.map((object, index) => {
+                            return(<MenuItem key={object["name"]} onClick={() => this.onButtonClickGetRepo(object)}>{object["name"]}</MenuItem>);
+                        })}
+                    </DropdownButton>
+                </ButtonToolbar>
                 <CourseOrgTeamMemberList 
                     team={team}
                     {...this.props}
@@ -65,6 +107,7 @@ class CourseOrgTeam extends Component {
                         <div align="center">
                             <CommitsAnalytics
                                 team={team}
+                                project_repo_id={this.state.projRepoId}
                                 {...this.props}
                             />
                         </div>
@@ -78,6 +121,7 @@ class CourseOrgTeam extends Component {
                         <div align="center">
                             <ChangeAnalytics
                                 team={team}
+                                project_repo_id={this.state.projRepoId}
                                 {...this.props}
                             />
                         </div>
