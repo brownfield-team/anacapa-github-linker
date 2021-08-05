@@ -173,15 +173,15 @@ class GithubRepo < ApplicationRecord
   end
 
   def self.adjusted_files_changed(c)
-    c.files_changed - c.excluded_files_changed
+    c.excluded_files_changed.nil? ? c.files_changed : c.files_changed - c.excluded_files_changed
   end
 
   def self.adjusted_additions(c)
-    c.additions - c.excluded_additions
+    c.excluded_additions.nil? ? c.additions : c.additions - c.excluded_additions
   end
 
   def self.adjusted_deletions(c)
-    c.deletions - c.excluded_deletions
+    c.excluded_deletions.nil? ? c.deletions : c.deletions - c.excluded_deletions
   end
 
   # self.method so it can be reused in course.rb
