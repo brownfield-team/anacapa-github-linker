@@ -93,7 +93,7 @@ class CourseOrgTeamsIndex extends Component {
                     <Panel.Heading>
                             <Panel.Title>{this.state.teamName}
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", padding: "0px", margin: "0px" }}>
-                                    <ButtonToolbar>
+                                    Select Team: <ButtonToolbar>
                                         <DropdownButton title={this.state.teamName} id="dropdown-size-medium">
                                             {teams.map((object, index) => {
                                                 return(<MenuItem key={object["name"]} onClick={() => this.onButtonClick(object)}>{object["name"]}</MenuItem>);

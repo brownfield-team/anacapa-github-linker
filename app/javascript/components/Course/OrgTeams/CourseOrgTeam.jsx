@@ -84,13 +84,15 @@ class CourseOrgTeam extends Component {
                     totalSize={1}
                     {...this.props}
                 />
-                <ButtonToolbar>
-                    <DropdownButton title={typeof this.state.projRepo !== 'undefined' ? this.state.projRepo : "Assign Repo" } id="dropdown-size-medium">
-                        {this.state.projRepos.map((object, index) => {
-                            return(<MenuItem key={object["name"]} onClick={() => this.onButtonClickGetRepo(object)}>{object["name"]}</MenuItem>);
-                        })}
-                    </DropdownButton>
-                </ButtonToolbar>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+                    Select Repo: <ButtonToolbar>
+                        <DropdownButton title={typeof this.state.projRepo !== 'undefined' ? this.state.projRepo : "Assign Repo" } id="dropdown-size-medium">
+                            {this.state.projRepos.map((object, index) => {
+                                return(<MenuItem key={object["name"]} onClick={() => this.onButtonClickGetRepo(object)}>{object["name"]}</MenuItem>);
+                            })}
+                        </DropdownButton>
+                    </ButtonToolbar>
+                </div>
                 <CourseOrgTeamMemberList 
                     team={team}
                     {...this.props}
