@@ -47,7 +47,7 @@ class CourseOrgTeamsIndex extends Component {
             success: function (data, status, xhr) {
                 const totalRecords = parseInt(xhr.getResponseHeader("X-Total"));
 
-                if (self.state.org_team_id == undefined) {
+                if (self.state.org_team_id == undefined && data.length > 0) {
                     self.setState({ org_team_id: data[0].id.toString(), teamName: data[0].name });
                 }
 
@@ -80,7 +80,8 @@ class CourseOrgTeamsIndex extends Component {
     render() {
         const teams = this.state.teams;
 
-        if (teams.length == 0) return "Loading...";
+        if (teams == undefined) return "Loading...";
+        else if (teams.length == 0) return "No teams found. Try running a job?"
 
         const org_team_id = this.state.org_team_id;
 

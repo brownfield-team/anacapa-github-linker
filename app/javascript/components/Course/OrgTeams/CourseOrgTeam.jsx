@@ -50,6 +50,8 @@ class CourseOrgTeam extends Component {
         const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos?is_project_repo=true`).then(response => response.json()).then(json => {
             if (json.length > 0) {
                 this.setState({projRepos: json})
+            } else if (json.length == 0) {
+                this.setState({projRepos: []})
             }
         });
     }
@@ -74,6 +76,7 @@ class CourseOrgTeam extends Component {
         const projRepos = this.state.projRepos;
 
         if (projRepos == null) return "Loading...";
+        else if (projRepos.length == 0) return "No project repos found. Try running a job?"
 
         return (
             <Fragment>
