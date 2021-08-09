@@ -106,6 +106,14 @@ class GithubRepo < ApplicationRecord
       author_email
       merge_commit_a
       merge_commit_b
+      files_json
+      excluded_files_json
+      excluded_files_changed
+      excluded_additions
+      excluded_deletions
+      adjusted_files_changed
+      adjusted_additions
+      adjusted_deletions
     ]
   end
 
@@ -152,6 +160,30 @@ class GithubRepo < ApplicationRecord
     "TBD"
   end
 
+  def self.excluded_files_changed(c)
+    c.excluded_files_changed
+  end
+
+  def self.excluded_additions(c)
+    c.excluded_additions
+  end
+
+  def self.excluded_deletions(c)
+    c.excluded_deletions
+  end
+
+  def self.adjusted_files_changed(c)
+    c.excluded_files_changed.nil? ? c.files_changed : c.files_changed - c.excluded_files_changed
+  end
+
+  def self.adjusted_additions(c)
+    c.excluded_additions.nil? ? c.additions : c.additions - c.excluded_additions
+  end
+
+  def self.adjusted_deletions(c)
+    c.excluded_deletions.nil? ? c.deletions : c.deletions - c.excluded_deletions
+  end
+
   # self.method so it can be reused in course.rb
   def self.commit_csv_export_fields(repo, c)
 
@@ -183,7 +215,15 @@ class GithubRepo < ApplicationRecord
       c.author_name,
       c.author_email,
       merge_commit?(c),
-      alt_merge_commit?(c)
+      alt_merge_commit?(c),
+      c.files_json,
+      c.excluded_files_json,
+      excluded_files_changed(c),
+      excluded_additions(c),
+      excluded_deletions(c),
+      adjusted_files_changed(c),
+      adjusted_additions(c),
+      adjusted_deletions(c)
     ]
   end
 

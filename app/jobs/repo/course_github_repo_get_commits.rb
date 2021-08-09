@@ -6,26 +6,6 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
     @job_description = "Get commits for this repo"
     @github_repo_full_name
 
-    # def result_hash(total, new_count, updated_count)
-    #   {
-    #     "total_commits" => total,
-    #     "total_new_commits" => new_count,
-    #     "total_updated_commits" => updated_count
-    #   }
-    # end
-
-    # def combine_results(h1,h2)
-    #   {
-    #     "total_commits" => h1["total_commits"] + h2["total_commits"],
-    #     "total_new_commits" => h1["total_new_commits"] + h2["total_new_commits"],
-    #     "total_updated_commits" => h1["total_updated_commits"] + h2["total_updated_commits"]
-    #   }
-    # end
-
-    # def all_good?(result_hash)
-    #   result_hash["total_commits"]==(result_hash["total_new_commits"] + result_hash["total_updated_commits"])
-    # end
-
     def attempt_job(options)
       @github_repo_full_name = @github_repo.full_name
       final_results = JobResult.new
@@ -62,17 +42,63 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
      JobResult.new(commits.length,total_new_commits,total_updated_commits)
     end
 
+    def set_excluded_fields_to_zero(commit)
+      commit.excluded_files_changed = 0
+      commit.excluded_additions = 0
+      commit.excluded_deletions = 0
+    end
+
+    def selected_fields_from_array_of_files_as_json(files)
+      files.map{ |f| {filename: f.filename, additions: f.additions, deletions: f.deletions}}.to_json
+    end
+
+    def file_should_be_excluded(f)
+      # return true if this file should be excluded from commit changes when analyzing
+      #  files changed, and line changes (additions/deletions)
+      # f is a hash in this format, returned by the GitHub API:
+      #   {
+      #     :sha=>"cdf1f12ad1878348846fd313214bd607a9ca7b5c", 
+      #     :filename=>"javascript/src/main/pages/Students/EditStudent.js", 
+      #     :status=>"modified", 
+      #     :additions=>1, 
+      #     :deletions=>1,
+      #     :changes=>2, 
+      #     :blob_url=>"https://github.com/ucsb-cs156-s21/proj-mapache-search/blob/0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98/javascript/src/main/pages/Students/EditStudent.js",
+      #     :raw_url=>"https://github.com/ucsb-cs156-s21/proj-mapache-search/raw/0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98/javascript/src/main/pages/Students/EditStudent.js", 
+      #     :contents_url=>"https://api.github.com/repos/ucsb-cs156-s21/proj-mapache-search/contents/javascript/src/main/pages/Students/EditStudent.js?ref=0438aa5cc7b6d96dbb0ee380a62e69a0abf05b98", 
+      #     :patch=>"@@ -43,4 +43,4 @@ const EditStudent = () => {\n   );\n };\n \n-export default EditStudent;\n\\ No newline at end of file\n+export default EditStudent;"
+      #   }
+      
+      f[:filename].include?("package-lock.json") ||
+      f[:filename].include?("server.compiled.js") ||       
+      f[:filename].starts_with?("client/build/")        
+    end
+
     # Regrettably, the v4 graphql api doesn't yet support
     # getting the filenames changed.
     # See: https://github.community/t/get-a-repositorys-commits-along-with-changed-patches-and-the-url-to-changed-files-using-graphql-v4/13585
-    def filenames_changed(commit_sha)
+    def update_from_restapi(commit)
+      commit_sha = commit.commit_hash
+      # Rails.logger.info "commit_object=#{sawyer_resource_to_s(github_commit_object_api_v3)}"
+
       begin
         github_commit_object_api_v3 = github_machine_user.commit(@github_repo_full_name,commit_sha)
-        result = github_commit_object_api_v3[:files].map{ |t| t[:filename]}.to_s
       rescue
-        result = ""
+        commit.filenames_changed = "ERROR fetching data from GitHub API"
+        set_excluded_fields_to_zero(commit)
+        return
       end
-      result
+      
+      array_of_files_changed = github_commit_object_api_v3[:files]
+      array_of_filenames_changed = array_of_files_changed.map{ |t| t[:filename]}
+      commit.filenames_changed = array_of_filenames_changed.to_s
+      commit.files_json = selected_fields_from_array_of_files_as_json(array_of_files_changed)
+      excluded_files = array_of_files_changed.select{ |f| file_should_be_excluded(f) }
+      commit.excluded_files_changed = excluded_files.count
+      commit.excluded_files_json =  selected_fields_from_array_of_files_as_json(excluded_files)
+      commit.excluded_additions = excluded_files.inject(0) {|sum, hash| sum + hash[:additions]}
+      commit.excluded_deletions = excluded_files.inject(0) {|sum, hash| sum + hash[:deletions]}
+  
     end
 
     def update_roster_student(commit, c, branch_name)
@@ -107,7 +133,7 @@ class CourseGithubRepoGetCommits < CourseGithubRepoJob
         return 0
       end
 
-      commit.filenames_changed = filenames_changed(commit.commit_hash)
+      update_from_restapi(commit)
 
       update_roster_student(commit, c, branch_name)
 
