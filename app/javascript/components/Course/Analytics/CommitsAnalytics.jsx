@@ -19,9 +19,9 @@ class CommitsAnalytics extends Component {
         const endDate = new Date();
     }
 
-    checkProperties(obj) {
-        for (var key in obj) {
-            if (obj[key] !== null && obj[key] != 0)
+    noCommitsFound(name_to_commit_count) {
+        for (var name in name_to_commit_count) {
+            if (name_to_commit_count[name] !== null && name_to_commit_count[name] != 0)
                 return false;
         }
         return true;
@@ -54,43 +54,45 @@ class CommitsAnalytics extends Component {
         }
     }
 
+    commitInDateRange = (commit, start_date, end_date) => {
+        if (start_date == undefined || end_date==undefined) 
+            return true
+        return commit["commit_timestamp"] > start_date.toISOString() &&  commit["commit_timestamp"] < end_date.toISOString();
+    }
+
     getCommitData = (team, startDate, endDate) => {
         this.setState({loading: true})
-        var commitDataDict = {}
+        var name_to_commit_count = {}
 
         for (const [key, value] of Object.entries(team.members)) {
-            commitDataDict[value.full_name] = null
+            name_to_commit_count[value.full_name] = null
         }
 
         if (this.props.project_repo_id != undefined) {
-            const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos/${this.props.project_repo_id}/repo_commit_events`).then(response => response.json()).then(json => {
-                for (let i = 1; i < json.length; i++) {
-                    if (json[i]["roster_student_id"] != null) {
-                        var student_name = json[i]["roster_student"]["first_name"] + " " + json[i]["roster_student"]["last_name"]
-                        if (student_name in commitDataDict) {
-                            if (startDate != undefined && endDate != undefined) {
-                                if (json[i]["commit_timestamp"] > startDate.toISOString() && json[i]["commit_timestamp"] < endDate.toISOString()) {
-                                    commitDataDict[student_name] += 1
+            const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos/${this.props.project_repo_id}/repo_commit_events`).then(response => response.json()).then(
+                commits => {
+                    commits.forEach( (commit) => {
+                        if (commit["roster_student_id"] != null) {
+                            var student_name = commit["roster_student"]["first_name"] + " " + commit["roster_student"]["last_name"]
+                            if (student_name in name_to_commit_count) {
+                                if (this.commitInDateRange(commit, startDate, endDate)) {
+                                    name_to_commit_count[student_name] += 1
                                 }
-                            } else {
-                                commitDataDict[student_name] += 1
                             }
                         }
+                    })
+                    if (this.noCommitsFound(name_to_commit_count)) {
+                        name_to_commit_count = {}
                     }
-                }
-
-                if (this.checkProperties(commitDataDict)) {
-                    commitDataDict = {}
-                }
-
-                this.setState({commitData: commitDataDict, loading: false})
-            });
+                    this.setState({commitData: name_to_commit_count, loading: false})
+                });
+        
         } else {
-            if (this.checkProperties(commitDataDict)) {
-                commitDataDict = {}
+            if (this.noCommitsFound(name_to_commit_count)) {
+                name_to_commit_count = {}
             }
 
-            this.setState({commitData: commitDataDict, loading: false})
+            this.setState({commitData: name_to_commit_count, loading: false})
         }
     }
 
