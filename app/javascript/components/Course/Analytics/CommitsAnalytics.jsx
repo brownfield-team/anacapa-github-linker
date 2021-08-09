@@ -4,8 +4,6 @@ import * as PropTypes from 'prop-types';
 import { ColumnChart } from 'react-chartkick'
 import 'chartkick/chart.js'
 
-import {ButtonToolbar, DropdownButton, MenuItem} from "react-bootstrap";
-
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -15,15 +13,15 @@ class CommitsAnalytics extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {commitData: undefined, startDate: startDate, endDate: endDate, loading: false, repoId: undefined, repoTitle: undefined, projRepos: undefined};
+        this.state = {commitData: undefined, startDate: startDate, endDate: endDate, loading: false, repoTitle: undefined, projRepos: undefined};
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 30);
         const endDate = new Date();
     }
 
-    checkProperties(obj) {
-        for (var key in obj) {
-            if (obj[key] !== null && obj[key] != 0)
+    noCommitsFound(name_to_commit_count) {
+        for (var name in name_to_commit_count) {
+            if (name_to_commit_count[name] !== null && name_to_commit_count[name] != 0)
                 return false;
         }
         return true;
@@ -37,48 +35,65 @@ class CommitsAnalytics extends Component {
         if (prevProps.team != this.props.team) {
             this.getProjectRepos(this.props.team)
         }
+
+        if (prevProps.project_repo_id != this.props.project_repo_id) {
+            this.setState({loading: true})
+            this.getProjectRepos(this.props.team)
+        }
     }
     
     getProjectRepos = (team) => {
-        const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos?is_project_repo=true`).then(response => response.json()).then(json => {
-            if (json.length > 0) {
-                this.setState({repoId: json[0]["id"], repoTitle: json[0]["name"], projRepos: json})
-            }
-        }).then(response => {
+        if (this.props.project_repo_id != undefined) {
+            const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos/${this.props.project_repo_id}`).then(response => response.json()).then(json => {
+                this.setState({ repoTitle: json["name"], projRepos: json})
+            }).then(response => {
+                this.getCommitData(this.props.team, undefined, undefined)
+            })
+        } else {
             this.getCommitData(this.props.team, undefined, undefined)
-        })
+        }
+    }
+
+    commitInDateRange = (commit, start_date, end_date) => {
+        if (start_date == undefined || end_date==undefined) 
+            return true
+        return commit["commit_timestamp"] > start_date.toISOString() &&  commit["commit_timestamp"] < end_date.toISOString();
     }
 
     getCommitData = (team, startDate, endDate) => {
         this.setState({loading: true})
-        var commitDataDict = {}
+        var name_to_commit_count = {}
 
         for (const [key, value] of Object.entries(team.members)) {
-            commitDataDict[value.full_name] = null
+            name_to_commit_count[value.full_name] = null
         }
 
-        const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos/${this.state.repoId}/repo_commit_events`).then(response => response.json()).then(json => {
-            for (let i = 1; i < json.length; i++) {
-                if (json[i]["roster_student_id"] != null) {
-                    var student_name = json[i]["roster_student"]["first_name"] + " " + json[i]["roster_student"]["last_name"]
-                    if (student_name in commitDataDict) {
-                        if (startDate != undefined && endDate != undefined) {
-                            if (json[i]["commit_timestamp"] > startDate.toISOString() && json[i]["commit_timestamp"] < endDate.toISOString()) {
-                                commitDataDict[student_name] += 1
+        if (this.props.project_repo_id != undefined) {
+            const response = fetch(`/api/courses/${team.org_team.course_id}/github_repos/${this.props.project_repo_id}/repo_commit_events`).then(response => response.json()).then(
+                commits => {
+                    commits.forEach( (commit) => {
+                        if (commit["roster_student_id"] != null) {
+                            var student_name = commit["roster_student"]["first_name"] + " " + commit["roster_student"]["last_name"]
+                            if (student_name in name_to_commit_count) {
+                                if (this.commitInDateRange(commit, startDate, endDate)) {
+                                    name_to_commit_count[student_name] += 1
+                                }
                             }
-                        } else {
-                            commitDataDict[student_name] += 1
                         }
+                    })
+                    if (this.noCommitsFound(name_to_commit_count)) {
+                        name_to_commit_count = {}
                     }
-                }
+                    this.setState({commitData: name_to_commit_count, loading: false})
+                });
+        
+        } else {
+            if (this.noCommitsFound(name_to_commit_count)) {
+                name_to_commit_count = {}
             }
 
-            if (this.checkProperties(commitDataDict)) {
-                commitDataDict = {}
-            }
-
-            this.setState({commitData: commitDataDict, loading: false})
-        });
+            this.setState({commitData: name_to_commit_count, loading: false})
+        }
     }
 
     onDateRangeChanged = (date, isStart) => {
@@ -98,22 +113,6 @@ class CommitsAnalytics extends Component {
         this.forceUpdate()
     }
 
-    onButtonClickGetRepo(repoName) {
-        this.setState({loading: true})
-        const response = fetch(`/api/courses/${this.props.course_id}/github_repos/`).then(response => response.json()).then(json => {
-            for (const [key, repo] of Object.entries(json)) {
-                if (repo["name"] == repoName) {
-                    this.setState({repoId: repo["id"], repoTitle: repo["name"]})
-
-                    this.getCommitData(this.props.team, this.state.startDate, this.state.endDate)
-                    this.forceUpdate()
-                }
-            }
-            
-            this.setState({loading: false})
-        });
-    }
-
     render() {
         const commitData = this.state.commitData;
 
@@ -121,15 +120,6 @@ class CommitsAnalytics extends Component {
         
         return (
             <Fragment>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", padding: "0px", margin: "0px" }}>
-                    <ButtonToolbar>
-                        <DropdownButton title="Change Repo" id="dropdown-size-medium">
-                            {this.state.projRepos.map((object, index) => {
-                                return(<MenuItem key={object["name"]} onClick={() => this.onButtonClickGetRepo(object["name"])}>{object["name"]}</MenuItem>);
-                            })}
-                        </DropdownButton>
-                    </ButtonToolbar>
-                </div>
                 {this.state.repoTitle}
                 {this.state.loading && <Loader type="TailSpin" color="#00BFFF" height={80} width={80}/>}
                 {!this.state.loading && <ColumnChart data={commitData} width="900px" height="500px" empty="No Commits" colors={["red", "blue", "green", "yellow", "purple", "pink", "orange"]} disabled={this.state.loading}/>}
@@ -162,6 +152,7 @@ class CommitsAnalytics extends Component {
 
 CommitsAnalytics.propTypes = {
     team: PropTypes.object.isRequired,
+    project_repo_id: PropTypes.string,
 };
 
 export default CommitsAnalytics;

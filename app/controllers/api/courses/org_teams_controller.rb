@@ -8,6 +8,16 @@ module Api::Courses
       respond_with @course.org_teams
     end
 
+    def update
+      @org_team = OrgTeam.find(params[:id])
+      @org_team.update_attributes(org_team_params)
+      @org_team.save
+    end
+
+    def org_team_params
+      params.require(:org_team).permit(:id, :name, :url, :course_id, :created_at, :updated_at, :team_id, :slug, :project_repo_id)
+    end
+
     def show
       members = @org_team.student_team_memberships.map{ |s| { 
           membership: s, 
