@@ -137,10 +137,10 @@ class CourseGithubReposTable extends Component {
 CourseGithubReposTable.propTypes = {
     repos: PropTypes.array.isRequired,
     paginationHandler: PropTypes.func,
-    page: PropTypes.number.isRequired,
-    pageSize: PropTypes.number.isRequired,
-    totalSize: PropTypes.number.isRequired,
-    course: PropTypes.object.isRequired
+    page: PropTypes.number,
+    pageSize: PropTypes.number,
+    totalSize: PropTypes.number,
+    course: PropTypes.object
 };
 
 export default CourseGithubReposTable;
