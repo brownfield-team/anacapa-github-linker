@@ -3,6 +3,7 @@ import {Panel, ButtonToolbar, DropdownButton, MenuItem} from "react-bootstrap";
 import * as PropTypes from 'prop-types';
 import CourseOrgTeamsTable from "./CourseOrgTeamsTable";
 import CourseOrgTeamMemberList from "./CourseOrgTeamMemberList";
+import CourseGithubReposTable from "../GithubRepos/CourseGithubReposTable";
 
 import OrgTeamsService from "../../../services/org-teams-service";
 import CourseOrgTeamRepoList from './CourseOrgTeamRepoList';
@@ -14,16 +15,22 @@ class CourseOrgTeam extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {team: undefined, projRepos: undefined, projRepo: undefined, projRepoId: undefined};
+        this.state = {team: undefined, projRepos: undefined, projRepo: undefined, projRepoName: undefined, projRepoId: undefined, page: 1, pageSize: 25, totalSize: 0};
     }
 
     componentDidMount() {
         this.fetchTeam();
     }
 
+    paginationHandler = (page, pageSize) => {
+        this.setState({page: page, pageSize: pageSize}, () => {
+            this.updateRepos();
+        });
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.org_team_id != this.props.org_team_id) {
-            this.setState({projRepo: undefined, projRepoId: undefined})
+            this.setState({projRepo: undefined, projRepoId: undefined, projRepoName: undefined})
             this.fetchTeam();
         }
 
@@ -40,7 +47,9 @@ class CourseOrgTeam extends Component {
         ).then(() => {
             if (this.state.team.org_team.project_repo_id != null) {
                 const response = fetch(`/api/courses/${this.props.course_id}/github_repos/${this.state.team.org_team.project_repo_id}`).then(response => response.json()).then(json => {
-                    this.setState({projRepo: json["name"], projRepoId: json["id"].toString() })
+                    const projRepo = [];
+                    projRepo.push(json);
+                    this.setState({projRepoName: json["name"], projRepoId: json["id"].toString(), projRepo: projRepo })
                 })
             }
         })
@@ -65,7 +74,9 @@ class CourseOrgTeam extends Component {
             data: $.param(params),
         })
 
-        this.setState({ projRepo: repo["name"], projRepoId: repo["id"].toString() });
+        const projRepo = [];
+        projRepo.push(repo);
+        this.setState({ projRepoName: repo["name"], projRepoId: repo["id"].toString(), projRepo: projRepo });
     }
 
     render() {
@@ -78,6 +89,7 @@ class CourseOrgTeam extends Component {
         if (projRepos == null) return "Loading...";
         else if (projRepos.length == 0) return "No project repos found. Try running a job?"
 
+        console.log("projRepo", this.state.projRepo)
         return (
             <Fragment>
                 <CourseOrgTeamsTable
@@ -89,13 +101,18 @@ class CourseOrgTeam extends Component {
                 />
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
                     Select Repo: <ButtonToolbar>
-                        <DropdownButton title={typeof this.state.projRepo !== 'undefined' ? this.state.projRepo : "Assign Repo" } id="dropdown-size-medium">
+                        <DropdownButton title={typeof this.state.projRepoName !== 'undefined' ? this.state.projRepoName : "Assign Repo" } id="dropdown-size-medium">
                             {this.state.projRepos.map((object, index) => {
                                 return(<MenuItem key={object["name"]} onClick={() => this.onButtonClickGetRepo(object)}>{object["name"]}</MenuItem>);
                             })}
                         </DropdownButton>
                     </ButtonToolbar>
                 </div>
+                {typeof this.state.projRepo !== "undefined" ? <CourseGithubReposTable
+                        repos={this.state.projRepo}
+                        {...this.props}
+                    /> : ""}
+                
                 <CourseOrgTeamMemberList 
                     team={team}
                     {...this.props}
