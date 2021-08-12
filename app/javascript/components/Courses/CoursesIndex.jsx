@@ -39,6 +39,14 @@ class CoursesIndex extends Component {
 		)
 	}
 
+	 renderShowHideButton = (cell, row) => {
+		 console.log("row", row)
+		 console.log("courses.path", row.path)
+		 return (
+			 <Button data-testid={`hidden-button-${row.id}` } onClick={() => this.hideOrShowCourse(row)}>{row.hidden == false ? 'Hide' : 'Show'}</Button>
+		 )
+	 }
+
 	 columns = [
 		{
 			dataField: 'school.abbreviation',
@@ -56,7 +64,8 @@ class CoursesIndex extends Component {
 		}, {
 			dataField: 'hidden',
 			text: 'Hidden',
-			sort: true
+			sort: true,
+			formatter: (cell, row) => this.renderShowHideButton(cell, row)
 		}, {
 			dataField: 'course_organization',
 			text: 'Course Organization',
@@ -90,6 +99,22 @@ class CoursesIndex extends Component {
 
 	deleteCourse = course => {
 		axios.delete(course.path).then(_ => this.getCourses());
+	}
+
+	hideOrShowCourse = course => {
+		let hidden = undefined
+
+		if (course.hidden == false) {
+			hidden = true
+		} else {
+			hidden = false
+		}
+
+		console.log("hidden", hidden)
+
+		axios.put(course.path, {
+			hidden: hidden
+		}).then(_ => this.getCourses())
 	}
 
 	render() {
