@@ -23,7 +23,7 @@ class CourseGithubReposTable extends Component {
             dataField: 'url',
             text: 'on Github',
             editable: false,
-            formatter: (cell) => this.renderRepoGithubUrl(cell)
+            formatter: (cell, row) => this.renderRepoGithubUrl(cell, row)
         }, {
             dataField: 'visibility',
             text: 'Visibility',
@@ -70,9 +70,11 @@ class CourseGithubReposTable extends Component {
         );
     }
 
-    renderRepoGithubUrl = (cell) => {
+    renderRepoGithubUrl = (cell, row) => {
+        const url = `https://www.github.com/${row.organization}/${row.name}`
+
         return (
-            <a href={cell}>on Github</a>
+            <a href={url}>on Github</a>
         );
     }
 
