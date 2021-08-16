@@ -11,6 +11,32 @@ class CourseGithubReposTable extends Component {
 
     constructor(props) {
         super(props);
+        this.state = { repoList: undefined }
+    }
+
+    componentDidMount() {
+        this.fetchRepoInfo();
+        this.interval = setInterval(() => this.fetchRepoInfo(), 10000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    fetchRepoInfo = () => {
+        const response = fetch(`/api/courses/${this.props.course_id}/github_repos`).then(json => json.json()).then(parsedJson => {
+            var repos = [];
+
+            for (const [key, APIrepo] of Object.entries(parsedJson)) {
+                for (const [key, propsRepo] of Object.entries(this.props.repos)) {
+                    if (APIrepo.id == propsRepo.id) {
+                        repos.push(APIrepo);
+                    }
+                }
+            }
+
+            this.setState({ repoList: repos })
+        });
     }
 
     columns =
@@ -116,11 +142,17 @@ class CourseGithubReposTable extends Component {
     }
 
     render() {
+        var repoList = this.state.repoList;
+
+        if (repoList == undefined) {
+            repoList = this.props.repos;
+        }
+
         return (
             <Fragment>
                 <BootstrapTable
                     columns={this.columns}
-                    data={this.props.repos}
+                    data={repoList}
                     keyField="id"
                     remote={ { pagination: true, filter: false, sort: false } }
                     pagination={
