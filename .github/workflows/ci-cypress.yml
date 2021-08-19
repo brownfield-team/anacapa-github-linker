@@ -83,16 +83,25 @@ jobs:
           start: bundle exec rails server -e test -p 5017
           wait-on: http://localhost:5017
           command:  yarn cypress run --project ./test
-      - name: Store Cypress Screenshots on Failure
+      - name: Check for Screenshots
+        id: check_for_screenshots
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "test/cypress/screenshots"
+      - name: Store Cypress Screenshots 
         uses: actions/upload-artifact@v2
-        if: failure()
+        if: steps.check_files.outputs.check_for_screenshots == 'true'
         with:
           name: cypress-screenshots
           path: test/cypress/screenshots
-      # Test run video was always captured, so this action uses "always()" condition
+      - name: Check for Videos
+        id: check_for_videos
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "test/cypress/videos"
       - name: Store Cypress Videos
-        uses: actions/upload-artifact@v1
-        if: always()
+        uses: actions/upload-artifact@v2
+        if: steps.check_files.outputs.check_for_videos == 'true'
         with:
           name: cypress-videos
           path: test/cypress/videos
