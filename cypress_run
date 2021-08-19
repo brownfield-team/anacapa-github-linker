@@ -1,1 +1,2 @@
+RAILS_ENV=test bundle exec rails webpacker:compile
 yarn cypress run --project ./test
