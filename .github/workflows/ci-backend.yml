@@ -1,0 +1,68 @@
+# .github/workflows/ci-backend.yml
+
+name: ci-backend
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:11
+        ports: ['5432:5432']
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports: ['6379:6379']
+        options: --entrypoint redis-server
+
+    steps:
+      - name: Set Environment Variables
+        id: set_github_env
+        run: |
+          echo "DATABASE_URL=postgres://postgres:@localhost:5432/test" >> $GITHUB_ENV
+          echo "PGUSER=postgres" >> $GITHUB_ENV
+          echo "PGPASSWORD=postgres" >> $GITHUB_ENV
+          echo "REDIS_URL=redis://localhost:6379/0" >> $GITHUB_ENV
+          echo "RAILS_ENV=test" >> $GITHUB_ENV
+          echo "RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}" >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1.66.1
+        with:
+          ruby-version: 2.6.5
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock     
+      - name: yarn install
+        run: |
+          yarn install
+      - name: Fix watched files problem
+        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+      - name: Cache gems
+        uses: actions/cache@preview
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gem-
+      - name: Build and run rails tests
+        run: |
+          sudo apt-get -yqq install libpq-dev
+          bundle config path vendor/bundle
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+          bundle exec rails db:create RAILS_ENV=test
+          bundle exec rails db:migrate RAILS_ENV=test
+          bundle exec rails test
+     

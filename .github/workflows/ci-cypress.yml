@@ -1,6 +1,6 @@
-# .github/workflows/ci.yml
+# .github/workflows/ci-cypress.yml
 
-name: CI
+name: ci-cypress
 on: [push, pull_request]
 jobs:
   test:
@@ -32,15 +32,21 @@ jobs:
           echo "PGPASSWORD=postgres" >> $GITHUB_ENV
           echo "REDIS_URL=redis://localhost:6379/0" >> $GITHUB_ENV
           echo "RAILS_ENV=test" >> $GITHUB_ENV
+          echo "NODE_ENV=test" >> $GITHUB_ENV
           echo "RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}" >> $GITHUB_ENV
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1.66.1
         with:
           ruby-version: 2.6.5
-      - uses: borales/actions-yarn@v2.0.0
+      - name: Setup Node
+        uses: actions/setup-node@v2
         with:
-          cmd: install
+          node-version: '14'
+          cache: 'npm'      
+      - name: yarn install
+        run: |
+          yarn install
       - name: Fix watched files problem
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
       - name: Cache gems
@@ -57,16 +63,18 @@ jobs:
           key: ${{ runner.os }}-cypress-${{ hashFiles('/home/runner/.cache/Cypress/5.0.0/Cypress') }}
           restore-keys: |
             ${{ runner.os }}-cypress-
-      - name: Build and run rails tests
+      - name: Prepare Bundle and Run DB Migrations
         run: |
           sudo apt-get -yqq install libpq-dev
           bundle config path vendor/bundle
           gem install bundler
           bundle install --jobs 4 --retry 3
-          bundle exec rails db:create RAILS_ENV=test
-          bundle exec rails db:migrate RAILS_ENV=test
-          bundle exec rails test
-      - name: Cypress run
+          bundle exec rails db:create 
+          bundle exec rails db:migrate
+      - name: Run webpacker
+        run: |
+          bundle exec rails webpacker:compile
+      - name: Run Cypress Tests
         uses: cypress-io/github-action@v2.9.5
         with:
           install: false
