@@ -53,5 +53,10 @@
     "publish-storybook-prod": "build-storybook && gh-pages -d storybook-static -b storybook -e prod",
     "publish-storybook-qa": "build-storybook && gh-pages -d storybook-static -b gh-pages -e qa",
     "publish-storybook-pr": "build-storybook && gh-pages -d storybook-static -b gh-pages -e pr"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+   "not dead",
+   "not op_mini all"
+ ]
 }
