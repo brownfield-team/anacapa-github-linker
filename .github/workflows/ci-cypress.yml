@@ -84,6 +84,7 @@ jobs:
           wait-on: http://localhost:5017
           command:  yarn cypress run --project ./test
       - name: Check for Screenshots
+        if: always()
         id: check_for_screenshots
         uses: andstor/file-existence-action@v1
         with:
@@ -95,6 +96,7 @@ jobs:
           name: cypress-screenshots
           path: test/cypress/screenshots
       - name: Check for Videos
+        if: always()
         id: check_for_videos
         uses: andstor/file-existence-action@v1
         with:
