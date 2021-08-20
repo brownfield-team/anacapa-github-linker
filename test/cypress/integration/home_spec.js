@@ -20,26 +20,26 @@ describe("Home Page before login", () => {
 // to React.    We'll put in a new issue to try to restore some reasonable tests
 // for this page.   
 
-//   describe("Student login", () => {
-//     beforeEach(() => { 
-//       cy.request("/api/testhooks/login_student");
-//       cy.visit("/");
-//     });
+  describe("Student login", () => {
+    beforeEach(() => { 
+      cy.request("/api/testhooks/login_student");
+      cy.visit("/");
+    });
 
-//     it("has a nav bar", () => {
-//         cy.get("nav.navbar").should("exist");
-//     });
+    it("has a nav bar", () => {
+        cy.get("nav.navbar").should("exist");
+    });
 
-//     it("has a Home button", () => {
-//         cy.get('a[href="/"]')
-//         .should('have.text', 'Home')
-//     });
+    it("has a Home button", () => {
+        cy.get('a[href="/"]')
+        .should('have.text', 'Home')
+    });
 
-//     it("has a Courses button", () => {
-//         cy.get('a[href="/courses"]')
-//         .should('contain.text', 'Courses')
-//     });
-//   }); // Student login
+    it("has a Courses button", () => {
+        cy.get('a[href="/courses"]')
+        .should('contain.text', 'Courses')
+    });
+  }); // Student login
 
   describe("Admin login", () => {
 
