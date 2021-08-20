@@ -72,8 +72,9 @@ jobs:
           bundle config path vendor/bundle
           gem install bundler
           bundle install --jobs 4 --retry 3
-          bundle exec rails db:create 
-          bundle exec rails db:migrate
+          bundle exec rake db:create 
+          bundle exec rake db:migrate
+          bundle exec rake db:fixtures:load
       - name: Run webpacker
         run: |
           bundle exec rails webpacker:compile
