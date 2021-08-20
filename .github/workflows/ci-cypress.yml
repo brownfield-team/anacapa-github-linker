@@ -77,6 +77,10 @@ jobs:
       - name: Run webpacker
         run: |
           bundle exec rails webpacker:compile
+      - name: Make directories for screenshots and videos
+        run: |
+          mkdir -p test/cypress/screenshots
+          mkdir -p test/cypress/videos
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v2.9.5
         with:
@@ -85,27 +89,15 @@ jobs:
           start: bundle exec rails server -e test -p 5017
           wait-on: http://localhost:5017
           command:  yarn cypress run --project ./test
-      - name: Check for Screenshots
-        if: always()
-        id: check_for_screenshots
-        uses: andstor/file-existence-action@v1
-        with:
-          files: "test/cypress/screenshots"
       - name: Store Cypress Screenshots 
         uses: actions/upload-artifact@v2
-        if: steps.check_files.outputs.check_for_screenshots == 'true'
+        if: always()
         with:
           name: cypress-screenshots
           path: test/cypress/screenshots
-      - name: Check for Videos
-        if: always()
-        id: check_for_videos
-        uses: andstor/file-existence-action@v1
-        with:
-          files: "test/cypress/videos"
       - name: Store Cypress Videos
         uses: actions/upload-artifact@v2
-        if: steps.check_files.outputs.check_for_videos == 'true'
+        if: always()
         with:
           name: cypress-videos
           path: test/cypress/videos
