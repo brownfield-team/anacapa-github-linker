@@ -31,14 +31,7 @@ module Api
 
     def set_authorized_courses
       if current_user.has_role? :admin
-        #@authorized_courses = @courses
-        @authorized_courses = []
-        @courses.each { |course|
-          if RosterStudent.where(course_id: course.id, email: current_user.email).count > 0
-            @authorized_courses.push(course)
-          end
-        }
-        
+        @authorized_courses = @courses
       else
         @authorized_courses = []
         @courses.each { |course|
