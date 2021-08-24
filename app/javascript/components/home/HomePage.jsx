@@ -16,7 +16,7 @@ class HomePage extends Component {
             this.setState({courses: coursesResponse, filteredCourses: coursesResponse});
         })
 
-		const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+		const csrf = document.querySelector("meta[name='csrf-token']")?.getAttribute("content");
 		this.setState({
 			csrfToken: csrf
 		});
