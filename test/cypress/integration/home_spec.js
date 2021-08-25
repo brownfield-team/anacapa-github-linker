@@ -13,12 +13,23 @@ describe("Home Page before login", () => {
         cy.get('a[href="/"]')
         .should('have.text', 'Home')
     });
-  }); // before login
 
-// TODO: These tests should be restored; they started breaking for reasons that 
-// we were unable to explain in July 2021 when we convered this page from ERB
-// to React.    We'll put in a new issue to try to restore some reasonable tests
-// for this page.   
+    it("has a Home button", () => {
+        cy.get('a[href="/"]')
+        .should('have.text', 'Home')
+    });
+
+    it("has a button with the text 'Sign in with Github' ", () => {
+        cy.contains("Sign in with Github")
+        .should('exist').closest('form').should('have.attr', 'action', '/users/auth/github').should('have.attr', 'method', 'post');
+    });
+
+    it("has a button with the text 'Sign in' ", () => {
+        cy.get('a').contains('Sign in').should('exist').should('have.attr','href','/users/auth/github').should('have.attr','data-method','post');
+    });
+
+
+  }); // before login
 
   describe("Student login", () => {
     beforeEach(() => { 
@@ -39,6 +50,9 @@ describe("Home Page before login", () => {
         cy.get('a[href="/courses"]')
         .should('contain.text', 'Courses')
     });
+
+
+    
   }); // Student login
 
   describe("Admin login", () => {
