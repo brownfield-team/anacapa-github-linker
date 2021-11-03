@@ -20,14 +20,15 @@ class CreateAssignmentReposJob < CourseJob
       Rails.logger.info "Attempting to create: #{repo_name}"
       repos_created += create_assignment_repo(repo_name, rs)
       repos_updated += add_repository_contributor(repo_name, rs.user.username)
-      
+      summary = "For #{pluralize roster_students.length, "roster student"}, #{pluralize repos_created, "repository"} created and permissions updated for #{pluralize repos_updated, "repository"} for assignment #{@assignment_name} with student permission level #{@permission_level}"
+      update_job_record_with_completion_summary("In Progress.  So far: #{summary}")
       if "#{ENV['SLEEP_TIME']}"
         sleep_time = "#{ENV['SLEEP_TIME']}".to_i
         Rails.logger.info "SLEEP_TIME set, sleeping #{sleep_time}"
         sleep sleep_time
       end
     end
-    "For #{pluralize roster_students.length, "roster student"}, #{pluralize repos_created, "repository"} created and permissions updated for #{pluralize repos_updated, "repository"} for assignment #{@assignment_name} with student permission level #{@permission_level}"
+    summary
   end
 
   def create_assignment_repo(repo_name, roster_student)
