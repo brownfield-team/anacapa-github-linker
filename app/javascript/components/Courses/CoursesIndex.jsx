@@ -28,15 +28,19 @@ class CoursesIndex extends Component {
 	};
 
 	 renderEditButton = (cell, row) => {
-		return (
-			<Button className="btn btn-warning" variant="warning" data-testid={`edit-button-${row.id}`} href={`${row.edit_path}`} >Edit</Button>
-		)
+		if(row.can_control){
+			return (
+				<Button className="btn btn-warning" variant="warning" data-testid={`edit-button-${row.id}`} href={`${row.edit_path}`} >Edit</Button>
+			)
+		}
 	}
 
 	 renderDeleteButton = (cell, row) => {
-		return (
-			<Button className="btn btn-danger" variant="danger" data-testid={`delete-button-${row.id}`} onClick={() => {if(window.confirm(`Delete course ${row.name}?`)) {this.deleteCourse(row)}}} >Delete</Button>
-		)
+		if(row.can_control){
+			return (
+				<Button className="btn btn-danger" variant="danger" data-testid={`delete-button-${row.id}`} onClick={() => {if(window.confirm(`Delete course ${row.name}?`)) {this.deleteCourse(row)}}} >Delete</Button>
+			)
+		}
 	}
 
 	 renderShowHideButton = (cell, row) => {
@@ -75,14 +79,12 @@ class CoursesIndex extends Component {
 			dataField: "edit",
 			text: "Edit",
 			isDummyField: true,
-			formatter: (cell, row) => this.renderEditButton(cell, row),
-			hidden: false /* should be true if this is not an instructor / admin */
+			formatter: (cell, row) => this.renderEditButton(cell, row)
 		}, {
 			dataField: "delete",
 			text: "Delete",
 			isDummyField: true,
-			formatter: (cell, row) => this.renderDeleteButton(cell, row),
-			hidden: false /* should be true if this is not an instructor / admin */
+			formatter: (cell, row) => this.renderDeleteButton(cell, row)
 		}
 	];
 
