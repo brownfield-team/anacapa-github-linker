@@ -13,11 +13,14 @@ Rails.application.routes.draw do
     mount Flipper::UI.app(Flipper) => '/admin/flipper'
   end
 
+  if Rails.env.test?
+    namespace :test_hooks do
+      get :login_student, to: 'login#login_student'
+      get :login_admin, to: 'login#login_admin'
+    end
+  end
+
   namespace :api, :defaults => { :format => 'json' } do
-
-    match 'testhooks/login_student' => 'testhooks#login_student', :via => :get
-    match 'testhooks/login_admin' => 'testhooks#login_admin', :via => :get
-
     resources :visitors
     resources :job_log
 
