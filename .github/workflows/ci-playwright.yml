@@ -1,6 +1,6 @@
-# .github/workflows/ci-cypress.yml
+# .github/workflows/ci-playwright.yml
 
-name: ci-cypress
+name: ci-playwright
 on: [push, pull_request]
 jobs:
   test:
@@ -59,13 +59,6 @@ jobs:
           key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gem-
-      - name: Cache Cypress Installation
-        uses: actions/cache@preview
-        with:
-          path: /home/runner/.cache/Cypress/5.0.0/Cypress
-          key: ${{ runner.os }}-cypress-${{ hashFiles('/home/runner/.cache/Cypress/5.0.0/Cypress') }}
-          restore-keys: |
-            ${{ runner.os }}-cypress-
       - name: Prepare Bundle and Run DB Migrations
         run: |
           sudo apt-get -yqq install libpq-dev
@@ -78,27 +71,13 @@ jobs:
       - name: Run webpacker
         run: |
           bundle exec rails webpacker:compile
-      - name: Make directories for screenshots and videos
-        run: |
-          mkdir -p test/cypress/screenshots
-          mkdir -p test/cypress/videos
-      - name: Run Cypress Tests
-        uses: cypress-io/github-action@v2.9.5
-        with:
-          install: false
-          build: npx cypress install
-          start: bundle exec rails server -e test -p 5017
-          wait-on: http://localhost:5017
-          command:  yarn cypress run --project ./test
-      - name: Store Cypress Screenshots 
-        uses: actions/upload-artifact@v2
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+      - name: Run Playwright Tests
+        run: yarn test:playwright
+      - name: Upload test results
         if: always()
-        with:
-          name: cypress-screenshots
-          path: test/cypress/screenshots
-      - name: Store Cypress Videos
         uses: actions/upload-artifact@v2
-        if: always()
         with:
-          name: cypress-videos
-          path: test/cypress/videos
+          name: playwright-report
+          path: playwright-report
