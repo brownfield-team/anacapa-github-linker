@@ -1,1 +1,0 @@
-bin/rails server -e test -p 5017

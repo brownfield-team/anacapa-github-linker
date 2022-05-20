@@ -27,6 +27,7 @@ Be sure that the test database is ready; if it isn't, see instructions below.
   assertions.
 
 
+
 # Preparing the test database
 
 Create the test database if it doesn't exist:
@@ -36,7 +37,6 @@ Create the test database if it doesn't exist:
 You may need to migrate the test database:
 * `RAILS_ENV=test bundle exec rake db:migrate` or 
 * `RAILS_ENV=test rails db:migrate`
-
 
 
 
