@@ -200,3 +200,7 @@ To have staging pull in data from production, run the following command (with he
  ```
 heroku pg:backups:restore `heroku pg:backups:url --app ucsb-cs-github-linker` DATABASE_URL --app anacapa-github-linker-test --confirm anacapa-github-linker-test
 ```
+
+# Testing
+
+For end2end testing, see: [`DOCS/playwright/README.md`](DOCS/playwright/README.md)
