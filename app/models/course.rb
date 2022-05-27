@@ -438,6 +438,18 @@ class Course < ApplicationRecord
     self.github_repos.where(is_project_repo: true)
   end
 
+  def instructor
+    Role.where(name: "instructor", resource_id: self.id).first.users.first
+  end
+
+  def is_instructor?(user)
+    user == instructor
+  end
+
+  def can_control?(user)
+    user.has_role?(:admin) || user == instructor
+  end
+
   def self.all_course_names
       Course.all.map{|c| c.name}
   end

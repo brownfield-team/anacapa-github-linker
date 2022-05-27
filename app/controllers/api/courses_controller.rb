@@ -4,6 +4,17 @@ module Api
     load_and_authorize_resource
     include Response
 
+    def index
+      if !current_user.has_role?(:admin)
+        @courses = Course.all.where(roster_students: current_user.roster_students)
+        if current_user.has_role?(:instructor)
+          @courses = [@courses.all, Course.with_role(:instructor, user=current_user).all].flatten.uniq
+        end
+      else
+        @courses = Course.all
+      end  
+    end
+
     def graphql
       @course = Course.find(params[:course_id])
       query = params[:query]
@@ -45,12 +56,6 @@ module Api
 
     def github_machine_user
       Octokit_Wrapper::Octokit_Wrapper.machine_user
-    end
-
-    respond_to :json
-    load_and_authorize_resource
-
-    def index
     end
 
   end
