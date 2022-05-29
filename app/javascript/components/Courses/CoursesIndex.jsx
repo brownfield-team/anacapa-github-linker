@@ -46,9 +46,11 @@ class CoursesIndex extends Component {
 	 renderShowHideButton = (cell, row) => {
 		 console.log("row", row)
 		 console.log("courses.path", row.path)
-		 return (
-			 <Button data-testid={`hidden-button-${row.id}` } onClick={() => this.hideOrShowCourse(row)}>{row.hidden == false ? 'Hide' : 'Show'}</Button>
-		 )
+		 if(row.can_control){
+			return (
+				<Button data-testid={`hidden-button-${row.id}` } onClick={() => this.hideOrShowCourse(row)}>{row.hidden == false ? 'Hide' : 'Show'}</Button>
+			)
+		 }
 	 }
 
 	 columns = [
@@ -65,16 +67,16 @@ class CoursesIndex extends Component {
 			dataField: 'term',
 			text: 'Term',
 			sort: true
+		},{
+			dataField: 'course_organization',
+			text: 'Course Organization',
+			sort: true,
+			formatter: (cell, row) => this.renderCourseOrgLink(cell, row)
 		}, {
 			dataField: 'hidden',
 			text: 'Hidden',
 			sort: true,
 			formatter: (cell, row) => this.renderShowHideButton(cell, row)
-		}, {
-			dataField: 'course_organization',
-			text: 'Course Organization',
-			sort: true,
-			formatter: (cell, row) => this.renderCourseOrgLink(cell, row)
 		}, {
 			dataField: "edit",
 			text: "Edit",
