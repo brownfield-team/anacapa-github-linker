@@ -2,7 +2,10 @@
   "dependencies": {
     "@babel/preset-react": "^7.9.4",
     "@rails/webpacker": "5.4.0",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "11.2.5",
     "axios": "^0.21.1",
+    "axios-mock-adapter": "^1.20.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "bootstrap": "3.4.1",
     "chart.js": "^3.3.2",
@@ -27,6 +30,7 @@
     "react-json-pretty": "^2.2.0",
     "react-loader-spinner": "^4.0.0",
     "react-on-rails": "11.3.0",
+    "react-query": "^3.39.1",
     "react-router-dom": "^5.2.0",
     "recharts": "^1.8.5",
     "sanitize-html": "^1.27.1",
@@ -44,12 +48,15 @@
     "babel-loader": "^8.2.2",
     "env-cmd": "^10.1.0",
     "gh-pages": "^3.1.0",
+    "jest": "^26.6.2",
     "webpack-dev-server": "^4.0.0"
   },
   "license": "MIT",
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build-storybook": "env-cmd -f dotenv.example build-storybook",
+    "test": "jest test",
+    "coverage": "jest test --coverage --watchAll=false",
     "test:playwright": "playwright test",
     "publish-storybook-prod": "build-storybook && gh-pages -d storybook-static -b storybook -e prod",
     "publish-storybook-qa": "build-storybook && gh-pages -d storybook-static -b gh-pages -e qa",
@@ -59,5 +66,27 @@
     ">0.2%",
     "not dead",
     "not op_mini all"
-  ]
+  ],
+  "jest": {
+    "roots": [
+      "test/javascript"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "app/javascript"
+    ],
+    "resetMocks": true,
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    },
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ]
+  }
 }
