@@ -204,3 +204,8 @@ heroku pg:backups:restore `heroku pg:backups:url --app ucsb-cs-github-linker` DA
 # Testing
 
 For end2end testing, see: [`DOCS/playwright/README.md`](DOCS/playwright/README.md)
+
+Frontend tests should be placed under the test/javascript directory.
+For frontend testing of React components run:
+* yarn test (run all frontend tests)
+* yarn run coverage (generate coverage test report)

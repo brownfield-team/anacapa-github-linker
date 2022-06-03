@@ -29,7 +29,7 @@
     "react-dom": "^16.13.1",
     "react-json-pretty": "^2.2.0",
     "react-loader-spinner": "^4.0.0",
-    "react-on-rails": "11.3.0",
+    "react-on-rails": "13.0.2",
     "react-query": "^3.39.1",
     "react-router-dom": "^5.2.0",
     "recharts": "^1.8.5",
