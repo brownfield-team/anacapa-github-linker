@@ -200,8 +200,6 @@ describe("CouresIndex tests", () => {
     expect(getByText('s22')).toBeInTheDocument();
     expect(getByText('Test-Course-2')).toBeInTheDocument();
 
-    const hideButtons = getAllByText('Hide');
-    expect(hideButtons).toHaveLength(2);
     const editButtons = getAllByText('Edit');
     expect(editButtons).toHaveLength(1);
     const deleteButtons = getAllByText('Delete');

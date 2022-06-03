@@ -39,9 +39,11 @@ export default function CoursesIndex(){
 	}
 
 	 const renderShowHideButton = (cell, row) => {
+		if(row.can_control){
 		 return (
 			 <Button data-testid={`hidden-button-${row.id}` } onClick={() => hideOrShowCourse(row)}>{row.hidden == false ? 'Hide' : 'Show'}</Button>
 		 )
+		}
 	 }
 
 	 const columns = [
@@ -62,7 +64,7 @@ export default function CoursesIndex(){
 			dataField: 'course_organization',
 			text: 'Course Organization',
 			sort: true,
-			formatter: (cell, row) => this.renderCourseOrgLink(cell, row)
+			formatter: (cell, row) => renderCourseOrgLink(cell, row)
 		}, {
 			dataField: 'hidden',
 			text: 'Hidden',
