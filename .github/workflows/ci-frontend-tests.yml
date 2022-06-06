@@ -1,0 +1,22 @@
+# .github/workflows/ci-frontend-tests.yml
+
+name: ci-frontend-test
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v2
+        with: 
+          fetch-depth: 2
+      - name: Use Node.js 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - run: npm ci
+        working-directory: ./test/javascript
+      - run: npm test:frontend
+        working-directory: ./test/javascript
+     
