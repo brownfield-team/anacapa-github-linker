@@ -207,5 +207,5 @@ For end2end testing, see: [`DOCS/playwright/README.md`](DOCS/playwright/README.m
 
 Frontend tests should be placed under the test/javascript directory.
 For frontend testing of React components run:
-* yarn test (run all frontend tests)
+* yarn test:jest (run all frontend tests)
 * yarn run coverage (generate coverage test report)

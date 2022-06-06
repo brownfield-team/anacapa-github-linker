@@ -12,41 +12,16 @@ axios.defaults.params['authenticity_token'] = csrfToken;
 
 export default function CoursesIndex(){
 	const [courses, setCourses] = useState([]);
+	 
+	useEffect(()=>{ getCourses(); }, []);
 
-	const renderCourseUrl = (cell, row) => <a href={row.path}>{cell}</a>;
-
-	const renderCourseOrgLink = (cell, row) => {
-		const url = `https://github.com/${cell}`;
-		return (
-			<a href={url}>{cell}</a>
-		)
-	};
-
-	const renderEditButton = (cell, row) => {
-		if(row.can_control){
-			return (
-				<Button className="btn btn-warning" variant="warning" data-testid={`edit-button-${row.id}`} href={`${row.edit_path}`} >Edit</Button>
-			)
-		}
+	const getCourses = async () => {
+		axios.get(coursesRoute).then(response => {
+			setCourses(response.data);
+		});
 	}
 
-	const renderDeleteButton = (cell, row) => {
-		if(row.can_control){
-			return (
-				<Button className="btn btn-danger" variant="danger" data-testid={`delete-button-${row.id}`} onClick={() => {if(window.confirm(`Delete course ${row.name}?`)) {deleteCourse(row)}}} >Delete</Button>
-			)
-		}
-	}
-
-	 const renderShowHideButton = (cell, row) => {
-		if(row.can_control){
-		 return (
-			 <Button data-testid={`hidden-button-${row.id}` } onClick={() => hideOrShowCourse(row)}>{row.hidden == false ? 'Hide' : 'Show'}</Button>
-		 )
-		}
-	 }
-
-	 const columns = [
+	const columns = [
 		{
 			dataField: 'school.abbreviation',
 			text: 'School',
@@ -83,28 +58,52 @@ export default function CoursesIndex(){
 		}
 	];
 
-	 
-	useEffect(()=>{ getCourses(); }, []);
-
-	const getCourses = async () => {
-		axios.get(coursesRoute).then(response => {
-			setCourses(response.data);
-		});
+	const renderCourseUrl = (cell, row) => <a href={row.path}>{cell}</a>;
+	
+	const renderCourseOrgLink = (cell, row) => {
+		const url = `https://github.com/${cell}`;
+		return (
+			<a href={url}>{cell}</a>
+		)
+	};
+	
+	const renderEditButton = (cell, row) => {
+		if(row.can_control){
+			return (
+				<Button className="btn btn-warning" variant="warning" data-testid={`edit-button-${row.id}`} href={`${row.edit_path}`} >Edit</Button>
+			)
+		}
 	}
-
+	
+	const renderDeleteButton = (cell, row) => {
+		if(row.can_control){
+			return (
+				<Button className="btn btn-danger" variant="danger" data-testid={`delete-button-${row.id}`} onClick={() => {if(window.confirm(`Delete course ${row.name}?`)) {deleteCourse(row)}}} >Delete</Button>
+			)
+		}
+	}
+	
+	const renderShowHideButton = (cell, row) => {
+		if(row.can_control){
+			return (
+				<Button data-testid={`hidden-button-${row.id}` } onClick={() => hideOrShowCourse(row)}>{row.hidden == false ? 'Hide' : 'Show'}</Button>
+			)
+		}
+	}
+	
 	const deleteCourse = course => {
 		axios.delete(course.path).then(_ => getCourses());
 	}
-
+	
 	const hideOrShowCourse = course => {
 		let hidden = undefined
-
+	
 		if (course.hidden == false) {
 			hidden = true
 		} else {
 			hidden = false
 		}
-
+	
 		axios.put(course.path, {
 			hidden: hidden
 		}).then(_ => getCourses())

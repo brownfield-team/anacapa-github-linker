@@ -55,7 +55,7 @@
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build-storybook": "env-cmd -f dotenv.example build-storybook",
-    "test": "jest test",
+    "test:jest": "jest test",
     "coverage": "jest test --coverage --watchAll=false",
     "test:playwright": "playwright test",
     "publish-storybook-prod": "build-storybook && gh-pages -d storybook-static -b storybook -e prod",
