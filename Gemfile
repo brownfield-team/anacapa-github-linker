@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby '>= 2.6'
+ruby '>= 2.7'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.4'
@@ -104,7 +104,7 @@ gem 'slack-ruby-bot'
 
 gem 'github_webhook', '~> 1.1'
 
-gem 'react_on_rails', '~> 11.3.0'
+gem 'react_on_rails', '~> 13.0.2'
 gem 'webpacker', '~> 4'
 
 gem 'pg_search'

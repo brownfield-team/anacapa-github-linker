@@ -1,59 +1,27 @@
-import React, { Component, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { coursesRoute } from "../../services/service-routes";
 import ReactOnRails from "react-on-rails";
 import BootstrapTable from 'react-bootstrap-table-next';
 import { Button } from "react-bootstrap";
 
-class CoursesIndex extends Component {
-	constructor(props) {
-		super(props);
-		this.state = { courses: [] };
-		const csrfToken = ReactOnRails.authenticityToken();
-		axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
-		axios.defaults.params = {}
-		axios.defaults.params['authenticity_token'] = csrfToken;
+const csrfToken = ReactOnRails.authenticityToken();
+axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
+axios.defaults.params = {}
+axios.defaults.params['authenticity_token'] = csrfToken;
+
+export default function CoursesIndex(){
+	const [courses, setCourses] = useState([]);
+	 
+	useEffect(()=>{ getCourses(); }, []);
+
+	const getCourses = async () => {
+		axios.get(coursesRoute).then(response => {
+			setCourses(response.data);
+		});
 	}
 
-
-	 schoolDisplay = () => this.props.course.school ? this.props.course.school.abbreviation : ""; 
-
-	 renderCourseUrl = (cell, row) => <a href={row.path}>{cell}</a>;
-
-	 renderCourseOrgLink = (cell, row) => {
-		const url = `https://github.com/${cell}`;
-		return (
-			<a href={url}>{cell}</a>
-		)
-	};
-
-	 renderEditButton = (cell, row) => {
-		if(row.can_control){
-			return (
-				<Button className="btn btn-warning" variant="warning" data-testid={`edit-button-${row.id}`} href={`${row.edit_path}`} >Edit</Button>
-			)
-		}
-	}
-
-	 renderDeleteButton = (cell, row) => {
-		if(row.can_control){
-			return (
-				<Button className="btn btn-danger" variant="danger" data-testid={`delete-button-${row.id}`} onClick={() => {if(window.confirm(`Delete course ${row.name}?`)) {this.deleteCourse(row)}}} >Delete</Button>
-			)
-		}
-	}
-
-	 renderShowHideButton = (cell, row) => {
-		 console.log("row", row)
-		 console.log("courses.path", row.path)
-		 if(row.can_control){
-			return (
-				<Button data-testid={`hidden-button-${row.id}` } onClick={() => this.hideOrShowCourse(row)}>{row.hidden == false ? 'Hide' : 'Show'}</Button>
-			)
-		 }
-	 }
-
-	 columns = [
+	const columns = [
 		{
 			dataField: 'school.abbreviation',
 			text: 'School',
@@ -62,7 +30,7 @@ class CoursesIndex extends Component {
 			dataField: 'name',
 			text: 'Name',
 			sort: true,
-			formatter: (cell, row) => this.renderCourseUrl(cell, row)
+			formatter: (cell, row) => renderCourseUrl(cell, row)
 		}, {
 			dataField: 'term',
 			text: 'Term',
@@ -71,69 +39,83 @@ class CoursesIndex extends Component {
 			dataField: 'course_organization',
 			text: 'Course Organization',
 			sort: true,
-			formatter: (cell, row) => this.renderCourseOrgLink(cell, row)
+			formatter: (cell, row) => renderCourseOrgLink(cell, row)
 		}, {
 			dataField: 'hidden',
 			text: 'Hidden',
 			sort: true,
-			formatter: (cell, row) => this.renderShowHideButton(cell, row)
+			formatter: (cell, row) => renderShowHideButton(cell, row)
 		}, {
 			dataField: "edit",
 			text: "Edit",
 			isDummyField: true,
-			formatter: (cell, row) => this.renderEditButton(cell, row)
+			formatter: (cell, row) => renderEditButton(cell, row)
 		}, {
 			dataField: "delete",
 			text: "Delete",
 			isDummyField: true,
-			formatter: (cell, row) => this.renderDeleteButton(cell, row)
+			formatter: (cell, row) => renderDeleteButton(cell, row)
 		}
 	];
 
-
-	componentDidMount() {
-		this.getCourses();
+	const renderCourseUrl = (cell, row) => <a href={row.path}>{cell}</a>;
+	
+	const renderCourseOrgLink = (cell, row) => {
+		const url = `https://github.com/${cell}`;
+		return (
+			<a href={url}>{cell}</a>
+		)
+	};
+	
+	const renderEditButton = (cell, row) => {
+		if(row.can_control){
+			return (
+				<Button className="btn btn-warning" variant="warning" data-testid={`edit-button-${row.id}`} href={`${row.edit_path}`} >Edit</Button>
+			)
+		}
 	}
-
-	getCourses = () => {
-		axios.get(coursesRoute).then(response => {
-			this.setState({ courses: response.data });
-		});
+	
+	const renderDeleteButton = (cell, row) => {
+		if(row.can_control){
+			return (
+				<Button className="btn btn-danger" variant="danger" data-testid={`delete-button-${row.id}`} onClick={() => {if(window.confirm(`Delete course ${row.name}?`)) {deleteCourse(row)}}} >Delete</Button>
+			)
+		}
 	}
-
-	deleteCourse = course => {
-		axios.delete(course.path).then(_ => this.getCourses());
+	
+	const renderShowHideButton = (cell, row) => {
+		if(row.can_control){
+			return (
+				<Button data-testid={`hidden-button-${row.id}` } onClick={() => hideOrShowCourse(row)}>{row.hidden == false ? 'Hide' : 'Show'}</Button>
+			)
+		}
 	}
-
-	hideOrShowCourse = course => {
+	
+	const deleteCourse = course => {
+		axios.delete(course.path).then(_ => getCourses());
+	}
+	
+	const hideOrShowCourse = course => {
 		let hidden = undefined
-
+	
 		if (course.hidden == false) {
 			hidden = true
 		} else {
 			hidden = false
 		}
-
-		console.log("hidden", hidden)
-
+	
 		axios.put(course.path, {
 			hidden: hidden
-		}).then(_ => this.getCourses())
+		}).then(_ => getCourses())
 	}
 
-	render() {
-		return (
-			<BootstrapTable
-				boostrap4={true}
-				columns={this.columns}
-				data={this.state.courses}
-				keyField="id"
-				id="course_list"
-			/>
-		);
-	}
+	return (
+		<BootstrapTable
+			boostrap4={true}
+			columns={columns}
+			data={courses}
+			keyField="id"
+			id="course_list"
+		/>
+	);
 }
-
-CoursesIndex.propTypes = {};
-
-export default CoursesIndex;
