@@ -1,0 +1,28 @@
+# .github/workflows/ci-frontend-tests.yml
+
+name: ci-frontend-coverage
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v2
+        with: 
+          fetch-depth: 2
+      - name: Use Node.js 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - run: yarn install --frozen-lockfile
+        working-directory: ./test/javascript
+      - run: yarn run coverage
+        working-directory: ./test/javascript
+      # - name: Upload to Codecov
+      #   env:
+      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      #   run: bash <(curl -s https://codecov.io/bash)
+      #   working-directory: ./test/javascript
+     
