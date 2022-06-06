@@ -17,6 +17,6 @@ jobs:
           node-version: 16
       - run: yarn install --frozen-lockfile
         working-directory: ./test/javascript
-      - run: yarn test:frontend
+      - run: yarn test:jest
         working-directory: ./test/javascript
      
