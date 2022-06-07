@@ -20,9 +20,7 @@ jobs:
         working-directory: ./test/javascript
       - run: yarn run coverage
         working-directory: ./test/javascript
-      # - name: Upload to Codecov
-      #   env:
-      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      #   run: bash <(curl -s https://codecov.io/bash)
-      #   working-directory: ./test/javascript
+      - name: Upload to Codecov
+        run: bash <(curl -s https://codecov.io/bash)
+        working-directory: ./test/javascript
      
