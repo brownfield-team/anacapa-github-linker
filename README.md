@@ -6,7 +6,7 @@ This is a rails application that allows for course management in conjunction wit
 React Storybooks: [https://brownfield-team.github.io/anacapa-github-linker](https://brownfield-team.github.io/anacapa-github-linker)
 
 ### Status
-[![Build Status](https://travis-ci.org/project-anacapa/anacapa-github-linker.png)](https://travis-ci.org/project-anacapa/anacapa-github-linker)
+[![codecov](https://codecov.io/gh/brownfield-team/anacapa-github-linker/branch/master/graph/badge.svg?token=OZukhZByPp)](https://codecov.io/gh/brownfield-team/anacapa-github-linker)
 
 ## Deploying to Heroku
   ### Selecting version/branch on heroku from this repository
