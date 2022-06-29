@@ -15,7 +15,7 @@
     "immutability-helper": "^3.0.2",
     "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "^4.5.0",
-    "moment": "^2.26.0",
+    "moment": "^2.29.2",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-bootstrap": "0.33.1",
