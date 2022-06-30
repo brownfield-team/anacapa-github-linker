@@ -424,13 +424,8 @@ class Course < ApplicationRecord
 
   def github_org_default_member_permissions
     # look up course_organization and get the default membership permissions
-    # response = github_machine_user.post '/graphql', 
-    #            { query: github_user_graphql_query(github_username) }.to_json
-    # if !response.respond_to?(:data) || response.respond_to?(:errors)
-    #   return nil
-    # end   
-    # response
-    "to do"
+    response = github_machine_user.get "/orgs/#{course_organization}"
+    response.default_repository_permission
   end
 
   def github_user_graphql_query(github_username)
