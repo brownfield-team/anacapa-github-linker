@@ -423,10 +423,14 @@ class Course < ApplicationRecord
   end
 
   def github_org_default_member_permission
-    api_to_text = {"none": "No permission", "read": "Read", "write": "Write", "admin": "Admin"}
-    # look up course_organization and get the default membership permissions
-    response = github_machine_user.get "/orgs/#{course_organization}"
-    api_to_text[response.default_repository_permission.to_sym]
+    begin
+      api_to_text = {"none": "No permission", "read": "Read", "write": "Write", "admin": "Admin"}
+      # look up course_organization and get the default membership permissions
+      response = github_machine_user.get "/orgs/#{course_organization}"
+      api_to_text[response.default_repository_permission.to_sym]
+    rescue
+      "Unavailable"
+    end
   end
 
   def github_org_change_default_member_permission_url
