@@ -130,6 +130,18 @@ module OctokitStubHelper
 
   end
 
+  def stub_get_org_default_membership_permission(org_name)
+      stub_request(:get, "https://api.github.com/orgs/#{org_name}").
+      with(
+      headers: {
+            'Accept'=>'application/vnd.github.v3+json',
+            'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Content-Type'=>'application/json',
+            'User-Agent'=>'Octokit Ruby Gem 4.18.0'
+      }).
+    to_return(status: 200, body: "{\"default_membership_permission\":\"none\"}", headers: {})
+  end
+
   def stub_organization_exists_but_not_admin_in_org(org_name)
     stub_request(:get, "https://api.github.com/user/memberships/orgs/#{org_name}").
       with(  headers: {
