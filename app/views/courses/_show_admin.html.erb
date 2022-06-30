@@ -13,7 +13,13 @@
 </p>
 <p>
   Default member permissions: 
-  <%= @default_member_permissions %>
+  <strong><%= @default_member_permission %></strong>
+  <% if @default_member_permission == "No permission" %>
+    <span style="margin-left:2em;">This is the recommended value.</span>
+  <% else %>
+    <span style="margin-left:2em;" class="text-warning">Warning: the recommended value is "No permission".</span>
+  <% end %>
+  <%= link_to "Change default member permissions", @course.github_org_change_default_member_permission_url, class: "btn", role: "button" %>
 </p>
 <%#= link_to "View Course Roster (#{@course.roster_students.length} enrolled)", course_roster_students_path(@course), class: "btn", role: "button" %>
 <div id="course-admin-panel" class="panel panel-default">

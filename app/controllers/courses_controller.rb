@@ -14,7 +14,7 @@ class CoursesController < ApplicationController
   # GET /courses/1
   # GET /courses/1.json
   def show
-    @default_member_permissions = @course.github_org_default_member_permissions
+    @default_member_permission = @course.github_org_default_member_permission
   end
 
   # # GET /courses/new
