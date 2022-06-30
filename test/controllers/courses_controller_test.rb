@@ -15,6 +15,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     sign_in @user
     stub_organization_membership_admin_in_org(@org, ENV["MACHINE_USER_NAME"])
     stub_organization_is_an_org(@org)
+    
     @enroll_success_flash_notice = %Q[You were successfully invited to #{@course.name}! View and accept your invitation <a href="https://github.com/orgs/#{@course.course_organization}/invitation">here</a>.]
   end
 
@@ -98,6 +99,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should show course" do
+    stub_get_org_default_membership_permission(@course.course_organization)
     get course_url(@course)
     assert_response :success
   end
@@ -395,6 +397,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
 
 
   test "TAs should be able to view courses that they are TA of" do
+    stub_get_org_default_membership_permission(@course.course_organization)
     @user = users(:julie)
     @user.add_role :user
     @user.add_role :ta, @course
@@ -405,6 +408,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "TAs should not be able to view other courses they are not the TA of " do
+    stub_get_org_default_membership_permission(@course.course_organization)
     @user = users(:julie)
     @user.add_role :user
     @user.add_role :ta, @course

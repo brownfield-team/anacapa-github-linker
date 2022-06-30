@@ -422,6 +422,21 @@ class Course < ApplicationRecord
     response       
   end
 
+  def github_org_default_member_permission
+    begin
+      api_to_text = {"none": "No permission", "read": "Read", "write": "Write", "admin": "Admin"}
+      # look up course_organization and get the default membership permissions
+      response = github_machine_user.get "/orgs/#{course_organization}"
+      api_to_text[response.default_repository_permission.to_sym]
+    rescue
+      "Unavailable"
+    end
+  end
+
+  def github_org_change_default_member_permission_url
+    "https://github.com/organizations/#{course_organization}/settings/member_privileges"
+  end
+
   def github_user_graphql_query(github_username)
     <<-GRAPHQL
     query { 
