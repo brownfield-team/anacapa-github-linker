@@ -81,9 +81,9 @@ class User < ApplicationRecord
     course_names = courses.map{|c| c.name}
     course_names.include?(course_name)
   end
-  
+
   def instructor_of?(course)
-    course.instructor == self
+    course && course.instructor == self
   end
 
   def courses_administrating

@@ -454,7 +454,8 @@ class Course < ApplicationRecord
   end
 
   def instructor
-    Role.where(name: "instructor", resource_id: self.id).first.users.first
+    role = Role.where(name: "instructor", resource_id: self.id).first
+    role.nil? ? nil : role.users.first
   end
 
   def is_instructor?(user)
