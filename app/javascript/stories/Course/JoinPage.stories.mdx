@@ -1,0 +1,24 @@
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+import JoinPage from '../../components/Course/JoinPage';
+import { BrowserRouter } from "react-router-dom";
+import { createMemoryHistory } from "history";
+
+
+<Meta title="components/Course/JoinPage" component={JoinPage} />
+
+# JoinPage
+
+The `JoinPage` appears when a user joins a course.
+
+export const Template = (args) => {
+  return (
+      <JoinPage {...args} />
+  )
+}
+
+<Canvas>
+  <Story name="Example" args={{ label: 'Example', course: {name: "test123", course_organization: "test123"} }}>
+    {Template.bind({})}
+   </Story>
+</Canvas>
+
