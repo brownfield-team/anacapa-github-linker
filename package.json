@@ -68,20 +68,20 @@
     "not op_mini all"
   ],
   "jest": {
-    "roots": [
-      "test/javascript"
-    ],
+    "testPathIgnorePatterns": ["test/playwright", "config/webpack"],
     "moduleDirectories": [
-      "node_modules",
-      "app/javascript"
+      "node_modules"
     ],
     "resetMocks": true,
+    "collectCoverageFrom": [
+      "app/javascript/**/*.{js,jsx}"
+    ],
     "coverageThreshold": {
       "global": {
-        "branches": 100,
-        "functions": 47.62,
-        "lines": 100,
-        "statements": 75.82
+        "branches": 4.33,
+        "functions": 3.32,
+        "lines": 4.87,
+        "statements": 4.75
       }
     },
     "coverageReporters": [
