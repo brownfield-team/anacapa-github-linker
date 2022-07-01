@@ -88,7 +88,7 @@ class CoursesController < ApplicationController
     roster_student = cross_check_user_emails_with_class(course)
     if roster_student.nil?
       message = 'Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verified your email address. '
-      return redirect_to courses_path, alert: message
+      return redirect_to root_path, alert: message
     end
 
     begin
@@ -98,7 +98,7 @@ class CoursesController < ApplicationController
        redirect_to courses_path, notice: %Q[You were successfully invited to #{course.name}! View and accept your invitation <a href="https://github.com/orgs/#{course.course_organization}/invitation">here</a>.]
     rescue Exception => e
       message = "Unable to invite #{current_user.username} to #{course.course_organization}; check whether #{ENV['MACHINE_USER_NAME']} has admin permission on that org.   Error: #{e.message}"
-      redirect_to courses_path, alert: message
+      redirect_to root_path, alert: message
     end
   end
 
