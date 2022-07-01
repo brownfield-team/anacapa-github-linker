@@ -95,7 +95,6 @@ class CoursesController < ApplicationController
        @course.invite_user_to_course_org(current_user)
        roster_student.update_attribute(:enrolled, true)
        current_user.roster_students.push(roster_student)
-     #  redirect_to courses_path, notice: %Q[You were successfully invited to #{@course.name}! View and accept your invitation <a href="https://github.com/orgs/#{@course.course_organization}/invitation">here</a>.]
     rescue Exception => e
       message = "Unable to invite #{current_user.username} to #{@course.course_organization}; check whether #{ENV['MACHINE_USER_NAME']} has admin permission on that org.   Error: #{e.message}"
       redirect_to courses_path, alert: message
