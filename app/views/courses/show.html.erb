@@ -1,15 +1,7 @@
-<% if current_user.can? :read, @course %>
+<% if (current_user.has_role? :admin) || (current_user.instructor_of? @course) %>
   <%= render 'show_admin', course: Course.new %>
-<% elsif current_user.can? :show, @course %>
+<% elsif current_user.enrolled_in? @course  %>
   <%= render 'show_student', course: Course.new %>
+<% else  %>
+  <%= redirect_to root_path, alert: "You do not have permission to see course #{params[:id]}" %>
 <% end %>
-
-<!-- 
-<p>
-  <strong>Name:</strong>
-  <%= @course.name %>
-</p>
-
-<%= link_to 'Edit', edit_course_path(@course) %> |
-<%= link_to 'Back', courses_path %>
--->

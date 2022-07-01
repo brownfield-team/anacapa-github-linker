@@ -39,7 +39,7 @@ begin
   def register_course_names_as_groups
     Course.all_course_names.each do |course_name|
       Flipper.register(course_name) do |actor|
-        actor.respond_to?(:enrolled_in?) && actor.enrolled_in?(course_name)
+        actor.respond_to?(:enrolled_in_course_named?) && actor.enrolled_in_course_named?(course_name)
       end
     end
   end
