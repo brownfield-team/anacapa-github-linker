@@ -82,6 +82,10 @@ class User < ApplicationRecord
     course_names.include?(course_name)
   end
 
+  def instructor_of?(course)
+    course && course.instructor == self
+  end
+
   def courses_administrating
     if has_role? :user
       return []
