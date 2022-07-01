@@ -3,6 +3,8 @@ import ReactOnRails from 'react-on-rails';
 import Users from '../components/Users/Users';
 import ProjectTeams from "../components/ProjectTeams/ProjectTeams";
 import CourseNavBar from "../components/CourseNavBar/CourseNavBar";
+import CourseStudentPage from "../components/Course/CourseStudentPage";
+
 import StudentActivity from "../components/ActivityDashboard/Student/StudentActivity";
 
 import CourseGithubReposIndex from "../components/Course/GithubRepos/CourseGithubReposIndex";
@@ -35,6 +37,7 @@ ReactOnRails.register({
   Users,
   ProjectTeams,
   CourseNavBar,
+  CourseStudentPage,
   StudentActivity,
   CourseGithubReposIndex,
   CourseGithubReposProjectRepos,

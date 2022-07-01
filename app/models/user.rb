@@ -77,9 +77,17 @@ class User < ApplicationRecord
     self.roster_students.map { |student| student.course }
   end
 
-  def enrolled_in?(course_name)
+  def enrolled_in_course_named?(course_name)
     course_names = courses.map{|c| c.name}
     course_names.include?(course_name)
+  end
+
+  def enrolled_in?(course)
+    courses_enrolled.include? course
+  end
+
+  def instructor_of?(course)
+    course.instructor == self
   end
 
   def courses_administrating
