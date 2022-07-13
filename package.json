@@ -70,7 +70,8 @@
   "jest": {
     "testPathIgnorePatterns": ["test/playwright", "config/webpack"],
     "moduleDirectories": [
-      "node_modules"
+      "node_modules",
+      "app/javascript"
     ],
     "resetMocks": true,
     "collectCoverageFrom": [
