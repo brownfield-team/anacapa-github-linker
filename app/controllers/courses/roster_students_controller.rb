@@ -17,10 +17,11 @@ module Courses
     def index
       @roster_students = @parent.roster_students.all
       csv_name = "#{@parent.name.parameterize}-students-#{Date.today}.csv"
+      json_name = "#{@parent.name.parameterize}-students-#{Date.today}.json"
       respond_to do |format|
         format.html
         format.csv { send_data @parent.export_students_to_csv, filename: csv_name }
-        format.json { send_data @parent.export_students_to_json, filename: csv_name }
+        format.json { send_data @parent.export_students_to_json, filename: json_name }
       end
     end
 
