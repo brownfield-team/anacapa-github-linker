@@ -2,6 +2,7 @@ module Api
   class CoursesController < ApplicationController
     respond_to :json
     load_and_authorize_resource
+    before_action :set_authorized_courses, only: [:index]
     include Response
 
     def index
@@ -39,6 +40,22 @@ module Api
 
     private
 
+    def set_authorized_courses
+      if current_user.has_role? :admin
+        @authorized_courses = @courses
+      else
+        @authorized_courses = []
+        @courses.each { |course|
+          if RosterStudent.where(course_id: course.id, email: current_user.email).count > 0
+            @authorized_courses.push(course)
+          end
+        }
+        
+        Course.with_role(:instructor, current_user).each { |course|
+          @authorized_courses.push(course)
+        }
+      end
+    end
 
     def perform_graphql_query(graphql_query_string, accept)
       puts("perform graphqlquery")
