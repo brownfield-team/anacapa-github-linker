@@ -255,7 +255,7 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
-    assert_redirected_to courses_url
+    assert_redirected_to root_url
     assert_equal "Your email did not match the email of any student on the course roster. Please check that your github email is correctly configured to match your school email and that you have verified your email address. ", flash[:alert]
 
   end
