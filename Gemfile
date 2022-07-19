@@ -127,3 +127,5 @@ gem 'flipper-ui'
 gem 'flipper-active_record'
 
 gem 'zlib'
+
+gem 'simplecov', require: false, group: :test
