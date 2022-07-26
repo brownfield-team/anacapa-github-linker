@@ -22,7 +22,6 @@ class CoursesTest < ApplicationSystemTestCase
     csv_name = "#{@course2.name.parameterize}-students-#{Date.today}.csv"
 
     full_path = DOWNLOAD_PATH+"/"+csv_name
-    puts full_path
 
     assert File.exist?(full_path)
     actual_headers = CSV.open(full_path, 'r') { |csv| csv.first.to_s }
