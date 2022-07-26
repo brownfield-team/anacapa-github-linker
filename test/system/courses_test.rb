@@ -14,7 +14,6 @@ class CoursesTest < ApplicationSystemTestCase
 
   test "instructors can download student roster as CSV" do
     visit course_path(@course2)
-    visit course_roster_students_path(@course2, :format => "csv")
 
     click_on "Download Roster (CSV)"
     sleep 1
