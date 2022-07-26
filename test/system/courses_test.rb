@@ -12,4 +12,13 @@ class CoursesTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Course"
   end
 
+  test "instructors can download student roster as CSV" do
+    visit course_path(@course2)
+    visit course_roster_students_path(@course2, :format => "csv")
+
+    click_on "Download Roster (CSV)"
+    sleep 1
+    
+    csv_name = "#{@course2.name.parameterize}-students-#{Date.today}.csv"
+  end
 end
