@@ -25,10 +25,10 @@ const StudentCoursePage = ({ course, user, roster_student}) => {
       <td>{roster_student.last_name}</td>
       <td>{roster_student.perm}</td>
       <td>{roster_student.email}</td>
-      <td>{roster_student.enrolled ? "True" : "False"}</td>
+      <td data-testid={"StudentCoursesPage-roster_student-enrolled"}>{roster_student.enrolled ? "True" : "False"}</td>
       <td>{roster_student.section}</td>
-      <td>{roster_student.is_ta ? "True" : "False"}</td>
-      <td>{course.slack_workspace? <a href={ 'https://' + course.slack_workspace + '.slack.com/ssb/redirect '}>{roster_student.slack_user}</a>     : "Unknown"}</td>
+      <td data-testid={"StudentCoursesPage-roster_student-ta"}>{roster_student.is_ta ? "True" : "False"}</td>
+      <td data-testid={"StudentCoursesPage-course-has-slack"}>{course.slack_workspace? <a href={ 'https://' + course.slack_workspace + '.slack.com/ssb/redirect '}>{roster_student.slack_user}</a>     : "Unknown"}</td>
       <td><a href={'https://github.com/' + user.username}>{user.username}</a></td>
       <td>{roster_student.org_membership_type}</td>
       <td>{roster_student.org_teams}</td>
