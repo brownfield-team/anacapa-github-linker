@@ -1,0 +1,25 @@
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+import StudentCoursePage from '../../components/Courses/StudentCoursePage';
+import { BrowserRouter } from "react-router-dom";
+import { createMemoryHistory } from "history";
+
+
+<Meta title="components/Courses/StudentCoursePage" component={StudentCoursePage} />
+
+# StudentCoursePage
+
+The `StudentCoursePage` appears when a student joins a course and looks at the course.
+
+export const Template = (args) => {
+  return (
+      <StudentCoursePage {...args} />
+  )
+}
+
+<Canvas>
+  <Story name="Example" args={{ label: 'Example', course: {name: "test123", course_organization: "test123", slack_workspace: "testOrgSlack"}, user: {username: "GithubIdTest"},
+  roster_student: {first_name: "Test", last_name: "Name", perm: "12345678", email: "test@test.org", enrolled: "0", section: "4pm", is_ta: "", org_membership_type: "test", org_teams: "teams123", slack_user: "SlackUserName"} }}>
+    {Template.bind({})}
+   </Story>
+</Canvas>
+
