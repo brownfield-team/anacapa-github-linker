@@ -1,1 +1,8 @@
-<p>Student Features Coming Soon </p>
+<%= react_component("StudentCoursePage",
+                        props: {current_path: request.env['PATH_INFO'],
+                                course:@course,
+                                user:current_user,
+                                roster_student:@roster_student
+                        },
+                        prerender: false)
+%>

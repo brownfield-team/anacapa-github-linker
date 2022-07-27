@@ -15,6 +15,8 @@ class CoursesController < ApplicationController
   # GET /courses/1.json
   def show
     @default_member_permission = @course.github_org_default_member_permission
+    # use current user and course to find the roster student record
+    @roster_student = RosterStudent.where(course_id:@course.id,user_id:current_user.id).first
   end
 
   # # GET /courses/new

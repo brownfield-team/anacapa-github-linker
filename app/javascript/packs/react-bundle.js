@@ -20,7 +20,7 @@ import HomePage from "../components/home/HomePage";
 
 import ExternalReposPage from "../components/Course/GithubRepos/ExternalRepos/ExternalReposPage";
 import CoursesIndex from "../components/Courses/CoursesIndex";
-
+import StudentCoursePage from '../components/Courses/StudentCoursePage';
 import OrphanCommits from '../components/Course/OrphanCommits/OrphanCommits';
 import OrphanCommitsByName from '../components/Course/OrphanCommits/OrphanCommitsByName';
 import OrphanCommitsByEmail from '../components/Course/OrphanCommits/OrphanCommitsByEmail';
@@ -45,6 +45,7 @@ ReactOnRails.register({
   JobLog,
   JoinPage,
   SchoolsIndex,
+  StudentCoursePage,
   HomePage,
   ExternalReposPage
 });
