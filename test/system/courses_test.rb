@@ -43,5 +43,12 @@ class CoursesTest < ApplicationSystemTestCase
     sleep 1
 
     assert File.exist?(full_path)
+
+    loaded = File.read(full_path)
+    data_hash = JSON.parse(loaded)[0]
+
+    actual_headers = data_hash.keys
+
+    assert_equal(["perm", "email", "first_name", "last_name", "enrolled", "section", "username", "slack_uid", "slack_username", "slack_display_name", "org_member_status", "teams"],actual_headers,"Header does not match")
   end
 end
