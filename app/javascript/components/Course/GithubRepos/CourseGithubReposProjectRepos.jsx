@@ -74,6 +74,7 @@ class CourseGithubReposProjectRepos extends Component {
                         {...this.props}
                     />
                 </div>
+                <h2>This is where it goes</h2>
                 <CourseGithubRepoProjectReposStatistics 
                     repos={this.state.repos}
                     course={this.props.course}
