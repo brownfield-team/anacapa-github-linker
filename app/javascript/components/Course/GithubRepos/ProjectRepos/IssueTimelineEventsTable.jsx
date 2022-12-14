@@ -26,7 +26,47 @@ class IssueTimelineEventsTable extends Component {
                 dataField: 'repo',
                 text: 'Repo',
                 editable: false,
-            }
+            },
+            {
+                dataField: 'actor',
+                text: 'Actor',
+                editable: false,
+            },
+            {
+                dataField: 'eventType',
+                text: 'Event Type',
+                editable: false,
+            },
+            {
+                dataField: 'createdAt',
+                text: 'Created At',
+                editable: false,
+            },
+            {
+                // for AssignedEvent
+                // NOTE: this might end up being a list
+                dataField: 'assigneeUsername',
+                text: 'Assignee Username',
+                editable: false,
+            },
+            {
+                // for AddedToProjectEvent, MovedColumnsInProjectEvent & RemovedFromProjectEvent
+                dataField: 'projectName',
+                text: 'Project Name',
+                editable: false,
+            },
+            {
+                // for MovedColumnsInProjectEvent, previousProjectColumnName
+                dataField: 'previousProjectColumnName',
+                text: 'Prev Proj Col Name',
+                editable: false,
+            },
+            {
+                // for AddedToProjectEvent, MovedColumnsInProjectEvent & RemovedFromProjectEvent, projectColumnName
+                dataField: 'projectColumnName',
+                text: 'Proj Col Name',
+                editable: false,
+            },
         ];
 
     onTableChange = (type, newState) => {

@@ -33,13 +33,79 @@ export const Template = (args) => {
     args={{
       label: "One Row",
       events: [
-      {
-        org: "ucsb-cs156-f22",
-        team: "f22-5pm-1",
-        repo: "f22-5pm-courses",
-     }
-    ],
-    course: { name: "test123", course_organization: "test123" },
+        {
+          org: "ucsb-cs156-f22",
+          team: "f22-5pm-1",
+          repo: "f22-5pm-courses",
+          actor: "johndoe",
+          eventType: "AssignedEvent",
+          createdAt: "2021-10-01T00:00:00Z",
+          assigneeUsername: "johndoe",
+          projectName: null,
+          previousProjectColumnName: null,
+          projectColumnName: null,
+        },
+      ],
+      course: { name: "test123", course_organization: "test123" },
+    }}
+  >
+    {Template.bind({})}
+  </Story>
+  <Story
+    name="Several Rows"
+    args={{
+      label: "Several Rows",
+      events: [
+        {
+          org: "ucsb-cs156-f22",
+          team: "f22-5pm-1",
+          repo: "f22-5pm-courses",
+          actor: "johndoe",
+          eventType: "AssignedEvent",
+          createdAt: "2021-10-01T00:00:00Z",
+          assigneeUsername: "johndoe",
+          projectName: null,
+          previousProjectColumnName: null,
+          projectColumnName: null,
+        },
+        {
+          org: "ucsb-cs156-f22",
+          team: "f22-5pm-1",
+          repo: "f22-5pm-courses",
+          actor: "johndoe",
+          eventType: "AddedToProjectEvent",
+          createdAt: "2021-10-01T00:00:00Z",
+          assigneeUsername: null,
+          projectName: "f22-5pm-1-project",
+          previousProjectColumnName: null,
+          projectColumnName: "To Do",
+        },
+        {
+          org: "ucsb-cs156-f22",
+          team: "f22-5pm-1",
+          repo: "f22-5pm-courses",
+          actor: "johndoe",
+          eventType: "MovedColumnsInProjectEvent",
+          createdAt: "2021-10-01T00:00:00Z",
+          assigneeUsername: null,
+          projectName: "f22-5pm-1-project",
+          previousProjectColumnName: "To Do",
+          projectColumnName: "In Progress",
+        },
+        {
+          org: "ucsb-cs156-f22",
+          team: "f22-5pm-1",
+          repo: "f22-5pm-courses",
+          actor: "johndoe",
+          eventType: "RemovedFromProjectEvent",
+          createdAt: "2021-10-01T00:00:00Z",
+          assigneeUsername: null,
+          projectName: "f22-5pm-1-project",
+          previousProjectColumnName: null,
+          projectColumnName: "In Progress",
+        },
+      ],
+      course: { name: "test123", course_organization: "test123" },
     }}
   >
     {Template.bind({})}
