@@ -1,0 +1,47 @@
+import { Meta, Story, Canvas } from "@storybook/addon-docs/blocks";
+import JoinPage from "../../components/Course/JoinPage";
+import { BrowserRouter } from "react-router-dom";
+import { createMemoryHistory } from "history";
+import IssueTimelineEventsTable from "../../components/Course/GithubRepos/ProjectRepos/IssueTimelineEventsTable";
+
+<Meta
+  title="components/Course/IssueTimelineEventsTable"
+  component={IssueTimelineEventsTable}
+/>
+
+# IssueTimelineEventsTable
+
+The `IssueTimelineEventsTable` appears when a user joins a course.
+
+export const Template = (args) => {
+  return <IssueTimelineEventsTable {...args} />;
+};
+
+<Canvas>
+  <Story
+    name="Empty"
+    args={{
+      label: "Empty",
+      events: [],
+      course: { name: "test123", course_organization: "test123" },
+    }}
+  >
+    {Template.bind({})}
+  </Story>
+  <Story
+    name="One Row"
+    args={{
+      label: "One Row",
+      events: [
+      {
+        org: "ucsb-cs156-f22",
+        team: "f22-5pm-1",
+        repo: "f22-5pm-courses",
+     }
+    ],
+    course: { name: "test123", course_organization: "test123" },
+    }}
+  >
+    {Template.bind({})}
+  </Story>
+</Canvas>
