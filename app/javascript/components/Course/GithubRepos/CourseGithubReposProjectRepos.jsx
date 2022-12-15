@@ -10,7 +10,7 @@ import { githubReposRoute } from "../../../services/service-routes";
 class CourseGithubReposProjectRepos extends Component {
     constructor(props) {
         super(props);
-        this.state = {  error: "", repos: [], page: 1, pageSize: 25, totalSize: 0 };
+        this.state = { error: "", repos: [], page: 1, pageSize: 25, totalSize: 0 };
     }
 
     componentDidMount() {
@@ -18,21 +18,21 @@ class CourseGithubReposProjectRepos extends Component {
     }
 
     paginationHandler = (page, pageSize) => {
-        this.setState({page: page, pageSize: pageSize}, () => {
+        this.setState({ page: page, pageSize: pageSize }, () => {
             this.updateRepos();
         });
     }
 
     updateRepos = () => {
         const url = githubReposRoute(this.props.course_id);
-        const params = { page: this.state.page, per_page: this.state.pageSize, is_project_repo:true};
+        const params = { page: this.state.page, per_page: this.state.pageSize, is_project_repo: true };
         // Otherwise, calling setState fails because the scope for "this" is the success/error function.
         const self = this;
         Rails.ajax({
             url: url,
             type: "get",
             data: $.param(params),
-            beforeSend: function() {
+            beforeSend: function () {
                 return true;
             },
             success: function (data, status, xhr) {
@@ -50,9 +50,9 @@ class CourseGithubReposProjectRepos extends Component {
         const error = this.state.error;
         return (
             <div>
-            { error !== "" &&
-                <Alert id="error-alert" variant="danger"> {error} </Alert>
-            }
+                {error !== "" &&
+                    <Alert id="error-alert" variant="danger"> {error} </Alert>
+                }
             </div>
         );
     }
@@ -62,7 +62,7 @@ class CourseGithubReposProjectRepos extends Component {
             <Fragment>
                 <div>
                     <h1>Project Repos</h1>
-                    { this.renderError() }
+                    {this.renderError()}
                     <CourseGithubReposTable
                         repos={this.state.repos}
                         page={this.state.page}
@@ -74,14 +74,16 @@ class CourseGithubReposProjectRepos extends Component {
                     />
                 </div>
 
-                {/* TODO: The empty array for events needs to be populated and pagination added
-                if appropriate */}
+    
+                <IssueTimelineEventsDisplay
+                    repos={this.state.repos}
+                    course={this.props.course} 
+                    databaseId_to_student={this.props.databaseId_to_student}
+                    databaseId_to_team={this.props.databaseId_to_team}
+                    {...this.props}
+                />
 
-
-                <IssueTimelineEventsDisplay course= {this.props.course} />
-
-
-                <CourseGithubRepoProjectReposStatistics 
+                <CourseGithubRepoProjectReposStatistics
                     repos={this.state.repos}
                     course={this.props.course}
                     databaseId_to_student={this.props.databaseId_to_student}
@@ -96,7 +98,7 @@ class CourseGithubReposProjectRepos extends Component {
 }
 
 CourseGithubReposProjectRepos.propTypes = {
-    course_id : PropTypes.number.isRequired,
+    course_id: PropTypes.number.isRequired,
     course: PropTypes.object.isRequired,
     databaseId_to_student: PropTypes.object.isRequired,
     databaseId_to_team: PropTypes.object.isRequired

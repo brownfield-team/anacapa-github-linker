@@ -29,7 +29,6 @@ export default class CourseGithubReposProjectReposStatistics extends Component {
             edit_combined_count_by_student: {},
             timeline_combined_count: {},
             timeline_combined_count_by_student: {}
-
         }
     }
 
