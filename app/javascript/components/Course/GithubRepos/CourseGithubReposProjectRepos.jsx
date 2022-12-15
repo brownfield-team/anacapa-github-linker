@@ -2,8 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import CourseGithubReposTable from "./CourseGithubReposTable";
 import CourseGithubRepoProjectReposStatistics from "./CourseGithubRepoProjectReposStatistics";
-import IssueTimelineEventsTable from "../GithubRepos/ProjectRepos/IssueTimelineEventsTable";
-import axios from "../../../helpers/axios-rails";
+import IssueTimelineEventsDisplay from "../GithubRepos/ProjectRepos/IssueTimelineEventsDisplay";
 import { Alert, Form } from 'react-bootstrap';
 
 import { githubReposRoute } from "../../../services/service-routes";
@@ -74,7 +73,14 @@ class CourseGithubReposProjectRepos extends Component {
                         {...this.props}
                     />
                 </div>
-                <IssueTimelineEventsTable events={[]} course= {this.props.course} />
+
+                {/* TODO: The empty array for events needs to be populated and pagination added
+                if appropriate */}
+
+
+                <IssueTimelineEventsDisplay course= {this.props.course} />
+
+
                 <CourseGithubRepoProjectReposStatistics 
                     repos={this.state.repos}
                     course={this.props.course}
