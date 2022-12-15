@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import CourseGithubReposTable from "./CourseGithubReposTable";
 import CourseGithubRepoProjectReposStatistics from "./CourseGithubRepoProjectReposStatistics";
-
+import IssueTimelineEventsTable from "../GithubRepos/ProjectRepos/IssueTimelineEventsTable";
 import axios from "../../../helpers/axios-rails";
 import { Alert, Form } from 'react-bootstrap';
 
@@ -74,7 +74,7 @@ class CourseGithubReposProjectRepos extends Component {
                         {...this.props}
                     />
                 </div>
-                <h2>This is where it goes</h2>
+                <IssueTimelineEventsTable events={[]} course= {this.props.course} />
                 <CourseGithubRepoProjectReposStatistics 
                     repos={this.state.repos}
                     course={this.props.course}
